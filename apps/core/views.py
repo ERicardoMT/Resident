@@ -19,6 +19,12 @@ def home(request):
             "available": True,
         },
         {
+            'title': 'Catálogo de productos',
+            'subtitle': 'Componentes y niveladores',
+            'icon': 'catalog',
+            'url_name': 'catalogo'
+        },
+        {
             "icon": "shock",
             "title": "Calculo de respuesta a choque",
             "subtitle": "Espectro de respuesta a impacto",
@@ -38,6 +44,9 @@ def home(request):
             "subtitle": "Documentacion tecnica",
             "url_name": "datasheet",
             "available": True,
-        },
+        },     
     ]
     return render(request, "core/home.html", {"menu": menu})
+
+def catalogo_view(request):
+    return render(request, 'core/catalogo.html')
