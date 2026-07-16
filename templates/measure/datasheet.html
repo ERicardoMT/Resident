@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Hojas de datos - VibraMeter{% endblock %}
+{% block url %}vibrameter.app/datasheet{% endblock %}
+
+{% block content %}
+<section class="page">
+  <h1 class="page-title">Hojas de datos de productos</h1>
+  <p class="page-lead">
+    Documentacion tecnica de montajes antivibratorios, topes y aisladores.
+  </p>
+
+  <div class="card">
+    <a class="datasheet-item" href="{% url 'datasheet' %}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke="var(--navy)" stroke-width="1.8" stroke-linecap="round"
+        stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Aislador conico serie AV</span>
+      <span class="tag">PDF</span>
+    </a>
+    <a class="datasheet-item" href="{% url 'datasheet' %}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke="var(--navy)" stroke-width="1.8" stroke-linecap="round"
+        stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Tope elastico serie ST</span>
+      <span class="tag">PDF</span>
+    </a>
+    <a class="datasheet-item" href="{% url 'datasheet' %}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke="var(--navy)" stroke-width="1.8" stroke-linecap="round"
+        stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Soporte de motor serie MB</span>
+      <span class="tag">PDF</span>
+    </a>
+    <a class="datasheet-item" href="{% url 'datasheet' %}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke="var(--navy)" stroke-width="1.8" stroke-linecap="round"
+        stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Plot antivibratorio serie PL</span>
+      <span class="tag">PDF</span>
+    </a>
+  </div>
+
+  <div class="note">
+    Estas fichas son de ejemplo. Conecta tu catalogo real para servir los PDF
+    desde la API de Django.
+  </div>
+</section>
+{% endblock %}

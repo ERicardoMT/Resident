@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Respuesta a choque - VibraMeter{% endblock %}
+{% block url %}vibrameter.app/choque{% endblock %}
+
+{% block content %}
+<section class="page">
+  <h1 class="page-title">Calculo de respuesta a choque</h1>
+  <p class="page-lead">
+    Estima la aceleracion de respuesta de un sistema de un grado de libertad
+    ante un pulso de choque semisenoidal.
+  </p>
+
+  <div class="card">
+    <div class="field">
+      <label for="amp">Aceleracion del choque (g)</label>
+      <input type="number" id="amp" value="30" min="0" step="1" />
+    </div>
+    <div class="field">
+      <label for="dur">Duracion del pulso (ms)</label>
+      <input type="number" id="dur" value="11" min="1" step="1" />
+    </div>
+    <div class="field">
+      <label for="fnat">Frecuencia natural del montaje (Hz)</label>
+      <input type="number" id="fnat" value="30" min="1" step="1" />
+    </div>
+  </div>
+
+  <div class="card surface">
+    <div class="result-line">
+      <span class="k">Periodo natural</span>
+      <span class="v" id="r-period">-</span>
+    </div>
+    <div class="result-line">
+      <span class="k">Relacion duracion/periodo</span>
+      <span class="v" id="r-ratio">-</span>
+    </div>
+    <div class="result-line">
+      <span class="k">Factor de amplificacion</span>
+      <span class="v" id="r-amp">-</span>
+    </div>
+    <div class="result-line">
+      <span class="k">Aceleracion de respuesta</span>
+      <span class="v" id="r-resp">-</span>
+    </div>
+  </div>
+
+  <div class="note">
+    Modelo simplificado de espectro de respuesta a choque (SRS) para un pulso
+    semisenoidal. Para diseno final consulta las hojas de datos del producto.
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var amp = document.getElementById("amp");
+    var dur = document.getElementById("dur");
+    var fnat = document.getElementById("fnat");
+    var out = {
+      period: document.getElementById("r-period"),
+      ratio: document.getElementById("r-ratio"),
+      amp: document.getElementById("r-amp"),
+      resp: document.getElementById("r-resp"),
+    };
+
+    function compute() {
+      var A = parseFloat(amp.value) || 0;
+      var tau = (parseFloat(dur.value) || 0) / 1000;
+      var fn = parseFloat(fnat.value) || 1;
+      var Tn = 1 / fn;
+      var ratio = tau / Tn;
+      // Factor de amplificacion aproximado para pulso semisenoidal.
+      var Q;
+      if (ratio >= 0.5) {
+        Q = 1.7; // regimen cuasi-estatico amplificado
+      } else {
+        Q = 2 * Math.sin(Math.PI * ratio) / (Math.PI * (1 - ratio * ratio || 0.0001));
+        Q = Math.min(Math.abs(Q), 2.0);
+      }
+      out.period.textContent = (Tn * 1000).toFixed(1) + " ms";
+      out.ratio.textContent = ratio.toFixed(2);
+      out.amp.textContent = Q.toFixed(2);
+      out.resp.textContent = (A * Q).toFixed(1) + " g";
+    }
+
+    [amp, dur, fnat].forEach(function (el) {
+      el.addEventListener("input", compute);
+    });
+    compute();
+  })();
+</script>
+{% endblock %}

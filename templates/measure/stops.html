@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Calculo de topes - VibraMeter{% endblock %}
+{% block url %}vibrameter.app/topes{% endblock %}
+
+{% block content %}
+<section class="page">
+  <h1 class="page-title">Calculo de topes</h1>
+  <p class="page-lead">
+    Dimensiona un tope elastico a partir de la carga, la rigidez y la deflexion
+    maxima admisible.
+  </p>
+
+  <div class="card">
+    <div class="field">
+      <label for="load">Carga aplicada (N)</label>
+      <input type="number" id="load" value="500" min="0" step="10" />
+    </div>
+    <div class="field">
+      <label for="stiff">Rigidez del tope (N/mm)</label>
+      <input type="number" id="stiff" value="200" min="1" step="1" />
+    </div>
+    <div class="field">
+      <label for="maxdef">Deflexion maxima admisible (mm)</label>
+      <input type="number" id="maxdef" value="4" min="0.1" step="0.1" />
+    </div>
+  </div>
+
+  <div class="card surface">
+    <div class="result-line">
+      <span class="k">Deflexion estimada</span>
+      <span class="v" id="r-def">-</span>
+    </div>
+    <div class="result-line">
+      <span class="k">Uso de la deflexion</span>
+      <span class="v" id="r-use">-</span>
+    </div>
+    <div class="result-line">
+      <span class="k">Estado</span>
+      <span class="v" id="r-state">-</span>
+    </div>
+  </div>
+
+  <div class="note" id="note">Introduce los valores para dimensionar el tope.</div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var load = document.getElementById("load");
+    var stiff = document.getElementById("stiff");
+    var maxdef = document.getElementById("maxdef");
+    var out = {
+      def: document.getElementById("r-def"),
+      use: document.getElementById("r-use"),
+      state: document.getElementById("r-state"),
+      note: document.getElementById("note"),
+    };
+
+    function compute() {
+      var F = parseFloat(load.value) || 0;
+      var k = parseFloat(stiff.value) || 1;
+      var maxD = parseFloat(maxdef.value) || 0.0001;
+      var deflection = F / k; // mm
+      var usage = (deflection / maxD) * 100;
+      out.def.textContent = deflection.toFixed(2) + " mm";
+      out.use.textContent = usage.toFixed(0) + " %";
+      if (usage <= 80) {
+        out.state.textContent = "Correcto";
+        out.note.textContent = "El tope trabaja dentro de un margen seguro.";
+      } else if (usage <= 100) {
+        out.state.textContent = "Al limite";
+        out.note.textContent = "Cerca del limite: considera un tope mas rigido.";
+      } else {
+        out.state.textContent = "Sobrecarga";
+        out.note.textContent =
+          "Deflexion excesiva: aumenta la rigidez o usa un tope mayor.";
+      }
+    }
+
+    [load, stiff, maxdef].forEach(function (el) {
+      el.addEventListener("input", compute);
+    });
+    compute();
+  })();
+</script>
+{% endblock %}

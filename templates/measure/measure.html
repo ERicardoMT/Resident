@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Medicion vibratoria - VibraMeter{% endblock %}
+{% block url %}vibrameter.app/medicion{% endblock %}
+
+{% block content %}
+<section class="page">
+  <h1 class="page-title">Medicion vibratoria</h1>
+  <p class="page-lead">
+    Coloca el dispositivo sobre la maquina o superficie a medir y pulsa iniciar.
+    El acelerometro captura las vibraciones y calcula la frecuencia dominante.
+  </p>
+
+  <div class="card">
+    <div class="reading">
+      <span class="value" id="hz-value">0.0</span><span class="unit">Hz</span>
+      <div class="caption" id="hz-caption">Frecuencia dominante</div>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="label">RPM</div>
+        <div class="num" id="stat-rpm">0</div>
+      </div>
+      <div class="stat">
+        <div class="label">Muestreo</div>
+        <div class="num" id="stat-fs">0 Hz</div>
+      </div>
+      <div class="stat">
+        <div class="label">RMS aceleracion</div>
+        <div class="num" id="stat-rms">0 g</div>
+      </div>
+      <div class="stat">
+        <div class="label">Pico</div>
+        <div class="num" id="stat-peak">0 g</div>
+      </div>
+    </div>
+    <div class="status">
+      <span class="dot" id="status-dot"></span>
+      <span id="status-text">Detenido</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label" style="font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700;margin-bottom:8px;">
+      Senal en tiempo real
+    </div>
+    <canvas class="scope" id="scope" width="800" height="240"></canvas>
+    <div class="label" style="font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700;margin:16px 0 8px;">
+      Espectro de frecuencias (FFT)
+    </div>
+    <canvas class="spectrum" id="spectrum" width="800" height="280"></canvas>
+  </div>
+
+  <button class="btn btn-primary" id="btn-start">Iniciar medicion</button>
+  <div class="btn-row">
+    <button class="btn btn-ghost" id="btn-demo">Modo demostracion</button>
+    <button class="btn btn-secondary" id="btn-stop" disabled>Detener</button>
+  </div>
+
+  <div class="note" id="sensor-note">
+    En iOS es necesario conceder permiso de movimiento al pulsar iniciar. El
+    analisis FFT se realiza en el servidor a traves de la API REST de Django
+    (<code>POST /api/analyze/</code>). Si no hay acelerometro disponible (por
+    ejemplo en escritorio), usa el modo demostracion.
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/measure.js' %}"></script>
+{% endblock %}
