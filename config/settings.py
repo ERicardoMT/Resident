@@ -30,7 +30,12 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     # Local
-    "measure",
+    "apps.core",
+    "apps.attenuation",
+    "apps.vibration",
+    "apps.shock",
+    "apps.stops",
+    "apps.datasheet",
 ]
 
 MIDDLEWARE = [

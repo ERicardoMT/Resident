@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 
 def home(request):
-    """Menu principal estilo PaulstraSoft Mobile."""
+    """Menu principal del proyecto."""
     menu = [
         {
             "icon": "hz",
@@ -40,25 +40,4 @@ def home(request):
             "available": True,
         },
     ]
-    return render(request, "measure/home.html", {"menu": menu})
-
-
-def measure(request):
-    """Pantalla de medicion de frecuencia en tiempo real."""
-    return render(request, "measure/measure.html")
-
-
-def attenuation(request):
-    return render(request, "measure/attenuation.html")
-
-
-def shock(request):
-    return render(request, "measure/shock.html")
-
-
-def stops(request):
-    return render(request, "measure/stops.html")
-
-
-def datasheet(request):
-    return render(request, "measure/datasheet.html")
+    return render(request, "core/home.html", {"menu": menu})
