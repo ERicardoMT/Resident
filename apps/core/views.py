@@ -2,51 +2,84 @@ from django.shortcuts import render
 
 
 def home(request):
-    """Menu principal del proyecto."""
+    """Muestra el panel principal de SMAV INAHER."""
+
     menu = [
         {
             "icon": "hz",
-            "title": "Medicion vibratoria y preseleccion",
-            "subtitle": "Mide la frecuencia (Hz) con el acelerometro",
+            "title": "Medición vibratoria",
+            "subtitle": "Frecuencia, RPM, aceleración y espectro FFT",
             "url_name": "measure",
             "available": True,
         },
         {
             "icon": "attenuation",
-            "title": "Atenuacion vibratoria",
-            "subtitle": "Transmisibilidad segun frecuencia",
+            "title": "Atenuación y aislamiento",
+            "subtitle": "Transmisibilidad según la frecuencia",
             "url_name": "attenuation",
             "available": True,
         },
         {
-            'title': 'Catálogo de productos',
-            'subtitle': 'Componentes y niveladores',
-            'icon': 'catalog',
-            'url_name': 'catalogo'
+            "icon": "catalog",
+            "title": "Catálogo de productos",
+            "subtitle": "Antivibratorios, niveladores y componentes",
+            "url_name": "catalogo",
+            "available": True,
         },
         {
             "icon": "shock",
-            "title": "Calculo de respuesta a choque",
-            "subtitle": "Espectro de respuesta a impacto",
+            "title": "Respuesta a choque",
+            "subtitle": "Evaluación de impactos y respuesta dinámica",
             "url_name": "shock",
             "available": True,
         },
         {
             "icon": "stops",
-            "title": "Calculo de topes",
-            "subtitle": "Dimensionado de topes elasticos",
+            "title": "Selección de soportes y topes",
+            "subtitle": "Dimensionamiento de elementos elásticos",
             "url_name": "stops",
             "available": True,
         },
         {
             "icon": "datasheet",
-            "title": "Hojas de datos de productos",
-            "subtitle": "Documentacion tecnica",
+            "title": "Documentación técnica",
+            "subtitle": "Fichas, manuales y hojas de datos INAHER",
             "url_name": "datasheet",
             "available": True,
-        },     
+        },
     ]
+
     return render(request, "core/home.html", {"menu": menu})
 
+
 def catalogo_view(request):
-    return render(request, 'core/catalogo.html')
+    """Muestra las categorías principales del catálogo INAHER."""
+
+    categorias = [
+        {
+            "name": "Antivibratorios",
+            "description": "Elementos para aislamiento y control de vibraciones.",
+            "icon": "vibration",
+        },
+        {
+            "name": "Patas niveladoras",
+            "description": "Soluciones de apoyo, ajuste y nivelación industrial.",
+            "icon": "leveling",
+        },
+        {
+            "name": "Elementos de accionamiento y maniobra",
+            "description": "Componentes para control y operación de maquinaria.",
+            "icon": "control",
+        },
+        {
+            "name": "Niveladores para mobiliario",
+            "description": "Elementos de regulación para muebles y estructuras.",
+            "icon": "furniture",
+        },
+    ]
+
+    return render(
+        request,
+        "core/catalogo.html",
+        {"categorias": categorias},
+    )

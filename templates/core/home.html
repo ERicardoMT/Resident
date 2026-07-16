@@ -1,86 +1,196 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}VibraMeter Mobile{% endblock %}
-{% block url %}vibrameter.app{% endblock %}
+{% block title %}SMAV INAHER{% endblock %}
 
 {% block back %}
-<span class="icon-btn" aria-hidden="true"></span>
+<span class="icon-btn icon-placeholder" aria-hidden="true"></span>
 {% endblock %}
 
 {% block content %}
-<section class="brand">
-  <div class="logo">
-    <svg class="logo-mark" width="46" height="46" viewBox="0 0 48 48" fill="none"
-      stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-      stroke-linejoin="round" aria-hidden="true">
-      <path d="M2 24 h6 l4 -12 6 24 5 -18 4 12 h13" />
-    </svg>
-    <div>
-      <div class="logo-text">Vibra<span class="accent">Meter</span></div>
-      <div class="logo-sub">MOBILE</div>
+<section class="hero">
+  <div class="hero-decoration hero-decoration-one"></div>
+  <div class="hero-decoration hero-decoration-two"></div>
+
+  <div class="hero-content">
+    <img
+      class="hero-logo"
+      src="{% static 'img/inaher-logo.png' %}"
+      alt="INAHER"
+    />
+
+    <span class="hero-eyebrow">Ingeniería antivibratoria</span>
+
+    <h1 class="hero-title">SMAV</h1>
+
+    <p class="hero-name">
+      Sistema de Medición y Análisis Vibratorio
+    </p>
+
+    <p class="hero-description">
+      Herramientas para medición, análisis y selección de soluciones
+      antivibratorias INAHER.
+    </p>
+
+    <div class="hero-badges">
+      <span>Medición</span>
+      <span>Análisis</span>
+      <span>Selección</span>
     </div>
   </div>
-  <p class="welcome">Bienvenido a la aplicacion VibraMeter Mobile</p>
 </section>
 
-<ul class="menu">
-  {% for item in menu %}
-  <li>
-    <a class="menu-item" href="{% url item.url_name %}">
-      <span class="menu-icon" aria-hidden="true">
-        {% if item.icon == 'hz' %}
-        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round"
-          stroke-linejoin="round">
-          <path d="M2 16 h4 l3 -8 4 16 3 -12 3 8 h11" />
-        </svg>
-        {% elif item.icon == 'attenuation' %}
-        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round"
-          stroke-linejoin="round">
-          <path d="M4 6 v20 h24" />
-          <path d="M6 8 C 14 8 12 24 28 24" stroke="var(--red)" />
-        </svg>
-        {% elif item.icon == 'shock' %}
-        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"
-          stroke="var(--red)" stroke-width="2" stroke-linecap="round"
-          stroke-linejoin="round">
-          <path d="M2 16 h5 l3 -11 4 22 3 -16 3 9 h7" />
-        </svg>
-        {% elif item.icon == 'stops' %}
-        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round"
-          stroke-linejoin="round">
-          <ellipse cx="16" cy="23" rx="12" ry="5" />
-          <path d="M8 23 L12 12 h8 l4 11" />
-          <ellipse cx="16" cy="12" rx="4" ry="2" fill="var(--red)" stroke="var(--red)" />
-        </svg>
-        {% elif item.icon == 'catalog' %}
-        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round"
-          stroke-linejoin="round">
-          <rect x="4" y="4" width="10" height="10" rx="2" ry="2" />
-          <rect x="18" y="4" width="10" height="10" rx="2" ry="2" />
-          <rect x="4" y="18" width="10" height="10" rx="2" ry="2" />
-          <rect x="18" y="18" width="10" height="10" rx="2" ry="2" stroke="var(--red)" />
-        </svg>
-        {% else %}
-        <svg width="28" height="28" viewBox="0 0 32 32" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round"
-          stroke-linejoin="round">
-          <path d="M8 3 h12 l5 5 v21 H8 Z" />
-          <line x1="12" y1="13" x2="21" y2="13" />
-          <line x1="12" y1="18" x2="21" y2="18" />
-          <path d="M12 23 h6" stroke="var(--red)" />
-        </svg>
-        {% endif %}
-      </span>
-      <span class="menu-text">
-        <span class="title">{{ item.title }}</span>
-        <span class="subtitle">{{ item.subtitle }}</span>
-      </span>
-    </a>
-  </li>
-  {% endfor %}
-</ul>
+<section class="home-content">
+  <div class="section-heading">
+    <div>
+      <span class="section-kicker">Panel principal</span>
+      <h2>Herramientas técnicas</h2>
+    </div>
+
+    <span class="section-count">{{ menu|length }} módulos</span>
+  </div>
+
+  <ul class="menu">
+    {% for item in menu %}
+    <li>
+      <a class="menu-item" href="{% url item.url_name %}">
+        <span class="menu-icon" aria-hidden="true">
+          {% if item.icon == "hz" %}
+          <svg
+            width="31"
+            height="31"
+            viewBox="0 0 32 32"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M2 16h4l3-8 4 16 3-12 3 8h11"></path>
+          </svg>
+
+          {% elif item.icon == "attenuation" %}
+          <svg
+            width="31"
+            height="31"
+            viewBox="0 0 32 32"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M4 5v22h24"></path>
+            <path d="M6 8c8 0 6 16 22 16" class="icon-accent"></path>
+          </svg>
+
+          {% elif item.icon == "shock" %}
+          <svg
+            width="31"
+            height="31"
+            viewBox="0 0 32 32"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M2 16h5l3-11 4 22 3-16 3 9h8"></path>
+          </svg>
+
+          {% elif item.icon == "stops" %}
+          <svg
+            width="31"
+            height="31"
+            viewBox="0 0 32 32"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <ellipse cx="16" cy="24" rx="12" ry="4"></ellipse>
+            <path d="M8 23l4-11h8l4 11"></path>
+            <ellipse
+              cx="16"
+              cy="12"
+              rx="4"
+              ry="2"
+              class="icon-accent-fill"
+            ></ellipse>
+          </svg>
+
+          {% else %}
+          <svg
+            width="29"
+            height="29"
+            viewBox="0 0 32 32"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M8 3h12l5 5v21H8z"></path>
+            <path d="M20 3v6h5"></path>
+            <line x1="12" y1="14" x2="21" y2="14"></line>
+            <line x1="12" y1="19" x2="21" y2="19"></line>
+            <line
+              x1="12"
+              y1="24"
+              x2="18"
+              y2="24"
+              class="icon-accent"
+            ></line>
+          </svg>
+          {% endif %}
+        </span>
+
+        <span class="menu-text">
+          <span class="title">{{ item.title }}</span>
+          <span class="subtitle">{{ item.subtitle }}</span>
+        </span>
+
+        <span class="menu-arrow" aria-hidden="true">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <div class="home-note">
+    <span class="home-note-icon" aria-hidden="true">
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M12 2v20"></path>
+        <path d="M5 9l7-7 7 7"></path>
+        <path d="M5 15l7 7 7-7"></path>
+      </svg>
+    </span>
+
+    <span>
+      Plataforma en desarrollo para apoyo en medición y selección técnica.
+    </span>
+  </div>
+</section>
 {% endblock %}

@@ -1,4 +1,4 @@
-"""Configuracion de Django para el proyecto VibraMeter (estilo PaulstraSoft)."""
+"""Configuración de Django para el proyecto SMAV INAHER."""
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent

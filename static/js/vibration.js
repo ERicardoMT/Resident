@@ -4,6 +4,20 @@
 
 (function () {
   "use strict";
+  function cssColor(variableName, fallback) {
+  var value = getComputedStyle(document.documentElement)
+    .getPropertyValue(variableName)
+    .trim();
+
+  return value || fallback;
+}
+
+var COLORS = {
+  primary: cssColor("--primary", "#063b68"),
+  accent: cssColor("--accent", "#18a6d9"),
+  muted: cssColor("--muted", "#64798b"),
+  grid: cssColor("--line", "#d8e3eb"),
+};
 
   var ANALYZE_URL = "/api/analyze/";
   var WINDOW_MS = 3000; // ventana de analisis
@@ -89,7 +103,7 @@
     var h = els.scope.height;
     c.clearRect(0, 0, w, h);
     // linea central
-    c.strokeStyle = "#d3d7e0";
+    c.strokeStyle = COLORS.grid;
     c.lineWidth = 1;
     c.beginPath();
     c.moveTo(0, h / 2);
@@ -107,7 +121,7 @@
       if (d > maxDev) maxDev = d;
     }
 
-    c.strokeStyle = "#d81f2a";
+    c.strokeStyle = COLORS.accent;
     c.lineWidth = 2;
     c.beginPath();
     for (var k = 0; k < scopeBuffer.length; k++) {
@@ -137,14 +151,14 @@
       var x = gap + i * (barW + gap);
       var y = h - barH - 18;
       var isPeak = Math.abs(spectrum[i].hz - dominantHz) < 0.01;
-      c.fillStyle = isPeak ? "#d81f2a" : "#14204e";
+      c.fillStyle = isPeak ? COLORS.accent : COLORS.primary;
       c.globalAlpha = isPeak ? 1 : 0.55;
       c.fillRect(x, y, barW, barH);
     }
     c.globalAlpha = 1;
 
     // Etiqueta del pico.
-    c.fillStyle = "#6b7280";
+    c.fillStyle = COLORS.muted;
     c.font = "12px Montserrat, sans-serif";
     c.textAlign = "center";
     c.fillText(dominantHz.toFixed(1) + " Hz", w / 2, h - 4);

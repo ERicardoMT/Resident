@@ -1,47 +1,109 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="es" class="bg-background">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
+
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
     />
-    <meta name="theme-color" content="#14204e" />
-    <title>{% block title %}VibraMeter Mobile{% endblock %}</title>
+
+    <meta name="theme-color" content="#063b68" />
+
+    <title>{% block title %}SMAV INAHER{% endblock %}</title>
+
     <meta
       name="description"
-      content="Aplicacion para medir frecuencias (Hz) y vibraciones con el acelerometro de dispositivos moviles Android e iOS."
+      content="Sistema de Medición y Análisis Vibratorio de INAHER para medición, cálculo y selección de soluciones antivibratorias."
     />
+
+    <link
+      rel="icon"
+      type="image/png"
+      href="{% static 'img/inaher-logo.png' %}"
+    />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
     <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   </head>
+
   <body>
     <main class="phone">
       <header class="topbar">
         {% block back %}
-        <a class="icon-btn" href="{% url 'home' %}" aria-label="Volver">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-            stroke-linejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+        <a class="icon-btn" href="{% url 'home' %}" aria-label="Volver al inicio">
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
         </a>
         {% endblock %}
-        <span class="url">{% block url %}vibrameter.app{% endblock %}</span>
-        <a class="icon-btn" href="{% url 'api-root' %}" aria-label="Informacion de la API">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
-            stroke-linejoin="round"><circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="16" x2="12" y2="12" />
-            <line x1="12" y1="8" x2="12.01" y2="8" /></svg>
+
+        <a
+          class="topbar-brand"
+          href="{% url 'home' %}"
+          aria-label="Ir al inicio de SMAV INAHER"
+        >
+          <img
+            src="{% static 'img/inaher-logo.png' %}"
+            alt="INAHER"
+            class="topbar-logo"
+          />
+
+          <span class="topbar-brand-copy">
+            <strong>SMAV</strong>
+            <small>INAHER</small>
+          </span>
+        </a>
+
+        <a
+          class="icon-btn"
+          href="{% url 'api-root' %}"
+          aria-label="Información de la API"
+        >
+          <svg
+            width="21"
+            height="21"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
         </a>
       </header>
+
       {% block content %}{% endblock %}
+
+      <footer class="app-footer">
+        <span>Sistema de Medición y Análisis Vibratorio</span>
+        <strong>INAHER</strong>
+      </footer>
     </main>
+
     {% block scripts %}{% endblock %}
   </body>
 </html>

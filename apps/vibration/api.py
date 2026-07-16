@@ -17,8 +17,10 @@ def api_root(request):
     """Descripcion de los endpoints disponibles."""
     return Response(
         {
-            "name": "VibraMeter API",
-            "description": "API de medicion de vibraciones y frecuencia (Hz).",
+            "name": "SMAV INAHER API",
+"description": (
+    "API del Sistema de Medición y Análisis Vibratorio de INAHER."
+),
             "endpoints": {
                 "analyze": {
                     "method": "POST",

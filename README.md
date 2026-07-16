@@ -1,4 +1,6 @@
-# VibraMeter
+# SMAV INAHER
+
+Sistema de Medición y Análisis Vibratorio de INAHER.
 
 ## Arquitectura actual
 
@@ -42,6 +44,7 @@ py -m venv venv
 
 # Activar el entorno virtual
 .\venv\Scripts\Activate.ps1
+source venv/Scripts/activate
 
 # Instalar dependencias
 pip install -r requirements.txt
