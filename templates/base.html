@@ -73,10 +73,14 @@
           </span>
         </a>
 
+        {% block auth_action %}
+        {% if request.resolver_match and request.resolver_match.url_name == 'login' %}
+        <span class="icon-btn icon-placeholder" aria-hidden="true"></span>
+        {% elif request.user.is_authenticated %}
         <a
           class="icon-btn"
-          href="{% url 'api-root' %}"
-          aria-label="Información de la API"
+          href="{% url 'logout' %}"
+          aria-label="Cerrar sesión"
         >
           <svg
             width="21"
@@ -89,11 +93,35 @@
             stroke-linejoin="round"
             aria-hidden="true"
           >
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="16" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            <path d="M10 17l5-5-5-5"></path>
+            <path d="M15 12H3"></path>
+            <path d="M21 3v18"></path>
           </svg>
         </a>
+        {% else %}
+        <a
+          class="icon-btn"
+          href="{% url 'login' %}"
+          aria-label="Iniciar sesión"
+        >
+          <svg
+            width="21"
+            height="21"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M10 17l5-5-5-5"></path>
+            <path d="M15 12H3"></path>
+            <path d="M21 3v18"></path>
+          </svg>
+        </a>
+        {% endif %}
+        {% endblock %}
       </header>
 
       {% block content %}{% endblock %}

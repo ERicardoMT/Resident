@@ -49,6 +49,27 @@ def home(request):
         },
     ]
 
+    if request.user.is_authenticated:
+        menu.append(
+            {
+                "icon": "logout",
+                "title": "Cerrar sesión",
+                "subtitle": "Salir de la sesión activa",
+                "url_name": "logout",
+                "available": True,
+            }
+        )
+    else:
+        menu.append(
+            {
+                "icon": "login",
+                "title": "Iniciar sesión",
+                "subtitle": "Acceso al panel seguro",
+                "url_name": "login",
+                "available": True,
+            }
+        )
+
     return render(request, "core/home.html", {"menu": menu})
 
 
