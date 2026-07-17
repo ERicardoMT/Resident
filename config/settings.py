@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     "apps.vibration",
     "apps.shock",
     "apps.stops",
-    "apps.datasheet",
+    "apps.leveler",
 ]
 
 MIDDLEWARE = [

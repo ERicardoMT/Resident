@@ -12,7 +12,7 @@ apps/
   attenuation/    # Atenuacion vibratoria
   shock/          # Respuesta a choque
   stops/          # Calculo de topes
-  datasheet/      # Hojas de datos
+  leveler/        # Nivelador basado en los sensores de orientación telefono
 templates/
 static/
 manage.py

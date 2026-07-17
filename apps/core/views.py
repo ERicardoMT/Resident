@@ -41,10 +41,10 @@ def home(request):
             "available": True,
         },
         {
-            "icon": "datasheet",
-            "title": "Documentación técnica",
-            "subtitle": "Fichas, manuales y hojas de datos INAHER",
-            "url_name": "datasheet",
+            "icon": "leveler",
+            "title": "Nivelador digital",
+            "subtitle": "Mide inclinación y nivelación con los sensores del teléfono",
+            "url_name": "leveler",
             "available": True,
         },
     ]

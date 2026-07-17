@@ -9,5 +9,5 @@ urlpatterns = [
     path("", include("apps.vibration.urls")),
     path("", include("apps.shock.urls")),
     path("", include("apps.stops.urls")),
-    path("", include("apps.datasheet.urls")),
+    path("", include("apps.leveler.urls")),
 ]
