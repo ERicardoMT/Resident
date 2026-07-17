@@ -44,6 +44,7 @@ py -m venv venv
 
 # Activar el entorno virtual
 .\venv\Scripts\Activate.ps1
+#Activar entorno virtual en Bash
 source venv/Scripts/activate
 
 # Instalar dependencias

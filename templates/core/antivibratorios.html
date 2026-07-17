@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Antivibratorios - INAHER{% endblock %}
+{% block url %}inaher.app{% endblock %}
+
+{% block back %}
+<a class="icon-btn" href="{% url 'catalogo' %}" aria-label="Volver al catálogo">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+    stroke-linejoin="round">
+    <polyline points="15 18 9 12 15 6" />
+  </svg>
+</a>
+{% endblock %}
+
+{% block content %}
+<style>
+    /* Estilos del menú de filtros */
+    .filter-menu {
+        text-align: center; color: #777; font-size: 0.85rem; margin-bottom: 30px; line-height: 1.8;
+    }
+    .filter-btn {
+        background: none; border: none; color: #777; cursor: pointer; padding: 0 5px; font-family: inherit; font-size: 0.85rem; transition: color 0.2s;
+    }
+    .filter-btn:hover { color: #14204e; }
+    .filter-btn.active { color: #14204e; font-weight: bold; }
+    
+    /* Animación personalizada: Fade & Slide Up */
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in {
+        animation: fadeSlideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    
+    /* Estilo para las etiquetas (Badges) */
+    .badge {
+        position: absolute; top: -10px; right: -10px; background: #e3000f; color: white; font-size: 0.6rem; font-weight: bold; padding: 3px 6px; border-radius: 12px;
+    }
+    .badge.top10 { background: #ffb400; color: #333; }
+</style>
+
+<section style="padding: 20px 15px; background-color: #ffffff; min-height: 100vh;">
+    
+    <!-- Título principal que cambiará dinámicamente -->
+    <h1 id="category-title" style="text-align: center; font-weight: 300; font-size: 1.8rem; color: #333; margin-bottom: 10px; letter-spacing: 1px; text-transform: uppercase;">
+        Todo
+    </h1>
+
+    <!-- Menú de filtros (Recreado del video) -->
+    <div class="filter-menu">
+        <button class="filter-btn active" data-filter="todo">Todo</button> /
+        <button class="filter-btn" data-filter="colgantes">Colgantes antivibración</button> /
+        <button class="filter-btn" data-filter="niveladores_maq">Niveladores antivibración para maquinaria</button> /
+        <button class="filter-btn" data-filter="pies">Pies antivibración</button> /
+        <button class="filter-btn" data-filter="soportes_piso">Soportes antivibración con anclaje al piso</button> /
+        <button class="filter-btn" data-filter="tacones">Tacones antivibración</button>
+    </div>
+
+    <!-- Grid de productos -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px;" id="product-grid">
+        
+        {% for producto in productos %}
+        <!-- Añadimos data-category a cada tarjeta para saber qué filtrar -->
+        <div class="product-card animate-in" data-category="{{ producto.categoria }}" style="background: #fff; border: 1px solid #eaeaea; border-radius: 4px; padding: 15px 10px; text-align: center; position: relative;">
+            
+            {% if producto.badge %}
+                <span class="badge {% if producto.badge == 'Top 10' %}top10{% endif %}">{{ producto.badge }}</span>
+            {% endif %}
+
+            <img src="{% static 'placeholder-logo.png' %}" alt="{{ producto.nombre }}" style="width: 100%; height: auto; max-height: 100px; object-fit: contain; margin-bottom: 15px;">
+
+            <h3 style="font-size: 0.7rem; color: #333; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; min-height: 40px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                {{ producto.nombre }}
+            </h3>
+
+            <p style="color: #14204e; font-size: 0.70rem; font-weight: 700; margin: 0; text-transform: uppercase;">
+                {{ producto.precio }}
+            </p>
+            
+        </div>
+        {% endfor %}
+
+    </div>
+</section>
+
+<!-- Script de Filtrado y Animación -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const productCards = document.querySelectorAll('.product-card');
+        const categoryTitle = document.getElementById('category-title');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 1. Cambiar estado activo en el menú
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // 2. Cambiar Título principal
+                categoryTitle.innerText = btn.innerText;
+
+                // 3. Filtrar y Animar
+                const filterValue = btn.getAttribute('data-filter');
+
+                productCards.forEach(card => {
+                    // Reiniciar animación quitando la clase temporalmente
+                    card.classList.remove('animate-in');
+                    
+                    if (filterValue === 'todo' || card.getAttribute('data-category') === filterValue) {
+                        card.style.display = 'block';
+                        
+                        // Forzar un "reflow" para que la animación se reproduzca de nuevo al instante
+                        void card.offsetWidth; 
+                        
+                        card.classList.add('animate-in');
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}
