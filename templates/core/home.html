@@ -17,10 +17,10 @@
       class="hero-logo"
       src="{% static 'img/inaher-logo.png' %}"
       alt="INAHER"
+      style="max-width: 300px; height: auto; margin: 0 auto; display: block;"
     />
 
     <span class="hero-eyebrow">Ingeniería en Nivelación y Antivibratorio</span>
-    <span class="hero-eyebrow">Ingeniería antivibratoria</span>
 
     <h1 class="hero-title">SMAV</h1>
 
@@ -119,6 +119,23 @@
               ry="2"
               class="icon-accent-fill"
             ></ellipse>
+          </svg>
+
+          {% elif item.icon == "catalog" %}
+          <svg
+            width="31"
+            height="31"
+            viewBox="0 0 32 32"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="4" y="4" width="10" height="10" rx="2" ry="2"></rect>
+            <rect x="18" y="4" width="10" height="10" rx="2" ry="2"></rect>
+            <rect x="4" y="18" width="10" height="10" rx="2" ry="2"></rect>
+            <rect x="18" y="18" width="10" height="10" rx="2" ry="2" class="icon-accent"></rect>
           </svg>
 
           {% else %}
