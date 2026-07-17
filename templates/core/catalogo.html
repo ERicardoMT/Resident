@@ -16,7 +16,7 @@
   <ul class="menu catalog-menu">
     {% for categoria in categorias %}
     <li>
-      <a class="menu-item" href="#">
+      <a class="menu-item" href="{% if categoria.icon == 'vibration' %}{% url 'antivibratorios' %}{% else %}#{% endif %}">
         <span class="menu-icon" aria-hidden="true">
           {% if categoria.icon == "vibration" %}
           <svg
