@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Iniciar sesión | SMAV INAHER{% endblock %}
+
+{% block content %}
+<section class="page auth-page">
+  <div class="card surface auth-intro">
+    <img
+      class="auth-logo"
+      src="{% static 'img/inaher-logo.png' %}"
+      alt="INAHER"
+    />
+
+    <span class="section-kicker">Acceso seguro</span>
+    <h1 class="page-title">Iniciar sesión</h1>
+    <p class="page-lead">
+    </p>
+  </div>
+
+  <div class="card auth-card">
+    {% if form.non_field_errors %}
+    <div class="note auth-note">
+      {{ form.non_field_errors }}
+    </div>
+    {% endif %}
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+
+      <div class="field">
+        {{ form.username.label_tag }}
+        {{ form.username }}
+        {{ form.username.errors }}
+      </div>
+
+      <div class="field">
+        {{ form.password.label_tag }}
+        {{ form.password }}
+        {{ form.password.errors }}
+      </div>
+
+      <input type="hidden" name="next" value="{{ next }}" />
+
+      <button class="btn btn-primary" type="submit">Entrar</button>
+    </form>
+  </div>
+</section>
+{% endblock %}
