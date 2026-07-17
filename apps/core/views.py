@@ -59,16 +59,6 @@ def home(request):
                 "available": True,
             }
         )
-    else:
-        menu.append(
-            {
-                "icon": "login",
-                "title": "Iniciar sesión",
-                "subtitle": "Acceso al panel seguro",
-                "url_name": "login",
-                "available": True,
-            }
-        )
 
     return render(request, "core/home.html", {"menu": menu})
 
