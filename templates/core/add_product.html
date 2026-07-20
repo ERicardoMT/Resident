@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Agregar Nuevo Producto{% endblock %}
+
+{% block back %}
+<a class="icon-btn" href="{% url 'dashboard' %}" aria-label="Volver al panel">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+</a>
+{% endblock %}
+
+{% block content %}
+<section style="padding: 20px 15px; background-color: #ffffff; min-height: 100vh;">
+    <h2 style="color: #14204e; text-align: center; margin-bottom: 20px; font-weight: 700;">Añadir Elemento del Catálogo</h2>
+    
+    <!-- NOTA: Se agregó enctype="multipart/form-data" para que soporte el envío de archivos -->
+    <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
+        {% csrf_token %}
+        
+        <input type="hidden" name="category" id="final_category">
+        
+        <div>
+            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Nombre del producto:</label>
+            <input type="text" name="name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">
+        </div>
+
+        <div>
+            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Categoría:</label>
+            <select id="main_category" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; background: white; font-family: inherit;">
+                <option value="antivibratorios">Antivibratorios</option>
+                <option value="patas_niveladoras">Patas niveladoras</option>
+                <option value="accionamiento">Elementos de accionamiento y maniobra</option>
+                <option value="mobiliario">Niveladores para mobiliario</option>
+            </select>
+        </div>
+
+        <div id="subcategory_container">
+            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Subcategoría:</label>
+            <select id="sub_category" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; background: white; font-family: inherit;">
+                <!-- Opciones dinámicas -->
+            </select>
+        </div>
+
+        <div>
+            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Precio o Etiqueta (Ej. Cotizar):</label>
+            <input type="text" name="price_label" value="Cotizar" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">
+        </div>
+
+        <div>
+            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Insignia / Badge (Opcional):</label>
+            <input type="text" name="badge" placeholder="Ej. Nuevo 2024, Top 10" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">
+        </div>
+
+        <!-- ZONA DE SUBIDA DE ARCHIVOS -->
+        <div style="background: #f4f6f9; padding: 15px; border-radius: 8px; border: 1px dashed #b0b8c1;">
+            
+            <!-- Campo para Agregar Imagen -->
+            <div style="margin-bottom: 15px;">
+                <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Agregar imagen:</label>
+                <input type="file" name="image" id="product_image" accept=".jpg, .jpeg, .png" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; background: white;">
+                <small style="color: #666; display: block; margin-top: 5px; font-weight: 500;">* Subir imagen no mayor a 5MB (Formatos aceptados: .jpg, .png)</small>
+            </div>
+
+            <!-- Campo para Agregar Modelo 3D -->
+            <div>
+                <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Agregar modelo 3D (Opcional):</label>
+                <input type="file" name="model_3d" id="product_model" accept=".glb,.gltf,.obj,.stl,.step" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; background: white;">
+                <small style="color: #666; display: block; margin-top: 5px;">Formatos soportados para visualización web (.glb, .gltf, etc.)</small>
+            </div>
+
+        </div>
+
+        <button type="submit" style="background: #14204e; color: white; padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; margin-top: 15px; cursor: pointer;">Guardar Producto</button>
+    </form>
+</section>
+
+<!-- Script para manejar Categorías y Validación de Archivos -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const categorySelect = document.getElementById('main_category');
+        const subcategoryContainer = document.getElementById('subcategory_container');
+        const subcategorySelect = document.getElementById('sub_category');
+        const finalCategoryInput = document.getElementById('final_category');
+
+        const subcategoriesData = {
+            'antivibratorios': [
+                { value: 'colgantes', text: 'Colgantes antivibración' },
+                { value: 'niveladores_maq', text: 'Niveladores antivibración para maquinaria' },
+                { value: 'pies', text: 'Pies antivibración' },
+                { value: 'soportes_piso', text: 'Soportes antivibración con anclaje al piso' },
+                { value: 'tacones', text: 'Tacones antivibración' }
+            ],
+            'patas_niveladoras': [
+                { value: 'alta_resistencia', text: 'Alta resistencia' },
+                { value: 'anclaje_piso', text: 'Anclaje al piso' },
+                { value: 'antiderrapante', text: 'Antiderrapante' },
+                { value: 'antivibracion', text: 'Antivibracion' },
+                { value: 'con_rotula', text: 'Con rotula' },
+                { value: 'uso_rudo', text: 'Uso rudo' }
+            ]
+        };
+
+        function updateForm() {
+            const selectedCat = categorySelect.value;
+            subcategorySelect.innerHTML = '';
+
+            if (subcategoriesData[selectedCat]) {
+                subcategoryContainer.style.display = 'block';
+                subcategoriesData[selectedCat].forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub.value;
+                    option.textContent = sub.text;
+                    subcategorySelect.appendChild(option);
+                });
+                finalCategoryInput.value = subcategorySelect.value;
+            } else {
+                subcategoryContainer.style.display = 'none';
+                finalCategoryInput.value = selectedCat;
+            }
+        }
+
+        categorySelect.addEventListener('change', updateForm);
+        
+        subcategorySelect.addEventListener('change', function() {
+            finalCategoryInput.value = this.value;
+        });
+
+        updateForm();
+
+        const imageInput = document.getElementById('product_image');
+        if(imageInput) {
+            imageInput.addEventListener('change', function() {
+                const maxFileSize = 5 * 1024 * 1024; 
+                if (this.files[0] && this.files[0].size > maxFileSize) {
+                    alert('El archivo supera el límite de 5MB. Por favor, selecciona una imagen más ligera.');
+                    this.value = ''; 
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

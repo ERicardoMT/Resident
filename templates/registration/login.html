@@ -29,20 +29,20 @@
       {% csrf_token %}
 
       <div class="field">
-        {{ form.username.label_tag }}
-        {{ form.username }}
+        <label for="id_username">Usuario:</label>
+        <input type="text" name="username" id="id_username" autocomplete="off" maxlength="20" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
         {{ form.username.errors }}
       </div>
 
       <div class="field">
-        {{ form.password.label_tag }}
-        {{ form.password }}
+        <label for="id_password">Contraseña:</label>
+        <input type="password" name="password" id="id_password" autocomplete="new-password" maxlength="16" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
         {{ form.password.errors }}
       </div>
 
       <input type="hidden" name="next" value="{{ next }}" />
 
-      <button class="btn btn-primary" type="submit">Entrar</button>
+      <button class="btn btn-primary" type="submit" style="margin-top: 15px;">Entrar</button>
     </form>
   </div>
 </section>

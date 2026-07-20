@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from .models import CatalogItem
 
@@ -9,13 +9,6 @@ def home(request):
     """Muestra el panel principal de SMAV INAHER."""
 
     menu = [
-        {
-            "icon": "dashboard",
-            "title": "Panel de control",
-            "subtitle": "Accesos rápidos para usuarios y catálogo",
-            "url_name": "dashboard",
-            "available": True,
-        },
         {
             "icon": "hz",
             "title": "Medición vibratoria",
@@ -59,20 +52,8 @@ def home(request):
             "available": True,
         },
     ]
-
-    if request.user.is_authenticated:
-        menu.append(
-            {
-                "icon": "logout",
-                "title": "Cerrar sesión",
-                "subtitle": "Salir de la sesión activa",
-                "url_name": "logout",
-                "available": True,
-            }
-        )
-
+   
     return render(request, "core/home.html", {"menu": menu})
-
 
 @login_required
 def dashboard(request):
@@ -167,36 +148,72 @@ def catalogo_view(request):
         {"categorias": categorias, "catalog_items": catalog_items},
     )
 
-
 def antivibratorios_view(request):
     productos = [
-        # --- COLGANTES ANTIVIBRACIÓN ---
         {'nombre': 'COLGANTE ANTIVIBRACIÓN DE CAUCHO LÍNEA CDC-2 PARA 100 KG', 'precio': 'Cotizar', 'categoria': 'colgantes', 'badge': None},
         {'nombre': 'COLGANTE ANTIVIBRACIÓN DE RESORTE LÍNEA CDR-2 PARA 120 KG', 'precio': 'Cotizar', 'categoria': 'colgantes', 'badge': None},
         {'nombre': 'COLGANTE ANTIVIBRATORIO LÍNEA CIR PARA 100 KG', 'precio': 'Cotizar', 'categoria': 'colgantes', 'badge': 'Nuevo 2024'},
-        
-        # --- NIVELADORES ANTIVIBRACIÓN PARA MAQUINARIA ---
         {'nombre': 'NIVELADOR ANTIVIBRATORIO LÍNEA IVH-12 PARA 4500 KG', 'precio': 'Cotizar', 'categoria': 'niveladores_maq', 'badge': None},
         {'nombre': 'NIVELADOR ANTIVIBRATORIO LÍNEA IVH-3 PARA 300 KG', 'precio': 'Cotizar', 'categoria': 'niveladores_maq', 'badge': None},
         {'nombre': 'Nivelador Antivibratorio Línea IVH-4 PARA 850 KG', 'precio': 'Cotizar', 'categoria': 'niveladores_maq', 'badge': 'Top 10'},
         {'nombre': 'NIVELADOR ANTIVIBRATORIO LÍNEA IVH-6 PARA 1800 KG', 'precio': 'Cotizar', 'categoria': 'niveladores_maq', 'badge': None},
         {'nombre': 'NIVELADOR ANTIVIBRATORIO LÍNEA IVH-9 PARA 3000 KG', 'precio': 'Cotizar', 'categoria': 'niveladores_maq', 'badge': None},
-        
-        # --- PIES ANTIVIBRACIÓN ---
         {'nombre': 'NIVELADOR ANTIVIBRATORIO LÍNEA CET DE 350 A 900 KG', 'precio': 'Cotizar', 'categoria': 'pies', 'badge': 'Nuevo 2024'},
-        
-        # --- SOPORTES ANTIVIBRACIÓN CON ANCLAJE AL PISO ---
         {'nombre': 'ANTIVIBRATORIO CON FIJACIÓN AL PISO LONG LIFE PARA 700 KG', 'precio': 'Cotizar', 'categoria': 'soportes_piso', 'badge': None},
         {'nombre': 'ANTIVIBRATORIO PARA MAQUINARIA DE RESORTE LÍNEA HST PARA 200 KG', 'precio': 'Cotizar', 'categoria': 'soportes_piso', 'badge': None},
         {'nombre': 'ANTIVIBRATORIO PARA MAQUINARIA DE RESORTE LÍNEA RDM-350 PARA 350 KG', 'precio': 'Cotizar', 'categoria': 'soportes_piso', 'badge': None},
         {'nombre': 'ANTIVIBRATORIO PARA MAQUINARIA DE RESORTE LÍNEA RDM-600 PARA 600 KG', 'precio': 'Cotizar', 'categoria': 'soportes_piso', 'badge': None},
         {'nombre': 'SOPORTE ANTIVIBRACIÓN CON FIJACIÓN LÍNEA REBO PARA 250 KG', 'precio': 'Cotizar', 'categoria': 'soportes_piso', 'badge': None},
-        
-        # --- TACONES ANTIVIBRACIÓN ---
         {'nombre': 'ANTIVIBRATORIO HEMBRA-HEMBRA LÍNEA HFF PARA 12 KG A 150 KG', 'precio': 'Cotizar', 'categoria': 'tacones', 'badge': None},
         {'nombre': 'SOPORTE ANTIVIBRACIÓN LÍNEA MSH-880 PARA 600 KG', 'precio': 'Cotizar', 'categoria': 'tacones', 'badge': None},
         {'nombre': 'SOPORTE ANTIVIBRACIÓN LÍNEA MXI-700 PARA 400 KG', 'precio': 'Cotizar', 'categoria': 'tacones', 'badge': None},
         {'nombre': 'SOPORTE ANTIVIBRATORIO LÍNEA SBS-80 PARA 450 KG', 'precio': 'Cotizar', 'categoria': 'tacones', 'badge': None},
         {'nombre': 'SOPORTE ANTIVIBRATORIO SBS-120 PARA 900 KG', 'precio': 'Cotizar', 'categoria': 'tacones', 'badge': 'Nuevo 2024'},
     ]
+
+    categorias_validas = ['colgantes', 'niveladores_maq', 'pies', 'soportes_piso', 'tacones']
+    nuevos_productos = CatalogItem.objects.filter(category__in=categorias_validas).order_by('-id')
+
+    for item in nuevos_productos:
+        productos.insert(0, {
+            'nombre': item.name,
+            'precio': item.price_label,
+            'categoria': item.category,
+            'badge': item.badge
+        })
+
     return render(request, 'core/antivibratorios.html', {'productos': productos})
+
+def patas_niveladoras_view(request):
+    productos = CatalogItem.objects.all().order_by('-id')
+    return render(request, 'core/patas.html', {'productos': productos})
+
+def accionamiento_view(request):
+    productos = CatalogItem.objects.all().order_by('-id')
+    return render(request, 'core/accionamiento.html', {'productos': productos})
+
+def mobiliario_view(request):
+    productos = CatalogItem.objects.all().order_by('-id')
+    return render(request, 'core/mobiliario.html', {'productos': productos})
+
+def agregar_producto_view(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('name')
+        categoria = request.POST.get('category')
+        descripcion = request.POST.get('description', '')
+        precio = request.POST.get('price_label', 'Cotizar')
+        badge = request.POST.get('badge', '')
+        
+        nuevo_item = CatalogItem(
+            name=nombre,
+            category=categoria,
+            description=descripcion,
+            price_label=precio,
+            badge=badge,
+            is_active=True,
+            sort_order=0 
+        )
+        nuevo_item.save()
+        return redirect('dashboard')
+        
+    return render(request, 'core/add_product.html')
