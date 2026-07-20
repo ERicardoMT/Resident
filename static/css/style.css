@@ -308,6 +308,10 @@ a {
   font-weight: 800;
 }
 
+.compact-heading {
+  margin-bottom: 12px;
+}
+
 .section-count {
   flex: 0 0 auto;
   padding: 5px 9px;
@@ -557,6 +561,94 @@ a {
   font-size: 18px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
+}
+
+.stat-hint {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.dashboard-page {
+  gap: 0;
+}
+
+.dashboard-hero {
+  margin-bottom: 14px;
+}
+
+.dashboard-stats {
+  margin-bottom: 16px;
+}
+
+.dashboard-actions-row {
+  margin-top: 16px;
+}
+
+.dashboard-menu-item {
+  min-height: 88px;
+}
+
+.catalog-card {
+  margin-top: 15px;
+}
+
+.catalog-list {
+  display: grid;
+  gap: 10px;
+}
+
+.catalog-entry {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 14px;
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.catalog-entry-copy {
+  min-width: 0;
+}
+
+.catalog-entry-copy strong {
+  display: block;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.catalog-entry-copy span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.catalog-entry-meta {
+  flex: 0 0 auto;
+  text-align: right;
+}
+
+.catalog-entry-meta span {
+  display: block;
+  color: var(--primary-500);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.catalog-entry-meta small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
 }
 
 /* Botones */

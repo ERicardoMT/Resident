@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Panel de control | SMAV INAHER{% endblock %}
+
+{% block content %}
+<section class="page dashboard-page">
+  <div class="card surface dashboard-hero">
+    <span class="section-kicker">Acceso administrativo</span>
+    <h1 class="page-title">Panel amigable de gestión</h1>
+    <p class="page-lead">
+      Desde aquí puedes entrar rápido a la creación de usuarios y al alta de
+      nuevos elementos del catálogo sin perder la navegación principal.
+    </p>
+
+    <div class="btn-row dashboard-actions-row">
+      <a class="btn btn-primary" href="/admin/auth/user/add/">Crear usuario</a>
+      <a class="btn btn-ghost" href="/admin/core/catalogitem/add/">Nuevo producto</a>
+    </div>
+  </div>
+
+  <div class="stats dashboard-stats">
+    {% for stat in stats %}
+    <div class="stat">
+      <span class="label">{{ stat.label }}</span>
+      <div class="num">{{ stat.num }}</div>
+      <div class="stat-hint">{{ stat.hint }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="section-heading compact-heading">
+    <div>
+      <span class="section-kicker">Atajos</span>
+      <h2>Acciones principales</h2>
+    </div>
+  </div>
+
+  <ul class="menu dashboard-menu">
+    {% for action in actions %}
+    <li>
+      <a class="menu-item dashboard-menu-item" href="{{ action.url }}">
+        <span class="menu-icon" aria-hidden="true">
+          {% if action.icon == "users" %}
+          <svg width="31" height="31" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="11" r="4"></circle>
+            <path d="M4 25c0-4 3.6-7 8-7s8 3 8 7"></path>
+            <circle cx="23" cy="13" r="3"></circle>
+            <path d="M19.5 24c.9-3 3.4-5 6.5-5"></path>
+          </svg>
+          {% else %}
+          <svg width="31" height="31" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="4" width="10" height="10" rx="2" ry="2"></rect>
+            <rect x="18" y="4" width="10" height="10" rx="2" ry="2"></rect>
+            <rect x="4" y="18" width="10" height="10" rx="2" ry="2"></rect>
+            <rect x="18" y="18" width="10" height="10" rx="2" ry="2" class="icon-accent"></rect>
+          </svg>
+          {% endif %}
+        </span>
+
+        <span class="menu-text">
+          <span class="title">{{ action.title }}</span>
+          <span class="subtitle">{{ action.subtitle }}</span>
+        </span>
+
+        <span class="menu-arrow" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+
+  {% if recent_items %}
+  <div class="card catalog-card">
+    <div class="section-heading compact-heading">
+      <div>
+        <span class="section-kicker">Últimos registros</span>
+        <h2>Elementos del catálogo activos</h2>
+      </div>
+    </div>
+
+    <div class="catalog-list">
+      {% for item in recent_items %}
+      <article class="catalog-entry">
+        <div class="catalog-entry-copy">
+          <strong>{{ item.name }}</strong>
+          <span>{{ item.description|default:"Sin descripción" }}</span>
+        </div>
+        <div class="catalog-entry-meta">
+          <span>{{ item.category|default:"General" }}</span>
+          <small>{{ item.badge|default:item.price_label }}</small>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

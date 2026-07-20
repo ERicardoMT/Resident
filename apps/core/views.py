@@ -1,10 +1,21 @@
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+
+from .models import CatalogItem
 
 
 def home(request):
     """Muestra el panel principal de SMAV INAHER."""
 
     menu = [
+        {
+            "icon": "dashboard",
+            "title": "Panel de control",
+            "subtitle": "Accesos rápidos para usuarios y catálogo",
+            "url_name": "dashboard",
+            "available": True,
+        },
         {
             "icon": "hz",
             "title": "Medición vibratoria",
@@ -63,6 +74,65 @@ def home(request):
     return render(request, "core/home.html", {"menu": menu})
 
 
+@login_required
+def dashboard(request):
+    """Panel de gestión para usuarios y catálogo."""
+
+    user_model = get_user_model()
+    catalog_count = CatalogItem.objects.filter(is_active=True).count()
+
+    stats = [
+        {
+            "label": "Usuarios",
+            "num": user_model.objects.count(),
+            "hint": "Cuentas registradas",
+        },
+        {
+            "label": "Catálogo",
+            "num": catalog_count,
+            "hint": "Elementos activos",
+        },
+        {
+            "label": "Sesión",
+            "num": "Activa",
+            "hint": request.user.get_username() or "Usuario autenticado",
+        },
+    ]
+
+    actions = [
+        {
+            "icon": "users",
+            "title": "Crear usuario",
+            "subtitle": "Abrir el alta de usuarios en el administrador de Django",
+            "url": "/admin/auth/user/add/",
+        },
+        {
+            "icon": "catalog",
+            "title": "Agregar al catálogo",
+            "subtitle": "Registrar nuevos elementos visibles en el catálogo público",
+            "url": "/admin/core/catalogitem/add/",
+        },
+        {
+            "icon": "catalog",
+            "title": "Ver catálogo",
+            "subtitle": "Revisar cómo se muestran las familias y los productos",
+            "url": "/catalogo/",
+        },
+    ]
+
+    recent_items = CatalogItem.objects.filter(is_active=True)[:6]
+
+    return render(
+        request,
+        "core/dashboard.html",
+        {
+            "stats": stats,
+            "actions": actions,
+            "recent_items": recent_items,
+        },
+    )
+
+
 def catalogo_view(request):
     """Muestra las categorías principales del catálogo INAHER."""
 
@@ -89,10 +159,12 @@ def catalogo_view(request):
         },
     ]
 
+    catalog_items = CatalogItem.objects.filter(is_active=True)
+
     return render(
         request,
         "core/catalogo.html",
-        {"categorias": categorias},
+        {"categorias": categorias, "catalog_items": catalog_items},
     )
 
 

@@ -117,5 +117,32 @@
     Las categorías se conectarán posteriormente con los productos y fichas
     técnicas reales de INAHER.
   </div>
+
+  {% if catalog_items %}
+  <div class="card catalog-card">
+    <div class="section-heading compact-heading">
+      <div>
+        <span class="section-kicker">Gestión dinámica</span>
+        <h2>Elementos agregados desde el panel</h2>
+      </div>
+      <span class="section-count">{{ catalog_items|length }} activos</span>
+    </div>
+
+    <div class="catalog-list">
+      {% for item in catalog_items %}
+      <article class="catalog-entry">
+        <div class="catalog-entry-copy">
+          <strong>{{ item.name }}</strong>
+          <span>{{ item.description|default:"Sin descripción" }}</span>
+        </div>
+        <div class="catalog-entry-meta">
+          <span>{{ item.category|default:"General" }}</span>
+          <small>{{ item.price_label }}</small>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
 </section>
 {% endblock %}
