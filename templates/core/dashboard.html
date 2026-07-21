@@ -6,16 +6,40 @@
 <section class="page dashboard-page">
   <div class="card surface dashboard-hero">
     <span class="section-kicker">Acceso administrativo</span>
+
     <h1 class="page-title">Panel amigable de gestión</h1>
+
     <p class="page-lead">
-      Desde aquí puedes entrar rápido a la creación de usuarios y al alta de
-      nuevos elementos del catálogo sin perder la navegación principal.
+      Administra las cuentas de acceso y los elementos del catálogo
+      desde una interfaz integrada con SMAV INAHER.
     </p>
 
+    {% if can_add_users or can_add_catalog %}
     <div class="btn-row dashboard-actions-row">
-      <a class="btn btn-primary" href="/admin/auth/user/add/">Crear usuario</a>
-      <a class="btn btn-ghost" href="{% url 'agregar_producto' %}">Agregar nuevo producto</a>
+      {% if can_add_users %}
+      <a
+        class="btn btn-primary"
+        href="{% url 'crear_usuario' %}"
+      >
+        Crear usuario
+      </a>
+      {% endif %}
+
+      {% if can_add_catalog %}
+      <a
+        class="btn btn-ghost"
+        href="{% url 'agregar_producto' %}"
+      >
+        Agregar producto
+      </a>
+      {% endif %}
     </div>
+    {% else %}
+    <div class="note">
+      Tu cuenta puede consultar el panel, pero no tiene permisos para
+      crear usuarios ni agregar productos.
+    </div>
+    {% endif %}
   </div>
 
   <div class="stats dashboard-stats">
@@ -42,11 +66,20 @@
       <article class="catalog-entry">
         <div class="catalog-entry-copy">
           <strong>{{ item.name }}</strong>
-          <span>{{ item.description|default:"Sin descripción" }}</span>
+
+          <span>
+            {{ item.description|default:"Sin descripción" }}
+          </span>
         </div>
+
         <div class="catalog-entry-meta">
-          <span>{{ item.category|default:"General" }}</span>
-          <small>{{ item.badge|default:item.price_label }}</small>
+          <span>
+            {{ item.category|default:"General" }}
+          </span>
+
+          <small>
+            {{ item.badge|default:item.price_label }}
+          </small>
         </div>
       </article>
       {% endfor %}
@@ -54,10 +87,11 @@
   </div>
   {% endif %}
 
-  <div style="margin-top: 25px;">
-      <a href="{% url 'catalogo' %}" class="btn btn-primary" style="display: block; width: 100%; text-align: center; padding: 14px; background-color: #14204e; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1rem;">
-          Ver catálogo completo
-      </a>
-  </div>
+  <a
+    href="{% url 'catalogo' %}"
+    class="btn btn-primary dashboard-catalog-link"
+  >
+    Ver catálogo completo
+  </a>
 </section>
 {% endblock %}
