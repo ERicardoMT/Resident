@@ -20,3 +20,4 @@ __pycache__/
 *.pyc
 db.sqlite3
 staticfiles/
+postgres_env.ps1

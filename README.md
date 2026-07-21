@@ -53,6 +53,9 @@ pip install -r requirements.txt
 # Ejecutar migraciones si hace falta
 python manage.py migrate
 
+#BD activate
+. .\postgres_env.ps1
+
 # Levantar el servidor local
 python manage.py runserver
 ```
