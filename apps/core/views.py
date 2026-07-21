@@ -1,10 +1,18 @@
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 import os
 import json
 from django.conf import settings
+from django.contrib.auth.decorators import (
+    login_required,
+    permission_required,
+)
+from django.shortcuts import redirect, render
+from django.urls import reverse
 
+from .forms import SMAVUserCreationForm
 from .models import CatalogItem
 
 
@@ -63,7 +71,10 @@ def dashboard(request):
     """Panel de gestión para usuarios y catálogo."""
 
     user_model = get_user_model()
-    catalog_count = CatalogItem.objects.filter(is_active=True).count()
+
+    catalog_count = CatalogItem.objects.filter(
+        is_active=True
+    ).count()
 
     stats = [
         {
@@ -79,7 +90,10 @@ def dashboard(request):
         {
             "label": "Sesión",
             "num": "Activa",
-            "hint": request.user.get_username() or "Usuario autenticado",
+            "hint": (
+                request.user.get_username()
+                or "Usuario autenticado"
+            ),
         },
     ]
 
@@ -87,24 +101,32 @@ def dashboard(request):
         {
             "icon": "users",
             "title": "Crear usuario",
-            "subtitle": "Abrir el alta de usuarios en el administrador de Django",
-            "url": "/admin/auth/user/add/",
+            "subtitle": (
+                "Registrar una cuenta desde el panel SMAV"
+            ),
+            "url": reverse("crear_usuario"),
         },
         {
             "icon": "catalog",
             "title": "Agregar al catálogo",
-            "subtitle": "Registrar nuevos elementos visibles en el catálogo público",
-            "url": "/admin/core/catalogitem/add/",
+            "subtitle": (
+                "Registrar nuevos elementos del catálogo"
+            ),
+            "url": reverse("agregar_producto"),
         },
         {
             "icon": "catalog",
             "title": "Ver catálogo",
-            "subtitle": "Revisar cómo se muestran las familias y los productos",
-            "url": "/catalogo/",
+            "subtitle": (
+                "Revisar las familias y productos publicados"
+            ),
+            "url": reverse("catalogo"),
         },
     ]
 
-    recent_items = CatalogItem.objects.filter(is_active=True)[:6]
+    recent_items = CatalogItem.objects.filter(
+        is_active=True
+    )[:6]
 
     return render(
         request,
@@ -113,6 +135,55 @@ def dashboard(request):
             "stats": stats,
             "actions": actions,
             "recent_items": recent_items,
+            "can_add_users": request.user.has_perm(
+                "auth.add_user"
+            ),
+            "can_add_catalog": request.user.has_perm(
+                "core.add_catalogitem"
+            ),
+        },
+    )
+
+
+@login_required
+@permission_required(
+    "auth.add_user",
+    raise_exception=True,
+)
+def crear_usuario_view(request):
+    """Crea usuarios desde una interfaz integrada con SMAV."""
+
+    can_assign_staff = request.user.is_superuser
+
+    if request.method == "POST":
+        form = SMAVUserCreationForm(
+            request.POST,
+            can_assign_staff=can_assign_staff,
+        )
+
+        if form.is_valid():
+            new_user = form.save()
+
+            messages.success(
+                request,
+                (
+                    f'El usuario "{new_user.username}" '
+                    "se creó correctamente."
+                ),
+            )
+
+            return redirect("dashboard")
+    else:
+        form = SMAVUserCreationForm(
+            can_assign_staff=can_assign_staff,
+        )
+
+    return render(
+        request,
+        "core/create_user.html",
+        {
+            "form": form,
+            "can_assign_staff": can_assign_staff,
         },
     )
 
@@ -199,14 +270,28 @@ def mobiliario_view(request):
     productos = CatalogItem.objects.all().order_by('-id')
     return render(request, 'core/mobiliario.html', {'productos': productos})
 
+@login_required
+@permission_required(
+    "core.add_catalogitem",
+    raise_exception=True,
+)
 def agregar_producto_view(request):
-    if request.method == 'POST':
-        nombre = request.POST.get('name')
-        categoria = request.POST.get('category')
-        descripcion = request.POST.get('description', '')
-        precio = request.POST.get('price_label', 'Cotizar')
-        badge = request.POST.get('badge', '')
-        
+    if request.method == "POST":
+        nombre = request.POST.get("name")
+        categoria = request.POST.get("category")
+        descripcion = request.POST.get(
+            "description",
+            "",
+        )
+        precio = request.POST.get(
+            "price_label",
+            "Cotizar",
+        )
+        badge = request.POST.get(
+            "badge",
+            "",
+        )
+
         nuevo_item = CatalogItem(
             name=nombre,
             category=categoria,
@@ -214,8 +299,9 @@ def agregar_producto_view(request):
             price_label=precio,
             badge=badge,
             is_active=True,
-            sort_order=0 
+            sort_order=0,
         )
+
         nuevo_item.save()
         return redirect('dashboard')
         

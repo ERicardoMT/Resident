@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+
+{% block title %}Crear usuario | SMAV INAHER{% endblock %}
+
+{% block back %}
+<a
+  class="icon-btn"
+  href="{% url 'dashboard' %}"
+  aria-label="Volver al panel"
+>
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+</a>
+{% endblock %}
+
+{% block content %}
+<section class="page user-create-page">
+  <div class="user-form-heading">
+    <span class="user-form-icon" aria-hidden="true">
+      <svg
+        width="31"
+        height="31"
+        viewBox="0 0 32 32"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="13" cy="11" r="5"></circle>
+        <path d="M4 27c0-5 4-9 9-9s9 4 9 9"></path>
+        <path d="M25 10v8"></path>
+        <path d="M21 14h8"></path>
+      </svg>
+    </span>
+
+    <div>
+      <span class="section-kicker">Gestión de accesos</span>
+      <h1 class="page-title">Crear nueva cuenta</h1>
+    </div>
+  </div>
+
+  <p class="page-lead">
+    Registra los datos del usuario. La contraseña se validará con las
+    reglas de seguridad configuradas en Django.
+  </p>
+
+  <form
+    method="post"
+    class="card user-form-card"
+    novalidate
+  >
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="form-alert form-alert-error">
+      {% for error in form.non_field_errors %}
+      <span>{{ error }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div
+      class="form-field form-field-full
+      {% if form.username.errors %}has-error{% endif %}"
+    >
+      <label for="{{ form.username.id_for_label }}">
+        {{ form.username.label }}
+        <span class="required-mark">*</span>
+      </label>
+
+      {{ form.username }}
+
+      {% if form.username.help_text %}
+      <div class="form-help">
+        {{ form.username.help_text|safe }}
+      </div>
+      {% endif %}
+
+      {% for error in form.username.errors %}
+      <div class="form-error">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="user-form-grid">
+      <div
+        class="form-field
+        {% if form.first_name.errors %}has-error{% endif %}"
+      >
+        <label for="{{ form.first_name.id_for_label }}">
+          {{ form.first_name.label }}
+        </label>
+
+        {{ form.first_name }}
+
+        {% for error in form.first_name.errors %}
+        <div class="form-error">{{ error }}</div>
+        {% endfor %}
+      </div>
+
+      <div
+        class="form-field
+        {% if form.last_name.errors %}has-error{% endif %}"
+      >
+        <label for="{{ form.last_name.id_for_label }}">
+          {{ form.last_name.label }}
+        </label>
+
+        {{ form.last_name }}
+
+        {% for error in form.last_name.errors %}
+        <div class="form-error">{{ error }}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div
+      class="form-field form-field-full
+      {% if form.email.errors %}has-error{% endif %}"
+    >
+      <label for="{{ form.email.id_for_label }}">
+        {{ form.email.label }}
+        <span class="required-mark">*</span>
+      </label>
+
+      {{ form.email }}
+
+      <div class="form-help">
+        Se utilizará como dato de contacto de la cuenta.
+      </div>
+
+      {% for error in form.email.errors %}
+      <div class="form-error">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div
+      class="form-field form-field-full
+      {% if form.password1.errors %}has-error{% endif %}"
+    >
+      <label for="{{ form.password1.id_for_label }}">
+        {{ form.password1.label }}
+        <span class="required-mark">*</span>
+      </label>
+
+      <div class="password-control">
+        {{ form.password1 }}
+
+        <button
+          type="button"
+          class="password-toggle"
+          data-password-toggle="#{{ form.password1.id_for_label }}"
+          aria-label="Mostrar contraseña"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </button>
+      </div>
+
+      {% if form.password1.help_text %}
+      <div class="form-help password-help">
+        {{ form.password1.help_text|safe }}
+      </div>
+      {% endif %}
+
+      {% for error in form.password1.errors %}
+      <div class="form-error">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div
+      class="form-field form-field-full
+      {% if form.password2.errors %}has-error{% endif %}"
+    >
+      <label for="{{ form.password2.id_for_label }}">
+        {{ form.password2.label }}
+        <span class="required-mark">*</span>
+      </label>
+
+      <div class="password-control">
+        {{ form.password2 }}
+
+        <button
+          type="button"
+          class="password-toggle"
+          data-password-toggle="#{{ form.password2.id_for_label }}"
+          aria-label="Mostrar contraseña"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </button>
+      </div>
+
+      {% if form.password2.help_text %}
+      <div class="form-help">
+        {{ form.password2.help_text|safe }}
+      </div>
+      {% endif %}
+
+      {% for error in form.password2.errors %}
+      <div class="form-error">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    {% if form.is_staff %}
+    <label class="permission-card">
+      {{ form.is_staff }}
+
+      <span class="permission-check" aria-hidden="true">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </span>
+
+      <span class="permission-copy">
+        <strong>{{ form.is_staff.label }}</strong>
+        <small>{{ form.is_staff.help_text }}</small>
+      </span>
+    </label>
+
+    {% for error in form.is_staff.errors %}
+    <div class="form-error">{{ error }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="form-security-note">
+      <svg
+        width="21"
+        height="21"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+        <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+      </svg>
+
+      <span>
+        La cuenta se creará activa. Nunca se mostrará ni almacenará la
+        contraseña en texto visible.
+      </span>
+    </div>
+
+    <div class="btn-row user-form-actions">
+      <button type="submit" class="btn btn-primary">
+        Crear cuenta
+      </button>
+
+      <a href="{% url 'dashboard' %}" class="btn btn-ghost">
+        Cancelar
+      </a>
+    </div>
+  </form>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    "use strict";
+
+    document
+      .querySelectorAll("[data-password-toggle]")
+      .forEach(function (button) {
+        button.addEventListener("click", function () {
+          var input = document.querySelector(
+            button.dataset.passwordToggle
+          );
+
+          if (!input) {
+            return;
+          }
+
+          var showing = input.type === "text";
+
+          input.type = showing ? "password" : "text";
+
+          button.classList.toggle(
+            "is-visible",
+            !showing
+          );
+
+          button.setAttribute(
+            "aria-label",
+            showing
+              ? "Mostrar contraseña"
+              : "Ocultar contraseña"
+          );
+        });
+      });
+  })();
+</script>
+{% endblock %}
