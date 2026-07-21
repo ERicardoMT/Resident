@@ -68,7 +68,7 @@
           <strong>{{ item.name }}</strong>
 
           <span>
-            {{ item.description|default:"Sin descripción" }}
+            {{ item.description|striptags|truncatechars:120|safe|default:"Sin descripción" }}
           </span>
         </div>
 

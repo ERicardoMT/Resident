@@ -4,46 +4,75 @@
 {% block title %}Iniciar sesión | SMAV INAHER{% endblock %}
 
 {% block content %}
-<section class="page auth-page">
-  <div class="card surface auth-intro">
-    <img
-      class="auth-logo"
-      src="{% static 'img/inaher-logo.png' %}"
-      alt="INAHER"
-    />
+<style>
+    .auth-hero-blue {
+        background: linear-gradient(135deg, #063b68 0%, #0a5290 100%);
+        border-radius: 16px;
+        padding: 40px 20px;
+        text-align: center;
+        color: white;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 20px rgba(6, 59, 104, 0.2);
+    }
+    .auth-hero-blue img {
+        max-width: 300px;
+        margin-bottom: 15px;
+        filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+    }
+    .auth-hero-blue h1 {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin: 0;
+        color: white;
+    }
+    
+    /* Estilos para la tarjeta del formulario */
+    .auth-form-card {
+        background: white;
+        border-radius: 16px;
+        padding: 30px 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+</style>
 
-    <span class="section-kicker">Acceso seguro</span>
-    <h1 class="page-title">Iniciar sesión</h1>
-    <p class="page-lead">
-    </p>
+<section style="padding: 20px 15px; background-color: #f8fafc; min-height: calc(100vh - 60px);">
+  
+  <!-- Tarjeta Superior Azul (Inspirada en el Inicio) -->
+  <div class="auth-hero-blue">
+    <img src="{% static 'img/inaher-logo.png' %}" alt="INAHER Logo" />
+    <h1>Inicio de sesión</h1>
   </div>
 
-  <div class="card auth-card">
+  <!-- Tarjeta Blanca del Formulario -->
+  <div class="auth-form-card">
     {% if form.non_field_errors %}
-    <div class="note auth-note">
+    <div style="background-color: #fee2e2; color: #b91c1c; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; text-align: center; border: 1px solid #f87171;">
       {{ form.non_field_errors }}
     </div>
     {% endif %}
 
-    <form method="post" class="auth-form">
+    <form method="post" style="display: flex; flex-direction: column; gap: 15px;">
       {% csrf_token %}
 
-      <div class="field">
-        <label for="id_username">Usuario:</label>
-        <input type="text" name="username" id="id_username" autocomplete="off" maxlength="20" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+      <div>
+        <label for="id_username" style="color: #14204e; font-weight: 700; font-size: 0.9rem;">Usuario:</label>
+        <input type="text" name="username" id="id_username" autocomplete="off" maxlength="150" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; font-family: inherit; font-size: 1rem; color: #333;">
         {{ form.username.errors }}
       </div>
 
-      <div class="field">
-        <label for="id_password">Contraseña:</label>
-        <input type="password" name="password" id="id_password" autocomplete="new-password" maxlength="16" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+      <div>
+        <label for="id_password" style="color: #14204e; font-weight: 700; font-size: 0.9rem;">Contraseña:</label>
+        <input type="password" name="password" id="id_password" autocomplete="new-password" maxlength="128" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; font-family: inherit; font-size: 1rem; color: #333;">
         {{ form.password.errors }}
       </div>
 
       <input type="hidden" name="next" value="{{ next }}" />
 
-      <button class="btn btn-primary" type="submit" style="margin-top: 15px;">Entrar</button>
+      <button type="submit" style="background: #0a5290; color: white; padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 10px rgba(10, 82, 144, 0.3); transition: background 0.3s;">
+        Entrar
+      </button>
     </form>
   </div>
+
 </section>
 {% endblock %}

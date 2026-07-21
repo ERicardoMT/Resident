@@ -133,7 +133,7 @@
       <article class="catalog-entry">
         <div class="catalog-entry-copy">
           <strong>{{ item.name }}</strong>
-          <span>{{ item.description|default:"Sin descripción" }}</span>
+          <span>{{ item.description|striptags|truncatechars:120|safe|default:"Sin descripción" }}</span>
         </div>
         <div class="catalog-entry-meta">
           <span>{{ item.category|default:"General" }}</span>
