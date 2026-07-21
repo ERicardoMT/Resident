@@ -1,6 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+import os
+import json
+from django.conf import settings
 
 from .models import CatalogItem
 
@@ -217,3 +220,28 @@ def agregar_producto_view(request):
         return redirect('dashboard')
         
     return render(request, 'core/add_product.html')
+
+def producto_detalle_view(request, nombre_producto):
+    productos_estaticos = [
+        {'nombre': 'COLGANTE ANTIVIBRACIÓN DE CAUCHO LÍNEA CDC-2 PARA 100 KG', 'precio': 'Cotizar', 'categoria': 'colgantes', 'badge': None, 'imagen': 'placeholder-logo.png', 'descripcion': 'Descripción genérica...'},
+    ]
+    
+    producto_encontrado = None
+
+    for prod in productos_estaticos:
+        if prod['nombre'] == nombre_producto:
+            producto_encontrado = prod
+            break
+
+    # 2. Si no está en los estáticos, buscar en el JSON local
+    if not producto_encontrado:
+        json_file = os.path.join(settings.BASE_DIR, 'productos_locales.json')
+        if os.path.exists(json_file):
+            with open(json_file, 'r', encoding='utf-8') as f:
+                productos_locales = json.load(f)
+                for prod in productos_locales:
+                    if prod.get('nombre') == nombre_producto:
+                        producto_encontrado = prod
+                        break
+
+    return render(request, 'core/producto_detalle.html', {'producto': producto_encontrado})

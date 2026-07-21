@@ -16,7 +16,6 @@
 
 {% block content %}
 <style>
-    /* Estilos del menú de filtros */
     .filter-menu {
         text-align: center; color: #777; font-size: 0.85rem; margin-bottom: 30px; line-height: 1.8;
     }
@@ -63,14 +62,19 @@
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px;" id="product-grid">
         
         {% for producto in productos %}
-        <!-- Añadimos data-category a cada tarjeta para saber qué filtrar -->
-        <div class="product-card animate-in" data-category="{{ producto.categoria }}" style="background: #fff; border: 1px solid #eaeaea; border-radius: 4px; padding: 15px 10px; text-align: center; position: relative;">
+        <!-- Cambiamos el div por una etiqueta <a> conectada a la vista de detalle -->
+        <a href="{% url 'producto_detalle' producto.nombre %}" class="product-card animate-in" data-category="{{ producto.categoria }}" style="text-decoration: none; display: block; background: #fff; border: 1px solid #eaeaea; border-radius: 4px; padding: 15px 10px; text-align: center; position: relative;">
             
             {% if producto.badge %}
-                <span class="badge {% if producto.badge == 'Top 10' %}top10{% endif %}">{{ producto.badge }}</span>
+                <span class="badge {% if producto.badge == 'Top 10' or producto.badge == 'TOP 10' %}top10{% endif %}">{{ producto.badge }}</span>
             {% endif %}
 
-            <img src="{% static 'placeholder-logo.png' %}" alt="{{ producto.nombre }}" style="width: 100%; height: auto; max-height: 100px; object-fit: contain; margin-bottom: 15px;">
+            <!-- Lógica para mostrar imagen subida o logo por defecto -->
+            {% if producto.imagen %}
+                <img src="{% static producto.imagen %}" alt="{{ producto.nombre }}" style="width: 100%; height: auto; max-height: 100px; object-fit: contain; margin-bottom: 15px;">
+            {% else %}
+                <img src="{% static 'placeholder-logo.png' %}" alt="{{ producto.nombre }}" style="width: 100%; height: auto; max-height: 100px; object-fit: contain; margin-bottom: 15px;">
+            {% endif %}
 
             <h3 style="font-size: 0.7rem; color: #333; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; min-height: 40px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
                 {{ producto.nombre }}
@@ -80,7 +84,7 @@
                 {{ producto.precio }}
             </p>
             
-        </div>
+        </a>
         {% endfor %}
 
     </div>
