@@ -55,7 +55,7 @@ pip install -r requirements.txt
 #bash
 source ./postgres_env.sh
 
-# Ejecutar migraciones si hace falta
+#Migraciones si hace falta
 python manage.py migrate
 
 # Levantar el servidor local

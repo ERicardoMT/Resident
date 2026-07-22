@@ -8,7 +8,7 @@ class CatalogItem(models.Model):
     price_label = models.CharField(max_length=40, default="Cotizar")
     badge = models.CharField(max_length=40, blank=True)
     
-    # --- NUEVOS CAMPOS PARA ARCHIVOS ---
+    # --- ESTOS SON LOS CAMPOS QUE EL PULL BORRÓ (Recuperados) ---
     image = models.ImageField(upload_to='productos/', blank=True, null=True)
     model_3d = models.FileField(upload_to='modelos_3d/', blank=True, null=True)
 

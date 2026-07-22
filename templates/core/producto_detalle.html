@@ -52,14 +52,61 @@
         <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px; border-top: 2px solid #f1f5f9; padding-top: 25px; flex-wrap: wrap;">
             
             <!-- Botón de Realidad Aumentada (Cubo 3D) -->
-            <button style="background: #14204e; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(20, 32, 78, 0.3); flex: 1; justify-content: center;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                </svg>
-                Ver en RA
-            </button>
+            {% if producto.ar_model_url %}
+<model-viewer
+    class="product-ar-launcher"
+    src="{{ producto.ar_model_url }}"
+    ar
+    ar-modes="webxr scene-viewer quick-look"
+    ar-placement="floor"
+    ar-scale="auto"
+    alt="Modelo de realidad aumentada de {{ producto.nombre }}"
+>
+    <button
+        type="button"
+        slot="ar-button"
+        class="product-ar-button"
+    >
+        <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4
+                a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8
+                a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0
+                l7-4A2 2 0 0 0 21 16z"
+            ></path>
+            <polyline
+                points="3.27 6.96 12 12.01 20.73 6.96"
+            ></polyline>
+            <line
+                x1="12"
+                y1="22.08"
+                x2="12"
+                y2="12"
+            ></line>
+        </svg>
+
+        Ver en RA
+    </button>
+</model-viewer>
+{% else %}
+<button
+    type="button"
+    class="product-ar-button product-ar-unavailable"
+    disabled
+>
+    RA no disponible
+</button>
+{% endif %}
 
             <!-- Botón de Detalles Extras (Ojo) -->
             <button style="background: white; color: #14204e; border: 2px solid #14204e; padding: 12px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.95rem; flex: 1; justify-content: center;">
@@ -101,5 +148,67 @@
     .product-description li {
         margin-bottom: 5px;
     }
+    .product-ar-launcher {
+    position: relative;
+    display: block;
+    flex: 1;
+    min-width: 180px;
+    height: 48px;
+    overflow: hidden;
+    background: transparent;
+    --poster-color: transparent;
+}
+
+.product-ar-button {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    color: white;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+
+    background: #14204e;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 12px rgba(20, 32, 78, 0.3);
+}
+
+.product-ar-button:hover {
+    background: #0a5290;
+}
+
+.product-ar-unavailable {
+    position: relative;
+    flex: 1;
+    min-width: 180px;
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.product-ar-launcher::part(default-progress-bar) {
+    display: none;
+}
 </style>
+{% block scripts %}
+{% if producto.ar_model_url %}
+<script
+    type="module"
+    src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"
+></script>
+{% endif %}
+{% endblock %}
 {% endblock %}

@@ -21,4 +21,10 @@ __pycache__/
 db.sqlite3
 staticfiles/
 postgres_env.ps1
+
 postgres_env.sh
+postgres_env.ps1
+# Variables privadas de PostgreSQL
+postgres_env.sh
+# Archivos cargados localmente
+media/

@@ -273,15 +273,10 @@ def patas_niveladoras_view(request):
     return render(request, 'core/patas.html', {'productos': productos})
 
 def accionamiento_view(request):
-    # Lista abierta para capturar cualquier variación con la que se guarde la categoría
     categorias_validas = [
         'Elementos de accionamiento y maniobra', 
-        'elementos de accionamiento y maniobra', 
-        'Accionamiento', 
-        'accionamiento', 
-        'ACCIONAMIENTO', 
-        'Maniobra', 
-        'maniobra'
+        'Accionamiento', 'accionamiento', 'ACCIONAMIENTO', 
+        'Maniobra', 'maniobra'
     ]
     productos = CatalogItem.objects.filter(category__in=categorias_validas).order_by('-id')
     return render(request, 'core/accionamiento.html', {'productos': productos})
@@ -289,10 +284,7 @@ def accionamiento_view(request):
 def mobiliario_view(request):
     categorias_validas = [
         'Niveladores para mobiliario', 
-        'niveladores para mobiliario', 
-        'Mobiliario', 
-        'mobiliario', 
-        'MOBILIARIO'
+        'Mobiliario', 'mobiliario', 'MOBILIARIO'
     ]
     productos = CatalogItem.objects.filter(category__in=categorias_validas).order_by('-id')
     return render(request, 'core/mobiliario.html', {'productos': productos})
