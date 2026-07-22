@@ -77,24 +77,22 @@
                 <small style="color: #666; display: block; margin-top: 5px; font-weight: 500;">* Subir imagen no mayor a 5MB (Formatos aceptados: .jpg, .png)</small>
             </div>
 
-            <!-- Campo para Agregar Modelo 3D -->
-            <!-- Archivo para Realidad Aumentada -->
 <div>
     <label
-        for="product_ar_model"
+        for="product_model"
         style="
             color: #333;
             font-weight: bold;
             font-size: 0.9rem;
         "
     >
-        Modelo de Realidad Aumentada:
+        Archivo GLB para Modelo 3D y Realidad Aumentada:
     </label>
 
     <input
         type="file"
-        name="ar_model"
-        id="product_ar_model"
+        name="model_3d"
+        id="product_model"
         accept=".glb,model/gltf-binary"
         style="
             width: 100%;
@@ -113,8 +111,9 @@
             margin-top: 5px;
         "
     >
-        Formato permitido: GLB. El modelo se utilizará únicamente
-        para la experiencia de realidad aumentada.
+        El mismo archivo GLB se utilizará para el visor 3D
+        y para la experiencia de realidad aumentada.
+        Tamaño máximo: 20 MB.
     </small>
 </div>
 
@@ -188,6 +187,35 @@
             });
         }
     });
+    const modelInput = document.getElementById("product_model");
+
+if (modelInput) {
+    modelInput.addEventListener("change", function () {
+        const file = this.files[0];
+
+        if (!file) {
+            return;
+        }
+
+        const extension = file.name
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+        if (extension !== "glb") {
+            alert("El modelo debe estar en formato GLB.");
+            this.value = "";
+            return;
+        }
+
+        const maxModelSize = 20 * 1024 * 1024;
+
+        if (file.size > maxModelSize) {
+            alert("El archivo GLB no puede superar los 20 MB.");
+            this.value = "";
+        }
+    });
+}
 </script>
 
 <!-- Cargar TinyMCE desde un CDN gratuito que no pide API Key -->

@@ -1,214 +1,1027 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ producto.name }} | SMAV INAHER{% endblock %}
+{% block title %}
+{{ producto.name }} | SMAV INAHER
+{% endblock %}
+
 
 {% block back %}
-<a class="icon-btn" href="javascript:history.back()" aria-label="Volver">
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="15 18 9 12 15 6"></polyline>
-  </svg>
+<a
+    class="icon-btn"
+    href="javascript:history.back()"
+    aria-label="Volver"
+>
+    <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+    >
+        <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
 </a>
 {% endblock %}
 
+
 {% block content %}
-<!-- Fondo general moderno y limpio -->
-<section style="background-color: #f8fafc; min-height: calc(100vh - 60px); padding: 30px 20px; display: flex; flex-direction: column; align-items: center;">
-    
-    <!-- Tarjeta Principal Blanca -->
-    <div style="background-color: white; border-radius: 16px; width: 100%; max-width: 500px; padding: 30px 20px; box-shadow: 0 10px 25px rgba(20, 32, 78, 0.08); position: relative;">
-        
-        <!-- Imagen del producto destacada -->
-        <div style="text-align: center; margin-bottom: 25px; padding: 20px; background: #ffffff; border-radius: 12px;">
+<section class="product-detail-page">
+
+    <div class="product-detail-card">
+
+        <!-- Imagen principal -->
+        <div class="product-image-container">
             {% if producto.image %}
-                <!-- Ahora lee la ruta real de la imagen guardada en /media/ -->
-                <img src="{{ producto.image.url }}" alt="{{ producto.name }}" style="width: 100%; max-height: 280px; object-fit: contain; filter: drop-shadow(0px 8px 16px rgba(0,0,0,0.1));">
+                <img
+                    src="{{ producto.image.url }}"
+                    alt="{{ producto.name }}"
+                    class="product-main-image"
+                >
             {% else %}
-                <!-- Si no se subió imagen, muestra el logo opaco de fondo -->
-                <img src="{% static 'img/inaher-logo.png' %}" alt="{{ producto.name }}" style="width: 100%; max-height: 200px; object-fit: contain; opacity: 0.2;">
+                <img
+                    src="{% static 'img/inaher-logo.png' %}"
+                    alt="{{ producto.name }}"
+                    class="product-placeholder-image"
+                >
             {% endif %}
         </div>
 
-        <!-- Etiqueta de Categoría y Título -->
-        <div style="text-align: center; margin-bottom: 25px;">
-            <span style="background-color: #e2e8f0; color: #475569; padding: 5px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+
+        <!-- Categoría y nombre -->
+        <div class="product-heading">
+            <span class="product-category">
                 {{ producto.category|default:"Catálogo" }}
             </span>
-            <h2 style="font-size: 1.4rem; color: #14204e; text-transform: uppercase; margin-top: 15px; font-weight: 800; line-height: 1.3;">
+
+            <h1 class="product-name">
                 {{ producto.name }}
-            </h2>
+            </h1>
         </div>
 
-        <!-- Descripción Completa (Con soporte para tablas y viñetas) -->
-        <div class="product-description" style="background-color: #ffffff; border-top: 2px solid #f1f5f9; padding-top: 20px; text-align: left; font-size: 0.95rem; color: #475569; line-height: 1.6;">
+
+        <!-- Descripción -->
+        <div class="product-description">
             {% if producto.description %}
                 {{ producto.description|safe }}
             {% else %}
-                <p style="text-align: center; font-style: italic; color: #94a3b8;">Ficha técnica y descripción en proceso de actualización.</p>
+                <p class="product-empty-description">
+                    Ficha técnica y descripción en proceso de actualización.
+                </p>
             {% endif %}
         </div>
 
-        <!-- Botones de Acción Modernos -->
-        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px; border-top: 2px solid #f1f5f9; padding-top: 25px; flex-wrap: wrap;">
-            
-            <!-- Botón de Realidad Aumentada (Cubo 3D) -->
-            {% if producto.ar_model_url %}
-<model-viewer
-    class="product-ar-launcher"
-    src="{{ producto.ar_model_url }}"
-    ar
-    ar-modes="webxr scene-viewer quick-look"
-    ar-placement="floor"
-    ar-scale="auto"
-    alt="Modelo de realidad aumentada de {{ producto.nombre }}"
->
-    <button
-        type="button"
-        slot="ar-button"
-        class="product-ar-button"
-    >
-        <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-        >
-            <path
-                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4
-                a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8
-                a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0
-                l7-4A2 2 0 0 0 21 16z"
-            ></path>
-            <polyline
-                points="3.27 6.96 12 12.01 20.73 6.96"
-            ></polyline>
-            <line
-                x1="12"
-                y1="22.08"
-                x2="12"
-                y2="12"
-            ></line>
-        </svg>
 
-        Ver en RA
-    </button>
-</model-viewer>
-{% else %}
-<button
-    type="button"
-    class="product-ar-button product-ar-unavailable"
-    disabled
->
-    RA no disponible
-</button>
-{% endif %}
+        <!-- Acciones de Modelo 3D y RA -->
+        {% if producto.model_url %}
 
-            <!-- Botón de Detalles Extras (Ojo) -->
-            <button style="background: white; color: #14204e; border: 2px solid #14204e; padding: 12px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.95rem; flex: 1; justify-content: center;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-                Detalles
-            </button>
-            
-        </div>
+            <div class="product-actions">
+                <button
+                    type="button"
+                    class="product-action product-action-primary"
+                    data-open-mode="ar"
+                >
+                    Ver en RA
+                </button>
+
+                <button
+                    type="button"
+                    class="product-action product-action-secondary"
+                    data-open-mode="3d"
+                >
+                    Modelo 3D
+                </button>
+            </div>
+
+
+            <!-- Experiencia del modelo -->
+            <section
+                id="model-experience"
+                class="model-experience"
+                hidden
+            >
+                <!-- Cambiar entre Modelo 3D y RA -->
+                <div
+                    class="model-mode-switch"
+                    role="tablist"
+                    aria-label="Modo de visualización"
+                >
+                    <button
+                        type="button"
+                        class="model-mode-tab is-active"
+                        data-model-mode="3d"
+                        role="tab"
+                        aria-selected="true"
+                    >
+                        Modelo 3D
+                    </button>
+
+                    <button
+                        type="button"
+                        class="model-mode-tab"
+                        data-model-mode="ar"
+                        role="tab"
+                        aria-selected="false"
+                    >
+                        RA
+                    </button>
+                </div>
+
+
+                <!-- Visor del modelo -->
+                <model-viewer
+                    id="product-model-viewer"
+                    src="{{ producto.model_url }}"
+                    alt="Modelo 3D de {{ producto.name }}"
+                    camera-controls
+                    touch-action="pan-y"
+                    camera-orbit="0deg 75deg 105%"
+                    camera-target="auto auto auto"
+                    orientation="0deg 0deg 0deg"
+                    shadow-intensity="1"
+                    environment-image="neutral"
+                    interaction-prompt="auto"
+                    ar
+                    ar-modes="webxr scene-viewer quick-look"
+                    ar-placement="floor"
+                    ar-scale="auto"
+                ></model-viewer>
+
+
+                <!-- Controles del Modelo 3D -->
+                <div
+                    id="model-3d-controls"
+                    class="model-mode-controls"
+                >
+                    <strong>Rotar por eje</strong>
+
+                    <div class="model-control-grid">
+                        <button
+                            type="button"
+                            data-rotate-axis="x"
+                            data-direction="-1"
+                        >
+                            X−
+                        </button>
+
+                        <button
+                            type="button"
+                            data-rotate-axis="x"
+                            data-direction="1"
+                        >
+                            X+
+                        </button>
+
+                        <button
+                            type="button"
+                            data-rotate-axis="y"
+                            data-direction="-1"
+                        >
+                            Y−
+                        </button>
+
+                        <button
+                            type="button"
+                            data-rotate-axis="y"
+                            data-direction="1"
+                        >
+                            Y+
+                        </button>
+
+                        <button
+                            type="button"
+                            data-rotate-axis="z"
+                            data-direction="-1"
+                        >
+                            Z−
+                        </button>
+
+                        <button
+                            type="button"
+                            data-rotate-axis="z"
+                            data-direction="1"
+                        >
+                            Z+
+                        </button>
+                    </div>
+
+
+                    <strong>Mover por la pantalla</strong>
+
+                    <div class="model-move-grid">
+                        <span></span>
+
+                        <button
+                            type="button"
+                            data-move-model="up"
+                            aria-label="Mover arriba"
+                        >
+                            ↑
+                        </button>
+
+                        <span></span>
+
+                        <button
+                            type="button"
+                            data-move-model="left"
+                            aria-label="Mover a la izquierda"
+                        >
+                            ←
+                        </button>
+
+                        <button
+                            type="button"
+                            data-reset-model
+                            aria-label="Restablecer posición"
+                        >
+                            Reiniciar
+                        </button>
+
+                        <button
+                            type="button"
+                            data-move-model="right"
+                            aria-label="Mover a la derecha"
+                        >
+                            →
+                        </button>
+
+                        <span></span>
+
+                        <button
+                            type="button"
+                            data-move-model="down"
+                            aria-label="Mover abajo"
+                        >
+                            ↓
+                        </button>
+
+                        <span></span>
+                    </div>
+                </div>
+
+
+                <!-- Controles de Realidad Aumentada -->
+                <div
+                    id="model-ar-controls"
+                    class="model-mode-controls"
+                    hidden
+                >
+                    <p class="ar-description">
+                        Abre la cámara y coloca el producto sobre una
+                        superficie.
+                    </p>
+
+                    <button
+                        type="button"
+                        id="launch-ar-button"
+                        class="launch-ar-button"
+                    >
+                        Abrir Realidad Aumentada
+                    </button>
+
+                    <small
+                        id="ar-support-message"
+                        aria-live="polite"
+                    ></small>
+                </div>
+            </section>
+
+        {% else %}
+
+            <!-- Producto sin GLB -->
+            <div class="product-actions">
+                <button
+                    type="button"
+                    class="product-action product-action-disabled"
+                    disabled
+                >
+                    RA no disponible
+                </button>
+
+                <button
+                    type="button"
+                    class="product-action product-action-disabled"
+                    disabled
+                >
+                    Modelo 3D no disponible
+                </button>
+            </div>
+
+        {% endif %}
+
     </div>
 </section>
 
-<!-- Estilos para embellecer automáticamente las tablas de TinyMCE -->
+
 <style>
+    .product-detail-page {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: calc(100vh - 60px);
+        padding: 30px 20px;
+        background-color: #f8fafc;
+    }
+
+    .product-detail-card {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+        padding: 30px 20px;
+        background-color: white;
+        border-radius: 16px;
+        box-shadow:
+            0 10px 25px rgba(20, 32, 78, 0.08);
+    }
+
+    .product-image-container {
+        padding: 20px;
+        margin-bottom: 25px;
+        text-align: center;
+        background: white;
+        border-radius: 12px;
+    }
+
+    .product-main-image {
+        width: 100%;
+        max-height: 280px;
+        object-fit: contain;
+        filter:
+            drop-shadow(
+                0 8px 16px rgba(0, 0, 0, 0.1)
+            );
+    }
+
+    .product-placeholder-image {
+        width: 100%;
+        max-height: 200px;
+        object-fit: contain;
+        opacity: 0.2;
+    }
+
+    .product-heading {
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .product-category {
+        display: inline-block;
+        padding: 5px 14px;
+        color: #475569;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background-color: #e2e8f0;
+        border-radius: 20px;
+    }
+
+    .product-name {
+        margin-top: 15px;
+        margin-bottom: 0;
+        color: #14204e;
+        font-size: 1.4rem;
+        font-weight: 800;
+        line-height: 1.3;
+        text-transform: uppercase;
+    }
+
+    .product-description {
+        padding-top: 20px;
+        color: #475569;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        text-align: left;
+        background-color: white;
+        border-top: 2px solid #f1f5f9;
+    }
+
+    .product-empty-description {
+        color: #94a3b8;
+        font-style: italic;
+        text-align: center;
+    }
+
     .product-description table {
         width: 100% !important;
-        border-collapse: collapse;
         margin-top: 15px;
         margin-bottom: 15px;
         font-size: 0.85rem;
+        border-collapse: collapse;
     }
-    .product-description th, .product-description td {
-        border: 1px solid #cbd5e1;
+
+    .product-description th,
+    .product-description td {
         padding: 10px;
         text-align: center;
+        border: 1px solid #cbd5e1;
     }
+
     .product-description th {
-        background-color: #f1f5f9;
         color: #14204e;
         font-weight: 700;
         text-transform: uppercase;
+        background-color: #f1f5f9;
     }
+
     .product-description ul {
         padding-left: 20px;
         margin-bottom: 15px;
     }
+
     .product-description li {
         margin-bottom: 5px;
     }
-    .product-ar-launcher {
-    position: relative;
-    display: block;
-    flex: 1;
-    min-width: 180px;
-    height: 48px;
-    overflow: hidden;
-    background: transparent;
-    --poster-color: transparent;
-}
 
-.product-ar-button {
-    position: absolute;
-    inset: 0;
-    z-index: 5;
 
-    width: 100%;
-    min-height: 48px;
-    padding: 12px 20px;
+    /* Botones principales */
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    .product-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 30px;
+        padding-top: 25px;
+        border-top: 2px solid #f1f5f9;
+    }
 
-    color: white;
-    font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 600;
+    .product-action {
+        flex: 1;
+        min-height: 48px;
+        padding: 12px 18px;
+        font-family: inherit;
+        font-size: 0.92rem;
+        font-weight: 700;
+        border-radius: 9px;
+        cursor: pointer;
+        transition:
+            background-color 0.2s,
+            color 0.2s,
+            transform 0.2s;
+    }
 
-    background: #14204e;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
+    .product-action:hover:not(:disabled) {
+        transform: translateY(-1px);
+    }
 
-    box-shadow:
-        0 4px 12px rgba(20, 32, 78, 0.3);
-}
+    .product-action-primary {
+        color: white;
+        background: #14204e;
+        border: 2px solid #14204e;
+    }
 
-.product-ar-button:hover {
-    background: #0a5290;
-}
+    .product-action-primary:hover {
+        background: #0a5290;
+        border-color: #0a5290;
+    }
 
-.product-ar-unavailable {
-    position: relative;
-    flex: 1;
-    min-width: 180px;
-    opacity: 0.55;
-    cursor: not-allowed;
-}
+    .product-action-secondary {
+        color: #14204e;
+        background: white;
+        border: 2px solid #14204e;
+    }
 
-.product-ar-launcher::part(default-progress-bar) {
-    display: none;
-}
+    .product-action-secondary:hover {
+        color: white;
+        background: #14204e;
+    }
+
+    .product-action-disabled {
+        color: #64748b;
+        background: #e2e8f0;
+        border: 2px solid #cbd5e1;
+        cursor: not-allowed;
+    }
+
+
+    /* Contenedor del modelo */
+
+    .model-experience {
+        width: 100%;
+        padding: 14px;
+        margin-top: 20px;
+        background: white;
+        border: 1px solid #dbe4ee;
+        border-radius: 14px;
+        box-shadow:
+            0 8px 20px rgba(20, 32, 78, 0.08);
+    }
+
+    .model-experience[hidden] {
+        display: none;
+    }
+
+    .model-mode-switch {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        padding: 4px;
+        margin-bottom: 12px;
+        background: #e9eff6;
+        border-radius: 10px;
+    }
+
+    .model-mode-tab {
+        flex: 1;
+        padding: 9px 12px;
+        color: #475569;
+        font-family: inherit;
+        font-size: 0.78rem;
+        font-weight: 700;
+        background: transparent;
+        border: none;
+        border-radius: 7px;
+        cursor: pointer;
+    }
+
+    .model-mode-tab.is-active {
+        color: white;
+        background: #14204e;
+    }
+
+
+    /* Visor */
+
+    #product-model-viewer {
+        display: block;
+        width: 100%;
+        height: 350px;
+        background:
+            linear-gradient(
+                145deg,
+                #ffffff,
+                #eef3f8
+            );
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        --poster-color: transparent;
+    }
+
+
+    /* Controles */
+
+    .model-mode-controls {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .model-mode-controls[hidden] {
+        display: none;
+    }
+
+    .model-mode-controls strong {
+        color: #14204e;
+        font-size: 0.82rem;
+        text-align: center;
+    }
+
+    .model-control-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+        gap: 7px;
+    }
+
+    .model-control-grid button,
+    .model-move-grid button {
+        min-height: 42px;
+        padding: 8px;
+        color: #14204e;
+        font-family: inherit;
+        font-weight: 700;
+        background: white;
+        border: 1px solid #aebccd;
+        border-radius: 8px;
+        cursor: pointer;
+        transition:
+            background-color 0.15s,
+            color 0.15s;
+    }
+
+    .model-control-grid button:hover,
+    .model-move-grid button:hover {
+        color: white;
+        background: #14204e;
+    }
+
+    .model-control-grid button:active,
+    .model-move-grid button:active {
+        transform: scale(0.97);
+    }
+
+    .model-move-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+        gap: 7px;
+    }
+
+
+    /* Realidad aumentada */
+
+    .ar-description {
+        margin: 0;
+        color: #475569;
+        line-height: 1.5;
+        text-align: center;
+    }
+
+    .launch-ar-button {
+        min-height: 48px;
+        padding: 12px 18px;
+        color: white;
+        font-family: inherit;
+        font-weight: 700;
+        background: #0a5290;
+        border: none;
+        border-radius: 9px;
+        cursor: pointer;
+    }
+
+    .launch-ar-button:hover {
+        background: #063b68;
+    }
+
+    #ar-support-message {
+        min-height: 20px;
+        color: #64748b;
+        line-height: 1.4;
+        text-align: center;
+    }
+
+
+    @media (max-width: 420px) {
+        .product-detail-page {
+            padding: 20px 12px;
+        }
+
+        .product-detail-card {
+            padding: 22px 14px;
+        }
+
+        #product-model-viewer {
+            height: 300px;
+        }
+
+        .product-actions {
+            flex-direction: column;
+        }
+    }
 </style>
+{% endblock %}
+
+
 {% block scripts %}
-{% if producto.ar_model_url %}
+{% if producto.model_url %}
+
 <script
     type="module"
     src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"
 ></script>
+
+<script type="module">
+    const viewer = document.getElementById(
+        "product-model-viewer"
+    );
+
+    const experience = document.getElementById(
+        "model-experience"
+    );
+
+    const controls3D = document.getElementById(
+        "model-3d-controls"
+    );
+
+    const controlsAR = document.getElementById(
+        "model-ar-controls"
+    );
+
+    const arMessage = document.getElementById(
+        "ar-support-message"
+    );
+
+    const resetButton = document.querySelector(
+        "[data-reset-model]"
+    );
+
+    const launchARButton = document.getElementById(
+        "launch-ar-button"
+    );
+
+
+    const rotation = {
+        x: 0,
+        y: 0,
+        z: 0,
+    };
+
+    const movement = {
+        x: 0,
+        y: 0,
+    };
+
+    let modelCenter = {
+        x: 0,
+        y: 0,
+        z: 0,
+    };
+
+    let moveStep = 0.05;
+
+
+    function applyRotation() {
+        /*
+         * model-viewer interpreta orientation como:
+         * roll, pitch y yaw.
+         *
+         * Z se usa como roll.
+         * X se usa como pitch.
+         * Y se usa como yaw.
+         */
+        viewer.setAttribute(
+            "orientation",
+            `${rotation.z}deg ` +
+            `${rotation.x}deg ` +
+            `${rotation.y}deg`
+        );
+    }
+
+
+    function applyMovement() {
+        viewer.setAttribute(
+            "camera-target",
+            `${modelCenter.x + movement.x}m ` +
+            `${modelCenter.y + movement.y}m ` +
+            `${modelCenter.z}m`
+        );
+
+        if (
+            typeof viewer.jumpCameraToGoal
+            === "function"
+        ) {
+            viewer.jumpCameraToGoal();
+        }
+    }
+
+
+    function resetModel() {
+        rotation.x = 0;
+        rotation.y = 0;
+        rotation.z = 0;
+
+        movement.x = 0;
+        movement.y = 0;
+
+        viewer.setAttribute(
+            "orientation",
+            "0deg 0deg 0deg"
+        );
+
+        viewer.setAttribute(
+            "camera-target",
+            "auto auto auto"
+        );
+
+        viewer.setAttribute(
+            "camera-orbit",
+            "0deg 75deg 105%"
+        );
+
+        if (
+            typeof viewer.updateFraming
+            === "function"
+        ) {
+            viewer.updateFraming();
+        }
+
+        requestAnimationFrame(() => {
+            if (
+                typeof viewer.jumpCameraToGoal
+                === "function"
+            ) {
+                viewer.jumpCameraToGoal();
+            }
+        });
+    }
+
+
+    function setMode(mode) {
+        experience.hidden = false;
+
+        document
+            .querySelectorAll("[data-model-mode]")
+            .forEach((button) => {
+                const active =
+                    button.dataset.modelMode === mode;
+
+                button.classList.toggle(
+                    "is-active",
+                    active
+                );
+
+                button.setAttribute(
+                    "aria-selected",
+                    String(active)
+                );
+            });
+
+        controls3D.hidden = mode !== "3d";
+        controlsAR.hidden = mode !== "ar";
+    }
+
+
+    document
+        .querySelectorAll("[data-open-mode]")
+        .forEach((button) => {
+            button.addEventListener(
+                "click",
+                () => {
+                    setMode(
+                        button.dataset.openMode
+                    );
+
+                    experience.scrollIntoView({
+                        behavior: "smooth",
+                        block: "nearest",
+                    });
+                }
+            );
+        });
+
+
+    document
+        .querySelectorAll("[data-model-mode]")
+        .forEach((button) => {
+            button.addEventListener(
+                "click",
+                () => {
+                    setMode(
+                        button.dataset.modelMode
+                    );
+                }
+            );
+        });
+
+
+    document
+        .querySelectorAll("[data-rotate-axis]")
+        .forEach((button) => {
+            button.addEventListener(
+                "click",
+                () => {
+                    const axis =
+                        button.dataset.rotateAxis;
+
+                    const direction = Number(
+                        button.dataset.direction
+                    );
+
+                    rotation[axis] +=
+                        direction * 15;
+
+                    applyRotation();
+                }
+            );
+        });
+
+
+    document
+        .querySelectorAll("[data-move-model]")
+        .forEach((button) => {
+            button.addEventListener(
+                "click",
+                () => {
+                    const direction =
+                        button.dataset.moveModel;
+
+                    if (direction === "left") {
+                        movement.x += moveStep;
+                    }
+
+                    if (direction === "right") {
+                        movement.x -= moveStep;
+                    }
+
+                    if (direction === "up") {
+                        movement.y -= moveStep;
+                    }
+
+                    if (direction === "down") {
+                        movement.y += moveStep;
+                    }
+
+                    applyMovement();
+                }
+            );
+        });
+
+
+    if (resetButton) {
+        resetButton.addEventListener(
+            "click",
+            resetModel
+        );
+    }
+
+
+    if (launchARButton) {
+        launchARButton.addEventListener(
+            "click",
+            async () => {
+                if (!viewer.canActivateAR) {
+                    arMessage.textContent =
+                        "Este dispositivo o navegador " +
+                        "no permite iniciar realidad " +
+                        "aumentada.";
+
+                    return;
+                }
+
+                arMessage.textContent = "";
+
+                try {
+                    await viewer.activateAR();
+                } catch (error) {
+                    arMessage.textContent =
+                        "No fue posible abrir la " +
+                        "experiencia de realidad aumentada.";
+                }
+            }
+        );
+    }
+
+
+    viewer.addEventListener(
+        "ar-status",
+        (event) => {
+            if (
+                event.detail.status === "failed"
+            ) {
+                arMessage.textContent =
+                    "La experiencia de realidad " +
+                    "aumentada no pudo iniciarse.";
+            }
+        }
+    );
+
+
+    customElements
+        .whenDefined("model-viewer")
+        .then(() => {
+            const configureModel = () => {
+                if (
+                    typeof viewer.getDimensions
+                    !== "function"
+                ) {
+                    resetModel();
+                    return;
+                }
+
+                const dimensions =
+                    viewer.getDimensions();
+
+                const center =
+                    viewer.getBoundingBoxCenter();
+
+                modelCenter = {
+                    x: center.x,
+                    y: center.y,
+                    z: center.z,
+                };
+
+                moveStep = Math.max(
+                    dimensions.x,
+                    dimensions.y,
+                    dimensions.z
+                ) * 0.08;
+
+                if (
+                    !Number.isFinite(moveStep)
+                    || moveStep <= 0
+                ) {
+                    moveStep = 0.05;
+                }
+
+                resetModel();
+            };
+
+            if (viewer.loaded) {
+                configureModel();
+            } else {
+                viewer.addEventListener(
+                    "load",
+                    configureModel,
+                    {
+                        once: true,
+                    }
+                );
+            }
+        });
+</script>
+
 {% endif %}
-{% endblock %}
 {% endblock %}

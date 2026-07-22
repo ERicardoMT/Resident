@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from .forms import SMAVUserCreationForm
 from .models import CatalogItem
+from pathlib import Path
 
 
 def home(request):
@@ -297,21 +298,77 @@ def mobiliario_view(request):
 )
 def agregar_producto_view(request):
     if request.method == "POST":
-        nombre = request.POST.get("name")
-        categoria = request.POST.get("category")
+        nombre = request.POST.get("name", "").strip()
+        categoria = request.POST.get("category", "").strip()
         descripcion = request.POST.get("description", "")
-        precio = request.POST.get("price_label", "Cotizar")
-        badge = request.POST.get("badge", "")
+        precio = request.POST.get(
+            "price_label",
+            "Cotizar",
+        ).strip()
+        badge = request.POST.get("badge", "").strip()
 
-        # Recibir archivos multimedia usando request.FILES
         imagen = request.FILES.get("image")
-        modelo_3d = request.FILES.get("model_3d")
+
+        # Acepta el nombre nuevo y el anterior para no romper formularios.
+        modelo_3d = (
+            request.FILES.get("model_3d")
+            or request.FILES.get("ar_model")
+        )
+
+        if not nombre:
+            messages.error(
+                request,
+                "El nombre del producto es obligatorio.",
+            )
+            return render(
+                request,
+                "core/add_product.html",
+                status=400,
+            )
+
+        if imagen and imagen.size > 5 * 1024 * 1024:
+            messages.error(
+                request,
+                "La imagen no puede superar los 5 MB.",
+            )
+            return render(
+                request,
+                "core/add_product.html",
+                status=400,
+            )
+
+        if modelo_3d:
+            extension = Path(
+                modelo_3d.name,
+            ).suffix.lower()
+
+            if extension != ".glb":
+                messages.error(
+                    request,
+                    "El modelo debe ser un archivo GLB.",
+                )
+                return render(
+                    request,
+                    "core/add_product.html",
+                    status=400,
+                )
+
+            if modelo_3d.size > 20 * 1024 * 1024:
+                messages.error(
+                    request,
+                    "El archivo GLB no puede superar los 20 MB.",
+                )
+                return render(
+                    request,
+                    "core/add_product.html",
+                    status=400,
+                )
 
         nuevo_item = CatalogItem(
             name=nombre,
             category=categoria,
             description=descripcion,
-            price_label=precio,
+            price_label=precio or "Cotizar",
             badge=badge,
             image=imagen,
             model_3d=modelo_3d,
@@ -320,32 +377,62 @@ def agregar_producto_view(request):
         )
 
         nuevo_item.save()
-        return redirect('dashboard')
-        
-    return render(request, 'core/add_product.html')
+
+        messages.success(
+            request,
+            f'El producto "{nuevo_item.name}" se guardó correctamente.',
+        )
+
+        return redirect("dashboard")
+
+    return render(
+        request,
+        "core/add_product.html",
+    )
 
 
 def producto_detalle_view(request, nombre_producto):
-    # 1. Buscar en la base de datos de PostgreSQL
-    producto_encontrado = CatalogItem.objects.filter(name=nombre_producto).first()
+    producto_encontrado = CatalogItem.objects.filter(
+        name=nombre_producto,
+        is_active=True,
+    ).first()
 
-    # 2. Respaldo para los productos estáticos antiguos
+    # Respaldo temporal para productos estáticos antiguos.
     if not producto_encontrado:
         productos_estaticos = [
-            {'nombre': 'COLGANTE ANTIVIBRACIÓN DE CAUCHO LÍNEA CDC-2 PARA 100 KG', 'precio': 'Cotizar', 'categoria': 'colgantes', 'badge': None, 'descripcion': 'Descripción genérica...'},
+            {
+                "nombre": (
+                    "COLGANTE ANTIVIBRACIÓN DE CAUCHO "
+                    "LÍNEA CDC-2 PARA 100 KG"
+                ),
+                "precio": "Cotizar",
+                "categoria": "colgantes",
+                "badge": None,
+                "descripcion": "Descripción genérica...",
+            },
         ]
-        
-        for prod in productos_estaticos:
-            if prod['nombre'] == nombre_producto:
+
+        for producto in productos_estaticos:
+            if producto["nombre"] == nombre_producto:
                 class ProductoFalso:
                     pass
+
                 producto_encontrado = ProductoFalso()
-                producto_encontrado.name = prod['nombre']
-                producto_encontrado.price_label = prod['precio']
-                producto_encontrado.category = prod['categoria']
-                producto_encontrado.badge = prod['badge']
-                producto_encontrado.description = prod['descripcion']
+                producto_encontrado.name = producto["nombre"]
+                producto_encontrado.price_label = producto["precio"]
+                producto_encontrado.category = producto["categoria"]
+                producto_encontrado.badge = producto["badge"]
+                producto_encontrado.description = producto["descripcion"]
                 producto_encontrado.image = None
+                producto_encontrado.model_3d = None
+                producto_encontrado.ar_model = None
+                producto_encontrado.model_url = ""
                 break
 
-    return render(request, 'core/producto_detalle.html', {'producto': producto_encontrado})
+    return render(
+        request,
+        "core/producto_detalle.html",
+        {
+            "producto": producto_encontrado,
+        },
+    )
