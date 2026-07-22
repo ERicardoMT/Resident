@@ -57,7 +57,6 @@ python manage.py migrate
 . .\postgres_env.ps1
 #bash
 source ./postgres_env.sh
-
 # Levantar el servidor local
 python manage.py runserver
 ```

@@ -14,6 +14,7 @@ from django.urls import reverse
 
 from .forms import SMAVUserCreationForm
 from .models import CatalogItem
+from pathlib import Path
 
 
 def home(request):
@@ -277,57 +278,154 @@ def mobiliario_view(request):
 )
 def agregar_producto_view(request):
     if request.method == "POST":
-        nombre = request.POST.get("name")
-        categoria = request.POST.get("category")
-        descripcion = request.POST.get(
-            "description",
-            "",
-        )
+        nombre = request.POST.get("name", "").strip()
+        categoria = request.POST.get("category", "").strip()
+        descripcion = request.POST.get("description", "")
         precio = request.POST.get(
             "price_label",
             "Cotizar",
-        )
-        badge = request.POST.get(
-            "badge",
-            "",
-        )
+        ).strip()
+        badge = request.POST.get("badge", "").strip()
+
+        ar_model = request.FILES.get("ar_model")
+
+        if not nombre:
+            messages.error(
+                request,
+                "El nombre del producto es obligatorio.",
+            )
+            return render(
+                request,
+                "core/add_product.html",
+                status=400,
+            )
+
+        if ar_model:
+            extension = Path(ar_model.name).suffix.lower()
+
+            if extension != ".glb":
+                messages.error(
+                    request,
+                    "El modelo de realidad aumentada debe ser un archivo GLB.",
+                )
+                return render(
+                    request,
+                    "core/add_product.html",
+                    status=400,
+                )
+
+            max_ar_size = 20 * 1024 * 1024
+
+            if ar_model.size > max_ar_size:
+                messages.error(
+                    request,
+                    "El modelo GLB no puede superar los 20 MB.",
+                )
+                return render(
+                    request,
+                    "core/add_product.html",
+                    status=400,
+                )
 
         nuevo_item = CatalogItem(
             name=nombre,
             category=categoria,
             description=descripcion,
-            price_label=precio,
+            price_label=precio or "Cotizar",
             badge=badge,
+            ar_model=ar_model,
             is_active=True,
             sort_order=0,
         )
 
         nuevo_item.save()
-        return redirect('dashboard')
-        
-    return render(request, 'core/add_product.html')
+
+        messages.success(
+            request,
+            f'El producto "{nuevo_item.name}" se guardó correctamente.',
+        )
+
+        return redirect("dashboard")
+
+    return render(
+        request,
+        "core/add_product.html",
+    )
 
 def producto_detalle_view(request, nombre_producto):
+    item = CatalogItem.objects.filter(
+        name=nombre_producto,
+        is_active=True,
+    ).first()
+
+    if item:
+        producto = {
+            "nombre": item.name,
+            "precio": item.price_label,
+            "categoria": item.category,
+            "badge": item.badge,
+            "imagen": None,
+            "descripcion": item.description,
+            "ar_model_url": (
+                item.ar_model.url
+                if item.ar_model
+                else None
+            ),
+        }
+
+        return render(
+            request,
+            "core/producto_detalle.html",
+            {"producto": producto},
+        )
+
     productos_estaticos = [
-        {'nombre': 'COLGANTE ANTIVIBRACIÓN DE CAUCHO LÍNEA CDC-2 PARA 100 KG', 'precio': 'Cotizar', 'categoria': 'colgantes', 'badge': None, 'imagen': 'placeholder-logo.png', 'descripcion': 'Descripción genérica...'},
+        {
+            "nombre": (
+                "COLGANTE ANTIVIBRACIÓN DE CAUCHO "
+                "LÍNEA CDC-2 PARA 100 KG"
+            ),
+            "precio": "Cotizar",
+            "categoria": "colgantes",
+            "badge": None,
+            "imagen": "placeholder-logo.png",
+            "descripcion": "Descripción genérica...",
+            "ar_model_url": None,
+        },
     ]
-    
+
     producto_encontrado = None
 
-    for prod in productos_estaticos:
-        if prod['nombre'] == nombre_producto:
-            producto_encontrado = prod
+    for producto in productos_estaticos:
+        if producto["nombre"] == nombre_producto:
+            producto_encontrado = producto
             break
 
-    # 2. Si no está en los estáticos, buscar en el JSON local
     if not producto_encontrado:
-        json_file = os.path.join(settings.BASE_DIR, 'productos_locales.json')
-        if os.path.exists(json_file):
-            with open(json_file, 'r', encoding='utf-8') as f:
-                productos_locales = json.load(f)
-                for prod in productos_locales:
-                    if prod.get('nombre') == nombre_producto:
-                        producto_encontrado = prod
-                        break
+        json_file = os.path.join(
+            settings.BASE_DIR,
+            "productos_locales.json",
+        )
 
-    return render(request, 'core/producto_detalle.html', {'producto': producto_encontrado})
+        if os.path.exists(json_file):
+            with open(
+                json_file,
+                "r",
+                encoding="utf-8",
+            ) as archivo:
+                productos_locales = json.load(archivo)
+
+            for producto in productos_locales:
+                if producto.get("nombre") == nombre_producto:
+                    producto_encontrado = producto
+                    producto_encontrado.setdefault(
+                        "ar_model_url",
+                        None,
+                    )
+                    break
+
+    return render(
+        request,
+        "core/producto_detalle.html",
+        {"producto": producto_encontrado},
+    )
