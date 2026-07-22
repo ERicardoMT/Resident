@@ -1,15 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect
-import os
-import json
-from django.conf import settings
-from django.contrib.auth.decorators import (
-    login_required,
-    permission_required,
-)
-from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from .forms import SMAVUserCreationForm
@@ -63,8 +55,9 @@ def home(request):
             "available": True,
         },
     ]
-   
+    
     return render(request, "core/home.html", {"menu": menu})
+
 
 @login_required
 def dashboard(request):
@@ -126,7 +119,7 @@ def dashboard(request):
 
     recent_items = CatalogItem.objects.filter(
         is_active=True
-    )[:6]
+    ).order_by('-id')[:6]
 
     return render(
         request,
@@ -196,31 +189,36 @@ def catalogo_view(request):
             "name": "Antivibratorios",
             "description": "Elementos para aislamiento y control de vibraciones.",
             "icon": "vibration",
+            "url_name": "antivibratorios", # <-- Ya conectada
         },
         {
             "name": "Patas niveladoras",
             "description": "Soluciones de apoyo, ajuste y nivelación industrial.",
             "icon": "leveling",
+            "url_name": "patas_niveladoras", # <-- Ajustar si en tu urls.py se llama distinto (ej. "patas")
         },
         {
             "name": "Elementos de accionamiento y maniobra",
             "description": "Componentes para control y operación de maquinaria.",
             "icon": "control",
+            "url_name": "accionamiento", 
         },
         {
             "name": "Niveladores para mobiliario",
             "description": "Elementos de regulación para muebles y estructuras.",
             "icon": "furniture",
+            "url_name": "mobiliario", 
         },
     ]
 
-    catalog_items = CatalogItem.objects.filter(is_active=True)
+    catalog_items = CatalogItem.objects.filter(is_active=True).order_by('-id')
 
     return render(
         request,
         "core/catalogo.html",
         {"categorias": categorias, "catalog_items": catalog_items},
     )
+
 
 def antivibratorios_view(request):
     productos = [
@@ -253,22 +251,52 @@ def antivibratorios_view(request):
             'nombre': item.name,
             'precio': item.price_label,
             'categoria': item.category,
-            'badge': item.badge
+            'badge': item.badge,
+            'imagen': item.image  # Asegura que la plantilla HTML lea .url
         })
 
     return render(request, 'core/antivibratorios.html', {'productos': productos})
 
+
 def patas_niveladoras_view(request):
-    productos = CatalogItem.objects.all().order_by('-id')
+    # Lista de todas las posibles formas en las que se puede guardar esta categoría
+    categorias_validas = [
+        'Patas niveladoras', 'patas_niveladoras', 'patas',
+        'Antiderrapante', 'antiderrapante', 'ANTIDERRAPANTE',
+        'Alta resistencia', 'alta_resistencia', 'ALTA RESISTENCIA',
+        'Anclaje al piso', 'anclaje_piso', 'ANCLAJE AL PISO',
+        'Antivibracion', 'antivibracion', 'ANTIVIBRACION',
+        'Con rotula', 'con_rotula', 'CON ROTULA',
+        'Uso rudo', 'uso_rudo', 'USO RUDO'
+    ]
+    productos = CatalogItem.objects.filter(category__in=categorias_validas).order_by('-id')
     return render(request, 'core/patas.html', {'productos': productos})
 
 def accionamiento_view(request):
-    productos = CatalogItem.objects.all().order_by('-id')
+    # Lista abierta para capturar cualquier variación con la que se guarde la categoría
+    categorias_validas = [
+        'Elementos de accionamiento y maniobra', 
+        'elementos de accionamiento y maniobra', 
+        'Accionamiento', 
+        'accionamiento', 
+        'ACCIONAMIENTO', 
+        'Maniobra', 
+        'maniobra'
+    ]
+    productos = CatalogItem.objects.filter(category__in=categorias_validas).order_by('-id')
     return render(request, 'core/accionamiento.html', {'productos': productos})
 
 def mobiliario_view(request):
-    productos = CatalogItem.objects.all().order_by('-id')
+    categorias_validas = [
+        'Niveladores para mobiliario', 
+        'niveladores para mobiliario', 
+        'Mobiliario', 
+        'mobiliario', 
+        'MOBILIARIO'
+    ]
+    productos = CatalogItem.objects.filter(category__in=categorias_validas).order_by('-id')
     return render(request, 'core/mobiliario.html', {'productos': productos})
+
 
 @login_required
 @permission_required(
@@ -279,18 +307,13 @@ def agregar_producto_view(request):
     if request.method == "POST":
         nombre = request.POST.get("name")
         categoria = request.POST.get("category")
-        descripcion = request.POST.get(
-            "description",
-            "",
-        )
-        precio = request.POST.get(
-            "price_label",
-            "Cotizar",
-        )
-        badge = request.POST.get(
-            "badge",
-            "",
-        )
+        descripcion = request.POST.get("description", "")
+        precio = request.POST.get("price_label", "Cotizar")
+        badge = request.POST.get("badge", "")
+
+        # Recibir archivos multimedia usando request.FILES
+        imagen = request.FILES.get("image")
+        modelo_3d = request.FILES.get("model_3d")
 
         nuevo_item = CatalogItem(
             name=nombre,
@@ -298,6 +321,8 @@ def agregar_producto_view(request):
             description=descripcion,
             price_label=precio,
             badge=badge,
+            image=imagen,
+            model_3d=modelo_3d,
             is_active=True,
             sort_order=0,
         )
@@ -307,27 +332,28 @@ def agregar_producto_view(request):
         
     return render(request, 'core/add_product.html')
 
+
 def producto_detalle_view(request, nombre_producto):
-    productos_estaticos = [
-        {'nombre': 'COLGANTE ANTIVIBRACIÓN DE CAUCHO LÍNEA CDC-2 PARA 100 KG', 'precio': 'Cotizar', 'categoria': 'colgantes', 'badge': None, 'imagen': 'placeholder-logo.png', 'descripcion': 'Descripción genérica...'},
-    ]
-    
-    producto_encontrado = None
+    # 1. Buscar en la base de datos de PostgreSQL
+    producto_encontrado = CatalogItem.objects.filter(name=nombre_producto).first()
 
-    for prod in productos_estaticos:
-        if prod['nombre'] == nombre_producto:
-            producto_encontrado = prod
-            break
-
-    # 2. Si no está en los estáticos, buscar en el JSON local
+    # 2. Respaldo para los productos estáticos antiguos
     if not producto_encontrado:
-        json_file = os.path.join(settings.BASE_DIR, 'productos_locales.json')
-        if os.path.exists(json_file):
-            with open(json_file, 'r', encoding='utf-8') as f:
-                productos_locales = json.load(f)
-                for prod in productos_locales:
-                    if prod.get('nombre') == nombre_producto:
-                        producto_encontrado = prod
-                        break
+        productos_estaticos = [
+            {'nombre': 'COLGANTE ANTIVIBRACIÓN DE CAUCHO LÍNEA CDC-2 PARA 100 KG', 'precio': 'Cotizar', 'categoria': 'colgantes', 'badge': None, 'descripcion': 'Descripción genérica...'},
+        ]
+        
+        for prod in productos_estaticos:
+            if prod['nombre'] == nombre_producto:
+                class ProductoFalso:
+                    pass
+                producto_encontrado = ProductoFalso()
+                producto_encontrado.name = prod['nombre']
+                producto_encontrado.price_label = prod['precio']
+                producto_encontrado.category = prod['categoria']
+                producto_encontrado.badge = prod['badge']
+                producto_encontrado.description = prod['descripcion']
+                producto_encontrado.image = None
+                break
 
     return render(request, 'core/producto_detalle.html', {'producto': producto_encontrado})

@@ -16,7 +16,7 @@
   <ul class="menu catalog-menu">
     {% for categoria in categorias %}
     <li>
-      <a class="menu-item" href="{% if categoria.icon == 'vibration' %}{% url 'antivibratorios' %}{% else %}#{% endif %}">
+      <a class="menu-item" href="{% url categoria.url_name %}">
         <span class="menu-icon" aria-hidden="true">
           {% if categoria.icon == "vibration" %}
           <svg
@@ -112,11 +112,6 @@
     </li>
     {% endfor %}
   </ul>
-
-  <div class="note">
-    Las categorías se conectarán posteriormente con los productos y fichas
-    técnicas reales de INAHER.
-  </div>
 
   {% if catalog_items %}
   <div class="card catalog-card">

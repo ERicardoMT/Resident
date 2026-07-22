@@ -78,49 +78,17 @@
         <span class="icon-btn icon-placeholder" aria-hidden="true"></span>
         {% elif request.user.is_authenticated %}
         
-        <!-- AQUI ESTÁ EL CAMBIO: El formulario POST para el Logout -->
-        <form method="post" action="{% url 'logout' %}" style="display: inline-flex; margin: 0; padding: 0;">
-          {% csrf_token %}
-          <button
-            type="submit"
-            class="icon-btn"
-            aria-label="Cerrar sesión"
-            style="background: transparent; border: none; cursor: pointer; padding: 0; color: inherit; font-family: inherit;"
-          >
-            <svg
-              width="21"
-              height="21"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="8" r="3.2"></circle>
-              <path d="M5 20c0-3.2 3.1-5.8 7-5.8s7 2.6 7 5.8"></path>
-            </svg>
-          </button>
-        </form>
+        <!-- CORRECCIÓN: Ahora es un enlace directo al Dashboard, NO un form de logout -->
+        <a class="icon-btn" href="{% url 'dashboard' %}" aria-label="Ir al panel">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="8" r="3.2"></circle>
+            <path d="M5 20c0-3.2 3.1-5.8 7-5.8s7 2.6 7 5.8"></path>
+          </svg>
+        </a>
 
         {% else %}
-        <a
-          class="icon-btn"
-          href="{% url 'login' %}"
-          aria-label="Iniciar sesión"
-        >
-          <svg
-            width="21"
-            height="21"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
+        <a class="icon-btn" href="{% url 'login' %}" aria-label="Iniciar sesión">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="8" r="3.2"></circle>
               <path d="M5 20c0-3.2 3.1-5.8 7-5.8s7 2.6 7 5.8"></path>
           </svg>

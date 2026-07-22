@@ -50,13 +50,13 @@ source venv/Scripts/activate
 # Instalar dependencias
 pip install -r requirements.txt
 
-# Ejecutar migraciones si hace falta
-python manage.py migrate
-
 #BD activate
 . .\postgres_env.ps1
 #bash
 source ./postgres_env.sh
+
+# Ejecutar migraciones si hace falta
+python manage.py migrate
 
 # Levantar el servidor local
 python manage.py runserver

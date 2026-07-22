@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import include, path
+from django.conf import settings  # <-- Agregado para leer el settings.py
+from django.conf.urls.static import static  # <-- Agregado para servir archivos estáticos/media
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -11,3 +13,7 @@ urlpatterns = [
     path("", include("apps.stops.urls")),
     path("", include("apps.leveler.urls")),
 ]
+
+# Permitir que Django sirva las imágenes subidas en modo desarrollo ---
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -37,7 +37,7 @@
     
     /* Estilo para las etiquetas (Badges) */
     .badge {
-        position: absolute; top: -10px; right: -10px; background: #e3000f; color: white; font-size: 0.6rem; font-weight: bold; padding: 3px 6px; border-radius: 12px;
+        position: absolute; top: -10px; right: -10px; background: #e3000f; color: white; font-size: 0.6rem; font-weight: bold; padding: 3px 6px; border-radius: 12px; z-index: 10;
     }
     .badge.top10 { background: #ffb400; color: #333; }
 </style>
@@ -52,36 +52,43 @@
     <!-- Menú de filtros (Adaptado para Patas Niveladoras) -->
     <div class="filter-menu">
         <button class="filter-btn active" data-filter="todo">Todo</button> /
-        <button class="filter-btn" data-filter="alta_resistencia">Alta resistencia</button> /
-        <button class="filter-btn" data-filter="anclaje_piso">Anclaje al piso</button> /
+        <button class="filter-btn" data-filter="alta resistencia">Alta resistencia</button> /
+        <button class="filter-btn" data-filter="anclaje al piso">Anclaje al piso</button> /
         <button class="filter-btn" data-filter="antiderrapante">Antiderrapante</button> /
         <button class="filter-btn" data-filter="antivibracion">Antivibracion</button> /
-        <button class="filter-btn" data-filter="con_rotula">Con rotula</button> /
-        <button class="filter-btn" data-filter="uso_rudo">Uso rudo</button>
+        <button class="filter-btn" data-filter="con rotula">Con rotula</button> /
+        <button class="filter-btn" data-filter="uso rudo">Uso rudo</button>
     </div>
 
     <!-- Grid de productos -->
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px;" id="product-grid">
         
         {% for producto in productos %}
-        <!-- Añadimos data-category a cada tarjeta para saber qué filtrar -->
-        <div class="product-card animate-in" data-category="{{ producto.categoria }}" style="background: #fff; border: 1px solid #eaeaea; border-radius: 4px; padding: 15px 10px; text-align: center; position: relative;">
+        <!-- AQUÍ ESTÁ EL CAMBIO: data-category="{{ producto.category|lower }}" -->
+        <a href="{% url 'producto_detalle' producto.name %}" class="product-card animate-in" data-category="{{ producto.category|lower }}" style="text-decoration: none; display: block; background: #fff; border: 1px solid #eaeaea; border-radius: 4px; padding: 15px 10px; text-align: center; position: relative;">
             
             {% if producto.badge %}
                 <span class="badge {% if producto.badge == 'Top 10' or producto.badge == 'TOP 10' %}top10{% endif %}">{{ producto.badge }}</span>
             {% endif %}
 
-            <img src="{% static 'placeholder-logo.png' %}" alt="{{ producto.nombre }}" style="width: 100%; height: auto; max-height: 100px; object-fit: contain; margin-bottom: 15px;">
+            <!-- Contenedor estricto para evitar imágenes gigantes -->
+            <div style="width: 100%; height: 120px; display: flex; align-items: center; justify-content: center; padding: 5px; margin-bottom: 10px; background-color: transparent; overflow: hidden;">
+                {% if producto.image %}
+                    <img src="{{ producto.image.url }}" alt="{{ producto.name }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                {% else %}
+                    <img src="{% static 'img/inaher-logo.png' %}" alt="{{ producto.name }}" style="max-width: 100%; max-height: 100%; object-fit: contain; opacity: 0.2;">
+                {% endif %}
+            </div>
 
             <h3 style="font-size: 0.7rem; color: #333; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; min-height: 40px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
-                {{ producto.nombre }}
+                {{ producto.name }}
             </h3>
 
             <p style="color: #14204e; font-size: 0.70rem; font-weight: 700; margin: 0; text-transform: uppercase;">
-                {{ producto.precio }}
+                {{ producto.price_label }}
             </p>
             
-        </div>
+        </a>
         {% endfor %}
 
     </div>
