@@ -27,13 +27,13 @@ class SMAVUserCreationForm(UserCreationForm):
     )
 
     is_staff = forms.BooleanField(
-        label="Acceso al panel administrativo",
-        required=False,
-        help_text=(
-            "Permite iniciar sesión en las herramientas internas. "
-            "No convierte al usuario en superusuario."
-        ),
-    )
+    label="Crear como superusuario",
+    required=False,
+    help_text=(
+        "Otorga acceso completo al sistema, al panel administrativo "
+        "y a todos los permisos."
+    ),
+)
 
     class Meta(UserCreationForm.Meta):
         model = UserModel
@@ -146,24 +146,26 @@ class SMAVUserCreationForm(UserCreationForm):
         user.first_name = self.cleaned_data.get(
             "first_name",
             "",
-        ).strip()
+    ).strip()
 
         user.last_name = self.cleaned_data.get(
             "last_name",
             "",
-        ).strip()
+    ).strip()
 
         user.email = self.cleaned_data["email"]
         user.is_active = True
-        user.is_superuser = False
+
+        crear_como_superusuario = False
 
         if self.can_assign_staff:
-            user.is_staff = self.cleaned_data.get(
+            crear_como_superusuario = self.cleaned_data.get(
                 "is_staff",
                 False,
-            )
-        else:
-            user.is_staff = False
+        )
+
+        user.is_staff = crear_como_superusuario
+        user.is_superuser = crear_como_superusuario
 
         if commit:
             user.save()
