@@ -2,6 +2,14 @@
 
 {% block title %}Catálogo de productos | SMAV INAHER{% endblock %}
 
+{% block back %}
+<a class="icon-btn" href="{% url 'dashboard' %}" aria-label="Volver al panel">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+</a>
+{% endblock %}
+
 {% block content %}
 <section class="page">
   <span class="section-kicker">Soluciones industriales</span>

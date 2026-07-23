@@ -81,8 +81,8 @@ def dashboard(request):
             "num": user_model.objects.count(),
             "hint": "Cuentas registradas",
              "url": (
-                    reverse("usuarios_dashboard")
-                     if can_view_users
+                    reverse("admin:auth_user_changelist")
+                     if request.user.is_superuser
                     else ""
             ),
         },
@@ -91,9 +91,7 @@ def dashboard(request):
             "num": catalog_count,
             "hint": "Elementos activos",
             "url": (
-                reverse("catalogo")
-                if can_view_catalog
-                else ""
+                reverse("administrar_catalogo")
             ),
         },
         {
@@ -105,7 +103,9 @@ def dashboard(request):
             ),
             "url": "",
         },
-    ]
+
+        
+]
 
     actions = [
         {
@@ -395,44 +395,20 @@ def catalogo_view(request):
         {"categorias": categorias, "catalog_items": catalog_items},
     )
 
-
 def antivibratorios_view(request):
-    productos = [
-        {'nombre': 'COLGANTE ANTIVIBRACIÓN DE CAUCHO LÍNEA CDC-2 PARA 100 KG', 'precio': 'Cotizar', 'categoria': 'colgantes', 'badge': None},
-        {'nombre': 'COLGANTE ANTIVIBRACIÓN DE RESORTE LÍNEA CDR-2 PARA 120 KG', 'precio': 'Cotizar', 'categoria': 'colgantes', 'badge': None},
-        {'nombre': 'COLGANTE ANTIVIBRATORIO LÍNEA CIR PARA 100 KG', 'precio': 'Cotizar', 'categoria': 'colgantes', 'badge': 'Nuevo 2024'},
-        {'nombre': 'NIVELADOR ANTIVIBRATORIO LÍNEA IVH-12 PARA 4500 KG', 'precio': 'Cotizar', 'categoria': 'niveladores_maq', 'badge': None},
-        {'nombre': 'NIVELADOR ANTIVIBRATORIO LÍNEA IVH-3 PARA 300 KG', 'precio': 'Cotizar', 'categoria': 'niveladores_maq', 'badge': None},
-        {'nombre': 'Nivelador Antivibratorio Línea IVH-4 PARA 850 KG', 'precio': 'Cotizar', 'categoria': 'niveladores_maq', 'badge': 'Top 10'},
-        {'nombre': 'NIVELADOR ANTIVIBRATORIO LÍNEA IVH-6 PARA 1800 KG', 'precio': 'Cotizar', 'categoria': 'niveladores_maq', 'badge': None},
-        {'nombre': 'NIVELADOR ANTIVIBRATORIO LÍNEA IVH-9 PARA 3000 KG', 'precio': 'Cotizar', 'categoria': 'niveladores_maq', 'badge': None},
-        {'nombre': 'NIVELADOR ANTIVIBRATORIO LÍNEA CET DE 350 A 900 KG', 'precio': 'Cotizar', 'categoria': 'pies', 'badge': 'Nuevo 2024'},
-        {'nombre': 'ANTIVIBRATORIO CON FIJACIÓN AL PISO LONG LIFE PARA 700 KG', 'precio': 'Cotizar', 'categoria': 'soportes_piso', 'badge': None},
-        {'nombre': 'ANTIVIBRATORIO PARA MAQUINARIA DE RESORTE LÍNEA HST PARA 200 KG', 'precio': 'Cotizar', 'categoria': 'soportes_piso', 'badge': None},
-        {'nombre': 'ANTIVIBRATORIO PARA MAQUINARIA DE RESORTE LÍNEA RDM-350 PARA 350 KG', 'precio': 'Cotizar', 'categoria': 'soportes_piso', 'badge': None},
-        {'nombre': 'ANTIVIBRATORIO PARA MAQUINARIA DE RESORTE LÍNEA RDM-600 PARA 600 KG', 'precio': 'Cotizar', 'categoria': 'soportes_piso', 'badge': None},
-        {'nombre': 'SOPORTE ANTIVIBRACIÓN CON FIJACIÓN LÍNEA REBO PARA 250 KG', 'precio': 'Cotizar', 'categoria': 'soportes_piso', 'badge': None},
-        {'nombre': 'ANTIVIBRATORIO HEMBRA-HEMBRA LÍNEA HFF PARA 12 KG A 150 KG', 'precio': 'Cotizar', 'categoria': 'tacones', 'badge': None},
-        {'nombre': 'SOPORTE ANTIVIBRACIÓN LÍNEA MSH-880 PARA 600 KG', 'precio': 'Cotizar', 'categoria': 'tacones', 'badge': None},
-        {'nombre': 'SOPORTE ANTIVIBRACIÓN LÍNEA MXI-700 PARA 400 KG', 'precio': 'Cotizar', 'categoria': 'tacones', 'badge': None},
-        {'nombre': 'SOPORTE ANTIVIBRATORIO LÍNEA SBS-80 PARA 450 KG', 'precio': 'Cotizar', 'categoria': 'tacones', 'badge': None},
-        {'nombre': 'SOPORTE ANTIVIBRATORIO SBS-120 PARA 900 KG', 'precio': 'Cotizar', 'categoria': 'tacones', 'badge': 'Nuevo 2024'},
+    # Filtramos todas las posibles variaciones de las subcategorías de antivibratorios
+    categorias_validas = [
+        'Antivibratorios', 'antivibratorios',
+        'Colgantes antivibración', 'colgantes', 'COLGANTES',
+        'Niveladores antivibración para maquinaria', 'niveladores_maq',
+        'Pies antivibración', 'pies', 'PIES',
+        'Soportes antivibración con anclaje al piso', 'soportes_piso',
+        'Tacones antivibración', 'tacones', 'TACONES'
     ]
-
-    categorias_validas = ['colgantes', 'niveladores_maq', 'pies', 'soportes_piso', 'tacones']
-    nuevos_productos = CatalogItem.objects.filter(category__in=categorias_validas).order_by('-id')
-
-    for item in nuevos_productos:
-        productos.insert(0, {
-            'nombre': item.name,
-            'precio': item.price_label,
-            'categoria': item.category,
-            'badge': item.badge,
-            'imagen': item.image  # Asegura que la plantilla HTML lea .url
-        })
-
-    return render(request, 'core/antivibratorios.html', {'productos': productos})
-
+    # Ahora solo lee los que están guardados en tu base de datos real
+    productos = CatalogItem.objects.filter(category__in=categorias_validas).order_by('-id')
+    
+    return render(request, "core/antivibratorios.html", {"productos": productos})
 
 def patas_niveladoras_view(request):
     # Lista de todas las posibles formas en las que se puede guardar esta categoría
@@ -471,6 +447,7 @@ def mobiliario_view(request):
     "core.add_catalogitem",
     raise_exception=True,
 )
+
 def agregar_producto_view(request):
     if request.method == "POST":
         nombre = request.POST.get("name", "").strip()
@@ -565,7 +542,6 @@ def agregar_producto_view(request):
         "core/add_product.html",
     )
 
-
 def producto_detalle_view(request, nombre_producto):
     producto_encontrado = CatalogItem.objects.filter(
         name=nombre_producto,
@@ -611,3 +587,39 @@ def producto_detalle_view(request, nombre_producto):
             "producto": producto_encontrado,
         },
     )
+
+def eliminar_producto_view(request, id):
+    # Busca el producto por su ID y lo elimina de la base de datos
+    producto = get_object_or_404(CatalogItem, id=id)
+    producto.delete()
+    return redirect('dashboard')
+
+def administrar_catalogo_view(request):
+    """Vista exclusiva para ver, editar y eliminar productos desde el panel"""
+    productos = CatalogItem.objects.all().order_by('-id')
+    return render(request, "core/administrar_catalogo.html", {"catalog_items": productos})
+
+def editar_producto_view(request, id):
+    """Vista para editar la información de un producto existente"""
+    from django.shortcuts import get_object_or_404, redirect
+    producto = get_object_or_404(CatalogItem, id=id)
+    
+    if request.method == "POST":
+        # Guardamos los textos limitando espacios extra
+        producto.name = request.POST.get("name", producto.name).strip()
+        producto.category = request.POST.get("category", producto.category).strip()
+        producto.subcategory = request.POST.get("subcategory", producto.subcategory or "").strip()
+        producto.description = request.POST.get("description", producto.description)
+        producto.price_label = request.POST.get("price_label", producto.price_label).strip()
+        producto.badge = request.POST.get("badge", producto.badge).strip()
+
+        # Solo actualiza la imagen o el modelo 3D si el usuario sube un archivo nuevo
+        if request.FILES.get("image"):
+            producto.image = request.FILES.get("image")
+        if request.FILES.get("model_3d"):
+            producto.model_3d = request.FILES.get("model_3d")
+
+        producto.save()
+        return redirect('administrar_catalogo')
+
+    return render(request, "core/editar_producto.html", {"producto": producto})

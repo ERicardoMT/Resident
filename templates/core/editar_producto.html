@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Producto | SMAV INAHER{% endblock %}
+
+{% block back %}
+<a class="icon-btn" href="{% url 'administrar_catalogo' %}" aria-label="Volver al panel">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+</a>
+{% endblock %}
+
+{% block content %}
+
+<style>
+    /* Ocultar a la fuerza el contenedor de notificaciones de TinyMCE */
+    .tox-notifications-container {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+    }
+</style>
+
+<section style="padding: 20px 15px; background-color: #ffffff; min-height: 100vh;">
+  <div class="card surface" style="max-width: 600px; margin: 0 auto; padding: 20px;">
+    <h2 style="color: #14204e; text-align: center; margin-bottom: 20px; font-weight: 700;">Editar Elemento del Catálogo</h2>
+    
+    <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
+        {% csrf_token %}
+        
+        <!-- Campo oculto idéntico al de agregar_producto -->
+        <input type="hidden" name="category" id="final_category" value="{{ producto.category }}">
+        
+        <div>
+            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Nombre del producto:</label>
+            <input type="text" name="name" value="{{ producto.name }}" required maxlength="160" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">
+        </div>
+
+        <div>
+            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Categoría:</label>
+            <select id="main_category" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; background: white; font-family: inherit;">
+                <option value="antivibratorios">Antivibratorios</option>
+                <option value="patas_niveladoras">Patas niveladoras</option>
+                <option value="accionamiento">Elementos de accionamiento y maniobra</option>
+                <option value="mobiliario">Niveladores para mobiliario</option>
+            </select>
+        </div>
+
+        <div id="subcategory_container">
+            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Subcategoría:</label>
+            <select id="sub_category" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; background: white; font-family: inherit;">
+                <!-- Opciones dinámicas -->
+            </select>
+        </div>
+
+        <div>
+            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Descripción completa:</label>
+            <textarea name="description" id="descripcion_editor" rows="10" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">{{ producto.description|safe }}</textarea>
+        </div>
+
+        <div>
+            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Precio o Etiqueta (Ej. Cotizar):</label>
+            <input type="text" name="price_label" value="{{ producto.price_label }}" required maxlength="40" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">
+        </div>
+
+        <div>
+            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Insignia / Badge (Opcional):</label>
+            <input type="text" name="badge" value="{{ producto.badge }}" placeholder="Ej. Nuevo 2024, Top 10" maxlength="40" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">
+        </div>
+
+        <!-- ZONA DE SUBIDA DE ARCHIVOS -->
+        <div style="background: #f4f6f9; padding: 15px; border-radius: 8px; border: 1px dashed #b0b8c1;">
+            
+            <div style="margin-bottom: 15px;">
+                <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Cambiar imagen (Opcional):</label>
+                {% if producto.image and producto.image.name %}
+                    <p style="font-size: 0.75rem; color: #666; margin-top: 5px; margin-bottom: 5px;">Imagen actual guardada: {{ producto.image.name }}</p>
+                {% endif %}
+                <input type="file" name="image" id="product_image" accept=".jpg, .jpeg, .png" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; background: white;">
+                <small style="color: #666; display: block; margin-top: 5px; font-weight: 500;">* Subir imagen no mayor a 5MB (Formatos aceptados: .jpg, .png)</small>
+            </div>
+
+            <div>
+                <label for="product_model" style="color: #333; font-weight: bold; font-size: 0.9rem;">Archivo GLB para Modelo 3D y Realidad Aumentada (Opcional):</label>
+                {% if producto.model_3d and producto.model_3d.name %}
+                    <p style="font-size: 0.75rem; color: #666; margin-top: 5px; margin-bottom: 5px;">Modelo actual guardado: {{ producto.model_3d.name }}</p>
+                {% endif %}
+                <input type="file" name="model_3d" id="product_model" accept=".glb,model/gltf-binary" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; background: white;">
+                <small style="color: #666; display: block; margin-top: 5px;">El mismo archivo GLB se utilizará para el visor 3D y para la experiencia de realidad aumentada. Tamaño máximo: 20 MB.</small>
+            </div>
+        </div>
+
+        <button type="submit" style="background: #14204e; color: white; padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; margin-top: 15px; cursor: pointer;">Guardar Cambios</button>
+    </form>
+  </div>
+</section>
+
+<!-- Script para manejar Categorías y Validación de Archivos (Clonado de add_product) -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const categorySelect = document.getElementById('main_category');
+        const subcategoryContainer = document.getElementById('subcategory_container');
+        const subcategorySelect = document.getElementById('sub_category');
+        const finalCategoryInput = document.getElementById('final_category');
+
+        const subcategoriesData = {
+            'antivibratorios': [
+                { value: 'colgantes', text: 'Colgantes antivibración' },
+                { value: 'niveladores_maq', text: 'Niveladores antivibración para maquinaria' },
+                { value: 'pies', text: 'Pies antivibración' },
+                { value: 'soportes_piso', text: 'Soportes antivibración con anclaje al piso' },
+                { value: 'tacones', text: 'Tacones antivibración' }
+            ],
+            'patas_niveladoras': [
+                { value: 'alta_resistencia', text: 'Alta resistencia' },
+                { value: 'anclaje_piso', text: 'Anclaje al piso' },
+                { value: 'antiderrapante', text: 'Antiderrapante' },
+                { value: 'antivibracion', text: 'Antivibracion' },
+                { value: 'con_rotula', text: 'Con rotula' },
+                { value: 'uso_rudo', text: 'Uso rudo' }
+            ]
+        };
+
+        function updateForm() {
+            const selectedCat = categorySelect.value;
+            subcategorySelect.innerHTML = '';
+
+            if (subcategoriesData[selectedCat]) {
+                subcategoryContainer.style.display = 'block';
+                subcategoriesData[selectedCat].forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub.value;
+                    option.textContent = sub.text;
+                    subcategorySelect.appendChild(option);
+                });
+                // Actualiza el campo final con la subcategoría seleccionada en este momento
+                finalCategoryInput.value = subcategorySelect.value;
+            } else {
+                subcategoryContainer.style.display = 'none';
+                finalCategoryInput.value = selectedCat;
+            }
+        }
+
+        categorySelect.addEventListener('change', updateForm);
+        
+        subcategorySelect.addEventListener('change', function() {
+            finalCategoryInput.value = this.value;
+        });
+
+        // == LÓGICA DE AUTO-SELECCIÓN PARA EDICIÓN ==
+        const savedCategory = "{{ producto.category }}";
+        let initialMain = savedCategory;
+
+        // Buscar si lo que está guardado es una subcategoría para seleccionar la categoría padre
+        for (const [main, subs] of Object.entries(subcategoriesData)) {
+            if (subs.some(sub => sub.value === savedCategory)) {
+                initialMain = main;
+                break;
+            }
+        }
+
+        // Asignar el valor principal en el select
+        categorySelect.value = initialMain;
+        if (!categorySelect.value) {
+            categorySelect.value = "antivibratorios"; 
+        }
+
+        // Actualizar el DOM para mostrar las opciones correctas
+        updateForm();
+
+        // Asignar el valor de la subcategoría si el contenedor está visible
+        if (subcategoryContainer.style.display === 'block') {
+            subcategorySelect.value = savedCategory;
+            finalCategoryInput.value = savedCategory;
+        }
+
+        // == VALIDACIONES DE ARCHIVOS ==
+        const imageInput = document.getElementById('product_image');
+        if(imageInput) {
+            imageInput.addEventListener('change', function() {
+                const maxFileSize = 5 * 1024 * 1024; 
+                if (this.files[0] && this.files[0].size > maxFileSize) {
+                    alert('El archivo supera el límite de 5MB. Por favor, selecciona una imagen más ligera.');
+                    this.value = ''; 
+                }
+            });
+        }
+
+        const modelInput = document.getElementById("product_model");
+        if (modelInput) {
+            modelInput.addEventListener("change", function () {
+                const file = this.files[0];
+                if (!file) return;
+
+                const extension = file.name.split(".").pop().toLowerCase();
+                if (extension !== "glb") {
+                    alert("El modelo debe estar en formato GLB.");
+                    this.value = "";
+                    return;
+                }
+
+                const maxModelSize = 20 * 1024 * 1024;
+                if (file.size > maxModelSize) {
+                    alert("El archivo GLB no puede superar los 20 MB.");
+                    this.value = "";
+                }
+            });
+        }
+    });
+</script>
+
+<!-- Cargar TinyMCE desde un CDN gratuito que no pide API Key -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js"></script>
+<script>
+    // Inicializar el editor en el campo de descripción
+    tinymce.init({
+        selector: '#descripcion_editor',
+        plugins: 'lists table',
+        toolbar: 'undo redo | bold italic | bullist numlist | table',
+        menubar: false,
+        language: 'es',
+        promotion: false,
+        setup: function (editor) {
+            editor.on('change', function () {
+                editor.save(); // Fuerza el guardado al textarea original
+            });
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Administrar Catálogo | SMAV INAHER{% endblock %}
+
+{% block back %}
+<a class="icon-btn" href="{% url 'dashboard' %}" aria-label="Volver">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+</a>
+{% endblock %}
+
+{% block content %}
+<section class="page dashboard-page">
+  <h1 class="page-title" style="margin-bottom: 30px;">Gestión de Productos</h1>
+  
+  <div class="card catalog-card">
+    <div class="catalog-list">
+      {% for item in catalog_items %}
+      <article class="catalog-entry">
+        <div class="catalog-entry-copy">
+          <strong>{{ item.name }}</strong>
+          <span style="color: #666; font-size: 0.85rem;">Categoría: {{ item.category }}</span>
+        </div>
+
+        <div class="catalog-entry-meta">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <!-- BOTÓN EDITAR -->
+            <a href="{% url 'editar_producto' item.id %}" 
+               style="background-color: #dcfce7; color: #16a34a; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; text-decoration: none; border: 1px solid #bbf7d0; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              Editar
+            </a>
+
+            <!-- BOTÓN ELIMINAR -->
+            <a href="{% url 'eliminar_producto' item.id %}" 
+               style="background-color: #fee2e2; color: #dc2626; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; text-decoration: none; border: 1px solid #fca5a5; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;" 
+               onclick="return confirm('¿Estás seguro de que quieres eliminar este producto permanentemente?');">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              Eliminar
+            </a>
+          </div>
+        </div>
+      </article>
+      {% empty %}
+      <p style="padding: 20px; text-align: center; color: #777;">No hay productos registrados en el sistema.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
