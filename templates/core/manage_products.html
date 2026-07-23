@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}
+Administrar productos | SMAV INAHER
+{% endblock %}
+
+{% block back %}
+<a
+  class="icon-btn"
+  href="{% url 'dashboard' %}"
+  aria-label="Volver al panel"
+>
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+</a>
+{% endblock %}
+
+{% block content %}
+<section class="page management-page">
+
+  <div class="card surface management-header">
+    <span class="section-kicker">
+      Administración
+    </span>
+
+    <h1 class="page-title">
+      Productos
+    </h1>
+
+    <p class="page-lead">
+      Consulta y elimina productos registrados
+      en el catálogo de SMAV INAHER.
+    </p>
+
+    {% if can_add_catalog %}
+    <a
+      class="btn btn-primary"
+      href="{% url 'agregar_producto' %}"
+    >
+      Agregar producto
+    </a>
+    {% endif %}
+  </div>
+
+  <div class="card management-card">
+    <div class="management-title-row">
+      <div>
+        <span class="section-kicker">
+          Base de datos
+        </span>
+
+        <h2>
+          {{ productos|length }} productos
+        </h2>
+      </div>
+    </div>
+
+    {% if productos %}
+    <div class="management-list">
+
+      {% for producto in productos %}
+      <article class="management-item">
+
+        <div class="management-product-image">
+          {% if producto.image %}
+          <img
+            src="{{ producto.image.url }}"
+            alt="{{ producto.name }}"
+          >
+          {% else %}
+          <span aria-hidden="true">
+            📦
+          </span>
+          {% endif %}
+        </div>
+
+        <div class="management-copy">
+          <strong>
+            {{ producto.name }}
+          </strong>
+
+          <span>
+            {{ producto.category|default:"Sin categoría" }}
+          </span>
+
+          <div class="management-badges">
+            <small class="management-badge">
+              {{ producto.price_label|default:"Cotizar" }}
+            </small>
+
+            {% if producto.is_active %}
+            <small class="management-badge active">
+              Activo
+            </small>
+            {% else %}
+            <small class="management-badge inactive">
+              Inactivo
+            </small>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if can_delete_catalog %}
+        <div class="management-controls">
+          <form
+            method="post"
+            action="{% url 'eliminar_producto' producto.pk %}"
+            onsubmit="return confirm('¿Eliminar el producto {{ producto.name|escapejs }}? También se eliminarán su imagen y archivos 3D.');"
+          >
+            {% csrf_token %}
+
+            <button
+              type="submit"
+              class="btn management-delete-button"
+            >
+              Eliminar
+            </button>
+          </form>
+        </div>
+        {% endif %}
+
+      </article>
+      {% endfor %}
+
+    </div>
+    {% else %}
+    <div class="management-empty">
+      No hay productos registrados.
+    </div>
+    {% endif %}
+  </div>
+
+</section>
+{% endblock %}

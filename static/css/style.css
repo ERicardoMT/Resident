@@ -586,6 +586,23 @@ a {
   margin-top: 16px;
 }
 
+.dashboard-logout-form {
+  margin-top: 14px;
+}
+
+.dashboard-logout-button {
+  gap: 9px;
+  color: var(--danger);
+  background: #ffffff;
+  border-color: rgba(198, 74, 83, 0.35);
+}
+
+.dashboard-logout-button:hover {
+  color: #a9343d;
+  background: rgba(198, 74, 83, 0.07);
+  border-color: rgba(198, 74, 83, 0.55);
+}
+
 .dashboard-menu-item {
   min-height: 88px;
 }
@@ -1822,5 +1839,216 @@ a {
 
   .user-form-actions {
     flex-direction: column;
+  }
+}
+
+/* Tarjetas clicables del dashboard */
+
+.stat-link {
+  position: relative;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.stat-link:hover {
+  transform: translateY(-2px);
+  border-color: rgba(24, 166, 217, 0.48);
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-action {
+  display: block;
+  margin-top: 9px;
+  color: var(--primary-500);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+
+/* Dashboards de administración */
+
+.management-page {
+  gap: 14px;
+}
+
+.management-header .btn {
+  margin-top: 18px;
+}
+
+.management-card {
+  padding: 18px;
+}
+
+.management-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.management-title-row h2 {
+  margin: 4px 0 0;
+  color: var(--primary);
+  font-size: 20px;
+}
+
+.management-list {
+  display: grid;
+  gap: 11px;
+}
+
+.management-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px;
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.management-avatar,
+.management-product-image {
+  display: grid;
+  place-items: center;
+  flex: 0 0 46px;
+  width: 46px;
+  height: 46px;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 800;
+  background:
+    linear-gradient(
+      135deg,
+      var(--primary),
+      var(--accent)
+    );
+  border-radius: 13px;
+  overflow: hidden;
+}
+
+.management-product-image {
+  color: var(--primary);
+  background: #ffffff;
+  border: 1px solid var(--line);
+}
+
+.management-product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.management-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.management-copy strong {
+  display: block;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+}
+
+.management-copy > span {
+  display: block;
+  margin-top: 4px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+}
+
+.management-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.management-badge,
+.current-user-label,
+.protected-label {
+  display: inline-flex;
+  padding: 4px 7px;
+  color: var(--primary);
+  font-size: 8px;
+  font-weight: 800;
+  background: var(--accent-soft);
+  border-radius: 999px;
+}
+
+.management-badge.active {
+  color: var(--success);
+  background: rgba(31, 138, 104, 0.1);
+}
+
+.management-badge.inactive {
+  color: var(--danger);
+  background: rgba(198, 74, 83, 0.1);
+}
+
+.management-controls {
+  flex: 0 0 auto;
+}
+
+.management-delete-button {
+  width: auto;
+  min-height: 38px;
+  padding: 8px 11px;
+  color: #ffffff;
+  font-size: 10px;
+  background: var(--danger);
+  box-shadow: none;
+}
+
+.management-delete-button:hover {
+  opacity: 0.9;
+}
+
+.current-user-label {
+  color: var(--success);
+  background: rgba(31, 138, 104, 0.1);
+}
+
+.protected-label {
+  color: var(--warning);
+  background: rgba(200, 135, 31, 0.1);
+}
+
+.management-empty {
+  padding: 28px 15px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  background: var(--surface-alt);
+  border: 1px dashed var(--line);
+  border-radius: 13px;
+}
+
+@media (max-width: 420px) {
+  .management-item {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .management-controls {
+    width: 100%;
+    padding-left: 58px;
+  }
+
+  .management-controls form,
+  .management-delete-button {
+    width: 100%;
   }
 }

@@ -17,7 +17,7 @@ class SMAVUserCreationForm(UserCreationForm):
 
     last_name = forms.CharField(
         label="Apellidos",
-        max_length=150,
+        max_length=150,     
         required=False,
     )
 

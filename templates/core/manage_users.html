@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}
+Administrar usuarios | SMAV INAHER
+{% endblock %}
+
+{% block back %}
+<a
+  class="icon-btn"
+  href="{% url 'dashboard' %}"
+  aria-label="Volver al panel"
+>
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+</a>
+{% endblock %}
+
+{% block content %}
+<section class="page management-page">
+
+  <div class="card surface management-header">
+    <span class="section-kicker">
+      Administración
+    </span>
+
+    <h1 class="page-title">
+      Usuarios
+    </h1>
+
+    <p class="page-lead">
+      Consulta y elimina las cuentas registradas
+      en SMAV INAHER.
+    </p>
+
+    {% if can_add_users %}
+    <a
+      class="btn btn-primary"
+      href="{% url 'crear_usuario' %}"
+    >
+      Crear usuario
+    </a>
+    {% endif %}
+  </div>
+
+  <div class="card management-card">
+    <div class="management-title-row">
+      <div>
+        <span class="section-kicker">
+          Cuentas registradas
+        </span>
+
+        <h2>
+          {{ usuarios|length }} usuarios
+        </h2>
+      </div>
+    </div>
+
+    {% if usuarios %}
+    <div class="management-list">
+
+      {% for usuario in usuarios %}
+      <article class="management-item">
+
+        <div class="management-avatar">
+          {{ usuario.username|first|upper }}
+        </div>
+
+        <div class="management-copy">
+          <strong>
+            {{ usuario.username }}
+          </strong>
+
+          <span>
+            {{ usuario.email|default:"Sin correo registrado" }}
+          </span>
+
+          <div class="management-badges">
+            {% if usuario.is_superuser %}
+            <small class="management-badge">
+              Superusuario
+            </small>
+            {% elif usuario.is_staff %}
+            <small class="management-badge">
+              Personal
+            </small>
+            {% else %}
+            <small class="management-badge">
+              Usuario
+            </small>
+            {% endif %}
+
+            {% if usuario.is_active %}
+            <small class="management-badge active">
+              Activo
+            </small>
+            {% else %}
+            <small class="management-badge inactive">
+              Inactivo
+            </small>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="management-controls">
+
+          {% if usuario.pk == request.user.pk %}
+          <span class="current-user-label">
+            Sesión actual
+          </span>
+
+          {% elif can_delete_users %}
+
+            {% if usuario.is_superuser and not request.user.is_superuser %}
+            <span class="protected-label">
+              Protegido
+            </span>
+
+            {% else %}
+            <form
+              method="post"
+              action="{% url 'eliminar_usuario' usuario.pk %}"
+              onsubmit="return confirm('¿Eliminar al usuario {{ usuario.username|escapejs }}? Esta acción no se puede deshacer.');"
+            >
+              {% csrf_token %}
+
+              <button
+                type="submit"
+                class="btn management-delete-button"
+              >
+                Eliminar
+              </button>
+            </form>
+            {% endif %}
+
+          {% endif %}
+
+        </div>
+      </article>
+      {% endfor %}
+
+    </div>
+    {% else %}
+    <div class="management-empty">
+      No hay usuarios registrados.
+    </div>
+    {% endif %}
+  </div>
+
+</section>
+{% endblock %}

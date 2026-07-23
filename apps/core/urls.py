@@ -4,6 +4,10 @@ from . import views
 urlpatterns = [
     path("", views.home, name="home"),
     path("dashboard/", views.dashboard, name="dashboard"),
+    path("dashboard/usuarios/",views.usuarios_dashboard_view,name="usuarios_dashboard",),
+    path("dashboard/usuarios/<int:user_id>/eliminar/",views.eliminar_usuario_view,name="eliminar_usuario",),
+    path("dashboard/productos/",views.productos_dashboard_view,name="productos_dashboard",),
+    path("dashboard/productos/<int:product_id>/eliminar/",views.eliminar_producto_view,name="eliminar_producto",),
     path("dashboard/usuarios/nuevo/", views.crear_usuario_view, name="crear_usuario"),
     path("dashboard/agregar-producto/", views.agregar_producto_view, name="agregar_producto"),
     

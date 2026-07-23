@@ -1,7 +1,10 @@
+from urllib import request
+
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 from django.urls import reverse
 
 from .forms import SMAVUserCreationForm
@@ -62,6 +65,8 @@ def home(request):
 
 @login_required
 def dashboard(request):
+    can_view_users = request.user.has_perm("auth.view_user")
+    can_view_catalog = request.user.has_perm( "core.view_catalogitem")
     """Panel de gestión para usuarios y catálogo."""
 
     user_model = get_user_model()
@@ -75,11 +80,21 @@ def dashboard(request):
             "label": "Usuarios",
             "num": user_model.objects.count(),
             "hint": "Cuentas registradas",
+             "url": (
+                    reverse("usuarios_dashboard")
+                     if can_view_users
+                    else ""
+            ),
         },
         {
             "label": "Catálogo",
             "num": catalog_count,
             "hint": "Elementos activos",
+            "url": (
+                reverse("catalogo")
+                if can_view_catalog
+                else ""
+            ),
         },
         {
             "label": "Sesión",
@@ -88,6 +103,7 @@ def dashboard(request):
                 request.user.get_username()
                 or "Usuario autenticado"
             ),
+            "url": "",
         },
     ]
 
@@ -138,6 +154,165 @@ def dashboard(request):
         },
     )
 
+
+@login_required
+@permission_required(
+    "auth.view_user",
+    raise_exception=True,
+)
+def usuarios_dashboard_view(request):
+    """Muestra las cuentas registradas en SMAV."""
+
+    user_model = get_user_model()
+
+    usuarios = user_model.objects.all().order_by(
+        "-is_superuser",
+        "-is_staff",
+        "username",
+    )
+
+    return render(
+        request,
+        "core/manage_users.html",
+        {
+            "usuarios": usuarios,
+            "can_add_users": request.user.has_perm(
+                "auth.add_user"
+            ),
+            "can_delete_users": request.user.has_perm(
+                "auth.delete_user"
+            ),
+        },
+    )
+
+
+@login_required
+@permission_required(
+    "auth.delete_user",
+    raise_exception=True,
+)
+@require_POST
+def eliminar_usuario_view(request, user_id):
+    """Elimina una cuenta con comprobaciones de seguridad."""
+
+    user_model = get_user_model()
+
+    usuario = get_object_or_404(
+        user_model,
+        pk=user_id,
+    )
+
+    if usuario.pk == request.user.pk:
+        messages.error(
+            request,
+            "No puedes eliminar la cuenta con la que "
+            "tienes iniciada la sesión.",
+        )
+        return redirect("usuarios_dashboard")
+
+    if usuario.is_superuser and not request.user.is_superuser:
+        messages.error(
+            request,
+            "Solo un superusuario puede eliminar "
+            "a otro superusuario.",
+        )
+        return redirect("usuarios_dashboard")
+
+    active_superusers = user_model.objects.filter(
+        is_superuser=True,
+        is_active=True,
+    ).count()
+
+    if (
+        usuario.is_superuser
+        and usuario.is_active
+        and active_superusers <= 1
+    ):
+        messages.error(
+            request,
+            "No se puede eliminar al último "
+            "superusuario activo.",
+        )
+        return redirect("usuarios_dashboard")
+
+    username = usuario.get_username()
+    usuario.delete()
+
+    messages.success(
+        request,
+        f'El usuario "{username}" fue eliminado.',
+    )
+
+    return redirect("usuarios_dashboard")
+
+
+@login_required
+@permission_required(
+    "core.view_catalogitem",
+    raise_exception=True,
+)
+def productos_dashboard_view(request):
+    """Muestra todos los productos registrados en la base."""
+
+    productos = CatalogItem.objects.all().order_by(
+        "-created_at",
+        "-id",
+    )
+
+    return render(
+        request,
+        "core/manage_products.html",
+        {
+            "productos": productos,
+            "can_add_catalog": request.user.has_perm(
+                "core.add_catalogitem"
+            ),
+            "can_delete_catalog": request.user.has_perm(
+                "core.delete_catalogitem"
+            ),
+        },
+    )
+
+
+@login_required
+@permission_required(
+    "core.delete_catalogitem",
+    raise_exception=True,
+)
+@require_POST
+def eliminar_producto_view(request, product_id):
+    """Elimina un producto y sus archivos multimedia."""
+
+    producto = get_object_or_404(
+        CatalogItem,
+        pk=product_id,
+    )
+
+    product_name = producto.name
+
+    # También elimina la imagen y los modelos subidos.
+    for field_name in (
+        "image",
+        "model_3d",
+        "ar_model",
+    ):
+        archivo = getattr(
+            producto,
+            field_name,
+            None,
+        )
+
+        if archivo and archivo.name:
+            archivo.delete(save=False)
+
+    producto.delete()
+
+    messages.success(
+        request,
+        f'El producto "{product_name}" fue eliminado.',
+    )
+
+    return redirect("productos_dashboard")
 
 @login_required
 @permission_required(
