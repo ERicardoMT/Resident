@@ -30,38 +30,38 @@
 
 
 {% block content %}
-<section class="product-detail-page">
+<section class="product-page">
 
-    <div class="product-detail-card">
+    <article class="product-card">
 
-        <!-- Imagen principal -->
-        <div class="product-image-container">
+        <!-- Imagen del producto -->
+        <div class="product-image-box">
             {% if producto.image %}
                 <img
                     src="{{ producto.image.url }}"
                     alt="{{ producto.name }}"
-                    class="product-main-image"
+                    class="product-image"
                 >
             {% else %}
                 <img
                     src="{% static 'img/inaher-logo.png' %}"
                     alt="{{ producto.name }}"
-                    class="product-placeholder-image"
+                    class="product-image-placeholder"
                 >
             {% endif %}
         </div>
 
 
-        <!-- Categoría y nombre -->
-        <div class="product-heading">
+        <!-- Información del producto -->
+        <header class="product-header">
             <span class="product-category">
                 {{ producto.category|default:"Catálogo" }}
             </span>
 
-            <h1 class="product-name">
+            <h1 class="product-title">
                 {{ producto.name }}
             </h1>
-        </div>
+        </header>
 
 
         <!-- Descripción -->
@@ -69,51 +69,75 @@
             {% if producto.description %}
                 {{ producto.description|safe }}
             {% else %}
-                <p class="product-empty-description">
-                    Ficha técnica y descripción en proceso de actualización.
+                <p class="product-empty-text">
+                    Ficha técnica en proceso de actualización.
                 </p>
             {% endif %}
         </div>
 
 
-        <!-- Acciones de Modelo 3D y RA -->
         {% if producto.model_url %}
 
-            <div class="product-actions">
-                <button
-                    type="button"
-                    class="product-action product-action-primary"
-                    data-open-mode="ar"
-                >
-                    Ver en RA
-                </button>
+            <!-- Opciones principales -->
+            <div class="experience-buttons">
 
                 <button
                     type="button"
-                    class="product-action product-action-secondary"
-                    data-open-mode="3d"
+                    class="experience-button experience-button-ar"
+                    id="open-ar"
                 >
-                    Modelo 3D
+                    <span
+                        class="experience-button-icon"
+                        aria-hidden="true"
+                    >
+                        📱
+                    </span>
+
+                    <span class="experience-button-text">
+                        <strong>Ver en mi espacio</strong>
+                        <small>Realidad aumentada</small>
+                    </span>
                 </button>
+
+
+                <button
+                    type="button"
+                    class="experience-button experience-button-3d"
+                    id="open-3d"
+                >
+                    <span
+                        class="experience-button-icon"
+                        aria-hidden="true"
+                    >
+                        ◫
+                    </span>
+
+                    <span class="experience-button-text">
+                        <strong>Explorar producto</strong>
+                        <small>Modelo 3D interactivo</small>
+                    </span>
+                </button>
+
             </div>
 
 
-            <!-- Experiencia del modelo -->
+            <!-- Panel de experiencia -->
             <section
-                id="model-experience"
-                class="model-experience"
+                id="experience-panel"
+                class="experience-panel"
                 hidden
             >
-                <!-- Cambiar entre Modelo 3D y RA -->
+
+                <!-- Selector Modelo 3D / RA -->
                 <div
-                    class="model-mode-switch"
+                    class="experience-tabs"
                     role="tablist"
-                    aria-label="Modo de visualización"
+                    aria-label="Seleccionar experiencia"
                 >
                     <button
                         type="button"
-                        class="model-mode-tab is-active"
-                        data-model-mode="3d"
+                        class="experience-tab is-active"
+                        data-mode="3d"
                         role="tab"
                         aria-selected="true"
                     >
@@ -122,285 +146,372 @@
 
                     <button
                         type="button"
-                        class="model-mode-tab"
-                        data-model-mode="ar"
+                        class="experience-tab"
+                        data-mode="ar"
                         role="tab"
                         aria-selected="false"
                     >
-                        RA
+                        Realidad aumentada
                     </button>
                 </div>
 
 
-                <!-- Visor del modelo -->
+                <!-- Instrucciones del modo seleccionado -->
+                <div
+                    id="mode-instructions"
+                    class="mode-instructions"
+                    aria-live="polite"
+                >
+                    <strong>Explora el producto</strong>
+
+                    <span>
+                        Arrastra para girar y usa la rueda o dos
+                        dedos para acercar.
+                    </span>
+                </div>
+
+
+                <!-- Visor -->
                 <model-viewer
                     id="product-model-viewer"
                     src="{{ producto.model_url }}"
-                    alt="Modelo 3D de {{ producto.name }}"
+                    alt="Modelo tridimensional de {{ producto.name }}"
                     camera-controls
-                    touch-action="pan-y"
+                    touch-action="none"
+                    interpolation-decay="80"
                     camera-orbit="0deg 75deg 105%"
                     camera-target="auto auto auto"
+                    field-of-view="auto"
                     orientation="0deg 0deg 0deg"
+                    scale="1 1 1"
                     shadow-intensity="1"
+                    shadow-softness="0.8"
                     environment-image="neutral"
+                    exposure="1"
                     interaction-prompt="auto"
                     ar
-                    ar-modes="webxr scene-viewer quick-look"
+                    ar-modes="webxr quick-look"
                     ar-placement="floor"
                     ar-scale="auto"
-                ></model-viewer>
+                    xr-environment
+                >
+
+                    <!-- Botón para cerrar WebXR -->
+                    <button
+                        type="button"
+                        slot="exit-webxr-ar-button"
+                        class="ar-exit-button"
+                    >
+                        <span aria-hidden="true">✕</span>
+                        Cerrar
+                    </button>
+
+
+                    <!-- Mensaje para encontrar superficie en WebXR -->
+                    <div class="ar-placement-guide">
+                        <div class="ar-guide-card">
+                            <span
+                                class="ar-guide-icon"
+                                aria-hidden="true"
+                            >
+                                📱
+                            </span>
+
+                            <strong>
+                                Busca una superficie
+                            </strong>
+
+                            <span>
+                                Mueve lentamente tu teléfono apuntando
+                                hacia el piso o una mesa.
+                            </span>
+                        </div>
+                    </div>
+
+
+                    <!-- Controles personalizados para WebXR -->
+                    <div class="ar-camera-controls">
+
+                        <div class="ar-camera-help">
+                            <strong>
+                                Producto colocado
+                            </strong>
+
+                            <span>
+                                Tócalo y arrástralo para moverlo.
+                            </span>
+                        </div>
+
+                        <div class="ar-control-dock">
+
+                            <button
+                                type="button"
+                                class="ar-control-button"
+                                data-ar-rotate="-15"
+                                aria-label="Girar producto a la izquierda"
+                            >
+                                <span aria-hidden="true">↶</span>
+                                <small>Girar</small>
+                            </button>
+
+                            <button
+                                type="button"
+                                class="ar-control-button"
+                                data-ar-scale="-0.1"
+                                aria-label="Reducir producto"
+                            >
+                                <span aria-hidden="true">−</span>
+                                <small>Reducir</small>
+                            </button>
+
+                            <button
+                                type="button"
+                                class="ar-control-button ar-reset-button"
+                                data-ar-reset
+                                aria-label="Restablecer producto"
+                            >
+                                <span aria-hidden="true">⌂</span>
+                                <small>Vista 3D</small>
+                            </button>
+
+                            <button
+                                type="button"
+                                class="ar-control-button"
+                                data-ar-scale="0.1"
+                                aria-label="Aumentar producto"
+                            >
+                                <span aria-hidden="true">+</span>
+                                <small>Aumentar</small>
+                            </button>
+
+                            <button
+                                type="button"
+                                class="ar-control-button"
+                                data-ar-rotate="15"
+                                aria-label="Girar producto a la derecha"
+                            >
+                                <span aria-hidden="true">↷</span>
+                                <small>Girar</small>
+                            </button>
+
+                        </div>
+                    </div>
+
+                </model-viewer>
 
 
                 <!-- Controles del Modelo 3D -->
                 <div
-                    id="model-3d-controls"
-                    class="model-mode-controls"
+                    id="controls-3d"
+                    class="controls-3d"
                 >
-                    <strong>Rotar por eje</strong>
 
-                    <div class="model-control-grid">
+                    <div class="simple-controls">
+
                         <button
                             type="button"
-                            data-rotate-axis="x"
-                            data-direction="-1"
+                            data-view-rotate="-15"
+                            disabled
                         >
-                            X−
+                            <span aria-hidden="true">↶</span>
+                            Girar
                         </button>
 
                         <button
                             type="button"
-                            data-rotate-axis="x"
-                            data-direction="1"
+                            data-view-reset
+                            class="control-reset"
+                            disabled
                         >
-                            X+
+                            <span aria-hidden="true">⌂</span>
+                            Centrar
                         </button>
 
                         <button
                             type="button"
-                            data-rotate-axis="y"
-                            data-direction="-1"
+                            data-view-rotate="15"
+                            disabled
                         >
-                            Y−
+                            Girar
+                            <span aria-hidden="true">↷</span>
                         </button>
 
-                        <button
-                            type="button"
-                            data-rotate-axis="y"
-                            data-direction="1"
-                        >
-                            Y+
-                        </button>
-
-                        <button
-                            type="button"
-                            data-rotate-axis="z"
-                            data-direction="-1"
-                        >
-                            Z−
-                        </button>
-
-                        <button
-                            type="button"
-                            data-rotate-axis="z"
-                            data-direction="1"
-                        >
-                            Z+
-                        </button>
                     </div>
 
+                    <p
+                        id="viewer-feedback"
+                        class="gesture-help"
+                        aria-live="polite"
+                    >
+                        Cargando el modelo 3D…
+                    </p>
 
-                    <strong>Mover por la pantalla</strong>
-
-                    <div class="model-move-grid">
-                        <span></span>
-
-                        <button
-                            type="button"
-                            data-move-model="up"
-                            aria-label="Mover arriba"
-                        >
-                            ↑
-                        </button>
-
-                        <span></span>
-
-                        <button
-                            type="button"
-                            data-move-model="left"
-                            aria-label="Mover a la izquierda"
-                        >
-                            ←
-                        </button>
-
-                        <button
-                            type="button"
-                            data-reset-model
-                            aria-label="Restablecer posición"
-                        >
-                            Reiniciar
-                        </button>
-
-                        <button
-                            type="button"
-                            data-move-model="right"
-                            aria-label="Mover a la derecha"
-                        >
-                            →
-                        </button>
-
-                        <span></span>
-
-                        <button
-                            type="button"
-                            data-move-model="down"
-                            aria-label="Mover abajo"
-                        >
-                            ↓
-                        </button>
-
-                        <span></span>
-                    </div>
                 </div>
 
 
-                <!-- Controles de Realidad Aumentada -->
+                <!-- Panel de Realidad Aumentada -->
                 <div
-                    id="model-ar-controls"
-                    class="model-mode-controls"
+                    id="controls-ar"
+                    class="controls-ar"
                     hidden
                 >
-                    <p class="ar-description">
-                        Abre la cámara y coloca el producto sobre una
-                        superficie.
-                    </p>
+
+                    <!-- Las instrucciones cambian según el dispositivo -->
+                    <div
+                        id="device-ar-help"
+                        class="device-ar-help"
+                        aria-live="polite"
+                    >
+                        Preparando instrucciones…
+                    </div>
+
+
+                    <!-- Aviso de transferencia de vista -->
+                    <div class="copied-view-message">
+                        <span aria-hidden="true">✓</span>
+
+                        <p>
+                            La cámara abrirá el producto con el ángulo
+                            y el acercamiento actuales del Modelo 3D.
+                        </p>
+                    </div>
+
 
                     <button
                         type="button"
-                        id="launch-ar-button"
+                        id="launch-ar"
                         class="launch-ar-button"
+                        disabled
                     >
-                        Abrir Realidad Aumentada
+                        <span aria-hidden="true">📷</span>
+                        Abrir cámara con esta vista
                     </button>
 
+
                     <small
-                        id="ar-support-message"
+                        id="ar-message"
+                        class="ar-message"
                         aria-live="polite"
                     ></small>
+
                 </div>
+
             </section>
 
         {% else %}
 
-            <!-- Producto sin GLB -->
-            <div class="product-actions">
-                <button
-                    type="button"
-                    class="product-action product-action-disabled"
-                    disabled
-                >
-                    RA no disponible
-                </button>
+            <!-- Producto sin modelo -->
+            <div class="unavailable-message">
+                <span aria-hidden="true">◫</span>
 
-                <button
-                    type="button"
-                    class="product-action product-action-disabled"
-                    disabled
-                >
-                    Modelo 3D no disponible
-                </button>
+                <div>
+                    <strong>
+                        Modelo no disponible
+                    </strong>
+
+                    <p>
+                        Este producto todavía no cuenta con una
+                        experiencia 3D o de realidad aumentada.
+                    </p>
+                </div>
             </div>
 
         {% endif %}
 
-    </div>
+    </article>
+
 </section>
 
 
 <style>
-    .product-detail-page {
+    .product-page {
         display: flex;
-        flex-direction: column;
-        align-items: center;
+        justify-content: center;
         min-height: calc(100vh - 60px);
-        padding: 30px 20px;
-        background-color: #f8fafc;
+        padding: 24px 14px 40px;
+        background: #f8fafc;
     }
 
-    .product-detail-card {
-        position: relative;
+    .product-card {
         width: 100%;
-        max-width: 500px;
-        padding: 30px 20px;
-        background-color: white;
-        border-radius: 16px;
+        max-width: 520px;
+        padding: 22px 16px;
+        background: #ffffff;
+        border-radius: 18px;
         box-shadow:
-            0 10px 25px rgba(20, 32, 78, 0.08);
+            0 10px 30px rgba(20, 32, 78, 0.09);
     }
 
-    .product-image-container {
-        padding: 20px;
-        margin-bottom: 25px;
-        text-align: center;
-        background: white;
-        border-radius: 12px;
+
+    /* Imagen */
+
+    .product-image-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 220px;
+        padding: 18px;
+        background: #ffffff;
+        border-radius: 14px;
     }
 
-    .product-main-image {
+    .product-image {
         width: 100%;
         max-height: 280px;
         object-fit: contain;
         filter:
             drop-shadow(
-                0 8px 16px rgba(0, 0, 0, 0.1)
+                0 10px 16px rgba(0, 0, 0, 0.1)
             );
     }
 
-    .product-placeholder-image {
-        width: 100%;
-        max-height: 200px;
+    .product-image-placeholder {
+        width: 80%;
+        max-height: 180px;
         object-fit: contain;
-        opacity: 0.2;
+        opacity: 0.18;
     }
 
-    .product-heading {
-        margin-bottom: 25px;
+
+    /* Encabezado */
+
+    .product-header {
+        margin: 18px 0 22px;
         text-align: center;
     }
 
     .product-category {
         display: inline-block;
-        padding: 5px 14px;
+        padding: 6px 14px;
         color: #475569;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        background-color: #e2e8f0;
-        border-radius: 20px;
+        background: #e8eef5;
+        border-radius: 999px;
     }
 
-    .product-name {
-        margin-top: 15px;
-        margin-bottom: 0;
+    .product-title {
+        margin: 14px 0 0;
         color: #14204e;
-        font-size: 1.4rem;
-        font-weight: 800;
-        line-height: 1.3;
+        font-size: 1.35rem;
+        line-height: 1.35;
         text-transform: uppercase;
     }
+
+
+    /* Descripción */
 
     .product-description {
         padding-top: 20px;
         color: #475569;
-        font-size: 0.95rem;
-        line-height: 1.6;
-        text-align: left;
-        background-color: white;
-        border-top: 2px solid #f1f5f9;
+        font-size: 0.94rem;
+        line-height: 1.65;
+        border-top: 1px solid #e6edf5;
     }
 
-    .product-empty-description {
+    .product-empty-text {
         color: #94a3b8;
         font-style: italic;
         text-align: center;
@@ -408,138 +519,183 @@
 
     .product-description table {
         width: 100% !important;
-        margin-top: 15px;
-        margin-bottom: 15px;
-        font-size: 0.85rem;
+        margin: 14px 0;
         border-collapse: collapse;
     }
 
     .product-description th,
     .product-description td {
-        padding: 10px;
+        padding: 9px;
         text-align: center;
         border: 1px solid #cbd5e1;
     }
 
     .product-description th {
         color: #14204e;
-        font-weight: 700;
-        text-transform: uppercase;
-        background-color: #f1f5f9;
+        background: #f1f5f9;
     }
 
     .product-description ul {
-        padding-left: 20px;
-        margin-bottom: 15px;
-    }
-
-    .product-description li {
-        margin-bottom: 5px;
+        padding-left: 22px;
     }
 
 
     /* Botones principales */
 
-    .product-actions {
-        display: flex;
-        gap: 12px;
-        margin-top: 30px;
-        padding-top: 25px;
-        border-top: 2px solid #f1f5f9;
+    .experience-buttons {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 26px;
+        padding-top: 22px;
+        border-top: 1px solid #e6edf5;
     }
 
-    .product-action {
-        flex: 1;
-        min-height: 48px;
-        padding: 12px 18px;
+    .experience-button {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 68px;
+        padding: 12px;
         font-family: inherit;
-        font-size: 0.92rem;
-        font-weight: 700;
-        border-radius: 9px;
+        text-align: left;
+        border-radius: 12px;
         cursor: pointer;
         transition:
-            background-color 0.2s,
-            color 0.2s,
-            transform 0.2s;
+            transform 0.2s,
+            box-shadow 0.2s,
+            background-color 0.2s;
     }
 
-    .product-action:hover:not(:disabled) {
+    .experience-button:hover {
         transform: translateY(-1px);
     }
 
-    .product-action-primary {
+    .experience-button:active {
+        transform: scale(0.98);
+    }
+
+    .experience-button-text {
+        display: grid;
+        gap: 2px;
+    }
+
+    .experience-button strong {
+        font-size: 0.84rem;
+    }
+
+    .experience-button small {
+        font-size: 0.69rem;
+        font-weight: 500;
+        opacity: 0.8;
+    }
+
+    .experience-button-icon {
+        display: grid;
+        flex: 0 0 auto;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        font-size: 1.16rem;
+        border-radius: 10px;
+    }
+
+    .experience-button-ar {
         color: white;
-        background: #14204e;
-        border: 2px solid #14204e;
-    }
-
-    .product-action-primary:hover {
         background: #0a5290;
-        border-color: #0a5290;
+        border: 2px solid #0a5290;
+        box-shadow:
+            0 5px 13px rgba(10, 82, 144, 0.2);
     }
 
-    .product-action-secondary {
+    .experience-button-ar:hover {
+        background: #074575;
+    }
+
+    .experience-button-ar
+    .experience-button-icon {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .experience-button-3d {
         color: #14204e;
         background: white;
         border: 2px solid #14204e;
     }
 
-    .product-action-secondary:hover {
-        color: white;
-        background: #14204e;
+    .experience-button-3d:hover {
+        background: #f4f7fb;
     }
 
-    .product-action-disabled {
-        color: #64748b;
-        background: #e2e8f0;
-        border: 2px solid #cbd5e1;
-        cursor: not-allowed;
+    .experience-button-3d
+    .experience-button-icon {
+        background: #e9eff6;
     }
 
 
-    /* Contenedor del modelo */
+    /* Panel principal */
 
-    .model-experience {
-        width: 100%;
-        padding: 14px;
-        margin-top: 20px;
-        background: white;
-        border: 1px solid #dbe4ee;
-        border-radius: 14px;
-        box-shadow:
-            0 8px 20px rgba(20, 32, 78, 0.08);
+    .experience-panel {
+        padding: 12px;
+        margin-top: 16px;
+        background: #f8fafc;
+        border: 1px solid #dce6f0;
+        border-radius: 15px;
     }
 
-    .model-experience[hidden] {
+    .experience-panel[hidden] {
         display: none;
     }
 
-    .model-mode-switch {
-        display: flex;
-        justify-content: center;
-        gap: 6px;
+    .experience-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
         padding: 4px;
-        margin-bottom: 12px;
-        background: #e9eff6;
+        background: #e5edf5;
         border-radius: 10px;
     }
 
-    .model-mode-tab {
-        flex: 1;
-        padding: 9px 12px;
-        color: #475569;
+    .experience-tab {
+        min-height: 40px;
+        padding: 8px;
+        color: #64748b;
         font-family: inherit;
-        font-size: 0.78rem;
+        font-size: 0.76rem;
         font-weight: 700;
         background: transparent;
         border: none;
         border-radius: 7px;
         cursor: pointer;
+        transition:
+            color 0.2s,
+            background-color 0.2s;
     }
 
-    .model-mode-tab.is-active {
+    .experience-tab.is-active {
         color: white;
         background: #14204e;
+        box-shadow:
+            0 3px 8px rgba(20, 32, 78, 0.18);
+    }
+
+    .mode-instructions {
+        display: grid;
+        gap: 3px;
+        padding: 12px 5px;
+        text-align: center;
+    }
+
+    .mode-instructions strong {
+        color: #14204e;
+        font-size: 0.86rem;
+    }
+
+    .mode-instructions span {
+        color: #64748b;
+        font-size: 0.73rem;
+        line-height: 1.4;
     }
 
 
@@ -548,127 +704,494 @@
     #product-model-viewer {
         display: block;
         width: 100%;
-        height: 350px;
+        height: 330px;
+        overflow: hidden;
         background:
-            linear-gradient(
-                145deg,
-                #ffffff,
-                #eef3f8
+            radial-gradient(
+                circle at center,
+                #ffffff 0%,
+                #edf3f8 100%
             );
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
+        border: 1px solid #dce5ee;
+        border-radius: 13px;
         --poster-color: transparent;
     }
 
 
-    /* Controles */
+    /* Controles de Modelo 3D */
 
-    .model-mode-controls {
-        display: grid;
-        gap: 10px;
-        margin-top: 14px;
+    .controls-3d {
+        margin-top: 12px;
     }
 
-    .model-mode-controls[hidden] {
+    .controls-3d[hidden] {
         display: none;
     }
 
-    .model-mode-controls strong {
-        color: #14204e;
-        font-size: 0.82rem;
-        text-align: center;
-    }
-
-    .model-control-grid {
+    .simple-controls {
         display: grid;
         grid-template-columns:
             repeat(3, minmax(0, 1fr));
         gap: 7px;
     }
 
-    .model-control-grid button,
-    .model-move-grid button {
-        min-height: 42px;
+    .simple-controls button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        min-height: 44px;
         padding: 8px;
         color: #14204e;
         font-family: inherit;
+        font-size: 0.76rem;
         font-weight: 700;
         background: white;
-        border: 1px solid #aebccd;
-        border-radius: 8px;
+        border: 1px solid #b8c5d3;
+        border-radius: 9px;
         cursor: pointer;
         transition:
+            color 0.15s,
             background-color 0.15s,
-            color 0.15s;
+            transform 0.15s;
     }
 
-    .model-control-grid button:hover,
-    .model-move-grid button:hover {
+    .simple-controls button:hover:not(:disabled) {
         color: white;
         background: #14204e;
     }
 
-    .model-control-grid button:active,
-    .model-move-grid button:active {
+    .simple-controls button:active:not(:disabled) {
         transform: scale(0.97);
     }
 
-    .model-move-grid {
-        display: grid;
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
-        gap: 7px;
+    .simple-controls button:disabled {
+        color: #94a3b8;
+        background: #f1f5f9;
+        cursor: wait;
     }
 
+    .simple-controls .control-reset {
+        color: white;
+        background: #14204e;
+        border-color: #14204e;
+    }
 
-    /* Realidad aumentada */
+    .simple-controls .control-reset:disabled {
+        color: #94a3b8;
+        background: #dce3eb;
+        border-color: #dce3eb;
+    }
 
-    .ar-description {
-        margin: 0;
-        color: #475569;
-        line-height: 1.5;
+    .gesture-help {
+        min-height: 20px;
+        margin: 10px 4px 0;
+        color: #64748b;
+        font-size: 0.7rem;
+        line-height: 1.45;
         text-align: center;
     }
 
+
+    /* Panel previo a RA */
+
+    .controls-ar {
+        display: grid;
+        gap: 12px;
+        margin-top: 12px;
+    }
+
+    .controls-ar[hidden] {
+        display: none;
+    }
+
+    .device-ar-help {
+        display: grid;
+        gap: 12px;
+        padding: 15px;
+        color: #475569;
+        background: #ffffff;
+        border: 1px solid #d9e4ee;
+        border-radius: 12px;
+    }
+
+    .device-help-heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .device-help-icon {
+        display: grid;
+        flex: 0 0 auto;
+        place-items: center;
+        width: 43px;
+        height: 43px;
+        font-size: 1.25rem;
+        background: #e8f4fb;
+        border-radius: 11px;
+    }
+
+    .device-help-heading div {
+        display: grid;
+        gap: 2px;
+    }
+
+    .device-help-heading strong {
+        color: #14204e;
+        font-size: 0.86rem;
+    }
+
+    .device-help-heading span {
+        color: #64748b;
+        font-size: 0.7rem;
+    }
+
+    .device-help-steps {
+        display: grid;
+        gap: 9px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        counter-reset: ar-step;
+    }
+
+    .device-help-steps li {
+        position: relative;
+        min-height: 30px;
+        padding-left: 38px;
+        color: #475569;
+        font-size: 0.74rem;
+        line-height: 1.45;
+        counter-increment: ar-step;
+    }
+
+    .device-help-steps li::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: grid;
+        place-items: center;
+        width: 27px;
+        height: 27px;
+        color: white;
+        font-size: 0.7rem;
+        font-weight: 800;
+        content: counter(ar-step);
+        background: #0a5290;
+        border-radius: 50%;
+    }
+
+    .device-help-note {
+        padding: 10px;
+        margin: 0;
+        color: #475569;
+        font-size: 0.69rem;
+        line-height: 1.45;
+        text-align: center;
+        background: #f1f5f9;
+        border-radius: 9px;
+    }
+
+    .device-help-warning {
+        color: #92400e;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+    }
+
+
+    /* Aviso de transferencia de vista */
+
+    .copied-view-message {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 10px 12px;
+        color: #166534;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 10px;
+    }
+
+    .copied-view-message > span {
+        display: grid;
+        flex: 0 0 auto;
+        place-items: center;
+        width: 25px;
+        height: 25px;
+        color: white;
+        font-weight: 800;
+        background: #16a34a;
+        border-radius: 50%;
+    }
+
+    .copied-view-message p {
+        margin: 0;
+        font-size: 0.7rem;
+        line-height: 1.4;
+    }
+
+
     .launch-ar-button {
-        min-height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 50px;
         padding: 12px 18px;
         color: white;
         font-family: inherit;
-        font-weight: 700;
+        font-size: 0.9rem;
+        font-weight: 800;
         background: #0a5290;
         border: none;
-        border-radius: 9px;
+        border-radius: 11px;
         cursor: pointer;
+        box-shadow:
+            0 5px 12px rgba(10, 82, 144, 0.25);
+        transition:
+            background-color 0.2s,
+            transform 0.2s;
     }
 
-    .launch-ar-button:hover {
+    .launch-ar-button:hover:not(:disabled) {
         background: #063b68;
     }
 
-    #ar-support-message {
-        min-height: 20px;
+    .launch-ar-button:active:not(:disabled) {
+        transform: scale(0.98);
+    }
+
+    .launch-ar-button:disabled {
         color: #64748b;
+        background: #cbd5e1;
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+
+    .ar-message {
+        min-height: 20px;
+        color: #b42318;
+        font-size: 0.72rem;
         line-height: 1.4;
         text-align: center;
     }
 
+    .ar-message.is-information {
+        color: #0a5290;
+    }
+
+    .ar-message.is-success {
+        color: #15803d;
+    }
+
+
+    /* Controles dentro de WebXR */
+
+    .ar-placement-guide,
+    .ar-camera-controls {
+        display: none;
+    }
+
+    model-viewer[ar-status="session-started"]
+    .ar-placement-guide {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        display: grid;
+        place-items: start center;
+        padding-top: 80px;
+        pointer-events: none;
+    }
+
+    model-viewer[ar-status="object-placed"]
+    .ar-placement-guide {
+        display: none;
+    }
+
+    .ar-guide-card {
+        display: grid;
+        justify-items: center;
+        gap: 5px;
+        width: min(88vw, 330px);
+        padding: 13px 18px;
+        color: #14204e;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 16px;
+        box-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    .ar-guide-icon {
+        font-size: 1.4rem;
+    }
+
+    .ar-guide-card strong {
+        font-size: 0.88rem;
+    }
+
+    .ar-guide-card span:last-child {
+        color: #64748b;
+        font-size: 0.72rem;
+        line-height: 1.4;
+    }
+
+    model-viewer[ar-status="session-started"]
+    .ar-camera-controls,
+    model-viewer[ar-status="object-placed"]
+    .ar-camera-controls {
+        position: fixed;
+        right: 12px;
+        bottom: 18px;
+        left: 12px;
+        z-index: 30;
+        display: grid;
+        gap: 8px;
+    }
+
+    .ar-camera-help {
+        display: grid;
+        gap: 1px;
+        justify-self: center;
+        padding: 8px 15px;
+        color: #14204e;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.93);
+        border-radius: 999px;
+        box-shadow:
+            0 4px 14px rgba(0, 0, 0, 0.16);
+        pointer-events: none;
+    }
+
+    .ar-camera-help strong {
+        font-size: 0.75rem;
+    }
+
+    .ar-camera-help span {
+        color: #64748b;
+        font-size: 0.64rem;
+    }
+
+    .ar-control-dock {
+        display: grid;
+        grid-template-columns:
+            repeat(5, minmax(0, 1fr));
+        gap: 6px;
+        padding: 7px;
+        background: rgba(20, 32, 78, 0.92);
+        border-radius: 18px;
+        box-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.24);
+    }
+
+    .ar-control-button {
+        display: grid;
+        justify-items: center;
+        gap: 2px;
+        min-height: 54px;
+        padding: 6px 2px;
+        color: white;
+        font-family: inherit;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+    }
+
+    .ar-control-button:active {
+        transform: scale(0.95);
+    }
+
+    .ar-control-button span {
+        font-size: 1.18rem;
+        font-weight: 800;
+    }
+
+    .ar-control-button small {
+        font-size: 0.55rem;
+        font-weight: 700;
+    }
+
+    .ar-reset-button {
+        color: #14204e;
+        background: white;
+    }
+
+    .ar-exit-button {
+        position: fixed;
+        top: 18px;
+        left: 16px;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        min-height: 42px;
+        padding: 9px 15px;
+        color: #14204e;
+        font-family: inherit;
+        font-weight: 800;
+        background: rgba(255, 255, 255, 0.94);
+        border: none;
+        border-radius: 999px;
+        box-shadow:
+            0 4px 14px rgba(0, 0, 0, 0.18);
+    }
+
+
+    /* Sin modelo */
+
+    .unavailable-message {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 15px;
+        margin-top: 24px;
+        color: #475569;
+        background: #f1f5f9;
+        border-radius: 12px;
+    }
+
+    .unavailable-message > span {
+        font-size: 1.4rem;
+    }
+
+    .unavailable-message strong {
+        color: #14204e;
+    }
+
+    .unavailable-message p {
+        margin: 4px 0 0;
+        font-size: 0.75rem;
+        line-height: 1.45;
+    }
+
 
     @media (max-width: 420px) {
-        .product-detail-page {
-            padding: 20px 12px;
+        .product-page {
+            padding: 18px 10px 34px;
         }
 
-        .product-detail-card {
-            padding: 22px 14px;
+        .product-card {
+            padding: 18px 12px;
         }
 
         #product-model-viewer {
             height: 300px;
         }
 
-        .product-actions {
-            flex-direction: column;
+        .experience-buttons {
+            grid-template-columns: 1fr;
+        }
+
+        .ar-control-dock {
+            gap: 4px;
+            padding: 6px;
+        }
+
+        .ar-control-button {
+            min-height: 52px;
         }
     }
 </style>
@@ -688,75 +1211,269 @@
         "product-model-viewer"
     );
 
-    const experience = document.getElementById(
-        "model-experience"
+    const panel = document.getElementById(
+        "experience-panel"
     );
 
     const controls3D = document.getElementById(
-        "model-3d-controls"
+        "controls-3d"
     );
 
     const controlsAR = document.getElementById(
-        "model-ar-controls"
+        "controls-ar"
+    );
+
+    const instructions = document.getElementById(
+        "mode-instructions"
+    );
+
+    const viewerFeedback = document.getElementById(
+        "viewer-feedback"
+    );
+
+    const deviceARHelp = document.getElementById(
+        "device-ar-help"
     );
 
     const arMessage = document.getElementById(
-        "ar-support-message"
-    );
-
-    const resetButton = document.querySelector(
-        "[data-reset-model]"
+        "ar-message"
     );
 
     const launchARButton = document.getElementById(
-        "launch-ar-button"
+        "launch-ar"
+    );
+
+    const open3DButton = document.getElementById(
+        "open-3d"
+    );
+
+    const openARButton = document.getElementById(
+        "open-ar"
+    );
+
+    const viewButtons = document.querySelectorAll(
+        "[data-view-rotate], [data-view-reset]"
     );
 
 
-    const rotation = {
-        x: 0,
-        y: 0,
-        z: 0,
+    const userAgent =
+        navigator.userAgent || "";
+
+    const isIOS =
+        /iPad|iPhone|iPod/.test(userAgent)
+        || (
+            navigator.platform === "MacIntel"
+            && navigator.maxTouchPoints > 1
+        );
+
+    const isAndroid =
+        /Android/i.test(userAgent);
+
+    const isMobile =
+        isIOS
+        || isAndroid
+        || /Mobile/i.test(userAgent);
+
+
+    let modelReady = false;
+
+    /*
+     * Ángulo horizontal utilizado por los
+     * botones del visor normal.
+     */
+    let cameraTheta = 0;
+
+
+    /*
+     * Vista inicial del Modelo 3D.
+     *
+     * Se utiliza como punto de referencia para calcular
+     * cuánto giró o acercó el usuario el producto.
+     */
+    let referenceOrbit = null;
+
+
+    /*
+     * Vista copiada desde el Modelo 3D para RA.
+     */
+    const copiedARView = {
+        pitch: 0,
+        yaw: 0,
+        scale: 1,
     };
 
-    const movement = {
-        x: 0,
-        y: 0,
-    };
 
-    let modelCenter = {
-        x: 0,
-        y: 0,
-        z: 0,
-    };
-
-    let moveStep = 0.05;
+    /*
+     * Transformaciones actuales durante WebXR.
+     */
+    let arPitch = 0;
+    let arRotationY = 0;
+    let arScale = 1;
 
 
-    function applyRotation() {
-        /*
-         * model-viewer interpreta orientation como:
-         * roll, pitch y yaw.
-         *
-         * Z se usa como roll.
-         * X se usa como pitch.
-         * Y se usa como yaw.
-         */
-        viewer.setAttribute(
-            "orientation",
-            `${rotation.z}deg ` +
-            `${rotation.x}deg ` +
-            `${rotation.y}deg`
+    /*
+     * Sirve para restaurar el visor cuando el usuario
+     * vuelve desde Quick Look en iPhone.
+     */
+    let arLaunchInProgress = false;
+    let pageWasHiddenForAR = false;
+
+
+    function clamp(
+        value,
+        minimum,
+        maximum
+    ) {
+        return Math.min(
+            maximum,
+            Math.max(minimum, value)
         );
     }
 
 
-    function applyMovement() {
+    function radiansToDegrees(radians) {
+        return radians * 180 / Math.PI;
+    }
+
+
+    function normalizeDegrees(value) {
+        let result = value % 360;
+
+        if (result > 180) {
+            result -= 360;
+        }
+
+        if (result < -180) {
+            result += 360;
+        }
+
+        return Math.round(result * 10) / 10;
+    }
+
+
+    function setViewerFeedback(message) {
+        if (viewerFeedback) {
+            viewerFeedback.textContent = message;
+        }
+    }
+
+
+    function setARMessage(
+        message,
+        messageType = "error"
+    ) {
+        arMessage.textContent = message;
+
+        arMessage.classList.remove(
+            "is-information",
+            "is-success"
+        );
+
+        if (messageType === "information") {
+            arMessage.classList.add(
+                "is-information"
+            );
+        }
+
+        if (messageType === "success") {
+            arMessage.classList.add(
+                "is-success"
+            );
+        }
+    }
+
+
+    function setViewButtonsEnabled(enabled) {
+        viewButtons.forEach((button) => {
+            button.disabled = !enabled;
+        });
+    }
+
+
+    /*
+     * Guarda la cámara inicial del Modelo 3D.
+     *
+     * Esa cámara corresponde a:
+     * 0 grados horizontal,
+     * 75 grados vertical,
+     * 105% de distancia.
+     */
+    function saveReferenceOrbit() {
+        if (
+            typeof viewer.getCameraOrbit
+            !== "function"
+        ) {
+            return;
+        }
+
+        const orbit =
+            viewer.getCameraOrbit();
+
+        if (
+            !orbit
+            || !Number.isFinite(orbit.radius)
+            || orbit.radius <= 0
+        ) {
+            return;
+        }
+
+        referenceOrbit = {
+            theta: orbit.theta,
+            phi: orbit.phi,
+            radius: orbit.radius,
+        };
+
+        cameraTheta =
+            radiansToDegrees(orbit.theta);
+    }
+
+
+    /*
+     * Obtiene el ángulo actual de la cámara después
+     * de que el usuario arrastró el modelo.
+     */
+    function synchronizeCameraTheta() {
+        if (
+            typeof viewer.getCameraOrbit
+            !== "function"
+        ) {
+            return;
+        }
+
+        const currentOrbit =
+            viewer.getCameraOrbit();
+
+        if (
+            currentOrbit
+            && Number.isFinite(currentOrbit.theta)
+        ) {
+            cameraTheta =
+                radiansToDegrees(
+                    currentOrbit.theta
+                );
+        }
+    }
+
+
+    /*
+     * Gira la cámara alrededor del producto.
+     */
+    function rotateCamera(degrees) {
+        if (!modelReady) {
+            setViewerFeedback(
+                "Espera a que termine de cargar el modelo."
+            );
+
+            return;
+        }
+
+        synchronizeCameraTheta();
+
+        cameraTheta += degrees;
+
         viewer.setAttribute(
-            "camera-target",
-            `${modelCenter.x + movement.x}m ` +
-            `${modelCenter.y + movement.y}m ` +
-            `${modelCenter.z}m`
+            "camera-orbit",
+            `${cameraTheta}deg 75deg 105%`
         );
 
         if (
@@ -765,20 +1482,39 @@
         ) {
             viewer.jumpCameraToGoal();
         }
+
+        if (degrees < 0) {
+            setViewerFeedback(
+                "Vista girada hacia la izquierda."
+            );
+        } else {
+            setViewerFeedback(
+                "Vista girada hacia la derecha."
+            );
+        }
     }
 
 
-    function resetModel() {
-        rotation.x = 0;
-        rotation.y = 0;
-        rotation.z = 0;
+    function resetCamera() {
+        cameraTheta = 0;
 
-        movement.x = 0;
-        movement.y = 0;
-
+        /*
+         * El Modelo 3D normal no debe conservar una
+         * transformación aplicada temporalmente para RA.
+         */
         viewer.setAttribute(
             "orientation",
             "0deg 0deg 0deg"
+        );
+
+        viewer.setAttribute(
+            "scale",
+            "1 1 1"
+        );
+
+        viewer.setAttribute(
+            "camera-orbit",
+            "0deg 75deg 105%"
         );
 
         viewer.setAttribute(
@@ -787,8 +1523,8 @@
         );
 
         viewer.setAttribute(
-            "camera-orbit",
-            "0deg 75deg 105%"
+            "field-of-view",
+            "auto"
         );
 
         if (
@@ -805,18 +1541,350 @@
             ) {
                 viewer.jumpCameraToGoal();
             }
+
+            /*
+             * Esperamos otro cuadro para asegurarnos de
+             * que getCameraOrbit devuelva la vista inicial.
+             */
+            requestAnimationFrame(
+                saveReferenceOrbit
+            );
         });
+
+        setViewerFeedback(
+            "Vista centrada al frente."
+        );
     }
 
 
-    function setMode(mode) {
-        experience.hidden = false;
+    /*
+     * Convierte la cámara actual del Modelo 3D en una
+     * rotación y escala reales del objeto.
+     *
+     * La cámara gira alrededor del producto en 3D.
+     * En RA necesitamos hacer lo contrario:
+     * girar el producto frente a la cámara.
+     */
+    function copyCurrent3DViewToAR() {
+        if (
+            typeof viewer.getCameraOrbit
+            !== "function"
+        ) {
+            return false;
+        }
+
+        const currentOrbit =
+            viewer.getCameraOrbit();
+
+        if (
+            !currentOrbit
+            || !Number.isFinite(currentOrbit.radius)
+            || currentOrbit.radius <= 0
+        ) {
+            return false;
+        }
+
+        if (!referenceOrbit) {
+            referenceOrbit = {
+                theta: 0,
+                phi: 75 * Math.PI / 180,
+                radius: currentOrbit.radius,
+            };
+        }
+
+
+        /*
+         * Horizontal:
+         * mover la cámara hacia un lado equivale a girar
+         * el producto en sentido contrario.
+         */
+        copiedARView.yaw =
+            normalizeDegrees(
+                radiansToDegrees(
+                    referenceOrbit.theta
+                    - currentOrbit.theta
+                )
+            );
+
+
+        /*
+         * Vertical:
+         * si la cámara observa el objeto desde arriba,
+         * inclinamos el producto para reproducir esa vista.
+         */
+        copiedARView.pitch =
+            normalizeDegrees(
+                radiansToDegrees(
+                    referenceOrbit.phi
+                    - currentOrbit.phi
+                )
+            );
+
+
+        /*
+         * Zoom:
+         * cámara más cerca = modelo inicialmente más grande.
+         * Se limita para evitar tamaños extremos en RA.
+         */
+        copiedARView.scale =
+            clamp(
+                referenceOrbit.radius
+                / currentOrbit.radius,
+                0.4,
+                2.5
+            );
+
+
+        arPitch =
+            copiedARView.pitch;
+
+        arRotationY =
+            copiedARView.yaw;
+
+        arScale =
+            copiedARView.scale;
+
+
+        applyARTransformations();
+
+        return true;
+    }
+
+
+    /*
+     * Aplica la vista copiada al modelo real.
+     *
+     * orientation usa:
+     * roll, pitch y yaw.
+     */
+    function applyARTransformations() {
+        viewer.setAttribute(
+            "orientation",
+            `0deg ${arPitch}deg ${arRotationY}deg`
+        );
+
+        arScale =
+            clamp(arScale, 0.4, 2.5);
+
+        viewer.setAttribute(
+            "scale",
+            `${arScale} ${arScale} ${arScale}`
+        );
+    }
+
+
+    /*
+     * El botón central de WebXR regresa al ángulo
+     * copiado desde el Modelo 3D, no al frente absoluto.
+     */
+    function resetARTransformations() {
+        arPitch =
+            copiedARView.pitch;
+
+        arRotationY =
+            copiedARView.yaw;
+
+        arScale =
+            copiedARView.scale;
+
+        applyARTransformations();
+    }
+
+
+    /*
+     * Al regresar de RA, dejamos el Modelo 3D como estaba:
+     * sin rotación física y con su cámara conservada.
+     */
+    function restoreNormal3DViewer() {
+        viewer.setAttribute(
+            "orientation",
+            "0deg 0deg 0deg"
+        );
+
+        viewer.setAttribute(
+            "scale",
+            "1 1 1"
+        );
+
+        arLaunchInProgress = false;
+        pageWasHiddenForAR = false;
+    }
+
+
+    function renderDeviceInstructions() {
+        if (isIOS) {
+            deviceARHelp.innerHTML = `
+                <div class="device-help-heading">
+                    <span
+                        class="device-help-icon"
+                        aria-hidden="true"
+                    >
+                        🍎
+                    </span>
+
+                    <div>
+                        <strong>
+                            Instrucciones para iPhone
+                        </strong>
+
+                        <span>
+                            Se abrirá Quick Look de Apple
+                        </span>
+                    </div>
+                </div>
+
+                <ol class="device-help-steps">
+                    <li>
+                        Primero acomoda el Modelo 3D con el
+                        ángulo y acercamiento que prefieras.
+                    </li>
+
+                    <li>
+                        Presiona
+                        <strong>
+                            Abrir cámara con esta vista
+                        </strong>.
+                    </li>
+
+                    <li>
+                        En Quick Look selecciona
+                        <strong>AR</strong>, cuando aparezca
+                        la opción.
+                    </li>
+
+                    <li>
+                        Apunta lentamente hacia el piso o una
+                        mesa con buena iluminación.
+                    </li>
+
+                    <li>
+                        El producto aparecerá con la vista
+                        preparada en el Modelo 3D.
+                    </li>
+                </ol>
+
+                <p class="device-help-note">
+                    Quick Look usa los controles propios del
+                    iPhone. Dentro de esa pantalla podrás mover
+                    el producto y ajustar su tamaño con dos dedos.
+                </p>
+            `;
+
+            return;
+        }
+
+
+        if (isAndroid) {
+            deviceARHelp.innerHTML = `
+                <div class="device-help-heading">
+                    <span
+                        class="device-help-icon"
+                        aria-hidden="true"
+                    >
+                        📱
+                    </span>
+
+                    <div>
+                        <strong>
+                            Instrucciones para Android
+                        </strong>
+
+                        <span>
+                            Usa Chrome y permite la cámara
+                        </span>
+                    </div>
+                </div>
+
+                <ol class="device-help-steps">
+                    <li>
+                        Acomoda primero el Modelo 3D con el
+                        ángulo y acercamiento que prefieras.
+                    </li>
+
+                    <li>
+                        Presiona
+                        <strong>
+                            Abrir cámara con esta vista
+                        </strong>.
+                    </li>
+
+                    <li>
+                        Acepta el permiso para utilizar
+                        la cámara.
+                    </li>
+
+                    <li>
+                        Mueve lentamente el teléfono apuntando
+                        hacia una superficie plana.
+                    </li>
+
+                    <li>
+                        El producto conservará la vista que
+                        preparaste en el Modelo 3D.
+                    </li>
+                </ol>
+
+                <p class="device-help-note">
+                    En WebXR aparecerán botones para girar,
+                    cambiar el tamaño y regresar a la vista
+                    copiada del Modelo 3D.
+                </p>
+            `;
+
+            return;
+        }
+
+
+        deviceARHelp.innerHTML = `
+            <div class="device-help-heading">
+                <span
+                    class="device-help-icon"
+                    aria-hidden="true"
+                >
+                    💻
+                </span>
+
+                <div>
+                    <strong>
+                        Abre esta página en un teléfono
+                    </strong>
+
+                    <span>
+                        La computadora permite preparar la vista 3D
+                    </span>
+                </div>
+            </div>
+
+            <p class="
+                device-help-note
+                device-help-warning
+            ">
+                La realidad aumentada necesita la cámara y
+                los sensores de un teléfono compatible.
+                Acomoda aquí el Modelo 3D y abre esta página
+                desde el teléfono para utilizar RA.
+            </p>
+        `;
+    }
+
+
+    function showMode(mode) {
+        panel.hidden = false;
+
+        const is3DMode =
+            mode === "3d";
+
+        controls3D.hidden =
+            !is3DMode;
+
+        controlsAR.hidden =
+            is3DMode;
 
         document
-            .querySelectorAll("[data-model-mode]")
+            .querySelectorAll("[data-mode]")
             .forEach((button) => {
                 const active =
-                    button.dataset.modelMode === mode;
+                    button.dataset.mode === mode;
 
                 button.classList.toggle(
                     "is-active",
@@ -829,38 +1897,69 @@
                 );
             });
 
-        controls3D.hidden = mode !== "3d";
-        controlsAR.hidden = mode !== "ar";
+
+        if (is3DMode) {
+            instructions.innerHTML = `
+                <strong>
+                    Explora el producto
+                </strong>
+
+                <span>
+                    Arrastra para girar. Usa dos dedos
+                    o la rueda para acercar.
+                </span>
+            `;
+
+            if (modelReady) {
+                setViewerFeedback(
+                    "Modelo listo. La vista actual se copiará a RA."
+                );
+            }
+        } else {
+            instructions.innerHTML = `
+                <strong>
+                    Ver en tu espacio
+                </strong>
+
+                <span>
+                    La cámara usará el ángulo y acercamiento
+                    actuales del Modelo 3D.
+                </span>
+            `;
+        }
+
+
+        panel.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+        });
     }
 
 
+    open3DButton.addEventListener(
+        "click",
+        () => {
+            showMode("3d");
+        }
+    );
+
+
+    openARButton.addEventListener(
+        "click",
+        () => {
+            showMode("ar");
+        }
+    );
+
+
     document
-        .querySelectorAll("[data-open-mode]")
+        .querySelectorAll("[data-mode]")
         .forEach((button) => {
             button.addEventListener(
                 "click",
                 () => {
-                    setMode(
-                        button.dataset.openMode
-                    );
-
-                    experience.scrollIntoView({
-                        behavior: "smooth",
-                        block: "nearest",
-                    });
-                }
-            );
-        });
-
-
-    document
-        .querySelectorAll("[data-model-mode]")
-        .forEach((button) => {
-            button.addEventListener(
-                "click",
-                () => {
-                    setMode(
-                        button.dataset.modelMode
+                    showMode(
+                        button.dataset.mode
                     );
                 }
             );
@@ -868,159 +1967,380 @@
 
 
     document
-        .querySelectorAll("[data-rotate-axis]")
+        .querySelectorAll("[data-view-rotate]")
         .forEach((button) => {
             button.addEventListener(
                 "click",
                 () => {
-                    const axis =
-                        button.dataset.rotateAxis;
-
-                    const direction = Number(
-                        button.dataset.direction
+                    rotateCamera(
+                        Number(
+                            button.dataset.viewRotate
+                        )
                     );
-
-                    rotation[axis] +=
-                        direction * 15;
-
-                    applyRotation();
                 }
             );
         });
 
 
-    document
-        .querySelectorAll("[data-move-model]")
-        .forEach((button) => {
-            button.addEventListener(
-                "click",
-                () => {
-                    const direction =
-                        button.dataset.moveModel;
-
-                    if (direction === "left") {
-                        movement.x += moveStep;
-                    }
-
-                    if (direction === "right") {
-                        movement.x -= moveStep;
-                    }
-
-                    if (direction === "up") {
-                        movement.y -= moveStep;
-                    }
-
-                    if (direction === "down") {
-                        movement.y += moveStep;
-                    }
-
-                    applyMovement();
-                }
-            );
-        });
+    const resetViewButton =
+        document.querySelector(
+            "[data-view-reset]"
+        );
 
 
-    if (resetButton) {
-        resetButton.addEventListener(
+    if (resetViewButton) {
+        resetViewButton.addEventListener(
             "click",
-            resetModel
+            resetCamera
         );
     }
 
 
-    if (launchARButton) {
-        launchARButton.addEventListener(
+    /*
+     * Controles de giro dentro de WebXR.
+     *
+     * Parten de la vista copiada desde el Modelo 3D.
+     */
+    document
+        .querySelectorAll("[data-ar-rotate]")
+        .forEach((button) => {
+            button.addEventListener(
+                "click",
+                (event) => {
+                    event.stopPropagation();
+
+                    arRotationY += Number(
+                        button.dataset.arRotate
+                    );
+
+                    applyARTransformations();
+                }
+            );
+        });
+
+
+    document
+        .querySelectorAll("[data-ar-scale]")
+        .forEach((button) => {
+            button.addEventListener(
+                "click",
+                (event) => {
+                    event.stopPropagation();
+
+                    arScale += Number(
+                        button.dataset.arScale
+                    );
+
+                    applyARTransformations();
+                }
+            );
+        });
+
+
+    const resetARButton =
+        document.querySelector(
+            "[data-ar-reset]"
+        );
+
+
+    if (resetARButton) {
+        resetARButton.addEventListener(
             "click",
-            async () => {
-                if (!viewer.canActivateAR) {
-                    arMessage.textContent =
-                        "Este dispositivo o navegador " +
-                        "no permite iniciar realidad " +
-                        "aumentada.";
+            (event) => {
+                event.stopPropagation();
 
-                    return;
-                }
-
-                arMessage.textContent = "";
-
-                try {
-                    await viewer.activateAR();
-                } catch (error) {
-                    arMessage.textContent =
-                        "No fue posible abrir la " +
-                        "experiencia de realidad aumentada.";
-                }
+                resetARTransformations();
             }
         );
     }
 
 
-    viewer.addEventListener(
-        "ar-status",
-        (event) => {
+    launchARButton.addEventListener(
+        "click",
+        () => {
+            setARMessage("");
+
+            if (!modelReady) {
+                setARMessage(
+                    "El modelo todavía está cargando."
+                );
+
+                return;
+            }
+
+            if (!viewer.canActivateAR) {
+                setARMessage(
+                    "La realidad aumentada no está disponible " +
+                    "en este dispositivo o navegador."
+                );
+
+                return;
+            }
+
+
+            const copiedSuccessfully =
+                copyCurrent3DViewToAR();
+
+
+            if (!copiedSuccessfully) {
+                setARMessage(
+                    "No fue posible obtener la vista actual " +
+                    "del Modelo 3D."
+                );
+
+                return;
+            }
+
+
+            arLaunchInProgress = true;
+            pageWasHiddenForAR = false;
+
+
+            if (isIOS) {
+                setARMessage(
+                    "Preparando la vista y abriendo Quick Look…",
+                    "information"
+                );
+            } else {
+                setARMessage(
+                    "Abriendo la cámara con la vista actual…",
+                    "information"
+                );
+            }
+
+
+            /*
+             * activateAR debe ejecutarse directamente
+             * durante el clic del usuario.
+             */
+            const result =
+                viewer.activateAR();
+
+
             if (
-                event.detail.status === "failed"
+                result
+                && typeof result.catch === "function"
             ) {
-                arMessage.textContent =
-                    "La experiencia de realidad " +
-                    "aumentada no pudo iniciarse.";
+                result.catch(() => {
+                    restoreNormal3DViewer();
+
+                    setARMessage(
+                        "No fue posible abrir la cámara."
+                    );
+                });
             }
         }
     );
 
 
+    viewer.addEventListener(
+        "camera-change",
+        () => {
+            synchronizeCameraTheta();
+        }
+    );
+
+
+    viewer.addEventListener(
+        "ar-status",
+        (event) => {
+            const status =
+                event.detail.status;
+
+
+            if (status === "failed") {
+                restoreNormal3DViewer();
+
+                setARMessage(
+                    "No fue posible iniciar la realidad aumentada."
+                );
+            }
+
+
+            if (status === "session-started") {
+                setARMessage(
+                    "Mueve lentamente el teléfono y busca " +
+                    "una superficie plana.",
+                    "information"
+                );
+            }
+
+
+            if (status === "object-placed") {
+                setARMessage(
+                    "Producto colocado con la vista del Modelo 3D.",
+                    "success"
+                );
+            }
+
+
+            if (status === "not-presenting") {
+                restoreNormal3DViewer();
+
+                setARMessage("");
+            }
+        }
+    );
+
+
+    viewer.addEventListener(
+        "ar-tracking",
+        (event) => {
+            const trackingStatus =
+                event.detail.status;
+
+
+            if (trackingStatus === "not-tracking") {
+                setARMessage(
+                    "Mueve lentamente el teléfono y busca " +
+                    "una zona con mejor iluminación.",
+                    "information"
+                );
+            }
+
+
+            if (trackingStatus === "tracking") {
+                setARMessage("");
+            }
+        }
+    );
+
+
+    /*
+     * Quick Look puede ocultar temporalmente Safari.
+     * Al regresar restauramos solamente orientation y scale.
+     * La órbita de la cámara 3D permanece donde el usuario la dejó.
+     */
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+            if (
+                document.hidden
+                && arLaunchInProgress
+            ) {
+                pageWasHiddenForAR = true;
+
+                return;
+            }
+
+
+            if (
+                !document.hidden
+                && arLaunchInProgress
+                && pageWasHiddenForAR
+            ) {
+                setTimeout(
+                    restoreNormal3DViewer,
+                    300
+                );
+            }
+        }
+    );
+
+
+    /*
+     * Preparación inicial.
+     */
+    setViewButtonsEnabled(false);
+    launchARButton.disabled = true;
+
+    renderDeviceInstructions();
+
+
     customElements
         .whenDefined("model-viewer")
         .then(() => {
-            const configureModel = () => {
-                if (
-                    typeof viewer.getDimensions
-                    !== "function"
-                ) {
-                    resetModel();
-                    return;
-                }
 
-                const dimensions =
-                    viewer.getDimensions();
+            const finishLoading = () => {
+                modelReady = true;
 
-                const center =
-                    viewer.getBoundingBoxCenter();
+                setViewButtonsEnabled(true);
 
-                modelCenter = {
-                    x: center.x,
-                    y: center.y,
-                    z: center.z,
+                resetCamera();
+
+                setViewerFeedback(
+                    "Modelo listo. La vista actual se copiará a RA."
+                );
+
+
+                /*
+                 * canActivateAR puede actualizarse después
+                 * de que termine la carga del GLB.
+                 */
+                const updateARAvailability = () => {
+                    if (viewer.canActivateAR) {
+                        launchARButton.disabled = false;
+
+                        if (isIOS) {
+                            setARMessage(
+                                "El modelo está listo para abrirse " +
+                                "en Quick Look.",
+                                "success"
+                            );
+                        }
+
+                        return;
+                    }
+
+
+                    launchARButton.disabled = true;
+
+
+                    if (isMobile) {
+                        setARMessage(
+                            "Este dispositivo o navegador no pudo " +
+                            "habilitar la realidad aumentada."
+                        );
+                    } else {
+                        setARMessage(
+                            "Abre esta página desde un teléfono " +
+                            "compatible para utilizar RA.",
+                            "information"
+                        );
+                    }
                 };
 
-                moveStep = Math.max(
-                    dimensions.x,
-                    dimensions.y,
-                    dimensions.z
-                ) * 0.08;
 
-                if (
-                    !Number.isFinite(moveStep)
-                    || moveStep <= 0
-                ) {
-                    moveStep = 0.05;
-                }
+                updateARAvailability();
 
-                resetModel();
+                setTimeout(
+                    updateARAvailability,
+                    500
+                );
             };
 
+
             if (viewer.loaded) {
-                configureModel();
+                finishLoading();
             } else {
                 viewer.addEventListener(
                     "load",
-                    configureModel,
+                    finishLoading,
                     {
                         once: true,
                     }
                 );
             }
         });
+
+
+    viewer.addEventListener(
+        "error",
+        () => {
+            modelReady = false;
+
+            setViewButtonsEnabled(false);
+            launchARButton.disabled = true;
+
+            setViewerFeedback(
+                "No fue posible cargar el archivo 3D."
+            );
+
+            setARMessage(
+                "Revisa que el archivo GLB sea válido."
+            );
+        }
+    );
 </script>
 
 {% endif %}
