@@ -2052,3 +2052,25 @@ a {
     width: 100%;
   }
 }
+
+.management-controls {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.management-edit-button {
+  width: auto;
+  min-height: 38px;
+  padding: 8px 11px;
+  color: var(--success);
+  font-size: 10px;
+  text-decoration: none;
+  background: rgba(31, 138, 104, 0.1);
+  border: 1px solid rgba(31, 138, 104, 0.24);
+  box-shadow: none;
+}
+
+.management-edit-button:hover {
+  background: rgba(31, 138, 104, 0.16);
+}

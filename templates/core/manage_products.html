@@ -112,22 +112,35 @@ Administrar productos | SMAV INAHER
         </div>
 
         {% if can_delete_catalog %}
-        <div class="management-controls">
-          <form
-            method="post"
-            action="{% url 'eliminar_producto' producto.pk %}"
-            onsubmit="return confirm('¿Eliminar el producto {{ producto.name|escapejs }}? También se eliminarán su imagen y archivos 3D.');"
-          >
-            {% csrf_token %}
+<div class="management-controls">
 
-            <button
-              type="submit"
-              class="btn management-delete-button"
-            >
-              Eliminar
-            </button>
-          </form>
-        </div>
+  {% if can_change_catalog %}
+  <a
+    href="{% url 'editar_producto' producto.pk %}"
+    class="btn management-edit-button"
+  >
+    Editar
+  </a>
+  {% endif %}
+
+  {% if can_delete_catalog %}
+  <form
+    method="post"
+    action="{% url 'eliminar_producto' producto.pk %}"
+    onsubmit="return confirm('¿Eliminar el producto {{ producto.name|escapejs }}? Esta acción no se puede deshacer.');"
+  >
+    {% csrf_token %}
+
+    <button
+      type="submit"
+      class="btn management-delete-button"
+    >
+      Eliminar
+    </button>
+  </form>
+  {% endif %}
+
+</div>
         {% endif %}
 
       </article>

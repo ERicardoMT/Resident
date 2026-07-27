@@ -65,11 +65,17 @@ def home(request):
 
 @login_required
 def dashboard(request):
-    can_view_users = request.user.has_perm("auth.view_user")
-    can_view_catalog = request.user.has_perm( "core.view_catalogitem")
     """Panel de gestión para usuarios y catálogo."""
 
     user_model = get_user_model()
+
+    can_view_users = request.user.has_perm(
+        "auth.view_user"
+    )
+
+    can_view_catalog = request.user.has_perm(
+        "core.view_catalogitem"
+    )
 
     catalog_count = CatalogItem.objects.filter(
         is_active=True
@@ -80,10 +86,10 @@ def dashboard(request):
             "label": "Usuarios",
             "num": user_model.objects.count(),
             "hint": "Cuentas registradas",
-             "url": (
-                    reverse("admin:auth_user_changelist")
-                     if request.user.is_superuser
-                    else ""
+            "url": (
+                reverse("usuarios_dashboard")
+                if can_view_users
+                else ""
             ),
         },
         {
@@ -91,7 +97,9 @@ def dashboard(request):
             "num": catalog_count,
             "hint": "Elementos activos",
             "url": (
-                reverse("administrar_catalogo")
+                reverse("productos_dashboard")
+                if can_view_catalog
+                else ""
             ),
         },
         {
@@ -103,48 +111,13 @@ def dashboard(request):
             ),
             "url": "",
         },
-
-        
-]
-
-    actions = [
-        {
-            "icon": "users",
-            "title": "Crear usuario",
-            "subtitle": (
-                "Registrar una cuenta desde el panel SMAV"
-            ),
-            "url": reverse("crear_usuario"),
-        },
-        {
-            "icon": "catalog",
-            "title": "Agregar al catálogo",
-            "subtitle": (
-                "Registrar nuevos elementos del catálogo"
-            ),
-            "url": reverse("agregar_producto"),
-        },
-        {
-            "icon": "catalog",
-            "title": "Ver catálogo",
-            "subtitle": (
-                "Revisar las familias y productos publicados"
-            ),
-            "url": reverse("catalogo"),
-        },
     ]
-
-    recent_items = CatalogItem.objects.filter(
-        is_active=True
-    ).order_by('-id')[:6]
 
     return render(
         request,
         "core/dashboard.html",
         {
             "stats": stats,
-            "actions": actions,
-            "recent_items": recent_items,
             "can_add_users": request.user.has_perm(
                 "auth.add_user"
             ),
@@ -251,12 +224,34 @@ def eliminar_usuario_view(request, user_id):
     "core.view_catalogitem",
     raise_exception=True,
 )
+@login_required
+@permission_required(
+    "core.view_catalogitem",
+    raise_exception=True,
+)
 def productos_dashboard_view(request):
-    """Muestra todos los productos registrados en la base."""
+    """Muestra los productos registrados en la base de datos."""
 
     productos = CatalogItem.objects.all().order_by(
         "-created_at",
         "-id",
+    )
+
+    return render(
+        request,
+        "core/manage_products.html",
+        {
+            "productos": productos,
+            "can_add_catalog": request.user.has_perm(
+                "core.add_catalogitem"
+            ),
+            "can_change_catalog": request.user.has_perm(
+                "core.change_catalogitem"
+            ),
+            "can_delete_catalog": request.user.has_perm(
+                "core.delete_catalogitem"
+            ),
+        },
     )
 
     return render(
@@ -588,21 +583,32 @@ def producto_detalle_view(request, nombre_producto):
         },
     )
 
-def eliminar_producto_view(request, id):
-    # Busca el producto por su ID y lo elimina de la base de datos
-    producto = get_object_or_404(CatalogItem, id=id)
-    producto.delete()
-    return redirect('dashboard')
-
+@login_required
+@permission_required(
+    "core.view_catalogitem",
+    raise_exception=True,
+)
 def administrar_catalogo_view(request):
-    """Vista exclusiva para ver, editar y eliminar productos desde el panel"""
-    productos = CatalogItem.objects.all().order_by('-id')
-    return render(request, "core/administrar_catalogo.html", {"catalog_items": productos})
+    """Muestra temporalmente el catálogo administrativo."""
 
-def editar_producto_view(request, id):
-    """Vista para editar la información de un producto existente"""
-    from django.shortcuts import get_object_or_404, redirect
-    producto = get_object_or_404(CatalogItem, id=id)
+    productos = CatalogItem.objects.all().order_by(
+        "-created_at",
+        "-id",
+    )
+
+    return render(
+        request,
+        "core/administrar_catalogo.html",
+        {
+            "catalog_items": productos,
+        },
+    )
+
+def editar_producto_view(request, product_id):
+    producto = get_object_or_404(
+        CatalogItem,
+        pk=product_id,
+    )
     
     if request.method == "POST":
         # Guardamos los textos limitando espacios extra
