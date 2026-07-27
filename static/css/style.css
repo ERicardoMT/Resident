@@ -2074,3 +2074,121 @@ a {
 .management-edit-button:hover {
   background: rgba(31, 138, 104, 0.16);
 }
+
+/* =========================================================
+   Corrección final: botones de administración de productos
+   ========================================================= */
+
+.management-item > .management-controls {
+  display: flex;
+  flex: 0 0 96px;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 7px;
+  width: 96px;
+  margin: 0 0 0 auto;
+  padding: 0;
+}
+
+.management-item > .management-controls form {
+  display: block;
+  width: 100%;
+  margin: 0;
+}
+
+/* Estilo compartido */
+.management-item .management-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  padding: 8px 10px;
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none !important;
+
+  border: 1px solid transparent;
+  border-radius: 9px;
+  box-shadow: none;
+  cursor: pointer;
+
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.management-item .management-action svg {
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+}
+
+/* Editar */
+.management-item .management-edit-button,
+.management-item .management-edit-button:link,
+.management-item .management-edit-button:visited {
+  color: #176b4d !important;
+  background: #e7f6ef !important;
+  border-color: #a6d8c5 !important;
+}
+
+.management-item .management-edit-button:hover {
+  color: #ffffff !important;
+  background: #1f8a68 !important;
+  border-color: #1f8a68 !important;
+  box-shadow: 0 5px 12px rgba(31, 138, 104, 0.22);
+  transform: translateY(-1px);
+}
+
+/* Eliminar */
+.management-item .management-delete-button {
+  color: #a9343d !important;
+  background: #fcebed !important;
+  border-color: #e5aeb3 !important;
+}
+
+.management-item .management-delete-button:hover {
+  color: #ffffff !important;
+  background: #c64a53 !important;
+  border-color: #c64a53 !important;
+  box-shadow: 0 5px 12px rgba(198, 74, 83, 0.22);
+  transform: translateY(-1px);
+}
+
+.management-item .management-action:active {
+  box-shadow: none;
+  transform: translateY(0);
+}
+
+.management-item .management-action:focus-visible {
+  outline: 3px solid rgba(24, 166, 217, 0.25);
+  outline-offset: 2px;
+}
+
+/* En pantallas pequeñas, colocar ambos botones abajo */
+@media (max-width: 420px) {
+  .management-item > .management-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    flex: 1 0 100%;
+    width: 100%;
+    margin: 3px 0 0;
+    padding-left: 58px;
+  }
+
+  .management-item > .management-controls form {
+    width: 100%;
+  }
+}
