@@ -583,26 +583,7 @@ def producto_detalle_view(request, nombre_producto):
         },
     )
 
-@login_required
-@permission_required(
-    "core.view_catalogitem",
-    raise_exception=True,
-)
-def administrar_catalogo_view(request):
-    """Muestra temporalmente el catálogo administrativo."""
 
-    productos = CatalogItem.objects.all().order_by(
-        "-created_at",
-        "-id",
-    )
-
-    return render(
-        request,
-        "core/administrar_catalogo.html",
-        {
-            "catalog_items": productos,
-        },
-    )
 
 def editar_producto_view(request, product_id):
     producto = get_object_or_404(
@@ -626,6 +607,10 @@ def editar_producto_view(request, product_id):
             producto.model_3d = request.FILES.get("model_3d")
 
         producto.save()
-        return redirect('administrar_catalogo')
+        messages.success(
+    request,
+    f'El producto "{producto.name}" se actualizó correctamente.',
+    )
+        return redirect("productos_dashboard")
 
     return render(request, "core/editar_producto.html", {"producto": producto})

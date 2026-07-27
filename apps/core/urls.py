@@ -56,13 +56,7 @@ urlpatterns = [
         name="eliminar_producto",
     ),
 
-    # Esta ruta se eliminará en el paso 4
-    path(
-        "dashboard/administrar-catalogo/",
-        views.administrar_catalogo_view,
-        name="administrar_catalogo",
-    ),
-
+    
     # Catálogo público
     path(
         "catalogo/",
