@@ -25,199 +25,634 @@
     <h2 style="color: #14204e; text-align: center; margin-bottom: 20px; font-weight: 700;">Añadir Elemento del Catálogo</h2>
     
     <!-- NOTA: Se agregó enctype="multipart/form-data" para que soporte el envío de archivos -->
-    <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
-        {% csrf_token %}
-        
-        <input type="hidden" name="category" id="final_category">
-        
-        <div>
-            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Nombre del producto:</label>
-            <input type="text" name="name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">
-        </div>
+    <form
+    method="post"
+    enctype="multipart/form-data"
+    style="
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    "
+>
+    {% csrf_token %}
 
-        <div>
-            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Categoría:</label>
-            <select id="main_category" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; background: white; font-family: inherit;">
-                <option value="antivibratorios">Antivibratorios</option>
-                <option value="patas_niveladoras">Patas niveladoras</option>
-                <option value="accionamiento">Elementos de accionamiento y maniobra</option>
-                <option value="mobiliario">Niveladores para mobiliario</option>
-            </select>
-        </div>
-
-        <div id="subcategory_container">
-            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Subcategoría:</label>
-            <select id="sub_category" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; background: white; font-family: inherit;">
-                <!-- Opciones dinámicas -->
-            </select>
-        </div>
-
-        <div>
-            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Descripción completa:</label>
-            <textarea name="description" id="descripcion_editor" rows="10" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;"></textarea>
-        </div>
-
-        <div>
-            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Precio o Etiqueta (Ej. Cotizar):</label>
-            <input type="text" name="price_label" value="Cotizar" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">
-        </div>
-
-        <div>
-            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Insignia / Badge (Opcional):</label>
-            <input type="text" name="badge" placeholder="Ej. Nuevo 2024, Top 10" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">
-        </div>
-
-        <!-- ZONA DE SUBIDA DE ARCHIVOS -->
-        <div style="background: #f4f6f9; padding: 15px; border-radius: 8px; border: 1px dashed #b0b8c1;">
-            
-            <!-- Campo para Agregar Imagen -->
-            <div style="margin-bottom: 15px;">
-                <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Agregar imagen:</label>
-                <input type="file" name="image" id="product_image" accept=".jpg, .jpeg, .png" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; background: white;">
-                <small style="color: #666; display: block; margin-top: 5px; font-weight: 500;">* Subir imagen no mayor a 5MB (Formatos aceptados: .jpg, .png)</small>
-            </div>
-
-<div>
-    <label
-        for="product_model"
+    {% if form.non_field_errors %}
+    <div
         style="
-            color: #333;
+            padding: 12px;
+            color: #842029;
+            background: #f8d7da;
+            border: 1px solid #f5c2c7;
+            border-radius: 6px;
+        "
+    >
+        {% for error in form.non_field_errors %}
+            <div>{{ error }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Nombre -->
+    <div>
+        <label
+            for="product_name"
+            style="
+                color: #333;
+                font-weight: bold;
+                font-size: 0.9rem;
+            "
+        >
+            Nombre del producto:
+        </label>
+
+        <input
+            type="text"
+            name="name"
+            id="product_name"
+            value="{{ form.name.value|default_if_none:'' }}"
+            required
+            style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                margin-top: 5px;
+            "
+        >
+
+        {% for error in form.name.errors %}
+        <small
+            style="
+                color: #b42318;
+                display: block;
+                margin-top: 5px;
+            "
+        >
+            {{ error }}
+        </small>
+        {% endfor %}
+    </div>
+
+    <!-- Categoría -->
+    <div>
+        <label
+            for="main_category"
+            style="
+                color: #333;
+                font-weight: bold;
+                font-size: 0.9rem;
+            "
+        >
+            Categoría:
+        </label>
+
+        <select
+            name="category"
+            id="main_category"
+            required
+            style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                margin-top: 5px;
+                background: white;
+                font-family: inherit;
+            "
+        >
+            <option value="antivibratorios">
+                Antivibratorios
+            </option>
+
+            <option value="patas_niveladoras">
+                Patas niveladoras
+            </option>
+
+            <option value="accionamiento">
+                Elementos de accionamiento y maniobra
+            </option>
+
+            <option value="mobiliario">
+                Niveladores para mobiliario
+            </option>
+        </select>
+
+        {% for error in form.category.errors %}
+        <small
+            style="
+                color: #b42318;
+                display: block;
+                margin-top: 5px;
+            "
+        >
+            {{ error }}
+        </small>
+        {% endfor %}
+    </div>
+
+    <!-- Subcategoría -->
+    <div id="subcategory_container">
+        <label
+            for="sub_category"
+            style="
+                color: #333;
+                font-weight: bold;
+                font-size: 0.9rem;
+            "
+        >
+            Subcategoría:
+        </label>
+
+        <select
+            name="subcategory"
+            id="sub_category"
+            style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                margin-top: 5px;
+                background: white;
+                font-family: inherit;
+            "
+        >
+            <!-- Las opciones se generan con JavaScript -->
+        </select>
+
+        {% for error in form.subcategory.errors %}
+        <small
+            style="
+                color: #b42318;
+                display: block;
+                margin-top: 5px;
+            "
+        >
+            {{ error }}
+        </small>
+        {% endfor %}
+    </div>
+
+    <!-- Descripción -->
+    <div>
+        <label
+            for="descripcion_editor"
+            style="
+                color: #333;
+                font-weight: bold;
+                font-size: 0.9rem;
+            "
+        >
+            Descripción completa:
+        </label>
+
+        <textarea
+            name="description"
+            id="descripcion_editor"
+            rows="10"
+            style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                margin-top: 5px;
+            "
+        >{{ form.description.value|default_if_none:'' }}</textarea>
+
+        {% for error in form.description.errors %}
+        <small
+            style="
+                color: #b42318;
+                display: block;
+                margin-top: 5px;
+            "
+        >
+            {{ error }}
+        </small>
+        {% endfor %}
+    </div>
+
+    <!-- Precio -->
+    <div>
+        <label
+            for="price_label"
+            style="
+                color: #333;
+                font-weight: bold;
+                font-size: 0.9rem;
+            "
+        >
+            Precio o etiqueta:
+        </label>
+
+        <input
+            type="text"
+            name="price_label"
+            id="price_label"
+            value="{{ form.price_label.value|default:'Cotizar' }}"
+            required
+            style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                margin-top: 5px;
+            "
+        >
+
+        {% for error in form.price_label.errors %}
+        <small
+            style="
+                color: #b42318;
+                display: block;
+                margin-top: 5px;
+            "
+        >
+            {{ error }}
+        </small>
+        {% endfor %}
+    </div>
+
+    <!-- Badge -->
+    <div>
+        <label
+            for="product_badge"
+            style="
+                color: #333;
+                font-weight: bold;
+                font-size: 0.9rem;
+            "
+        >
+            Insignia / Badge (opcional):
+        </label>
+
+        <input
+            type="text"
+            name="badge"
+            id="product_badge"
+            value="{{ form.badge.value|default_if_none:'' }}"
+            placeholder="Ej. Nuevo, Recomendado"
+            style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                margin-top: 5px;
+            "
+        >
+
+        {% for error in form.badge.errors %}
+        <small
+            style="
+                color: #b42318;
+                display: block;
+                margin-top: 5px;
+            "
+        >
+            {{ error }}
+        </small>
+        {% endfor %}
+    </div>
+
+    <!-- Archivos -->
+    <div
+        style="
+            background: #f4f6f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #b0b8c1;
+        "
+    >
+        <!-- Imagen -->
+        <div style="margin-bottom: 15px;">
+            <label
+                for="product_image"
+                style="
+                    color: #333;
+                    font-weight: bold;
+                    font-size: 0.9rem;
+                "
+            >
+                Agregar imagen:
+            </label>
+
+            <input
+                type="file"
+                name="image"
+                id="product_image"
+                accept=".jpg,.jpeg,.png,.webp"
+                style="
+                    width: 100%;
+                    padding: 8px;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                    margin-top: 5px;
+                    background: white;
+                "
+            >
+
+            <small
+                style="
+                    color: #666;
+                    display: block;
+                    margin-top: 5px;
+                    font-weight: 500;
+                "
+            >
+                Tamaño máximo: 5 MB. Formatos:
+                JPG, JPEG, PNG o WEBP.
+            </small>
+
+            {% for error in form.image.errors %}
+            <small
+                style="
+                    color: #b42318;
+                    display: block;
+                    margin-top: 5px;
+                "
+            >
+                {{ error }}
+            </small>
+            {% endfor %}
+        </div>
+
+        <!-- Modelo GLB -->
+        <div>
+            <label
+                for="product_model"
+                style="
+                    color: #333;
+                    font-weight: bold;
+                    font-size: 0.9rem;
+                "
+            >
+                Archivo GLB para modelo 3D y realidad aumentada:
+            </label>
+
+            <input
+                type="file"
+                name="model_3d"
+                id="product_model"
+                accept=".glb,model/gltf-binary"
+                style="
+                    width: 100%;
+                    padding: 8px;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                    margin-top: 5px;
+                    background: white;
+                "
+            >
+
+            <small
+                style="
+                    color: #666;
+                    display: block;
+                    margin-top: 5px;
+                "
+            >
+                El mismo archivo GLB se utilizará en el visor
+                3D y en realidad aumentada. Tamaño máximo:
+                20 MB.
+            </small>
+
+            {% for error in form.model_3d.errors %}
+            <small
+                style="
+                    color: #b42318;
+                    display: block;
+                    margin-top: 5px;
+                "
+            >
+                {{ error }}
+            </small>
+            {% endfor %}
+        </div>
+    </div>
+
+    <button
+        type="submit"
+        style="
+            background: #14204e;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            margin-top: 15px;
+            cursor: pointer;
         "
     >
-        Archivo GLB para Modelo 3D y Realidad Aumentada:
-    </label>
-
-    <input
-        type="file"
-        name="model_3d"
-        id="product_model"
-        accept=".glb,model/gltf-binary"
-        style="
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-top: 5px;
-            background: white;
-        "
-    >
-
-    <small
-        style="
-            color: #666;
-            display: block;
-            margin-top: 5px;
-        "
-    >
-        El mismo archivo GLB se utilizará para el visor 3D
-        y para la experiencia de realidad aumentada.
-        Tamaño máximo: 20 MB.
-    </small>
-</div>
-
-        </div>
-
-        <button type="submit" style="background: #14204e; color: white; padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; margin-top: 15px; cursor: pointer;">Guardar Producto</button>
-    </form>
+        Guardar producto
+    </button>
+</form>
 </section>
 
-<!-- Script para manejar Categorías y Validación de Archivos -->
+<!-- Categorías y validación básica en navegador -->
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const categorySelect = document.getElementById('main_category');
-        const subcategoryContainer = document.getElementById('subcategory_container');
-        const subcategorySelect = document.getElementById('sub_category');
-        const finalCategoryInput = document.getElementById('final_category');
+document.addEventListener("DOMContentLoaded", function () {
+    const categorySelect =
+        document.getElementById("main_category");
 
-        const subcategoriesData = {
-            'antivibratorios': [
-                { value: 'colgantes', text: 'Colgantes antivibración' },
-                { value: 'niveladores_maq', text: 'Niveladores antivibración para maquinaria' },
-                { value: 'pies', text: 'Pies antivibración' },
-                { value: 'soportes_piso', text: 'Soportes antivibración con anclaje al piso' },
-                { value: 'tacones', text: 'Tacones antivibración' }
-            ],
-            'patas_niveladoras': [
-                { value: 'alta_resistencia', text: 'Alta resistencia' },
-                { value: 'anclaje_piso', text: 'Anclaje al piso' },
-                { value: 'antiderrapante', text: 'Antiderrapante' },
-                { value: 'antivibracion', text: 'Antivibracion' },
-                { value: 'con_rotula', text: 'Con rotula' },
-                { value: 'uso_rudo', text: 'Uso rudo' }
-            ]
-        };
+    const subcategoryContainer =
+        document.getElementById("subcategory_container");
 
-        function updateForm() {
-            const selectedCat = categorySelect.value;
-            subcategorySelect.innerHTML = '';
+    const subcategorySelect =
+        document.getElementById("sub_category");
 
-            if (subcategoriesData[selectedCat]) {
-                subcategoryContainer.style.display = 'block';
-                subcategoriesData[selectedCat].forEach(sub => {
-                    const option = document.createElement('option');
-                    option.value = sub.value;
-                    option.textContent = sub.text;
-                    subcategorySelect.appendChild(option);
-                });
-                finalCategoryInput.value = subcategorySelect.value;
-            } else {
-                subcategoryContainer.style.display = 'none';
-                finalCategoryInput.value = selectedCat;
+    const initialCategory =
+        "{{ form.category.value|default:'antivibratorios'|escapejs }}";
+
+    const initialSubcategory =
+        "{{ form.subcategory.value|default:''|escapejs }}";
+
+    const subcategoriesData = {
+        antivibratorios: [
+            {
+                value: "colgantes",
+                text: "Colgantes antivibración"
+            },
+            {
+                value: "niveladores_maq",
+                text: "Niveladores antivibración para maquinaria"
+            },
+            {
+                value: "pies",
+                text: "Pies antivibración"
+            },
+            {
+                value: "soportes_piso",
+                text: "Soportes antivibración con anclaje al piso"
+            },
+            {
+                value: "tacones",
+                text: "Tacones antivibración"
             }
+        ],
+
+        patas_niveladoras: [
+            {
+                value: "alta_resistencia",
+                text: "Alta resistencia"
+            },
+            {
+                value: "anclaje_piso",
+                text: "Anclaje al piso"
+            },
+            {
+                value: "antiderrapante",
+                text: "Antiderrapante"
+            },
+            {
+                value: "antivibracion",
+                text: "Antivibración"
+            },
+            {
+                value: "con_rotula",
+                text: "Con rótula"
+            },
+            {
+                value: "uso_rudo",
+                text: "Uso rudo"
+            }
+        ]
+    };
+
+    function updateSubcategories(
+        selectedSubcategory = ""
+    ) {
+        const selectedCategory =
+            categorySelect.value;
+
+        const subcategories =
+            subcategoriesData[selectedCategory] || [];
+
+        subcategorySelect.innerHTML = "";
+
+        if (subcategories.length === 0) {
+            subcategoryContainer.style.display = "none";
+
+            subcategorySelect.disabled = true;
+            subcategorySelect.required = false;
+
+            return;
         }
 
-        categorySelect.addEventListener('change', updateForm);
-        
-        subcategorySelect.addEventListener('change', function() {
-            finalCategoryInput.value = this.value;
+        subcategoryContainer.style.display = "block";
+
+        subcategorySelect.disabled = false;
+        subcategorySelect.required = true;
+
+        subcategories.forEach(function (subcategory) {
+            const option =
+                document.createElement("option");
+
+            option.value = subcategory.value;
+            option.textContent = subcategory.text;
+
+            subcategorySelect.appendChild(option);
         });
 
-        updateForm();
+        const optionExists = Array.from(
+            subcategorySelect.options
+        ).some(function (option) {
+            return option.value === selectedSubcategory;
+        });
 
-        const imageInput = document.getElementById('product_image');
-        if(imageInput) {
-            imageInput.addEventListener('change', function() {
-                const maxFileSize = 5 * 1024 * 1024; 
-                if (this.files[0] && this.files[0].size > maxFileSize) {
-                    alert('El archivo supera el límite de 5MB. Por favor, selecciona una imagen más ligera.');
-                    this.value = ''; 
+        if (optionExists) {
+            subcategorySelect.value =
+                selectedSubcategory;
+        }
+    }
+
+    const categoryExists = Array.from(
+        categorySelect.options
+    ).some(function (option) {
+        return option.value === initialCategory;
+    });
+
+    if (categoryExists) {
+        categorySelect.value = initialCategory;
+    }
+
+    updateSubcategories(initialSubcategory);
+
+    categorySelect.addEventListener(
+        "change",
+        function () {
+            updateSubcategories();
+        }
+    );
+
+    const imageInput =
+        document.getElementById("product_image");
+
+    if (imageInput) {
+        imageInput.addEventListener(
+            "change",
+            function () {
+                const file = this.files[0];
+
+                if (!file) {
+                    return;
                 }
-            });
-        }
-    });
-    const modelInput = document.getElementById("product_model");
 
-if (modelInput) {
-    modelInput.addEventListener("change", function () {
-        const file = this.files[0];
+                const maximumSize =
+                    5 * 1024 * 1024;
 
-        if (!file) {
-            return;
-        }
+                if (file.size > maximumSize) {
+                    alert(
+                        "La imagen no puede superar los 5 MB."
+                    );
 
-        const extension = file.name
-            .split(".")
-            .pop()
-            .toLowerCase();
+                    this.value = "";
+                }
+            }
+        );
+    }
 
-        if (extension !== "glb") {
-            alert("El modelo debe estar en formato GLB.");
-            this.value = "";
-            return;
-        }
+    const modelInput =
+        document.getElementById("product_model");
 
-        const maxModelSize = 20 * 1024 * 1024;
+    if (modelInput) {
+        modelInput.addEventListener(
+            "change",
+            function () {
+                const file = this.files[0];
 
-        if (file.size > maxModelSize) {
-            alert("El archivo GLB no puede superar los 20 MB.");
-            this.value = "";
-        }
-    });
-}
+                if (!file) {
+                    return;
+                }
+
+                const extension = file.name
+                    .split(".")
+                    .pop()
+                    .toLowerCase();
+
+                if (extension !== "glb") {
+                    alert(
+                        "El modelo debe estar en formato GLB."
+                    );
+
+                    this.value = "";
+                    return;
+                }
+
+                const maximumSize =
+                    20 * 1024 * 1024;
+
+                if (file.size > maximumSize) {
+                    alert(
+                        "El archivo GLB no puede superar los 20 MB."
+                    );
+
+                    this.value = "";
+                }
+            }
+        );
+    }
+});
 </script>
-
 <!-- Cargar TinyMCE desde un CDN gratuito que no pide API Key -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js"></script>
 <script>

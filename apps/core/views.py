@@ -7,7 +7,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from django.urls import reverse
 
-from .forms import SMAVUserCreationForm
+from .forms import (
+    CatalogItemForm,
+    SMAVUserCreationForm,
+)
 from .models import CatalogItem
 from pathlib import Path
 
@@ -439,99 +442,36 @@ def mobiliario_view(request):
     "core.add_catalogitem",
     raise_exception=True,
 )
-
 def agregar_producto_view(request):
+    """Crea un producto usando CatalogItemForm."""
+
     if request.method == "POST":
-        nombre = request.POST.get("name", "").strip()
-        categoria = request.POST.get("category", "").strip()
-        descripcion = request.POST.get("description", "")
-        precio = request.POST.get(
-            "price_label",
-            "Cotizar",
-        ).strip()
-        badge = request.POST.get("badge", "").strip()
-
-        imagen = request.FILES.get("image")
-
-        # Acepta el nombre nuevo y el anterior para no romper formularios.
-        modelo_3d = (
-            request.FILES.get("model_3d")
-            or request.FILES.get("ar_model")
+        form = CatalogItemForm(
+            request.POST,
+            request.FILES,
         )
 
-        if not nombre:
-            messages.error(
-                request,
-                "El nombre del producto es obligatorio.",
-            )
-            return render(
-                request,
-                "core/add_product.html",
-                status=400,
-            )
+        if form.is_valid():
+            producto = form.save()
 
-        if imagen and imagen.size > 5 * 1024 * 1024:
-            messages.error(
+            messages.success(
                 request,
-                "La imagen no puede superar los 5 MB.",
-            )
-            return render(
-                request,
-                "core/add_product.html",
-                status=400,
+                (
+                    f'El producto "{producto.name}" '
+                    "se guardó correctamente."
+                ),
             )
 
-        if modelo_3d:
-            extension = Path(
-                modelo_3d.name,
-            ).suffix.lower()
-
-            if extension != ".glb":
-                messages.error(
-                    request,
-                    "El modelo debe ser un archivo GLB.",
-                )
-                return render(
-                    request,
-                    "core/add_product.html",
-                    status=400,
-                )
-
-            if modelo_3d.size > 20 * 1024 * 1024:
-                messages.error(
-                    request,
-                    "El archivo GLB no puede superar los 20 MB.",
-                )
-                return render(
-                    request,
-                    "core/add_product.html",
-                    status=400,
-                )
-
-        nuevo_item = CatalogItem(
-            name=nombre,
-            category=categoria,
-            description=descripcion,
-            price_label=precio or "Cotizar",
-            badge=badge,
-            image=imagen,
-            model_3d=modelo_3d,
-            is_active=True,
-            sort_order=0,
-        )
-
-        nuevo_item.save()
-
-        messages.success(
-            request,
-            f'El producto "{nuevo_item.name}" se guardó correctamente.',
-        )
-
-        return redirect("dashboard")
+            return redirect("productos_dashboard")
+    else:
+        form = CatalogItemForm()
 
     return render(
         request,
         "core/add_product.html",
+        {
+            "form": form,
+        },
     )
 
 def producto_detalle_view(request, nombre_producto):
@@ -582,32 +522,90 @@ def producto_detalle_view(request, nombre_producto):
 
 
 
+@login_required
+@permission_required(
+    "core.change_catalogitem",
+    raise_exception=True,
+)
 def editar_producto_view(request, product_id):
+    """Edita un producto usando CatalogItemForm."""
+
     producto = get_object_or_404(
         CatalogItem,
         pk=product_id,
     )
-    
+
+    old_files = {
+        "image": (
+            producto.image.name
+            if producto.image
+            else ""
+        ),
+        "model_3d": (
+            producto.model_3d.name
+            if producto.model_3d
+            else ""
+        ),
+        "ar_model": (
+            producto.ar_model.name
+            if producto.ar_model
+            else ""
+        ),
+    }
+
     if request.method == "POST":
-        # Guardamos los textos limitando espacios extra
-        producto.name = request.POST.get("name", producto.name).strip()
-        producto.category = request.POST.get("category", producto.category).strip()
-        producto.subcategory = request.POST.get("subcategory", producto.subcategory or "").strip()
-        producto.description = request.POST.get("description", producto.description)
-        producto.price_label = request.POST.get("price_label", producto.price_label).strip()
-        producto.badge = request.POST.get("badge", producto.badge).strip()
+        form = CatalogItemForm(
+            request.POST,
+            request.FILES,
+            instance=producto,
+        )
 
-        # Solo actualiza la imagen o el modelo 3D si el usuario sube un archivo nuevo
-        if request.FILES.get("image"):
-            producto.image = request.FILES.get("image")
-        if request.FILES.get("model_3d"):
-            producto.model_3d = request.FILES.get("model_3d")
+        if form.is_valid():
+            producto_actualizado = form.save()
 
-        producto.save()
-        messages.success(
-    request,
-    f'El producto "{producto.name}" se actualizó correctamente.',
+            for field_name, old_name in old_files.items():
+                new_file = getattr(
+                    producto_actualizado,
+                    field_name,
+                )
+
+                new_name = (
+                    new_file.name
+                    if new_file
+                    else ""
+                )
+
+                if old_name and old_name != new_name:
+                    model_field = (
+                        producto_actualizado
+                        ._meta
+                        .get_field(field_name)
+                    )
+
+                    model_field.storage.delete(
+                        old_name
+                    )
+
+            messages.success(
+                request,
+                (
+                    f'El producto '
+                    f'"{producto_actualizado.name}" '
+                    "se actualizó correctamente."
+                ),
+            )
+
+            return redirect("productos_dashboard")
+    else:
+        form = CatalogItemForm(
+            instance=producto,
+        )
+
+    return render(
+        request,
+        "core/editar_producto.html",
+        {
+            "producto": producto,
+            "form": form,
+        },
     )
-        return redirect("productos_dashboard")
-
-    return render(request, "core/editar_producto.html", {"producto": producto})
