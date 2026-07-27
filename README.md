@@ -10,7 +10,6 @@ apps/
   core/           # Home y menu principal
   vibration/      # Medicion vibratoria, API y FFT
   attenuation/    # Atenuacion vibratoria
-  shock/          # Respuesta a choque
   stops/          # Calculo de topes
   leveler/        # Nivelador basado en los sensores de orientación telefono
 templates/

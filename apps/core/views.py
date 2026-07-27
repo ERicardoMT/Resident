@@ -41,13 +41,6 @@ def home(request):
             "available": True,
         },
         {
-            "icon": "shock",
-            "title": "Respuesta a choque",
-            "subtitle": "Evaluación de impactos y respuesta dinámica",
-            "url_name": "shock",
-            "available": True,
-        },
-        {
             "icon": "stops",
             "title": "Selección de soportes y topes",
             "subtitle": "Dimensionamiento de elementos elásticos",

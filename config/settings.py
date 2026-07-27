@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.attenuation",
     "apps.vibration",
-    "apps.shock",
     "apps.stops",
     "apps.leveler",
 ]
