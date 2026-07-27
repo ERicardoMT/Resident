@@ -127,15 +127,12 @@ Administrar productos | SMAV INAHER
   <form
     method="post"
     action="{% url 'eliminar_producto' producto.pk %}"
-    onsubmit="return confirm('¿Eliminar el producto {{ producto.name|escapejs }}? Esta acción no se puede deshacer.');"
+    onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');"
   >
     {% csrf_token %}
 
-    <button
-      type="submit"
-      class="btn management-delete-button"
-    >
-      Eliminar
+    <button type="submit">
+        Eliminar
     </button>
   </form>
   {% endif %}

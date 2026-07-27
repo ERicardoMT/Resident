@@ -276,8 +276,6 @@ def productos_dashboard_view(request):
 )
 @require_POST
 def eliminar_producto_view(request, product_id):
-    """Elimina un producto y sus archivos multimedia."""
-
     producto = get_object_or_404(
         CatalogItem,
         pk=product_id,
@@ -285,7 +283,6 @@ def eliminar_producto_view(request, product_id):
 
     product_name = producto.name
 
-    # También elimina la imagen y los modelos subidos.
     for field_name in (
         "image",
         "model_3d",
