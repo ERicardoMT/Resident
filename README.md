@@ -67,3 +67,13 @@ Si PowerShell bloquea la activacion del entorno, usa esta orden una sola vez en 
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
+
+## Variables de entorno
+
+El proyecto utiliza un archivo `.env` privado para la
+configuración local.
+
+Crear el archivo a partir del ejemplo:
+
+```bash
+cp .env.example .env

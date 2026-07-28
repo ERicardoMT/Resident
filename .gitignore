@@ -1,4 +1,7 @@
-# v0 sandbox internal files
+# =========================================================
+# Archivos internos de herramientas
+# =========================================================
+
 __v0_runtime_loader.js
 __v0_devtools.tsx
 __v0_jsx-dev-runtime.ts
@@ -6,25 +9,75 @@ __v0_jsx-dev-runtime.ts
 .v0-trash/
 .vercel/
 
-# Environment variables
-.env*.local
 
-# Common ignores
-node_modules
-.next/
-.DS_Store
+# =========================================================
+# Variables de entorno y credenciales
+# =========================================================
 
-# Python / Django
+.env
+.env.*
+!.env.example
+
+postgres_env.sh
+postgres_env.ps1
+
+
+# =========================================================
+# Python
+# =========================================================
+
+venv/
 .venv/
-__pycache__/
-*.pyc
-db.sqlite3
-staticfiles/
-postgres_env.ps1
+env/
 
-postgres_env.sh
-postgres_env.ps1
-# Variables privadas de PostgreSQL
-postgres_env.sh
-# Archivos cargados localmente
+__pycache__/
+*.py[cod]
+*$py.class
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+coverage.xml
+.coverage
+htmlcov/
+
+
+# =========================================================
+# Django
+# =========================================================
+
+db.sqlite3
+db.sqlite3-journal
+
 media/
+staticfiles/
+
+*.log
+
+
+# =========================================================
+# Editores
+# =========================================================
+
+.vscode/
+.idea/
+
+*.swp
+*.swo
+
+
+# =========================================================
+# Sistema operativo
+# =========================================================
+
+.DS_Store
+Thumbs.db
+
+
+# =========================================================
+# Node
+# =========================================================
+
+node_modules/
+.next/
