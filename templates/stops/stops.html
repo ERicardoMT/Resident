@@ -1,87 +1,390 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Selección de topes | SMAV INAHER{% endblock %}
+{% block title %}Selección de soporte y Nivelador | SMAV INAHER{% endblock %}
 
 {% block content %}
-<section class="page">
-  <h1 class="page-title">Calculo de topes</h1>
+<section class="page leveler-page">
+  <span class="section-kicker">
+    Herramienta combinada
+  </span>
+
+  <h1 class="page-title">
+    Selección de soporte y Nivelador
+  </h1>
+
   <p class="page-lead">
-    Dimensiona un tope elastico a partir de la carga, la rigidez y la deflexion
-    maxima admisible.
+    Dimensiona un soporte o tope elástico y utiliza los
+    sensores del teléfono para comprobar la nivelación.
   </p>
 
-  <div class="card">
+  <div class="btn-row">
+    <a
+      class="btn btn-secondary"
+      href="#seleccion-soporte"
+    >
+      Seleccionar soporte
+    </a>
+
+    <a
+      class="btn btn-ghost"
+      href="#nivelador-digital"
+    >
+      Abrir nivelador
+    </a>
+  </div>
+
+  <div
+    class="card"
+    id="seleccion-soporte"
+  >
+    <span class="section-kicker">
+      Dimensionamiento
+    </span>
+
+    <h2>
+      Selección de soporte y tope
+    </h2>
+
+    <p>
+      Calcula la deflexión del soporte utilizando la carga,
+      la rigidez y la deflexión máxima permitida.
+    </p>
+
     <div class="field">
-      <label for="load">Carga aplicada (N)</label>
-      <input type="number" id="load" value="500" min="0" step="10" />
+      <label for="support-load">
+        Carga aplicada (N)
+      </label>
+
+      <input
+        type="number"
+        id="support-load"
+        value="500"
+        min="0"
+        step="10"
+      />
     </div>
+
     <div class="field">
-      <label for="stiff">Rigidez del tope (N/mm)</label>
-      <input type="number" id="stiff" value="200" min="1" step="1" />
+      <label for="support-stiffness">
+        Rigidez del soporte (N/mm)
+      </label>
+
+      <input
+        type="number"
+        id="support-stiffness"
+        value="200"
+        min="0.01"
+        step="1"
+      />
     </div>
+
     <div class="field">
-      <label for="maxdef">Deflexion maxima admisible (mm)</label>
-      <input type="number" id="maxdef" value="4" min="0.1" step="0.1" />
+      <label for="support-max-deflection">
+        Deflexión máxima admisible (mm)
+      </label>
+
+      <input
+        type="number"
+        id="support-max-deflection"
+        value="4"
+        min="0.1"
+        step="0.1"
+      />
     </div>
   </div>
 
   <div class="card surface">
     <div class="result-line">
-      <span class="k">Deflexion estimada</span>
-      <span class="v" id="r-def">-</span>
+      <span class="k">
+        Deflexión estimada
+      </span>
+
+      <span
+        class="v"
+        id="support-result-deflection"
+      >
+        -
+      </span>
     </div>
+
     <div class="result-line">
-      <span class="k">Uso de la deflexion</span>
-      <span class="v" id="r-use">-</span>
+      <span class="k">
+        Uso de la deflexión
+      </span>
+
+      <span
+        class="v"
+        id="support-result-usage"
+      >
+        -
+      </span>
     </div>
+
     <div class="result-line">
-      <span class="k">Estado</span>
-      <span class="v" id="r-state">-</span>
+      <span class="k">
+        Estado
+      </span>
+
+      <span
+        class="v"
+        id="support-result-state"
+      >
+        -
+      </span>
     </div>
   </div>
 
-  <div class="note" id="note">Introduce los valores para dimensionar el tope.</div>
+  <div
+    class="note"
+    id="support-result-note"
+    aria-live="polite"
+  >
+    Introduce los valores para dimensionar el soporte.
+  </div>
+
+  <span
+    class="section-kicker"
+    id="nivelador-digital"
+  >
+    Nivelador digital
+  </span>
+
+  <h2>
+    Nivelación con sensores
+  </h2>
+
+  <p class="page-lead">
+    Coloca el teléfono acostado, sobre un borde largo o
+    en posición vertical. El sistema detectará
+    automáticamente la forma de medición.
+  </p>
+
+  <div class="level-auto-mode">
+    <span class="level-auto-icon" aria-hidden="true">
+      <svg
+        width="30"
+        height="30"
+        viewBox="0 0 32 32"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <rect x="8" y="3" width="16" height="26" rx="3"></rect>
+        <circle cx="16" cy="24" r="1"></circle>
+        <path d="M3 16h4"></path>
+        <path d="M25 16h4"></path>
+      </svg>
+    </span>
+
+    <span class="level-auto-copy">
+      <small>Posición detectada</small>
+      <strong id="level-mode">Esperando sensor</strong>
+      <span id="level-mode-description">
+        Activa el sensor para comenzar.
+      </span>
+    </span>
+
+    <span class="level-auto-badge" id="level-auto-badge">
+      AUTO
+    </span>
+  </div>
+
+  <div class="card leveler-card" id="leveler-card" data-state="stopped">
+    <div class="leveler-status">
+      <span class="dot level-sensor-dot" id="level-dot"></span>
+
+      <div class="level-status-copy">
+        <span class="leveler-status-label">Estado</span>
+        <strong id="level-status" aria-live="polite">
+          Sensor detenido
+        </strong>
+      </div>
+
+      <span class="level-stability" id="level-stability">
+        Sin lectura
+      </span>
+    </div>
+
+    <div
+      class="leveler-visual"
+      id="leveler-visual"
+      data-mode="detecting"
+    >
+      <div
+        class="level-surface"
+        id="level-surface"
+        role="img"
+        aria-label="Burbuja de nivelación en dos ejes"
+      >
+        <span class="level-ring level-ring-one"></span>
+        <span class="level-ring level-ring-two"></span>
+
+        <span class="level-cross level-cross-horizontal"></span>
+        <span class="level-cross level-cross-vertical"></span>
+
+        <span class="level-target"></span>
+        <span class="level-bubble" id="level-bubble"></span>
+      </div>
+
+      <div
+        class="level-tube"
+        id="level-tube"
+        role="img"
+        aria-label="Nivel de burbuja en un eje"
+      >
+        <span class="level-tube-line"></span>
+        <span class="level-tube-mark level-tube-mark-left"></span>
+        <span class="level-tube-mark level-tube-mark-right"></span>
+        <span class="level-tube-target"></span>
+        <span class="level-tube-bubble" id="level-tube-bubble"></span>
+      </div>
+    </div>
+
+    <div class="level-readings" id="level-surface-readings">
+      <div class="level-reading">
+        <span class="level-reading-label">
+          Izquierda / derecha
+        </span>
+
+        <strong id="level-x">0.0°</strong>
+      </div>
+
+      <div class="level-reading">
+        <span class="level-reading-label">
+          Frente / atrás
+        </span>
+
+        <strong id="level-y">0.0°</strong>
+      </div>
+
+      <div class="level-reading level-reading-total">
+        <span class="level-reading-label">
+          Inclinación total
+        </span>
+
+        <strong id="level-total">0.0°</strong>
+      </div>
+    </div>
+
+    <div
+      class="level-single-reading"
+      id="level-edge-reading"
+      hidden
+    >
+      <span class="level-reading-label" id="level-angle-label">
+        Inclinación
+      </span>
+
+      <strong id="level-angle">0.0°</strong>
+
+      <span id="level-direction">Centrado</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="level-setting-header">
+      <label for="level-tolerance">
+        Tolerancia para considerar nivelado
+      </label>
+
+      <output
+        id="level-tolerance-value"
+        for="level-tolerance"
+      >
+        ±0.5°
+      </output>
+    </div>
+
+    <input
+      class="level-range"
+      type="range"
+      id="level-tolerance"
+      min="0.2"
+      max="2"
+      value="0.5"
+      step="0.1"
+    />
+
+    <div class="level-range-labels">
+      <span>Mayor precisión</span>
+      <span>Mayor tolerancia</span>
+    </div>
+  </div>
+
+  <button
+    type="button"
+    class="btn btn-primary"
+    id="btn-level-start"
+  >
+    Activar nivelador
+  </button>
+
+  <div class="btn-row">
+    <button
+      type="button"
+      class="btn btn-ghost"
+      id="btn-level-zero"
+      disabled
+    >
+      Establecer cero
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-secondary"
+      id="btn-level-stop"
+      disabled
+    >
+      Detener
+    </button>
+  </div>
+
+  <button
+    type="button"
+    class="btn level-reset-button"
+    id="btn-level-reset"
+  >
+    Restablecer cero del modo detectado
+  </button>
+
+  <div class="note" id="level-message" aria-live="polite">
+    Pulsa “Activar nivelador” y concede permiso de movimiento.
+  </div>
+
+  <div class="level-calibration-state">
+    <span>Referencia del modo actual:</span>
+
+    <strong id="level-calibration-state">
+      Gravedad absoluta
+    </strong>
+  </div>
+
+  <div class="card level-instructions">
+    <h2>Funcionamiento automático</h2>
+
+    <ul>
+      <li>
+        <strong>Acostado:</strong>
+        pantalla hacia arriba; mide dos ejes.
+      </li>
+
+      <li>
+        <strong>Horizontal:</strong>
+        apoyado sobre un borde largo; evita el relieve de la cámara.
+      </li>
+
+      <li>
+        <strong>Vertical:</strong>
+        apoyado sobre el borde corto; comprueba la desviación vertical.
+      </li>
+    </ul>
+  </div>
 </section>
 {% endblock %}
 
 {% block scripts %}
-<script>
-  (function () {
-    var load = document.getElementById("load");
-    var stiff = document.getElementById("stiff");
-    var maxdef = document.getElementById("maxdef");
-    var out = {
-      def: document.getElementById("r-def"),
-      use: document.getElementById("r-use"),
-      state: document.getElementById("r-state"),
-      note: document.getElementById("note"),
-    };
-
-    function compute() {
-      var F = parseFloat(load.value) || 0;
-      var k = parseFloat(stiff.value) || 1;
-      var maxD = parseFloat(maxdef.value) || 0.0001;
-      var deflection = F / k; // mm
-      var usage = (deflection / maxD) * 100;
-      out.def.textContent = deflection.toFixed(2) + " mm";
-      out.use.textContent = usage.toFixed(0) + " %";
-      if (usage <= 80) {
-        out.state.textContent = "Correcto";
-        out.note.textContent = "El tope trabaja dentro de un margen seguro.";
-      } else if (usage <= 100) {
-        out.state.textContent = "Al limite";
-        out.note.textContent = "Cerca del limite: considera un tope mas rigido.";
-      } else {
-        out.state.textContent = "Sobrecarga";
-        out.note.textContent =
-          "Deflexion excesiva: aumenta la rigidez o usa un tope mayor.";
-      }
-    }
-
-    [load, stiff, maxdef].forEach(function (el) {
-      el.addEventListener("input", compute);
-    });
-    compute();
-  })();
-</script>
+<script src="{% static 'js/support_leveler.js' %}"></script>
 {% endblock %}

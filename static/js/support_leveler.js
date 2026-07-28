@@ -1137,3 +1137,130 @@
 
   initialize();
 })();
+
+/* =========================================================
+   Selección de soporte y tope
+   ========================================================= */
+
+(function () {
+  "use strict";
+
+  var loadInput = document.getElementById(
+    "support-load"
+  );
+
+  var stiffnessInput = document.getElementById(
+    "support-stiffness"
+  );
+
+  var maxDeflectionInput = document.getElementById(
+    "support-max-deflection"
+  );
+
+  var deflectionOutput = document.getElementById(
+    "support-result-deflection"
+  );
+
+  var usageOutput = document.getElementById(
+    "support-result-usage"
+  );
+
+  var stateOutput = document.getElementById(
+    "support-result-state"
+  );
+
+  var noteOutput = document.getElementById(
+    "support-result-note"
+  );
+
+  if (
+    !loadInput ||
+    !stiffnessInput ||
+    !maxDeflectionInput ||
+    !deflectionOutput ||
+    !usageOutput ||
+    !stateOutput ||
+    !noteOutput
+  ) {
+    return;
+  }
+
+  function showInvalidData() {
+    deflectionOutput.textContent = "-";
+    usageOutput.textContent = "-";
+    stateOutput.textContent = "Datos inválidos";
+
+    noteOutput.textContent =
+      "Introduce valores positivos y una rigidez mayor que cero.";
+  }
+
+  function computeSupport() {
+    var load = Number.parseFloat(
+      loadInput.value
+    );
+
+    var stiffness = Number.parseFloat(
+      stiffnessInput.value
+    );
+
+    var maximumDeflection = Number.parseFloat(
+      maxDeflectionInput.value
+    );
+
+    if (
+      !Number.isFinite(load) ||
+      !Number.isFinite(stiffness) ||
+      !Number.isFinite(maximumDeflection) ||
+      load < 0 ||
+      stiffness <= 0 ||
+      maximumDeflection <= 0
+    ) {
+      showInvalidData();
+      return;
+    }
+
+    var deflection = load / stiffness;
+
+    var usage = (
+      deflection / maximumDeflection
+    ) * 100;
+
+    deflectionOutput.textContent =
+      deflection.toFixed(2) + " mm";
+
+    usageOutput.textContent =
+      usage.toFixed(0) + " %";
+
+    if (usage <= 80) {
+      stateOutput.textContent = "Correcto";
+
+      noteOutput.textContent =
+        "El soporte trabaja dentro de un margen seguro.";
+    } else if (usage <= 100) {
+      stateOutput.textContent = "Al límite";
+
+      noteOutput.textContent =
+        "El soporte está cerca del límite. " +
+        "Considera una rigidez mayor.";
+    } else {
+      stateOutput.textContent = "Sobrecarga";
+
+      noteOutput.textContent =
+        "La deflexión es excesiva. Aumenta la rigidez " +
+        "o selecciona un soporte de mayor capacidad.";
+    }
+  }
+
+  [
+    loadInput,
+    stiffnessInput,
+    maxDeflectionInput,
+  ].forEach(function (input) {
+    input.addEventListener(
+      "input",
+      computeSupport
+    );
+  });
+
+  computeSupport();
+})();

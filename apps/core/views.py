@@ -42,16 +42,12 @@ def home(request):
         },
         {
             "icon": "stops",
-            "title": "Selección de soportes y topes",
-            "subtitle": "Dimensionamiento de elementos elásticos",
+            "title": "Selección de soporte y Nivelador",
+            "subtitle": (
+                "Dimensionamiento de soportes y "
+                "nivelación con sensores"
+            ),
             "url_name": "stops",
-            "available": True,
-        },
-        {
-            "icon": "leveler",
-            "title": "Nivelador digital",
-            "subtitle": "Mide inclinación y nivelación con los sensores del teléfono",
-            "url_name": "leveler",
             "available": True,
         },
     ]

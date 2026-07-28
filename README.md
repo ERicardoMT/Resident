@@ -10,8 +10,7 @@ apps/
   core/           # Home y menu principal
   vibration/      # Medicion vibratoria, API y FFT
   attenuation/    # Atenuacion vibratoria
-  stops/          # Calculo de topes
-  leveler/        # Nivelador basado en los sensores de orientación telefono
+  stops/          # Selección de soporte y Nivelador
 templates/
 static/
 manage.py
@@ -31,7 +30,7 @@ db.sqlite3
 1. `config/urls.py` enruta hacia las apps.
 2. `apps/core/` muestra el menu principal.
 3. `apps/vibration/` recibe muestras, analiza la señal y devuelve Hz/RPM.
-4. `apps/attenuation/`, `apps/shock/`, `apps/stops/` y `apps/datasheet/` resuelven cada calculo o vista.
+4. `apps/attenuation/` y `apps/stops/` contienen las herramientas auxiliares.
 
 ## Inicio rapido
 
