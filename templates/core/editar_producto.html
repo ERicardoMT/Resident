@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Editar Producto | SMAV INAHER{% endblock %}
 
@@ -24,33 +25,43 @@
 <section style="padding: 20px 15px; background-color: #ffffff; min-height: 100vh;">
   <div class="card surface" style="max-width: 600px; margin: 0 auto; padding: 20px;">
     <h2 style="color: #14204e; text-align: center; margin-bottom: 20px; font-weight: 700;">Editar Elemento del Catálogo</h2>
-    
+
     <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
         {% csrf_token %}
-        
-        <!-- Campo oculto idéntico al de agregar_producto -->
-        <input type="hidden" name="category" id="final_category" value="{{ producto.category }}">
-        
+
+
+
         <div>
             <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Nombre del producto:</label>
             <input type="text" name="name" value="{{ producto.name }}" required maxlength="160" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">
         </div>
 
         <div>
-            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Categoría:</label>
-            <select id="main_category" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; background: white; font-family: inherit;">
-                <option value="antivibratorios">Antivibratorios</option>
-                <option value="patas_niveladoras">Patas niveladoras</option>
-                <option value="accionamiento">Elementos de accionamiento y maniobra</option>
-                <option value="mobiliario">Niveladores para mobiliario</option>
-            </select>
+            <label for="{{ form.category.id_for_label }}">
+                Categoría:
+            </label>
+
+            {{ form.category }}
+
+            {% for error in form.category.errors %}
+            <small style="color: #b42318;">
+                {{ error }}
+            </small>
+            {% endfor %}
         </div>
 
         <div id="subcategory_container">
-            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Subcategoría:</label>
-            <select id="sub_category" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; background: white; font-family: inherit;">
-                <!-- Opciones dinámicas -->
-            </select>
+            <label for="{{ form.subcategory.id_for_label }}">
+                Subcategoría:
+            </label>
+
+            {{ form.subcategory }}
+
+            {% for error in form.subcategory.errors %}
+            <small style="color: #b42318;">
+                {{ error }}
+            </small>
+            {% endfor %}
         </div>
 
         <div>
@@ -70,7 +81,7 @@
 
         <!-- ZONA DE SUBIDA DE ARCHIVOS -->
         <div style="background: #f4f6f9; padding: 15px; border-radius: 8px; border: 1px dashed #b0b8c1;">
-            
+
             <div style="margin-bottom: 15px;">
                 <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Cambiar imagen (Opcional):</label>
                 {% if producto.image and producto.image.name %}
@@ -96,118 +107,7 @@
 </section>
 
 <!-- Script para manejar Categorías y Validación de Archivos (Clonado de add_product) -->
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const categorySelect = document.getElementById('main_category');
-        const subcategoryContainer = document.getElementById('subcategory_container');
-        const subcategorySelect = document.getElementById('sub_category');
-        const finalCategoryInput = document.getElementById('final_category');
-
-        const subcategoriesData = {
-            'antivibratorios': [
-                { value: 'colgantes', text: 'Colgantes antivibración' },
-                { value: 'niveladores_maq', text: 'Niveladores antivibración para maquinaria' },
-                { value: 'pies', text: 'Pies antivibración' },
-                { value: 'soportes_piso', text: 'Soportes antivibración con anclaje al piso' },
-                { value: 'tacones', text: 'Tacones antivibración' }
-            ],
-            'patas_niveladoras': [
-                { value: 'alta_resistencia', text: 'Alta resistencia' },
-                { value: 'anclaje_piso', text: 'Anclaje al piso' },
-                { value: 'antiderrapante', text: 'Antiderrapante' },
-                { value: 'antivibracion', text: 'Antivibracion' },
-                { value: 'con_rotula', text: 'Con rotula' },
-                { value: 'uso_rudo', text: 'Uso rudo' }
-            ]
-        };
-
-        function updateForm() {
-            const selectedCat = categorySelect.value;
-            subcategorySelect.innerHTML = '';
-
-            if (subcategoriesData[selectedCat]) {
-                subcategoryContainer.style.display = 'block';
-                subcategoriesData[selectedCat].forEach(sub => {
-                    const option = document.createElement('option');
-                    option.value = sub.value;
-                    option.textContent = sub.text;
-                    subcategorySelect.appendChild(option);
-                });
-                // Actualiza el campo final con la subcategoría seleccionada en este momento
-                finalCategoryInput.value = subcategorySelect.value;
-            } else {
-                subcategoryContainer.style.display = 'none';
-                finalCategoryInput.value = selectedCat;
-            }
-        }
-
-        categorySelect.addEventListener('change', updateForm);
-        
-        subcategorySelect.addEventListener('change', function() {
-            finalCategoryInput.value = this.value;
-        });
-
-        // == LÓGICA DE AUTO-SELECCIÓN PARA EDICIÓN ==
-        const savedCategory = "{{ producto.category }}";
-        let initialMain = savedCategory;
-
-        // Buscar si lo que está guardado es una subcategoría para seleccionar la categoría padre
-        for (const [main, subs] of Object.entries(subcategoriesData)) {
-            if (subs.some(sub => sub.value === savedCategory)) {
-                initialMain = main;
-                break;
-            }
-        }
-
-        // Asignar el valor principal en el select
-        categorySelect.value = initialMain;
-        if (!categorySelect.value) {
-            categorySelect.value = "antivibratorios"; 
-        }
-
-        // Actualizar el DOM para mostrar las opciones correctas
-        updateForm();
-
-        // Asignar el valor de la subcategoría si el contenedor está visible
-        if (subcategoryContainer.style.display === 'block') {
-            subcategorySelect.value = savedCategory;
-            finalCategoryInput.value = savedCategory;
-        }
-
-        // == VALIDACIONES DE ARCHIVOS ==
-        const imageInput = document.getElementById('product_image');
-        if(imageInput) {
-            imageInput.addEventListener('change', function() {
-                const maxFileSize = 5 * 1024 * 1024; 
-                if (this.files[0] && this.files[0].size > maxFileSize) {
-                    alert('El archivo supera el límite de 5MB. Por favor, selecciona una imagen más ligera.');
-                    this.value = ''; 
-                }
-            });
-        }
-
-        const modelInput = document.getElementById("product_model");
-        if (modelInput) {
-            modelInput.addEventListener("change", function () {
-                const file = this.files[0];
-                if (!file) return;
-
-                const extension = file.name.split(".").pop().toLowerCase();
-                if (extension !== "glb") {
-                    alert("El modelo debe estar en formato GLB.");
-                    this.value = "";
-                    return;
-                }
-
-                const maxModelSize = 20 * 1024 * 1024;
-                if (file.size > maxModelSize) {
-                    alert("El archivo GLB no puede superar los 20 MB.");
-                    this.value = "";
-                }
-            });
-        }
-    });
-</script>
+<script src="{% static 'js/catalog_form.js' %}"></script>
 
 <!-- Cargar TinyMCE desde un CDN gratuito que no pide API Key -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js"></script>

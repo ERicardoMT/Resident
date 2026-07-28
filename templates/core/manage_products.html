@@ -91,7 +91,11 @@ Administrar productos | SMAV INAHER
           </strong>
 
           <span>
-            {{ producto.category|default:"Sin categoría" }}
+            {{ producto.get_category_display|default:"Sin categoría" }}
+
+            {% if producto.subcategory %}
+                · {{ producto.get_subcategory_display }}
+            {% endif %}
           </span>
 
           <div class="management-badges">

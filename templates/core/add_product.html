@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Agregar Nuevo Producto{% endblock %}
 
@@ -95,56 +96,14 @@
 
     <!-- Categoría -->
     <div>
-        <label
-            for="main_category"
-            style="
-                color: #333;
-                font-weight: bold;
-                font-size: 0.9rem;
-            "
-        >
+        <label for="{{ form.category.id_for_label }}">
             Categoría:
         </label>
 
-        <select
-            name="category"
-            id="main_category"
-            required
-            style="
-                width: 100%;
-                padding: 10px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                margin-top: 5px;
-                background: white;
-                font-family: inherit;
-            "
-        >
-            <option value="antivibratorios">
-                Antivibratorios
-            </option>
-
-            <option value="patas_niveladoras">
-                Patas niveladoras
-            </option>
-
-            <option value="accionamiento">
-                Elementos de accionamiento y maniobra
-            </option>
-
-            <option value="mobiliario">
-                Niveladores para mobiliario
-            </option>
-        </select>
+        {{ form.category }}
 
         {% for error in form.category.errors %}
-        <small
-            style="
-                color: #b42318;
-                display: block;
-                margin-top: 5px;
-            "
-        >
+        <small style="color: #b42318;">
             {{ error }}
         </small>
         {% endfor %}
@@ -152,44 +111,17 @@
 
     <!-- Subcategoría -->
     <div id="subcategory_container">
-        <label
-            for="sub_category"
-            style="
-                color: #333;
-                font-weight: bold;
-                font-size: 0.9rem;
-            "
-        >
+        <label for="{{ form.subcategory.id_for_label }}">
             Subcategoría:
         </label>
 
-        <select
-            name="subcategory"
-            id="sub_category"
-            style="
-                width: 100%;
-                padding: 10px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                margin-top: 5px;
-                background: white;
-                font-family: inherit;
-            "
-        >
-            <!-- Las opciones se generan con JavaScript -->
-        </select>
+    {{ form.subcategory }}
 
-        {% for error in form.subcategory.errors %}
-        <small
-            style="
-                color: #b42318;
-                display: block;
-                margin-top: 5px;
-            "
-        >
-            {{ error }}
-        </small>
-        {% endfor %}
+    {% for error in form.subcategory.errors %}
+    <small style="color: #b42318;">
+        {{ error }}
+    </small>
+    {% endfor %}
     </div>
 
     <!-- Descripción -->
@@ -449,210 +381,8 @@
 </section>
 
 <!-- Categorías y validación básica en navegador -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const categorySelect =
-        document.getElementById("main_category");
+<script src="{% static 'js/catalog_form.js' %}"></script>
 
-    const subcategoryContainer =
-        document.getElementById("subcategory_container");
-
-    const subcategorySelect =
-        document.getElementById("sub_category");
-
-    const initialCategory =
-        "{{ form.category.value|default:'antivibratorios'|escapejs }}";
-
-    const initialSubcategory =
-        "{{ form.subcategory.value|default:''|escapejs }}";
-
-    const subcategoriesData = {
-        antivibratorios: [
-            {
-                value: "colgantes",
-                text: "Colgantes antivibración"
-            },
-            {
-                value: "niveladores_maq",
-                text: "Niveladores antivibración para maquinaria"
-            },
-            {
-                value: "pies",
-                text: "Pies antivibración"
-            },
-            {
-                value: "soportes_piso",
-                text: "Soportes antivibración con anclaje al piso"
-            },
-            {
-                value: "tacones",
-                text: "Tacones antivibración"
-            }
-        ],
-
-        patas_niveladoras: [
-            {
-                value: "alta_resistencia",
-                text: "Alta resistencia"
-            },
-            {
-                value: "anclaje_piso",
-                text: "Anclaje al piso"
-            },
-            {
-                value: "antiderrapante",
-                text: "Antiderrapante"
-            },
-            {
-                value: "antivibracion",
-                text: "Antivibración"
-            },
-            {
-                value: "con_rotula",
-                text: "Con rótula"
-            },
-            {
-                value: "uso_rudo",
-                text: "Uso rudo"
-            }
-        ]
-    };
-
-    function updateSubcategories(
-        selectedSubcategory = ""
-    ) {
-        const selectedCategory =
-            categorySelect.value;
-
-        const subcategories =
-            subcategoriesData[selectedCategory] || [];
-
-        subcategorySelect.innerHTML = "";
-
-        if (subcategories.length === 0) {
-            subcategoryContainer.style.display = "none";
-
-            subcategorySelect.disabled = true;
-            subcategorySelect.required = false;
-
-            return;
-        }
-
-        subcategoryContainer.style.display = "block";
-
-        subcategorySelect.disabled = false;
-        subcategorySelect.required = true;
-
-        subcategories.forEach(function (subcategory) {
-            const option =
-                document.createElement("option");
-
-            option.value = subcategory.value;
-            option.textContent = subcategory.text;
-
-            subcategorySelect.appendChild(option);
-        });
-
-        const optionExists = Array.from(
-            subcategorySelect.options
-        ).some(function (option) {
-            return option.value === selectedSubcategory;
-        });
-
-        if (optionExists) {
-            subcategorySelect.value =
-                selectedSubcategory;
-        }
-    }
-
-    const categoryExists = Array.from(
-        categorySelect.options
-    ).some(function (option) {
-        return option.value === initialCategory;
-    });
-
-    if (categoryExists) {
-        categorySelect.value = initialCategory;
-    }
-
-    updateSubcategories(initialSubcategory);
-
-    categorySelect.addEventListener(
-        "change",
-        function () {
-            updateSubcategories();
-        }
-    );
-
-    const imageInput =
-        document.getElementById("product_image");
-
-    if (imageInput) {
-        imageInput.addEventListener(
-            "change",
-            function () {
-                const file = this.files[0];
-
-                if (!file) {
-                    return;
-                }
-
-                const maximumSize =
-                    5 * 1024 * 1024;
-
-                if (file.size > maximumSize) {
-                    alert(
-                        "La imagen no puede superar los 5 MB."
-                    );
-
-                    this.value = "";
-                }
-            }
-        );
-    }
-
-    const modelInput =
-        document.getElementById("product_model");
-
-    if (modelInput) {
-        modelInput.addEventListener(
-            "change",
-            function () {
-                const file = this.files[0];
-
-                if (!file) {
-                    return;
-                }
-
-                const extension = file.name
-                    .split(".")
-                    .pop()
-                    .toLowerCase();
-
-                if (extension !== "glb") {
-                    alert(
-                        "El modelo debe estar en formato GLB."
-                    );
-
-                    this.value = "";
-                    return;
-                }
-
-                const maximumSize =
-                    20 * 1024 * 1024;
-
-                if (file.size > maximumSize) {
-                    alert(
-                        "El archivo GLB no puede superar los 20 MB."
-                    );
-
-                    this.value = "";
-                }
-            }
-        );
-    }
-});
-</script>
 <!-- Cargar TinyMCE desde un CDN gratuito que no pide API Key -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js"></script>
 <script>

@@ -11,7 +11,10 @@ from .forms import (
     CatalogItemForm,
     SMAVUserCreationForm,
 )
-from .models import CatalogItem
+from .models import (
+    CatalogCategory,
+    CatalogItem,
+)
 from pathlib import Path
 
 
@@ -246,20 +249,6 @@ def productos_dashboard_view(request):
         },
     )
 
-    return render(
-        request,
-        "core/manage_products.html",
-        {
-            "productos": productos,
-            "can_add_catalog": request.user.has_perm(
-                "core.add_catalogitem"
-            ),
-            "can_delete_catalog": request.user.has_perm(
-                "core.delete_catalogitem"
-            ),
-        },
-    )
-
 
 @login_required
 @permission_required(
@@ -380,50 +369,60 @@ def catalogo_view(request):
     )
 
 def antivibratorios_view(request):
-    # Filtramos todas las posibles variaciones de las subcategorías de antivibratorios
-    categorias_validas = [
-        'Antivibratorios', 'antivibratorios',
-        'Colgantes antivibración', 'colgantes', 'COLGANTES',
-        'Niveladores antivibración para maquinaria', 'niveladores_maq',
-        'Pies antivibración', 'pies', 'PIES',
-        'Soportes antivibración con anclaje al piso', 'soportes_piso',
-        'Tacones antivibración', 'tacones', 'TACONES'
-    ]
-    # Ahora solo lee los que están guardados en tu base de datos real
-    productos = CatalogItem.objects.filter(category__in=categorias_validas).order_by('-id')
-    
-    return render(request, "core/antivibratorios.html", {"productos": productos})
+    productos = CatalogItem.objects.filter(
+        category=CatalogCategory.ANTIVIBRATORIOS,
+        is_active=True,
+    ).order_by("-id")
+
+    return render(
+        request,
+        "core/antivibratorios.html",
+        {
+            "productos": productos,
+        },
+    )
 
 def patas_niveladoras_view(request):
-    # Lista de todas las posibles formas en las que se puede guardar esta categoría
-    categorias_validas = [
-        'Patas niveladoras', 'patas_niveladoras', 'patas',
-        'Antiderrapante', 'antiderrapante', 'ANTIDERRAPANTE',
-        'Alta resistencia', 'alta_resistencia', 'ALTA RESISTENCIA',
-        'Anclaje al piso', 'anclaje_piso', 'ANCLAJE AL PISO',
-        'Antivibracion', 'antivibracion', 'ANTIVIBRACION',
-        'Con rotula', 'con_rotula', 'CON ROTULA',
-        'Uso rudo', 'uso_rudo', 'USO RUDO'
-    ]
-    productos = CatalogItem.objects.filter(category__in=categorias_validas).order_by('-id')
-    return render(request, 'core/patas.html', {'productos': productos})
+    productos = CatalogItem.objects.filter(
+        category=CatalogCategory.PATAS_NIVELADORAS,
+        is_active=True,
+    ).order_by("-id")
+
+    return render(
+        request,
+        "core/patas.html",
+        {
+            "productos": productos,
+        },
+    )
 
 def accionamiento_view(request):
-    categorias_validas = [
-        'Elementos de accionamiento y maniobra', 
-        'Accionamiento', 'accionamiento', 'ACCIONAMIENTO', 
-        'Maniobra', 'maniobra'
-    ]
-    productos = CatalogItem.objects.filter(category__in=categorias_validas).order_by('-id')
-    return render(request, 'core/accionamiento.html', {'productos': productos})
+    productos = CatalogItem.objects.filter(
+        category=CatalogCategory.ACCIONAMIENTO,
+        is_active=True,
+    ).order_by("-id")
+
+    return render(
+        request,
+        "core/accionamiento.html",
+        {
+            "productos": productos,
+        },
+    )
 
 def mobiliario_view(request):
-    categorias_validas = [
-        'Niveladores para mobiliario', 
-        'Mobiliario', 'mobiliario', 'MOBILIARIO'
-    ]
-    productos = CatalogItem.objects.filter(category__in=categorias_validas).order_by('-id')
-    return render(request, 'core/mobiliario.html', {'productos': productos})
+    productos = CatalogItem.objects.filter(
+        category=CatalogCategory.MOBILIARIO,
+        is_active=True,
+    ).order_by("-id")
+
+    return render(
+        request,
+        "core/mobiliario.html",
+        {
+            "productos": productos,
+        },
+    )
 
 
 @login_required

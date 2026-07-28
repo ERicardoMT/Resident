@@ -6,7 +6,12 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import UploadedFile
 
-from .models import CatalogItem
+from .models import (
+    CatalogCategory,
+    CatalogItem,
+    CatalogSubcategory,
+    SUBCATEGORIES_BY_CATEGORY,
+)
 
 
 UserModel = get_user_model()
@@ -206,6 +211,33 @@ class SMAVUserCreationForm(UserCreationForm):
 class CatalogItemForm(forms.ModelForm):
     """Formulario compartido para crear y editar productos."""
 
+    category = forms.ChoiceField(
+        label="Categoría",
+        choices=CatalogCategory.choices,
+        widget=forms.Select(
+            attrs={
+                "class": "form-control",
+            }
+        ),
+    )
+
+    subcategory = forms.ChoiceField(
+        label="Subcategoría",
+        required=False,
+        choices=[
+            (
+                "",
+                "Selecciona una subcategoría",
+            ),
+            *CatalogSubcategory.choices,
+        ],
+        widget=forms.Select(
+            attrs={
+                "class": "form-control",
+            }
+        ),
+    )
+
     MAX_IMAGE_SIZE = 5 * 1024 * 1024
     MAX_MODEL_SIZE = 20 * 1024 * 1024
 
@@ -231,18 +263,6 @@ class CatalogItemForm(forms.ModelForm):
                     "placeholder": (
                         "Nombre del producto"
                     ),
-                }
-            ),
-            "category": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "Categoría",
-                }
-            ),
-            "subcategory": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "Subcategoría",
                 }
             ),
             "description": forms.Textarea(
@@ -326,6 +346,55 @@ class CatalogItemForm(forms.ModelForm):
             )
             or ""
         ).strip()
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        category = cleaned_data.get(
+            "category"
+        )
+
+        subcategory = (
+            cleaned_data.get(
+                "subcategory"
+            )
+            or ""
+        )
+
+        if not category:
+            return cleaned_data
+
+        allowed_subcategories = (
+            SUBCATEGORIES_BY_CATEGORY.get(
+                category,
+                set(),
+            )
+        )
+
+        if allowed_subcategories:
+            if not subcategory:
+                self.add_error(
+                    "subcategory",
+                    (
+                        "Selecciona una subcategoría "
+                        "para esta categoría."
+                    ),
+                )
+            elif (
+                subcategory
+                not in allowed_subcategories
+            ):
+                self.add_error(
+                    "subcategory",
+                    (
+                        "La subcategoría seleccionada "
+                        "no pertenece a esta categoría."
+                    ),
+                )
+        elif subcategory:
+            cleaned_data["subcategory"] = ""
+
+        return cleaned_data
 
     def clean_description(self):
         return (
