@@ -23,39 +23,61 @@ def home(request):
 
     menu = [
         {
-            "icon": "hz",
-            "title": "Medición vibratoria",
-            "subtitle": "Frecuencia, RPM, aceleración y espectro FFT",
-            "url_name": "measure",
-            "available": True,
+            "icon": "stops",
+            "title": "Soportes antivibratorios",
+            "subtitle": (
+                "Elige un soporte o mide la vibración "
+                "de tu maquinaria"
+            ),
+            "children": [
+                {
+                    "icon": "stops",
+                    "title": "Elegir mi soporte",
+                    "subtitle": (
+                        "Dimensiona el soporte y accede "
+                        "al nivelador digital"
+                    ),
+                    "url_name": "stops",
+                },
+                {
+                    "icon": "hz",
+                    "title": "Medir vibración",
+                    "subtitle": (
+                        "Frecuencia, RPM, aceleración "
+                        "y espectro FFT"
+                    ),
+                    "url_name": "measure",
+                },
+            ],
         },
         {
             "icon": "attenuation",
             "title": "Atenuación y aislamiento",
-            "subtitle": "Transmisibilidad según la frecuencia",
+            "subtitle": (
+                "Transmisibilidad según la frecuencia"
+            ),
             "url_name": "attenuation",
             "available": True,
         },
         {
             "icon": "catalog",
             "title": "Catálogo de productos",
-            "subtitle": "Antivibratorios, niveladores y componentes",
+            "subtitle": (
+                "Antivibratorios, niveladores "
+                "y componentes"
+            ),
             "url_name": "catalogo",
             "available": True,
         },
-        {
-            "icon": "stops",
-            "title": "Selección de soporte y Nivelador",
-            "subtitle": (
-                "Dimensionamiento de soportes y "
-                "nivelación con sensores"
-            ),
-            "url_name": "stops",
-            "available": True,
-        },
     ]
-    
-    return render(request, "core/home.html", {"menu": menu})
+
+    return render(
+        request,
+        "core/home.html",
+        {
+            "menu": menu,
+        },
+    )
 
 
 @login_required

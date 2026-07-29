@@ -2192,3 +2192,202 @@ a {
     width: 100%;
   }
 }
+
+/* =========================================================
+   MÓDULO: SOPORTES ANTIVIBRATORIOS
+   ========================================================= */
+
+.support-hub-page {
+  padding-bottom: 34px;
+}
+
+.support-hub-menu {
+  margin-top: 24px;
+}
+
+.support-hub-option {
+  min-height: 112px;
+  align-items: center;
+}
+
+.support-hub-option .menu-icon {
+  flex: 0 0 56px;
+  width: 56px;
+  height: 56px;
+}
+
+.support-hub-option .menu-text {
+  min-width: 0;
+}
+
+.support-hub-option .menu-text .title {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.support-hub-option .menu-text .subtitle {
+  display: block;
+  line-height: 1.45;
+}
+
+.support-hub-note {
+  margin-top: 20px;
+}
+
+
+@media (max-width: 480px) {
+  .support-hub-option {
+    min-height: 104px;
+  }
+
+  .support-hub-option .menu-icon {
+    flex-basis: 50px;
+    width: 50px;
+    height: 50px;
+  }
+}
+
+
+/* =========================================================
+   MENÚ DESPLEGABLE DE SOPORTES
+   ========================================================= */
+
+.menu-group {
+  width: 100%;
+}
+
+.menu-toggle {
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  list-style: none;
+}
+
+.menu-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.menu-toggle::marker {
+  content: "";
+}
+
+.menu-toggle .menu-arrow {
+  transition:
+    transform 0.22s ease,
+    color 0.22s ease,
+    background 0.22s ease;
+}
+
+.menu-group[open] .menu-toggle {
+  border-color: rgba(24, 166, 217, 0.65);
+  box-shadow: var(--shadow);
+}
+
+.menu-group[open] .menu-toggle .menu-arrow {
+  color: #ffffff;
+  background: var(--primary-500);
+  transform: rotate(90deg);
+}
+
+
+/* Opciones internas */
+
+.submenu {
+  position: relative;
+  display: grid;
+  gap: 9px;
+  padding: 11px 0 0 20px;
+  margin: 0 0 2px 29px;
+  list-style: none;
+  border-left: 2px solid rgba(24, 166, 217, 0.28);
+}
+
+.submenu-item {
+  display: grid;
+  grid-template-columns: 46px 1fr 26px;
+  align-items: center;
+  gap: 12px;
+  min-height: 76px;
+  padding: 12px;
+  color: var(--text);
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.submenu-item:hover {
+  border-color: rgba(24, 166, 217, 0.58);
+  box-shadow: var(--shadow);
+  transform: translateX(2px);
+}
+
+.submenu-item:active {
+  transform: scale(0.99);
+}
+
+.submenu-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  color: var(--primary);
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff 0%,
+      var(--accent-soft) 100%
+    );
+  border: 1px solid rgba(24, 166, 217, 0.26);
+  border-radius: 13px;
+}
+
+.submenu-icon svg {
+  width: 25px;
+  height: 25px;
+}
+
+.submenu-item .menu-text .title {
+  font-size: 13px;
+}
+
+.submenu-item .menu-text .subtitle {
+  margin-top: 3px;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.submenu-arrow {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  color: var(--primary-500);
+  background: var(--surface-alt);
+  border-radius: 50%;
+}
+
+
+@media (max-width: 390px) {
+  .submenu {
+    padding-left: 12px;
+    margin-left: 20px;
+  }
+
+  .submenu-item {
+    grid-template-columns: 42px 1fr 24px;
+    gap: 9px;
+    padding: 10px;
+  }
+
+  .submenu-icon {
+    width: 42px;
+    height: 42px;
+  }
+}

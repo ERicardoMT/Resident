@@ -9,8 +9,7 @@ urlpatterns = [
         views.home,
         name="home",
     ),
-
-    # Dashboard principal
+# Dashboard principal
     path(
         "dashboard/",
         views.dashboard,
