@@ -3,16 +3,11 @@ from django.shortcuts import render
 
 def stops(request):
     """
-    Muestra la selección de soporte y el nivelador digital.
+    Muestra la herramienta para seleccionar
+    un soporte antivibratorio.
     """
 
-    response = render(
+    return render(
         request,
         "stops/stops.html",
     )
-
-    response.headers["Permissions-Policy"] = (
-        "accelerometer=(self), gyroscope=(self)"
-    )
-
-    return response

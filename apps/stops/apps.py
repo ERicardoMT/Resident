@@ -4,4 +4,4 @@ from django.apps import AppConfig
 class StopsConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.stops"
-    verbose_name = "Selección de soporte y Nivelador"
+    verbose_name = "Selección de soporte antivibratorio"

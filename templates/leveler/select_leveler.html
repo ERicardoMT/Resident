@@ -1,0 +1,683 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Elegir mi nivelador | SMAV INAHER
+{% endblock %}
+
+
+{% block back %}
+<a
+  class="icon-btn"
+  href="{% url 'home' %}"
+  aria-label="Volver al menú principal"
+>
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+</a>
+{% endblock %}
+
+
+{% block content %}
+<section class="page leveler-selector-page">
+
+  <span class="section-kicker">
+    Pies de nivelación
+  </span>
+
+  <h1 class="page-title">
+    Elegir mi nivelador
+  </h1>
+
+  <p class="page-lead">
+    Responde tres preguntas sencillas. La herramienta
+    te orientará hacia la familia de nivelador más
+    adecuada para revisar en el catálogo.
+  </p>
+
+
+  <form
+    id="leveler-selector-form"
+    class="leveler-selector-form"
+  >
+
+    <!-- Paso 1 -->
+    <fieldset class="card selector-step">
+      <legend>
+        <span class="selector-step-number">1</span>
+
+        ¿Dónde se instalará?
+      </legend>
+
+      <div class="selector-options">
+
+        <label class="selector-option">
+          <input
+            type="radio"
+            name="application"
+            value="light"
+            required
+          >
+
+          <span class="selector-option-content">
+            <strong>
+              Equipo ligero
+            </strong>
+
+            <small>
+              Mesas, gabinetes, mobiliario técnico
+              o equipos pequeños.
+            </small>
+          </span>
+        </label>
+
+
+        <label class="selector-option">
+          <input
+            type="radio"
+            name="application"
+            value="machine"
+          >
+
+          <span class="selector-option-content">
+            <strong>
+              Maquinaria industrial
+            </strong>
+
+            <small>
+              Máquinas, bastidores y equipos que
+              requieren estabilidad.
+            </small>
+          </span>
+        </label>
+
+
+        <label class="selector-option">
+          <input
+            type="radio"
+            name="application"
+            value="hygienic"
+          >
+
+          <span class="selector-option-content">
+            <strong>
+              Área húmeda o sanitaria
+            </strong>
+
+            <small>
+              Procesos con humedad, limpieza frecuente
+              o requisitos de higiene.
+            </small>
+          </span>
+        </label>
+
+      </div>
+    </fieldset>
+
+
+    <!-- Paso 2 -->
+    <fieldset class="card selector-step">
+      <legend>
+        <span class="selector-step-number">2</span>
+
+        ¿Qué prioridad tiene el montaje?
+      </legend>
+
+      <div class="selector-options">
+
+        <label class="selector-option">
+          <input
+            type="radio"
+            name="priority"
+            value="compact"
+            required
+          >
+
+          <span class="selector-option-content">
+            <strong>
+              Diseño compacto
+            </strong>
+
+            <small>
+              Hay poco espacio disponible debajo
+              del equipo.
+            </small>
+          </span>
+        </label>
+
+
+        <label class="selector-option">
+          <input
+            type="radio"
+            name="priority"
+            value="adjustment"
+          >
+
+          <span class="selector-option-content">
+            <strong>
+              Mayor ajuste de altura
+            </strong>
+
+            <small>
+              El piso tiene desniveles o se necesita
+              una regulación amplia.
+            </small>
+          </span>
+        </label>
+
+
+        <label class="selector-option">
+          <input
+            type="radio"
+            name="priority"
+            value="stability"
+          >
+
+          <span class="selector-option-content">
+            <strong>
+              Máxima estabilidad
+            </strong>
+
+            <small>
+              Se busca una base firme y resistente
+              para maquinaria.
+            </small>
+          </span>
+        </label>
+
+      </div>
+    </fieldset>
+
+
+    <!-- Paso 3 -->
+    <fieldset class="card selector-step">
+      <legend>
+        <span class="selector-step-number">3</span>
+
+        ¿Cómo es el entorno?
+      </legend>
+
+      <div class="selector-options">
+
+        <label class="selector-option">
+          <input
+            type="radio"
+            name="environment"
+            value="dry"
+            required
+          >
+
+          <span class="selector-option-content">
+            <strong>
+              Interior seco
+            </strong>
+
+            <small>
+              Taller, oficina, laboratorio o área
+              sin contacto frecuente con agua.
+            </small>
+          </span>
+        </label>
+
+
+        <label class="selector-option">
+          <input
+            type="radio"
+            name="environment"
+            value="wet"
+          >
+
+          <span class="selector-option-content">
+            <strong>
+              Humedad o lavado
+            </strong>
+
+            <small>
+              Puede haber agua, agentes de limpieza
+              o humedad constante.
+            </small>
+          </span>
+        </label>
+
+
+        <label class="selector-option">
+          <input
+            type="radio"
+            name="environment"
+            value="outdoor"
+          >
+
+          <span class="selector-option-content">
+            <strong>
+              Exterior o ambiente exigente
+            </strong>
+
+            <small>
+              Exposición ambiental o condiciones
+              industriales más severas.
+            </small>
+          </span>
+        </label>
+
+      </div>
+    </fieldset>
+
+
+    <button
+      type="submit"
+      class="btn btn-primary selector-submit"
+    >
+      Ver recomendación
+    </button>
+
+  </form>
+
+
+  <!-- Resultado -->
+  <section
+    id="leveler-result"
+    class="selector-result"
+    aria-live="polite"
+    hidden
+  >
+
+    <div class="selector-result-heading">
+      <span
+        class="selector-result-icon"
+        aria-hidden="true"
+      >
+        ✓
+      </span>
+
+      <div>
+        <small>Orientación inicial</small>
+
+        <h2 id="leveler-result-title">
+          Familia recomendada
+        </h2>
+      </div>
+    </div>
+
+
+    <p id="leveler-result-description"></p>
+
+
+    <div class="selector-result-note">
+      Esta orientación no sustituye la revisión de carga,
+      rosca, material, diámetro de base y condiciones reales
+      de instalación.
+    </div>
+
+
+    <div class="selector-result-actions">
+
+      <a
+        class="btn btn-primary"
+        href="{% url 'catalogo' %}"
+      >
+        Revisar catálogo
+      </a>
+
+      <a
+        class="btn btn-secondary"
+        href="{% url 'leveler' %}"
+      >
+        Verificar nivelación
+      </a>
+
+    </div>
+
+  </section>
+
+</section>
+
+
+<style>
+  .leveler-selector-form {
+    display: grid;
+    gap: 15px;
+  }
+
+
+  .selector-step {
+    padding: 17px;
+    margin: 0;
+  }
+
+
+  .selector-step legend {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 5px;
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+
+  .selector-step-number {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 27px;
+    height: 27px;
+    color: #ffffff;
+    font-size: 11px;
+    background: var(--primary);
+    border-radius: 50%;
+  }
+
+
+  .selector-options {
+    display: grid;
+    gap: 9px;
+    margin-top: 12px;
+  }
+
+
+  .selector-option {
+    position: relative;
+    display: block;
+    cursor: pointer;
+  }
+
+
+  .selector-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+
+  .selector-option-content {
+    display: grid;
+    gap: 4px;
+    padding: 13px 14px;
+    color: var(--text);
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.15s ease;
+  }
+
+
+  .selector-option-content strong {
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+
+  .selector-option-content small {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+
+  .selector-option:hover
+  .selector-option-content {
+    border-color: rgba(24, 166, 217, 0.55);
+  }
+
+
+  .selector-option input:checked
+  + .selector-option-content {
+    color: #ffffff;
+    background:
+      linear-gradient(
+        135deg,
+        var(--primary-900),
+        var(--primary)
+      );
+    border-color: var(--primary);
+    box-shadow:
+      0 5px 14px rgba(3, 49, 91, 0.2);
+    transform: translateY(-1px);
+  }
+
+
+  .selector-option input:checked
+  + .selector-option-content small {
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+
+  .selector-option input:focus-visible
+  + .selector-option-content {
+    outline: 3px solid rgba(24, 166, 217, 0.3);
+    outline-offset: 2px;
+  }
+
+
+  .selector-submit {
+    width: 100%;
+  }
+
+
+  .selector-result {
+    padding: 18px;
+    margin-top: 18px;
+    background:
+      linear-gradient(
+        145deg,
+        #ffffff,
+        var(--accent-soft)
+      );
+    border: 1px solid rgba(24, 166, 217, 0.38);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+
+
+  .selector-result[hidden] {
+    display: none;
+  }
+
+
+  .selector-result-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+
+
+  .selector-result-icon {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 800;
+    background: #16a34a;
+    border-radius: 50%;
+  }
+
+
+  .selector-result-heading small {
+    color: var(--accent-hover);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+
+  .selector-result-heading h2 {
+    margin: 3px 0 0;
+    color: var(--primary);
+    font-size: 17px;
+  }
+
+
+  .selector-result > p {
+    margin: 14px 0;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.6;
+  }
+
+
+  .selector-result-note {
+    padding: 11px;
+    color: #6b5b24;
+    font-size: 9.5px;
+    font-weight: 600;
+    line-height: 1.5;
+    background: #fff9df;
+    border: 1px solid #f1df93;
+    border-radius: 10px;
+  }
+
+
+  .selector-result-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+
+  @media (max-width: 390px) {
+    .selector-result-actions {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+  (function () {
+    "use strict";
+
+
+    const form = document.getElementById(
+      "leveler-selector-form"
+    );
+
+    const result = document.getElementById(
+      "leveler-result"
+    );
+
+    const resultTitle = document.getElementById(
+      "leveler-result-title"
+    );
+
+    const resultDescription =
+      document.getElementById(
+        "leveler-result-description"
+      );
+
+
+    form.addEventListener(
+      "submit",
+      function (event) {
+        event.preventDefault();
+
+
+        const data =
+          new FormData(form);
+
+        const application =
+          data.get("application");
+
+        const priority =
+          data.get("priority");
+
+        const environment =
+          data.get("environment");
+
+
+        let title =
+          "Nivelador industrial de uso general";
+
+        let description =
+          "Busca una familia con base estable, " +
+          "ajuste accesible y dimensiones compatibles " +
+          "con el equipo.";
+
+
+        if (
+          environment === "wet"
+          || environment === "outdoor"
+          || application === "hygienic"
+        ) {
+          title =
+            "Nivelador resistente a humedad";
+
+          description =
+            "Conviene revisar familias fabricadas para " +
+            "ambientes húmedos o exigentes, verificando " +
+            "materiales, protección y método de limpieza.";
+        } else if (
+          application === "machine"
+          || priority === "stability"
+        ) {
+          title =
+            "Nivelador industrial reforzado";
+
+          description =
+            "Conviene revisar una familia orientada a " +
+            "maquinaria, con base amplia y capacidad " +
+            "compatible con la carga real del montaje.";
+        } else if (
+          application === "light"
+          && priority === "compact"
+        ) {
+          title =
+            "Nivelador compacto";
+
+          description =
+            "Conviene revisar una familia compacta para " +
+            "equipos ligeros o espacios reducidos.";
+        } else if (
+          priority === "adjustment"
+        ) {
+          title =
+            "Nivelador con mayor recorrido de ajuste";
+
+          description =
+            "Conviene revisar una familia que permita " +
+            "compensar desniveles mediante un recorrido " +
+            "de regulación adecuado.";
+        }
+
+
+        resultTitle.textContent =
+          title;
+
+        resultDescription.textContent =
+          description;
+
+        result.hidden = false;
+
+        result.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      }
+    );
+  })();
+</script>
+{% endblock %}

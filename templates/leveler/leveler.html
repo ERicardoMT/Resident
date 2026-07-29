@@ -1,0 +1,474 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}
+Verificar nivelación | SMAV INAHER
+{% endblock %}
+
+
+{% block back %}
+<a
+  class="icon-btn"
+  href="{% url 'home' %}"
+  aria-label="Volver al menú principal"
+>
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+</a>
+{% endblock %}
+
+
+{% block content %}
+<section class="page leveler-page">
+
+  <span class="section-kicker">
+    Pies de nivelación
+  </span>
+
+
+  <h1 class="page-title">
+    Verificar nivelación
+  </h1>
+
+
+  <p class="page-lead">
+    Coloca el teléfono acostado, sobre un borde largo o en
+    posición vertical. El sistema detectará automáticamente
+    la forma de medición.
+  </p>
+
+
+  <!-- Posición detectada -->
+  <div class="level-auto-mode">
+
+    <span
+      class="level-auto-icon"
+      aria-hidden="true"
+    >
+      <svg
+        width="30"
+        height="30"
+        viewBox="0 0 32 32"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <rect
+          x="8"
+          y="3"
+          width="16"
+          height="26"
+          rx="3"
+        ></rect>
+
+        <circle
+          cx="16"
+          cy="24"
+          r="1"
+        ></circle>
+
+        <path d="M3 16h4"></path>
+        <path d="M25 16h4"></path>
+      </svg>
+    </span>
+
+
+    <span class="level-auto-copy">
+
+      <small>
+        Posición detectada
+      </small>
+
+      <strong id="level-mode">
+        Esperando sensor
+      </strong>
+
+      <span id="level-mode-description">
+        Activa el sensor para comenzar.
+      </span>
+
+    </span>
+
+
+    <span
+      class="level-auto-badge"
+      id="level-auto-badge"
+    >
+      AUTO
+    </span>
+
+  </div>
+
+
+  <!-- Tarjeta principal del nivelador -->
+  <div
+    class="card leveler-card"
+    id="leveler-card"
+    data-state="stopped"
+  >
+
+    <!-- Estado del sensor -->
+    <div class="leveler-status">
+
+      <span
+        class="dot level-sensor-dot"
+        id="level-dot"
+      ></span>
+
+
+      <div class="level-status-copy">
+
+        <span class="leveler-status-label">
+          Estado
+        </span>
+
+        <strong
+          id="level-status"
+          aria-live="polite"
+        >
+          Sensor detenido
+        </strong>
+
+      </div>
+
+
+      <span
+        class="level-stability"
+        id="level-stability"
+      >
+        Sin lectura
+      </span>
+
+    </div>
+
+
+    <!-- Visualización del nivel -->
+    <div
+      class="leveler-visual"
+      id="leveler-visual"
+      data-mode="detecting"
+    >
+
+      <!-- Nivel en dos ejes -->
+      <div
+        class="level-surface"
+        id="level-surface"
+        role="img"
+        aria-label="Burbuja de nivelación en dos ejes"
+      >
+
+        <span
+          class="level-ring level-ring-one"
+        ></span>
+
+        <span
+          class="level-ring level-ring-two"
+        ></span>
+
+
+        <span
+          class="
+            level-cross
+            level-cross-horizontal
+          "
+        ></span>
+
+        <span
+          class="
+            level-cross
+            level-cross-vertical
+          "
+        ></span>
+
+
+        <span class="level-target"></span>
+
+        <span
+          class="level-bubble"
+          id="level-bubble"
+        ></span>
+
+      </div>
+
+
+      <!-- Nivel en un eje -->
+      <div
+        class="level-tube"
+        id="level-tube"
+        role="img"
+        aria-label="Nivel de burbuja en un eje"
+      >
+
+        <span class="level-tube-line"></span>
+
+        <span
+          class="
+            level-tube-mark
+            level-tube-mark-left
+          "
+        ></span>
+
+        <span
+          class="
+            level-tube-mark
+            level-tube-mark-right
+          "
+        ></span>
+
+        <span class="level-tube-target"></span>
+
+        <span
+          class="level-tube-bubble"
+          id="level-tube-bubble"
+        ></span>
+
+      </div>
+
+    </div>
+
+
+    <!-- Lecturas en dos ejes -->
+    <div
+      class="level-readings"
+      id="level-surface-readings"
+    >
+
+      <div class="level-reading">
+
+        <span class="level-reading-label">
+          Izquierda / derecha
+        </span>
+
+        <strong id="level-x">
+          0.0°
+        </strong>
+
+      </div>
+
+
+      <div class="level-reading">
+
+        <span class="level-reading-label">
+          Frente / atrás
+        </span>
+
+        <strong id="level-y">
+          0.0°
+        </strong>
+
+      </div>
+
+
+      <div
+        class="
+          level-reading
+          level-reading-total
+        "
+      >
+
+        <span class="level-reading-label">
+          Inclinación total
+        </span>
+
+        <strong id="level-total">
+          0.0°
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- Lectura en un eje -->
+    <div
+      class="level-single-reading"
+      id="level-edge-reading"
+      hidden
+    >
+
+      <span
+        class="level-reading-label"
+        id="level-angle-label"
+      >
+        Inclinación
+      </span>
+
+      <strong id="level-angle">
+        0.0°
+      </strong>
+
+      <span id="level-direction">
+        Centrado
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- Configuración de tolerancia -->
+  <div class="card">
+
+    <div class="level-setting-header">
+
+      <label for="level-tolerance">
+        Tolerancia para considerar nivelado
+      </label>
+
+      <output
+        id="level-tolerance-value"
+        for="level-tolerance"
+      >
+        ±0.5°
+      </output>
+
+    </div>
+
+
+    <input
+      class="level-range"
+      type="range"
+      id="level-tolerance"
+      min="0.2"
+      max="2"
+      value="0.5"
+      step="0.1"
+    >
+
+
+    <div class="level-range-labels">
+
+      <span>
+        Mayor precisión
+      </span>
+
+      <span>
+        Mayor tolerancia
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- Activar nivelador -->
+  <button
+    type="button"
+    class="btn btn-primary"
+    id="btn-level-start"
+  >
+    Activar nivelador
+  </button>
+
+
+  <!-- Acciones secundarias -->
+  <div class="btn-row">
+
+    <button
+      type="button"
+      class="btn btn-ghost"
+      id="btn-level-zero"
+      disabled
+    >
+      Establecer cero
+    </button>
+
+
+    <button
+      type="button"
+      class="btn btn-secondary"
+      id="btn-level-stop"
+      disabled
+    >
+      Detener
+    </button>
+
+  </div>
+
+
+  <!-- Restablecer calibración -->
+  <button
+    type="button"
+    class="btn level-reset-button"
+    id="btn-level-reset"
+  >
+    Restablecer cero del modo detectado
+  </button>
+
+
+  <!-- Mensajes -->
+  <div
+    class="note"
+    id="level-message"
+    aria-live="polite"
+  >
+    Pulsa “Activar nivelador” y concede permiso de movimiento.
+  </div>
+
+
+  <!-- Estado de calibración -->
+  <div class="level-calibration-state">
+
+    <span>
+      Referencia del modo actual:
+    </span>
+
+    <strong id="level-calibration-state">
+      Gravedad absoluta
+    </strong>
+
+  </div>
+
+
+  <!-- Instrucciones -->
+  <div class="card level-instructions">
+
+    <h2>
+      Funcionamiento automático
+    </h2>
+
+
+    <ul>
+
+      <li>
+        <strong>Acostado:</strong>
+        pantalla hacia arriba; mide dos ejes.
+      </li>
+
+      <li>
+        <strong>Horizontal:</strong>
+        apoyado sobre un borde largo; evita el relieve
+        de la cámara.
+      </li>
+
+      <li>
+        <strong>Vertical:</strong>
+        apoyado sobre el borde corto; comprueba la
+        desviación vertical.
+      </li>
+
+    </ul>
+
+  </div>
+
+</section>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'js/leveler.js' %}"></script>
+{% endblock %}

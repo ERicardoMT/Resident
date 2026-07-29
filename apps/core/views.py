@@ -26,16 +26,16 @@ def home(request):
             "icon": "stops",
             "title": "Soportes antivibratorios",
             "subtitle": (
-                "Elige un soporte o mide la vibración "
-                "de tu maquinaria"
+                "Selecciona un soporte o mide "
+                "la vibración de tu maquinaria"
             ),
             "children": [
                 {
                     "icon": "stops",
                     "title": "Elegir mi soporte",
                     "subtitle": (
-                        "Dimensiona el soporte y accede "
-                        "al nivelador digital"
+                        "Dimensiona un soporte "
+                        "antivibratorio"
                     ),
                     "url_name": "stops",
                 },
@@ -47,6 +47,34 @@ def home(request):
                         "y espectro FFT"
                     ),
                     "url_name": "measure",
+                },
+            ],
+        },
+        {
+            "icon": "leveling-feet",
+            "title": "Pies de nivelación",
+            "subtitle": (
+                "Selecciona un nivelador y comprueba "
+                "la nivelación del equipo"
+            ),
+            "children": [
+                {
+                    "icon": "leveling-feet",
+                    "title": "Elegir mi nivelador",
+                    "subtitle": (
+                        "Guía sencilla para encontrar "
+                        "la familia adecuada"
+                    ),
+                    "url_name": "select_leveler",
+                },
+                {
+                    "icon": "leveler",
+                    "title": "Verificar nivelación",
+                    "subtitle": (
+                        "Usa el teléfono como nivel "
+                        "de burbuja en dos ejes"
+                    ),
+                    "url_name": "leveler",
                 },
             ],
         },

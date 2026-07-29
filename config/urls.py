@@ -13,6 +13,7 @@ urlpatterns = [
     path("", include("apps.attenuation.urls")),
     path("", include("apps.vibration.urls")),
     path("", include("apps.stops.urls")),
+    path("", include("apps.leveler.urls")),
 ]
 
 

@@ -109,6 +109,7 @@ INSTALLED_APPS = [
     "apps.attenuation",
     "apps.vibration",
     "apps.stops",
+    "apps.leveler",
 ]
 
 
