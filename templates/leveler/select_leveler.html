@@ -8,9 +8,10 @@ Elegir mi nivelador | SMAV INAHER
 
 {% block back %}
 <a
+  id="leveler-flow-back"
   class="icon-btn"
   href="{% url 'home' %}"
-  aria-label="Volver al menú principal"
+  aria-label="Volver"
 >
   <svg
     width="22"
@@ -32,340 +33,221 @@ Elegir mi nivelador | SMAV INAHER
 {% block content %}
 <section class="page leveler-selector-page">
 
-  <span class="section-kicker">
-    Pies de nivelación
-  </span>
-
-  <h1 class="page-title">
-    Elegir mi nivelador
-  </h1>
-
-  <p class="page-lead">
-    Responde tres preguntas sencillas. La herramienta
-    te orientará hacia la familia de nivelador más
-    adecuada para revisar en el catálogo.
-  </p>
-
-
-  <form
-    id="leveler-selector-form"
-    class="leveler-selector-form"
+  <!-- Pantalla 1 -->
+  <section
+    id="selector-screen-1"
+    class="selector-screen"
+    aria-labelledby="selector-main-title"
   >
+    <span class="section-kicker">
+      Pies de nivelación
+    </span>
 
-    <!-- Paso 1 -->
-    <fieldset class="card selector-step">
-      <legend>
+    <h1
+      id="selector-main-title"
+      class="page-title"
+    >
+      Elegir mi nivelador
+    </h1>
+
+    <p class="page-lead selector-intro">
+      Contesta un cuestionario y te decimos modelo y cantidad.
+    </p>
+
+    <form id="selector-application-form">
+
+      <div class="selector-question-heading">
         <span class="selector-step-number">1</span>
 
-        ¿Dónde se instalará?
-      </legend>
+        <h2>¿Qué vas a nivelar?</h2>
+      </div>
 
-      <div class="selector-options">
+      <div class="selector-choice-list">
 
-        <label class="selector-option">
+        <label class="selector-choice">
           <input
             type="radio"
             name="application"
-            value="light"
+            value="furniture"
             required
           >
 
-          <span class="selector-option-content">
-            <strong>
-              Equipo ligero
-            </strong>
+          <span class="selector-choice-card">
+            <strong>Mobiliario</strong>
 
             <small>
-              Mesas, gabinetes, mobiliario técnico
-              o equipos pequeños.
+              Muebles, vitrinas, exhibidores de tienda,
+              racks ligeros y estanterías.
             </small>
           </span>
         </label>
 
-
-        <label class="selector-option">
+        <label class="selector-choice">
           <input
             type="radio"
             name="application"
-            value="machine"
+            value="industrial"
           >
 
-          <span class="selector-option-content">
+          <span class="selector-choice-card">
             <strong>
-              Maquinaria industrial
+              Maquinaria y equipos industriales
             </strong>
 
             <small>
-              Máquinas, bastidores y equipos que
-              requieren estabilidad.
-            </small>
-          </span>
-        </label>
-
-
-        <label class="selector-option">
-          <input
-            type="radio"
-            name="application"
-            value="hygienic"
-          >
-
-          <span class="selector-option-content">
-            <strong>
-              Área húmeda o sanitaria
-            </strong>
-
-            <small>
-              Procesos con humedad, limpieza frecuente
-              o requisitos de higiene.
+              Máquinas, gabinetes, bandas transportadoras
+              (conveyors), bastidores — incluso equipos
+              pequeños de uso industrial.
             </small>
           </span>
         </label>
 
       </div>
-    </fieldset>
+
+      <button
+        id="selector-step-1-continue"
+        type="submit"
+        class="btn btn-primary selector-continue"
+        disabled
+      >
+        Continuar
+      </button>
+
+    </form>
+  </section>
 
 
-    <!-- Paso 2 -->
-    <fieldset class="card selector-step">
-      <legend>
-        <span class="selector-step-number">2</span>
-
-        ¿Qué prioridad tiene el montaje?
-      </legend>
-
-      <div class="selector-options">
-
-        <label class="selector-option">
-          <input
-            type="radio"
-            name="priority"
-            value="compact"
-            required
-          >
-
-          <span class="selector-option-content">
-            <strong>
-              Diseño compacto
-            </strong>
-
-            <small>
-              Hay poco espacio disponible debajo
-              del equipo.
-            </small>
-          </span>
-        </label>
-
-
-        <label class="selector-option">
-          <input
-            type="radio"
-            name="priority"
-            value="adjustment"
-          >
-
-          <span class="selector-option-content">
-            <strong>
-              Mayor ajuste de altura
-            </strong>
-
-            <small>
-              El piso tiene desniveles o se necesita
-              una regulación amplia.
-            </small>
-          </span>
-        </label>
-
-
-        <label class="selector-option">
-          <input
-            type="radio"
-            name="priority"
-            value="stability"
-          >
-
-          <span class="selector-option-content">
-            <strong>
-              Máxima estabilidad
-            </strong>
-
-            <small>
-              Se busca una base firme y resistente
-              para maquinaria.
-            </small>
-          </span>
-        </label>
-
-      </div>
-    </fieldset>
-
-
-    <!-- Paso 3 -->
-    <fieldset class="card selector-step">
-      <legend>
-        <span class="selector-step-number">3</span>
-
-        ¿Cómo es el entorno?
-      </legend>
-
-      <div class="selector-options">
-
-        <label class="selector-option">
-          <input
-            type="radio"
-            name="environment"
-            value="dry"
-            required
-          >
-
-          <span class="selector-option-content">
-            <strong>
-              Interior seco
-            </strong>
-
-            <small>
-              Taller, oficina, laboratorio o área
-              sin contacto frecuente con agua.
-            </small>
-          </span>
-        </label>
-
-
-        <label class="selector-option">
-          <input
-            type="radio"
-            name="environment"
-            value="wet"
-          >
-
-          <span class="selector-option-content">
-            <strong>
-              Humedad o lavado
-            </strong>
-
-            <small>
-              Puede haber agua, agentes de limpieza
-              o humedad constante.
-            </small>
-          </span>
-        </label>
-
-
-        <label class="selector-option">
-          <input
-            type="radio"
-            name="environment"
-            value="outdoor"
-          >
-
-          <span class="selector-option-content">
-            <strong>
-              Exterior o ambiente exigente
-            </strong>
-
-            <small>
-              Exposición ambiental o condiciones
-              industriales más severas.
-            </small>
-          </span>
-        </label>
-
-      </div>
-    </fieldset>
-
-
-    <button
-      type="submit"
-      class="btn btn-primary selector-submit"
-    >
-      Ver recomendación
-    </button>
-
-  </form>
-
-
-  <!-- Resultado -->
+  <!-- Pantalla 2 -->
   <section
-    id="leveler-result"
-    class="selector-result"
-    aria-live="polite"
+    id="selector-screen-2"
+    class="selector-screen"
+    aria-labelledby="selector-equipment-title"
     hidden
   >
+    <span class="section-kicker">
+      Pies de nivelación
+    </span>
 
-    <div class="selector-result-heading">
-      <span
-        class="selector-result-icon"
-        aria-hidden="true"
+    <div class="selector-question-heading selector-screen-2-heading">
+      <span class="selector-step-number">2</span>
+
+      <h1
+        id="selector-equipment-title"
+        class="selector-step-title"
       >
-        ✓
-      </span>
+        Tu equipo
+      </h1>
+    </div>
 
-      <div>
-        <small>Orientación inicial</small>
+    <form id="selector-equipment-form">
 
-        <h2 id="leveler-result-title">
-          Familia recomendada
-        </h2>
+      <div class="selector-field">
+        <label for="selector-weight">
+          ¿Cuánto pesa tu equipo? (kg)
+        </label>
+
+        <input
+          id="selector-weight"
+          name="weight"
+          type="number"
+          min="0.01"
+          step="0.01"
+          inputmode="decimal"
+          value="600"
+          required
+        >
       </div>
-    </div>
 
+      <div class="selector-field">
+        <label for="selector-support-points">
+          ¿Cuántos puntos de apoyo tiene?
+        </label>
 
-    <p id="leveler-result-description"></p>
+        <input
+          id="selector-support-points"
+          name="support_points"
+          type="number"
+          min="1"
+          step="1"
+          inputmode="numeric"
+          value="4"
+          required
+        >
+      </div>
 
-
-    <div class="selector-result-note">
-      Esta orientación no sustituye la revisión de carga,
-      rosca, material, diámetro de base y condiciones reales
-      de instalación.
-    </div>
-
-
-    <div class="selector-result-actions">
-
-      <a
-        class="btn btn-primary"
-        href="{% url 'catalogo' %}"
+      <div
+        class="selector-load-summary"
+        aria-live="polite"
       >
-        Revisar catálogo
-      </a>
+        <strong id="selector-load-per-point">
+          Carga por punto: 150 kg
+        </strong>
 
-      <a
-        class="btn btn-secondary"
-        href="{% url 'leveler' %}"
+        <span>
+          El peso se reparte entre los apoyos; con este
+          dato elegimos el modelo.
+        </span>
+      </div>
+
+      <label class="selector-sanitary-option">
+        <input
+          id="selector-sanitary"
+          name="sanitary"
+          type="checkbox"
+        >
+
+        <span class="selector-sanitary-copy">
+          <strong>
+            ¿Ambiente húmedo, sanitario o corrosivo?
+          </strong>
+
+          <small>
+            Alimentos, farmacéutica, laboratorios, lavado
+            frecuente o vapores químicos.
+          </small>
+        </span>
+      </label>
+
+      <p class="selector-weight-hint">
+        ¿No sabes el peso exacto? Usa un aproximado
+      </p>
+
+      <button
+        type="submit"
+        class="btn btn-primary selector-continue"
       >
-        Verificar nivelación
-      </a>
+        Continuar
+      </button>
 
-    </div>
-
+    </form>
   </section>
 
 </section>
 
 
 <style>
-  .leveler-selector-form {
-    display: grid;
-    gap: 15px;
+  .selector-screen[hidden] {
+    display: none;
   }
 
-
-  .selector-step {
-    padding: 17px;
-    margin: 0;
+  .selector-intro {
+    margin-bottom: 17px;
   }
 
-
-  .selector-step legend {
+  .selector-question-heading {
     display: flex;
     align-items: center;
     gap: 9px;
-    padding: 0 5px;
-    color: var(--primary);
-    font-size: 13px;
-    font-weight: 800;
+    margin-bottom: 12px;
   }
 
+  .selector-question-heading h2,
+  .selector-step-title {
+    margin: 0;
+    color: var(--primary);
+    font-size: 16px;
+    font-weight: 800;
+  }
 
   .selector-step-number {
     display: grid;
@@ -374,193 +256,157 @@ Elegir mi nivelador | SMAV INAHER
     width: 27px;
     height: 27px;
     color: #ffffff;
-    font-size: 11px;
+    font-size: 12px;
+    font-weight: 800;
     background: var(--primary);
     border-radius: 50%;
   }
 
-
-  .selector-options {
+  .selector-choice-list {
     display: grid;
-    gap: 9px;
-    margin-top: 12px;
+    gap: 10px;
   }
 
-
-  .selector-option {
+  .selector-choice {
     position: relative;
     display: block;
     cursor: pointer;
   }
 
-
-  .selector-option input {
+  .selector-choice input {
     position: absolute;
+    width: 1px;
+    height: 1px;
     opacity: 0;
-    pointer-events: none;
   }
 
-
-  .selector-option-content {
+  .selector-choice-card {
     display: grid;
-    gap: 4px;
-    padding: 13px 14px;
-    color: var(--text);
-    background: var(--surface-alt);
+    gap: 5px;
+    min-height: 82px;
+    padding: 14px;
+    background: #ffffff;
     border: 1px solid var(--line);
-    border-radius: 12px;
-    transition:
-      border-color 0.2s ease,
-      background-color 0.2s ease,
-      box-shadow 0.2s ease,
-      transform 0.15s ease;
+    border-radius: 13px;
+    box-shadow: var(--shadow-sm);
   }
 
-
-  .selector-option-content strong {
-    font-size: 12px;
+  .selector-choice-card strong {
+    color: var(--primary);
+    font-size: 13px;
     font-weight: 800;
   }
 
-
-  .selector-option-content small {
+  .selector-choice-card small {
     color: var(--muted);
     font-size: 10px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .selector-choice input:checked
+  + .selector-choice-card {
+    background: rgba(228, 246, 253, 0.7);
+    border: 2px solid var(--accent-hover);
+    box-shadow:
+      0 0 0 3px rgba(24, 166, 217, 0.1),
+      var(--shadow-sm);
+  }
+
+  .selector-continue {
+    width: 100%;
+    margin-top: 15px;
+  }
+
+  .selector-continue:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .selector-field {
+    display: grid;
+    gap: 7px;
+    margin-bottom: 13px;
+  }
+
+  .selector-field label {
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .selector-field input {
+    width: 100%;
+    min-height: 47px;
+    padding: 11px 13px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+  }
+
+  .selector-load-summary {
+    display: grid;
+    gap: 4px;
+    padding: 4px 12px 14px;
+  }
+
+  .selector-load-summary strong {
+    color: var(--accent-hover);
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .selector-load-summary span {
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  .selector-sanitary-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px;
+    cursor: pointer;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+  .selector-sanitary-option input {
+    width: 19px;
+    height: 19px;
+    accent-color: var(--accent-hover);
+  }
+
+  .selector-sanitary-copy {
+    display: grid;
+    gap: 5px;
+  }
+
+  .selector-sanitary-copy strong {
+    color: var(--primary);
+    font-size: 11.5px;
+    font-weight: 800;
+  }
+
+  .selector-sanitary-copy small {
+    color: var(--muted);
+    font-size: 9.5px;
     font-weight: 600;
     line-height: 1.45;
   }
 
-
-  .selector-option:hover
-  .selector-option-content {
-    border-color: rgba(24, 166, 217, 0.55);
-  }
-
-
-  .selector-option input:checked
-  + .selector-option-content {
-    color: #ffffff;
-    background:
-      linear-gradient(
-        135deg,
-        var(--primary-900),
-        var(--primary)
-      );
-    border-color: var(--primary);
-    box-shadow:
-      0 5px 14px rgba(3, 49, 91, 0.2);
-    transform: translateY(-1px);
-  }
-
-
-  .selector-option input:checked
-  + .selector-option-content small {
-    color: rgba(255, 255, 255, 0.78);
-  }
-
-
-  .selector-option input:focus-visible
-  + .selector-option-content {
-    outline: 3px solid rgba(24, 166, 217, 0.3);
-    outline-offset: 2px;
-  }
-
-
-  .selector-submit {
-    width: 100%;
-  }
-
-
-  .selector-result {
-    padding: 18px;
-    margin-top: 18px;
-    background:
-      linear-gradient(
-        145deg,
-        #ffffff,
-        var(--accent-soft)
-      );
-    border: 1px solid rgba(24, 166, 217, 0.38);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-sm);
-  }
-
-
-  .selector-result[hidden] {
-    display: none;
-  }
-
-
-  .selector-result-heading {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-  }
-
-
-  .selector-result-icon {
-    display: grid;
-    flex: 0 0 auto;
-    place-items: center;
-    width: 42px;
-    height: 42px;
-    color: #ffffff;
-    font-size: 18px;
-    font-weight: 800;
-    background: #16a34a;
-    border-radius: 50%;
-  }
-
-
-  .selector-result-heading small {
-    color: var(--accent-hover);
-    font-size: 8px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-
-  .selector-result-heading h2 {
-    margin: 3px 0 0;
-    color: var(--primary);
-    font-size: 17px;
-  }
-
-
-  .selector-result > p {
-    margin: 14px 0;
+  .selector-weight-hint {
+    margin: 12px 2px 0;
     color: var(--muted);
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1.6;
-  }
-
-
-  .selector-result-note {
-    padding: 11px;
-    color: #6b5b24;
     font-size: 9.5px;
+    font-style: italic;
     font-weight: 600;
-    line-height: 1.5;
-    background: #fff9df;
-    border: 1px solid #f1df93;
-    border-radius: 10px;
-  }
-
-
-  .selector-result-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 14px;
-  }
-
-
-  @media (max-width: 390px) {
-    .selector-result-actions {
-      grid-template-columns: 1fr;
-    }
   }
 </style>
 {% endblock %}
@@ -571,113 +417,149 @@ Elegir mi nivelador | SMAV INAHER
   (function () {
     "use strict";
 
-
-    const form = document.getElementById(
-      "leveler-selector-form"
+    const screen1 = document.getElementById(
+      "selector-screen-1"
     );
 
-    const result = document.getElementById(
-      "leveler-result"
+    const screen2 = document.getElementById(
+      "selector-screen-2"
     );
 
-    const resultTitle = document.getElementById(
-      "leveler-result-title"
+    const backButton = document.getElementById(
+      "leveler-flow-back"
     );
 
-    const resultDescription =
-      document.getElementById(
-        "leveler-result-description"
+    const applicationForm = document.getElementById(
+      "selector-application-form"
+    );
+
+    const equipmentForm = document.getElementById(
+      "selector-equipment-form"
+    );
+
+    const continueButton = document.getElementById(
+      "selector-step-1-continue"
+    );
+
+    const weightInput = document.getElementById(
+      "selector-weight"
+    );
+
+    const supportPointsInput = document.getElementById(
+      "selector-support-points"
+    );
+
+    const loadOutput = document.getElementById(
+      "selector-load-per-point"
+    );
+
+    let currentScreen = 1;
+
+    function getSelectedApplication() {
+      return applicationForm.querySelector(
+        'input[name="application"]:checked'
       );
+    }
 
+    function updateLoad() {
+      const weight = Number(weightInput.value);
+      const supportPoints =
+        Number(supportPointsInput.value);
 
-    form.addEventListener(
+      if (
+        !Number.isFinite(weight)
+        || !Number.isFinite(supportPoints)
+        || weight <= 0
+        || supportPoints <= 0
+      ) {
+        loadOutput.textContent =
+          "Carga por punto: —";
+        return;
+      }
+
+      const load = weight / supportPoints;
+
+      loadOutput.textContent =
+        "Carga por punto: "
+        + new Intl.NumberFormat(
+          "es-MX",
+          {
+            maximumFractionDigits: 2,
+          }
+        ).format(load)
+        + " kg";
+    }
+
+    function showScreen(number) {
+      currentScreen = number;
+
+      screen1.hidden = number !== 1;
+      screen2.hidden = number !== 2;
+
+      backButton.setAttribute(
+        "aria-label",
+        number === 1
+          ? "Volver al menú principal"
+          : "Volver a la pregunta anterior"
+      );
+    }
+
+    applicationForm.addEventListener(
+      "change",
+      function () {
+        continueButton.disabled =
+          !getSelectedApplication();
+      }
+    );
+
+    applicationForm.addEventListener(
       "submit",
       function (event) {
         event.preventDefault();
 
-
-        const data =
-          new FormData(form);
-
-        const application =
-          data.get("application");
-
-        const priority =
-          data.get("priority");
-
-        const environment =
-          data.get("environment");
-
-
-        let title =
-          "Nivelador industrial de uso general";
-
-        let description =
-          "Busca una familia con base estable, " +
-          "ajuste accesible y dimensiones compatibles " +
-          "con el equipo.";
-
-
-        if (
-          environment === "wet"
-          || environment === "outdoor"
-          || application === "hygienic"
-        ) {
-          title =
-            "Nivelador resistente a humedad";
-
-          description =
-            "Conviene revisar familias fabricadas para " +
-            "ambientes húmedos o exigentes, verificando " +
-            "materiales, protección y método de limpieza.";
-        } else if (
-          application === "machine"
-          || priority === "stability"
-        ) {
-          title =
-            "Nivelador industrial reforzado";
-
-          description =
-            "Conviene revisar una familia orientada a " +
-            "maquinaria, con base amplia y capacidad " +
-            "compatible con la carga real del montaje.";
-        } else if (
-          application === "light"
-          && priority === "compact"
-        ) {
-          title =
-            "Nivelador compacto";
-
-          description =
-            "Conviene revisar una familia compacta para " +
-            "equipos ligeros o espacios reducidos.";
-        } else if (
-          priority === "adjustment"
-        ) {
-          title =
-            "Nivelador con mayor recorrido de ajuste";
-
-          description =
-            "Conviene revisar una familia que permita " +
-            "compensar desniveles mediante un recorrido " +
-            "de regulación adecuado.";
+        if (!applicationForm.checkValidity()) {
+          applicationForm.reportValidity();
+          return;
         }
 
-
-        resultTitle.textContent =
-          title;
-
-        resultDescription.textContent =
-          description;
-
-        result.hidden = false;
-
-        result.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-        });
+        showScreen(2);
       }
     );
+
+    weightInput.addEventListener(
+      "input",
+      updateLoad
+    );
+
+    supportPointsInput.addEventListener(
+      "input",
+      updateLoad
+    );
+
+    equipmentForm.addEventListener(
+      "submit",
+      function (event) {
+        event.preventDefault();
+
+        if (!equipmentForm.checkValidity()) {
+          equipmentForm.reportValidity();
+        }
+      }
+    );
+
+    backButton.addEventListener(
+      "click",
+      function (event) {
+        if (currentScreen !== 2) {
+          return;
+        }
+
+        event.preventDefault();
+        showScreen(1);
+      }
+    );
+
+    updateLoad();
   })();
 </script>
 {% endblock %}
