@@ -2,8 +2,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from django.conf import settings  # <-- Agregado para leer el settings.py
-from django.conf.urls.static import static  # <-- Agregado para servir archivos estáticos/media
 
 
 urlpatterns = [
