@@ -10,18 +10,54 @@ import numpy as np
 
 # Constante de gravedad para convertir m/s^2 a g.
 G = 9.80665
+# Límites defensivos para evitar consumos excesivos
+# de memoria y procesamiento.
+MIN_INPUT_SAMPLES = 8
+MAX_INPUT_SAMPLES = 5000
+MAX_DURATION_SECONDS = 10.0
+MAX_RESAMPLED_POINTS = 5000
 
 
-def _uniform_resample(times_s: np.ndarray, values: np.ndarray, fs: float):
-    """Reinterpola las muestras a una malla temporal uniforme.
-
-    DeviceMotion no garantiza un intervalo constante entre muestras, por lo que
-    interpolamos linealmente sobre una malla uniforme antes de la FFT.
+def _uniform_resample(
+    times_s: np.ndarray,
+    values: np.ndarray,
+    fs: float,
+):
     """
+    Reinterpola las muestras a una malla temporal uniforme.
+
+    DeviceMotion no garantiza un intervalo constante entre
+    muestras, por lo que interpolamos linealmente antes
+    de ejecutar la FFT.
+    """
+
     t0, t1 = times_s[0], times_s[-1]
-    n = max(int(round((t1 - t0) * fs)) + 1, 2)
-    uniform_t = np.linspace(t0, t1, n)
-    uniform_v = np.interp(uniform_t, times_s, values)
+
+    estimated_points = (
+        int(round((t1 - t0) * fs))
+        + 1
+    )
+
+    n = min(
+        max(
+            estimated_points,
+            2,
+        ),
+        MAX_RESAMPLED_POINTS,
+    )
+
+    uniform_t = np.linspace(
+        t0,
+        t1,
+        n,
+    )
+
+    uniform_v = np.interp(
+        uniform_t,
+        times_s,
+        values,
+    )
+
     return uniform_t, uniform_v
 
 
@@ -33,15 +69,46 @@ def analyze_samples(samples: list[dict]) -> dict:
 
     Devuelve un diccionario con la frecuencia dominante y estadisticas asociadas.
     """
-    if not samples or len(samples) < 8:
+    if (
+    not samples
+    or len(samples) < MIN_INPUT_SAMPLES
+    ):
         raise ValueError(
-            "Se necesitan al menos 8 muestras para estimar la frecuencia."
+            (
+            "Se necesitan al menos "
+            f"{MIN_INPUT_SAMPLES} muestras "
+            "para estimar la frecuencia."
+            )
+        )
+
+    if len(samples) > MAX_INPUT_SAMPLES:
+        raise ValueError(
+            (
+            "No se pueden analizar más de "
+            f"{MAX_INPUT_SAMPLES} muestras."
+            )
         )
 
     times = np.array([float(s["t"]) for s in samples], dtype=float)
     x = np.array([float(s.get("x", 0.0)) for s in samples], dtype=float)
     y = np.array([float(s.get("y", 0.0)) for s in samples], dtype=float)
     z = np.array([float(s.get("z", 0.0)) for s in samples], dtype=float)
+
+    if not all(
+    np.all(np.isfinite(values))
+    for values in (
+        times,
+        x,
+        y,
+        z,
+    )
+):
+        raise ValueError(
+            (
+            "Las muestras contienen valores "
+            "numéricos inválidos."
+            )
+    )
 
     # Ordenamos por tiempo por seguridad y pasamos a segundos relativos.
     order = np.argsort(times)
@@ -50,7 +117,15 @@ def analyze_samples(samples: list[dict]) -> dict:
 
     duration = float(times_s[-1] - times_s[0])
     if duration <= 0:
-        raise ValueError("La ventana de tiempo es invalida (duracion <= 0).")
+        raise ValueError("La ventana de tiempo es invalida (duracion menor o igual a cero).")
+
+    if duration > MAX_DURATION_SECONDS:
+        raise ValueError(
+            (
+            "La ventana de tiempo no puede "
+            f"superar {MAX_DURATION_SECONDS:g} segundos."
+            )
+        )
 
     # Magnitud del vector de aceleracion (independiente de la orientacion).
     magnitude = np.sqrt(x**2 + y**2 + z**2)

@@ -301,6 +301,15 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
     ],
+    "DEFAULT_THROTTLE_CLASSES": [
+        (
+            "rest_framework.throttling."
+            "AnonRateThrottle"
+        ),
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "120/min",
+    },
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
         (
