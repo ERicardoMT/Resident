@@ -266,6 +266,34 @@ def eliminar_usuario_view(request, user_id):
     "core.view_catalogitem",
     raise_exception=True,
 )
+def productos_dashboard_view(request):
+    """
+    Muestra los productos registrados
+    en la base de datos.
+    """
+
+    productos = CatalogItem.objects.all().order_by(
+        "-created_at",
+        "-id",
+    )
+
+    return render(
+        request,
+        "core/manage_products.html",
+        {
+            "productos": productos,
+            "can_add_catalog": request.user.has_perm(
+                "core.add_catalogitem"
+            ),
+            "can_change_catalog": request.user.has_perm(
+                "core.change_catalogitem"
+            ),
+            "can_delete_catalog": request.user.has_perm(
+                "core.delete_catalogitem"
+            ),
+        },
+    )
+
 
 
 @login_required
