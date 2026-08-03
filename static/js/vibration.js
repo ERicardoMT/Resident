@@ -33,6 +33,8 @@ var COLORS = {
   var analyzeTimer = null;
   var motionHandler = null;
   var lastAnalyzeInFlight = false;
+  var measurementUnit = "acceleration";
+  var latestAnalysis = null;
 
   var els = {
     hz: document.getElementById("hz-value"),
@@ -41,6 +43,22 @@ var COLORS = {
     fs: document.getElementById("stat-fs"),
     rms: document.getElementById("stat-rms"),
     peak: document.getElementById("stat-peak"),
+
+    rmsLabel: document.getElementById(
+  "stat-rms-label"
+),
+
+peakLabel: document.getElementById(
+  "stat-peak-label"
+),
+
+unitDescription: document.getElementById(
+  "measurement-unit-description"
+),
+
+unitButtons: document.querySelectorAll(
+  "[data-vibration-unit]"
+),
     dot: document.getElementById("status-dot"),
     statusText: document.getElementById("status-text"),
     start: document.getElementById("btn-start"),
@@ -61,6 +79,121 @@ var COLORS = {
   function now() {
     return performance.now();
   }
+
+  function formatMeasurement(
+  value,
+  decimals,
+  unit
+) {
+  if (
+    typeof value !== "number"
+    || !Number.isFinite(value)
+  ) {
+    return "— " + unit;
+  }
+
+  return (
+    value.toFixed(decimals)
+    + " "
+    + unit
+  );
+}
+
+
+function renderMeasurementUnit() {
+  els.unitButtons.forEach(
+    function (button) {
+      var buttonUnit =
+        button.getAttribute(
+          "data-vibration-unit"
+        );
+
+      var isActive =
+        buttonUnit === measurementUnit;
+
+      button.classList.toggle(
+        "is-active",
+        isActive
+      );
+
+      button.setAttribute(
+        "aria-pressed",
+        isActive ? "true" : "false"
+      );
+    }
+  );
+
+
+  if (measurementUnit === "velocity") {
+    els.rmsLabel.textContent =
+      "RMS velocidad";
+
+    els.peakLabel.textContent =
+      "Pico velocidad";
+
+    els.unitDescription.textContent =
+      "Velocidad vibratoria integrada desde la aceleración";
+
+    els.rms.textContent =
+      formatMeasurement(
+        latestAnalysis
+          ? latestAnalysis.velocity_rms_mms
+          : 0,
+        3,
+        "mm/s"
+      );
+
+    els.peak.textContent =
+      formatMeasurement(
+        latestAnalysis
+          ? latestAnalysis.velocity_peak_mms
+          : 0,
+        3,
+        "mm/s"
+      );
+
+    return;
+  }
+
+
+  els.rmsLabel.textContent =
+    "RMS aceleración";
+
+  els.peakLabel.textContent =
+    "Pico aceleración";
+
+  els.unitDescription.textContent =
+    "Aceleración vibratoria";
+
+  els.rms.textContent =
+    formatMeasurement(
+      latestAnalysis
+        ? latestAnalysis.rms_ms2
+        : 0,
+      3,
+      "m/s²"
+    );
+
+  els.peak.textContent =
+    formatMeasurement(
+      latestAnalysis
+        ? latestAnalysis.peak_ms2
+        : 0,
+      3,
+      "m/s²"
+    );
+}
+
+
+function setMeasurementUnit(unit) {
+  measurementUnit = (
+    unit === "velocity"
+      ? "velocity"
+      : "acceleration"
+  );
+
+  renderMeasurementUnit();
+}
 
   // ---- Captura de muestras reales ----
   function onMotion(event) {
@@ -196,14 +329,26 @@ var COLORS = {
       });
   }
 
-  function updateReadout(d) {
-    els.hz.textContent = d.dominant_hz.toFixed(1);
-    els.rpm.textContent = Math.round(d.rpm);
-    els.fs.textContent = d.sample_rate_hz.toFixed(0) + " Hz";
-    els.rms.textContent = d.rms_g.toFixed(3) + " g";
-    els.peak.textContent = d.peak_g.toFixed(3) + " g";
-    drawSpectrum(d.spectrum, d.dominant_hz);
-  }
+function updateReadout(d) {
+  latestAnalysis = d;
+
+  els.hz.textContent =
+    d.dominant_hz.toFixed(1);
+
+  els.rpm.textContent =
+    Math.round(d.rpm);
+
+  els.fs.textContent =
+    d.sample_rate_hz.toFixed(0)
+    + " Hz";
+
+  renderMeasurementUnit();
+
+  drawSpectrum(
+    d.spectrum,
+    d.dominant_hz
+  );
+}
 
   // ---- Bucle de render ----
   function renderLoop() {
@@ -217,6 +362,8 @@ var COLORS = {
     running = true;
     samples = [];
     scopeBuffer = [];
+    latestAnalysis = null;
+    renderMeasurementUnit();
     els.start.disabled = true;
     els.demo.disabled = true;
     els.stop.disabled = false;
@@ -278,6 +425,21 @@ var COLORS = {
     return Promise.resolve(true);
   }
 
+  els.unitButtons.forEach(
+  function (button) {
+    button.addEventListener(
+      "click",
+      function () {
+        setMeasurementUnit(
+          button.getAttribute(
+            "data-vibration-unit"
+          )
+        );
+      }
+    );
+  }
+);
+
   els.start.addEventListener("click", function () {
     requestMotionPermission()
       .then(function (granted) {
@@ -299,6 +461,7 @@ var COLORS = {
   els.stop.addEventListener("click", stop);
 
   // Estado inicial de los lienzos.
-  drawScope();
-  drawSpectrum([], 0);
+setMeasurementUnit("acceleration");
+drawScope();
+drawSpectrum([], 0);
 })();

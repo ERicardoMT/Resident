@@ -31,15 +31,17 @@ def api_root(request):
                         ]
                     },
                     "returns": [
-                        "dominant_hz",
-                        "rpm",
-                        "sample_rate_hz",
-                        "rms_ms2",
-                        "rms_g",
-                        "peak_ms2",
-                        "peak_g",
-                        "spectrum",
-                    ],
+                                "dominant_hz",
+                                "rpm",
+                                "sample_rate_hz",
+                                "rms_ms2",
+                                "rms_g",
+                                "peak_ms2",
+                                "peak_g",
+                                "velocity_rms_mms",
+                                "velocity_peak_mms",
+                                "spectrum",
+                            ],
                 }
             },
         }

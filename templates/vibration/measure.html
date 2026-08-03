@@ -35,10 +35,57 @@
   </p>
 
   <div class="card">
-    <div class="reading">
-      <span class="value" id="hz-value">0.0</span><span class="unit">Hz</span>
-      <div class="caption" id="hz-caption">Frecuencia dominante</div>
-    </div>
+<div class="reading">
+  <span class="value" id="hz-value">0.0</span>
+  <span class="unit">Hz</span>
+
+  <div class="caption" id="hz-caption">
+    Frecuencia dominante
+  </div>
+</div>
+
+
+<div class="measurement-unit-control">
+
+  <span class="measurement-unit-label">
+    Unidad de vibración
+  </span>
+
+  <div
+    class="measurement-unit-switch"
+    role="group"
+    aria-label="Cambiar unidad de vibración"
+  >
+    <button
+      type="button"
+      class="measurement-unit-button is-active"
+      data-vibration-unit="acceleration"
+      aria-pressed="true"
+    >
+      m/s²
+    </button>
+
+    <button
+      type="button"
+      class="measurement-unit-button"
+      data-vibration-unit="velocity"
+      aria-pressed="false"
+    >
+      mm/s
+    </button>
+  </div>
+
+  <small
+    id="measurement-unit-description"
+    class="measurement-unit-description"
+  >
+    Aceleración vibratoria
+  </small>
+
+</div>
+
+
+<div class="stats">
     <div class="stats">
       <div class="stat">
         <div class="label">RPM</div>
@@ -48,14 +95,31 @@
         <div class="label">Muestreo</div>
         <div class="num" id="stat-fs">0 Hz</div>
       </div>
-      <div class="stat">
-        <div class="label">RMS aceleracion</div>
-        <div class="num" id="stat-rms">0 g</div>
-      </div>
-      <div class="stat">
-        <div class="label">Pico</div>
-        <div class="num" id="stat-peak">0 g</div>
-      </div>
+<div class="stat">
+  <div
+    class="label"
+    id="stat-rms-label"
+  >
+    RMS aceleración
+  </div>
+
+  <div class="num" id="stat-rms">
+    0.000 m/s²
+  </div>
+</div>
+
+<div class="stat">
+  <div
+    class="label"
+    id="stat-peak-label"
+  >
+    Pico aceleración
+  </div>
+
+  <div class="num" id="stat-peak">
+    0.000 m/s²
+  </div>
+</div>
     </div>
     <div class="status">
       <span class="dot" id="status-dot"></span>
@@ -81,6 +145,77 @@
   </div>
 
 </section>
+
+<style>
+  .measurement-unit-control {
+    display: grid;
+    gap: 7px;
+    margin: 16px 0;
+  }
+
+
+  .measurement-unit-label {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+  }
+
+
+  .measurement-unit-switch {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 5px;
+    padding: 4px;
+    background: #eef4f8;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+
+  .measurement-unit-button {
+    min-height: 39px;
+    padding: 8px 12px;
+    color: var(--muted);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    border-radius: 9px;
+    transition:
+      color 0.18s ease,
+      background-color 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+
+
+  .measurement-unit-button.is-active {
+    color: var(--primary);
+    background: #ffffff;
+    box-shadow:
+      0 2px 8px rgba(15, 43, 64, 0.12);
+  }
+
+
+  .measurement-unit-button:focus-visible {
+    outline: 3px solid
+      rgba(24, 166, 217, 0.28);
+    outline-offset: 2px;
+  }
+
+
+  .measurement-unit-description {
+    min-height: 15px;
+    color: var(--muted);
+    font-size: 9.5px;
+    font-weight: 600;
+  }
+</style>
+
 {% endblock %}
 
 {% block scripts %}
