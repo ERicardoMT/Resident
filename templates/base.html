@@ -36,7 +36,7 @@
   </head>
 
   <body>
-    <main class="phone">
+    <main class="phone{% block shell_class %}{% endblock %}">
       <header class="topbar">
         {% block back %}
         <a class="icon-btn" href="{% url 'home' %}" aria-label="Volver al inicio">
