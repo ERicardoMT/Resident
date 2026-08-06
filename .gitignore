@@ -80,4 +80,4 @@ Thumbs.db
 # =========================================================
 
 node_modules/
-.next/
+.next/apps/leveler/data/*.xlsx

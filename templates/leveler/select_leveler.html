@@ -123,6 +123,7 @@ Elegir mi nivelador | SMAV INAHER
     </div>
 
     <form id="selector-equipment-form">
+      {% csrf_token %}
       <div class="selector-field">
         <label for="selector-weight">
           ¿Cuánto pesa tu equipo? (kg)
@@ -181,16 +182,40 @@ Elegir mi nivelador | SMAV INAHER
         </span>
       </label>
 
-      <!-- Filtros mock para disparar las 3 pantallas de resultado -->
-      <div class="selector-field">
-        <label for="selector-thread-type">
-          Rosca solicitada
-        </label>
-        <select id="selector-thread-type" name="thread_type">
-          <option value="metric-standard">Métrica / Estándar</option>
-          <option value="quarter-20">1/4"-20</option>
-        </select>
-      </div>
+<div class="selector-field">
+  <label for="selector-thread-type">
+    Rosca solicitada
+  </label>
+
+  <select
+    id="selector-thread-type"
+    name="thread_type"
+  >
+    <option value="">
+      Sin preferencia
+    </option>
+
+    {% if metric_threads %}
+      <optgroup label="Roscas métricas">
+        {% for thread in metric_threads %}
+          <option value="{{ thread }}">
+            {{ thread }}
+          </option>
+        {% endfor %}
+      </optgroup>
+    {% endif %}
+
+    {% if standard_threads %}
+      <optgroup label="Roscas estándar">
+        {% for thread in standard_threads %}
+          <option value="{{ thread }}">
+            {{ thread }}
+          </option>
+        {% endfor %}
+      </optgroup>
+    {% endif %}
+  </select>
+</div>
 
       <div class="selector-field">
         <label for="selector-special-mode">
@@ -675,120 +700,192 @@ Elegir mi nivelador | SMAV INAHER
   (function () {
     "use strict";
 
-    const screen1 = document.getElementById("selector-screen-1");
-    const screen2 = document.getElementById("selector-screen-2");
-    const screen3 = document.getElementById("selector-screen-3");
+    const recommendationUrl =
+      "{% url 'recommend_leveler' %}";
 
-    const backButton = document.getElementById("leveler-flow-back");
+    const catalogUrl =
+      "{% url 'catalogo' %}";
 
-    const applicationForm = document.getElementById("selector-application-form");
-    const equipmentForm = document.getElementById("selector-equipment-form");
+    const screen1 = document.getElementById(
+      "selector-screen-1"
+    );
 
-    const step1Continue = document.getElementById("selector-step-1-continue");
+    const screen2 = document.getElementById(
+      "selector-screen-2"
+    );
 
-    const weightInput = document.getElementById("selector-weight");
-    const supportPointsInput = document.getElementById("selector-support-points");
-    const sanitaryInput = document.getElementById("selector-sanitary");
-    const threadTypeInput = document.getElementById("selector-thread-type");
-    const specialModeInput = document.getElementById("selector-special-mode");
+    const screen3 = document.getElementById(
+      "selector-screen-3"
+    );
 
-    const loadPerPointOutput = document.getElementById("selector-load-per-point");
+    const backButton = document.getElementById(
+      "leveler-flow-back"
+    );
 
-    const resultFolio = document.getElementById("result-folio");
-    const resultSummary = document.getElementById("result-summary");
-    const resultFilterBlock = document.getElementById("result-filter-block");
-    const resultWarning = document.getElementById("result-warning");
-    const resultList = document.getElementById("result-list");
-    const resultBlueBanner = document.getElementById("result-blue-banner");
-    const resultExtraMessage = document.getElementById("result-extra-message");
+    const applicationForm =
+      document.getElementById(
+        "selector-application-form"
+      );
+
+    const equipmentForm =
+      document.getElementById(
+        "selector-equipment-form"
+      );
+
+    const step1Continue =
+      document.getElementById(
+        "selector-step-1-continue"
+      );
+
+    const step2Continue =
+      document.getElementById(
+        "selector-step-2-continue"
+      );
+
+    const weightInput =
+      document.getElementById(
+        "selector-weight"
+      );
+
+    const supportPointsInput =
+      document.getElementById(
+        "selector-support-points"
+      );
+
+    const sanitaryInput =
+      document.getElementById(
+        "selector-sanitary"
+      );
+
+    const threadTypeInput =
+      document.getElementById(
+        "selector-thread-type"
+      );
+
+    const specialModeInput =
+      document.getElementById(
+        "selector-special-mode"
+      );
+
+    const csrfTokenInput =
+      equipmentForm.querySelector(
+        "[name=csrfmiddlewaretoken]"
+      );
+
+    const loadPerPointOutput =
+      document.getElementById(
+        "selector-load-per-point"
+      );
+
+    const resultFolio =
+      document.getElementById(
+        "result-folio"
+      );
+
+    const resultSummary =
+      document.getElementById(
+        "result-summary"
+      );
+
+    const resultFilterBlock =
+      document.getElementById(
+        "result-filter-block"
+      );
+
+    const resultWarning =
+      document.getElementById(
+        "result-warning"
+      );
+
+    const resultList =
+      document.getElementById(
+        "result-list"
+      );
+
+    const resultBlueBanner =
+      document.getElementById(
+        "result-blue-banner"
+      );
+
+    const resultExtraMessage =
+      document.getElementById(
+        "result-extra-message"
+      );
 
     let currentScreen = 1;
 
-    const MOCK_PRODUCTS = {
-      normal: [
-        {
-          code: "MKD-2",
-          featured: true,
-          capacity: "200 kg por punto · uso 75%",
-          metric: "M10 × 1.5, M12 × 1.75, M16 × 2.0",
-          standard: "3/8\"-16, 1/2\"-13, 5/8\"-11",
-          screw: "galvanizado o inoxidable T-304",
-          base: "con neopreno",
-          note: "Ideal para brazos robóticos y líneas de ensamble en suelos con desniveles."
-        },
-        {
-          code: "MKD-3",
-          featured: false,
-          capacity: "300 kg por punto · si vas a agregar peso",
-          metric: "M12 × 1.75, M16 × 2.0, M20 × 2.5",
-          standard: "1/2\"-13, 5/8\"-11, 3/4\"-10",
-          screw: "galvanizado o inoxidable T-304",
-          base: "con neopreno",
-          note: ""
-        }
-      ],
-      sanitary: [
-        {
-          code: "MKD-2",
-          featured: true,
-          capacity: "200 kg por punto · uso 75%",
-          metric: "M10 × 1.5, M12 × 1.75, M16 × 2.0",
-          standard: "3/8\"-16, 1/2\"-13, 5/8\"-11",
-          screw: "inoxidable T-304",
-          base: "inoxidable con neopreno",
-          note: ""
-        },
-        {
-          code: "MKD-3",
-          featured: false,
-          capacity: "300 kg por punto · si vas a agregar peso",
-          metric: "M12 × 1.75, M16 × 2.0, M20 × 2.5",
-          standard: "1/2\"-13, 5/8\"-11, 3/4\"-10",
-          screw: "inoxidable T-304",
-          base: "inoxidable con neopreno",
-          note: ""
-        }
-      ]
-    };
 
     function generateFolio() {
-      const random = Math.floor(1000 + Math.random() * 9000);
+      const random = Math.floor(
+        1000
+        + Math.random() * 9000
+      );
+
       return "NV-" + random;
     }
 
+
     function getSelectedApplication() {
-      const selected = applicationForm.querySelector('input[name="application"]:checked');
-      return selected ? selected.value : "";
+      const selected =
+        applicationForm.querySelector(
+          'input[name="application"]:checked'
+        );
+
+      return selected
+        ? selected.value
+        : "";
     }
 
-    function calculateLoadPerPoint() {
-      const weight = Number(weightInput.value);
-      const supports = Number(supportPointsInput.value);
 
-      if (!Number.isFinite(weight) || !Number.isFinite(supports) || weight <= 0 || supports <= 0) {
+    function calculateLoadPerPoint() {
+      const weight = Number(
+        weightInput.value
+      );
+
+      const supports = Number(
+        supportPointsInput.value
+      );
+
+      if (
+        !Number.isFinite(weight)
+        || !Number.isFinite(supports)
+        || weight <= 0
+        || supports <= 0
+      ) {
         return null;
       }
 
       return weight / supports;
     }
 
+
     function formatNumber(value) {
-      return new Intl.NumberFormat("es-MX", {
-        maximumFractionDigits: 2
-      }).format(value);
+      return new Intl.NumberFormat(
+        "es-MX",
+        {
+          maximumFractionDigits: 2
+        }
+      ).format(value);
     }
 
+
     function updateLoadSummary() {
-      const load = calculateLoadPerPoint();
+      const load =
+        calculateLoadPerPoint();
 
       if (load === null) {
-        loadPerPointOutput.textContent = "Carga por punto: —";
+        loadPerPointOutput.textContent =
+          "Carga por punto: —";
+
         return;
       }
 
       loadPerPointOutput.textContent =
-        "Carga por punto: " + formatNumber(load) + " kg";
+        "Carga por punto: "
+        + formatNumber(load)
+        + " kg";
     }
+
 
     function showScreen(number) {
       currentScreen = number;
@@ -807,169 +904,549 @@ Elegir mi nivelador | SMAV INAHER
       );
     }
 
-    function renderProductCard(product) {
-      return `
-        <article class="result-card ${product.featured ? "result-card-featured" : ""}">
-          ${product.featured ? '<span class="result-badge">Recomendado</span>' : ""}
-          <h3>${product.code}</h3>
-          <p><strong>Capacidad:</strong> ${product.capacity}</p>
-          <p><strong>Tornillo:</strong> ${product.screw}</p>
-          <p><strong>Base:</strong> ${product.base}</p>
-          <p><strong>Roscas métricas:</strong> ${product.metric}</p>
-          <p><strong>Roscas estándar:</strong> ${product.standard}</p>
-          ${product.note ? `<p>${product.note}</p>` : ""}
-          ${product.featured ? '<a class="result-card-action" href="{% url "catalogo" %}">Ver ficha y precio</a>' : ""}
-        </article>
-      `;
+
+    function clearElement(element) {
+      while (element.firstChild) {
+        element.removeChild(
+          element.firstChild
+        );
+      }
     }
 
-    function renderRecommendedResult(loadPerPoint, sanitary) {
-      const weight = Number(weightInput.value);
-      const supports = Number(supportPointsInput.value);
 
-      const products = sanitary
-        ? MOCK_PRODUCTS.sanitary
-        : MOCK_PRODUCTS.normal;
+    function addProductRow(
+      card,
+      label,
+      value
+    ) {
+      const normalizedValue =
+        Array.isArray(value)
+          ? value.join(", ")
+          : String(value || "").trim();
 
-      resultBlueBanner.hidden = !sanitary;
-      resultBlueBanner.textContent =
-        "Mostrando acabados inoxidables — ambiente sanitario o corrosivo";
+      if (!normalizedValue) {
+        return;
+      }
+
+      const paragraph =
+        document.createElement("p");
+
+      const strong =
+        document.createElement("strong");
+
+      strong.textContent =
+        label + ":";
+
+      paragraph.appendChild(strong);
+
+      paragraph.appendChild(
+        document.createTextNode(
+          " " + normalizedValue
+        )
+      );
+
+      card.appendChild(paragraph);
+    }
+
+
+    function renderProductCard(
+      product,
+      featured
+    ) {
+      const card =
+        document.createElement(
+          "article"
+        );
+
+      card.className =
+        "result-card";
+
+      if (featured) {
+        card.classList.add(
+          "result-card-featured"
+        );
+
+        const badge =
+          document.createElement(
+            "span"
+          );
+
+        badge.className =
+          "result-badge";
+
+        badge.textContent =
+          "Recomendado";
+
+        card.appendChild(badge);
+      }
+
+      const title =
+        document.createElement("h3");
+
+      title.textContent =
+        product.model;
+
+      card.appendChild(title);
+
+      addProductRow(
+        card,
+        "Capacidad",
+        product.capacity_label
+      );
+
+      addProductRow(
+        card,
+        "Tipo",
+        product.type
+      );
+
+      addProductRow(
+        card,
+        "Diámetro de base",
+        product.base_diameter
+      );
+
+      addProductRow(
+        card,
+        "Altura de tornillo",
+        product.screw_height
+      );
+
+      addProductRow(
+        card,
+        "Material del tornillo",
+        product.screw_material
+      );
+
+      addProductRow(
+        card,
+        "Material de la base",
+        product.base_material
+      );
+
+      addProductRow(
+        card,
+        "Roscas métricas",
+        product.metric_threads
+      );
+
+      addProductRow(
+        card,
+        "Roscas estándar",
+        product.standard_threads
+      );
+
+      if (featured) {
+        const link =
+          document.createElement("a");
+
+        link.className =
+          "result-card-action";
+
+        link.href = catalogUrl;
+
+        link.textContent =
+          "Ver catálogo";
+
+        card.appendChild(link);
+      }
+
+      return card;
+    }
+
+
+    function setFilterChip(text) {
+      clearElement(
+        resultFilterBlock
+      );
+
+      const chip =
+        document.createElement("div");
+
+      chip.className =
+        "result-filter-chip";
+
+      chip.textContent = text;
+
+      resultFilterBlock.appendChild(
+        chip
+      );
+    }
+
+
+    function setExtraMessage(
+      title,
+      message
+    ) {
+      clearElement(
+        resultExtraMessage
+      );
+
+      if (title) {
+        const strong =
+          document.createElement(
+            "strong"
+          );
+
+        strong.textContent = title;
+
+        resultExtraMessage.appendChild(
+          strong
+        );
+      }
+
+      if (message) {
+        resultExtraMessage.appendChild(
+          document.createTextNode(
+            message
+          )
+        );
+      }
+    }
+
+
+    function getModeLabel(mode) {
+      const labels = {
+        normal: "Línea normal",
+        rotula: "Rótula",
+        anclaje: "Anclaje al piso"
+      };
+
+      return labels[mode] || mode;
+    }
+
+
+    function renderResult(data) {
+      clearElement(resultList);
+
+      resultFolio.textContent =
+        "Folio "
+        + generateFolio()
+        + " · guárdalo";
 
       resultSummary.textContent =
-        "Para " + formatNumber(loadPerPoint) + " kg por punto (" +
-        formatNumber(weight) + " kg entre " + formatNumber(supports) + " apoyos):";
+        "Para "
+        + formatNumber(
+          data.load_per_point_kg
+        )
+        + " kg por punto ("
+        + formatNumber(
+          data.weight_kg
+        )
+        + " kg entre "
+        + formatNumber(
+          data.support_points
+        )
+        + " apoyos):";
 
-      resultFilterBlock.innerHTML =
-        '<div class="result-filter-chip">Filtrar por rosca: Métrica ▼ · Estándar ▼</div>';
+      const requestedThread =
+        data.requested_thread
+        || "Sin preferencia";
+
+      setFilterChip(
+        "Rosca: "
+        + requestedThread
+        + " · Tipo: "
+        + getModeLabel(
+          data.special_mode
+        )
+      );
+
+      resultBlueBanner.hidden =
+        !data.sanitary;
+
+      resultBlueBanner.textContent =
+        "Mostrando modelos con disponibilidad "
+        + "de materiales inoxidables";
 
       resultWarning.hidden = true;
       resultWarning.textContent = "";
 
-      resultList.innerHTML = products.map(renderProductCard).join("");
+      if (
+        data.status === "recommended"
+        && data.recommended
+      ) {
+        resultList.appendChild(
+          renderProductCard(
+            data.recommended,
+            true
+          )
+        );
 
-      resultExtraMessage.innerHTML = sanitary
-        ? ""
-        : "<strong>¿Ambiente húmedo, sanitario o con químicos?</strong> Elige inoxidable o escríbenos.";
-    }
+        data.alternatives.forEach(
+          function (product) {
+            resultList.appendChild(
+              renderProductCard(
+                product,
+                false
+              )
+            );
+          }
+        );
 
-    function renderSpecialMeasureResult(loadPerPoint) {
-      resultBlueBanner.hidden = true;
-      resultSummary.textContent =
-        "Estas opciones sí cubren tus " + formatNumber(loadPerPoint) + " kg por punto:";
+        if (data.alternatives.length) {
+          setExtraMessage(
+            "También encontramos alternativas.",
+            " Se muestran hasta tres modelos "
+            + "adicionales compatibles."
+          );
+        } else {
+          setExtraMessage(
+            "Coincidencia encontrada.",
+            " Este modelo cumple los filtros "
+            + "capturados."
+          );
+        }
 
-      resultFilterBlock.innerHTML =
-        '<div class="result-filter-chip">Filtrar por rosca: 1/4&quot;-20 ▼</div>';
+        return;
+      }
+
+      if (
+        data.status
+        === "thread_not_available"
+      ) {
+        resultWarning.hidden = false;
+
+        resultWarning.textContent =
+          data.message;
+
+        data.alternatives.forEach(
+          function (product) {
+            resultList.appendChild(
+              renderProductCard(
+                product,
+                false
+              )
+            );
+          }
+        );
+
+        setExtraMessage(
+          "La rosca solicitada no está disponible.",
+          " Los modelos mostrados sí cumplen "
+          + "la carga, aplicación, tipo y "
+          + "materiales. Consulta una fabricación "
+          + "especial con tu folio."
+        );
+
+        return;
+      }
 
       resultWarning.hidden = false;
+
       resultWarning.textContent =
-        "En esa capacidad no manejamos 1/4\" de línea.";
+        data.message
+        || (
+          "No se encontraron modelos "
+          + "compatibles."
+        );
 
-      resultList.innerHTML = `
-        <article class="result-card">
-          <h3>MKD-2</h3>
-          <p><strong>Roscas estándar:</strong> 3/8"-16, 1/2"-13, 5/8"-11</p>
-        </article>
-
-        <article class="result-card">
-          <h3>MKD-3</h3>
-          <p><strong>Roscas estándar:</strong> 1/2"-13, 5/8"-11, 3/4"-10</p>
-        </article>
-      `;
-
-      resultExtraMessage.innerHTML = `
-        <strong>¿Necesitas 1/4" forzosamente?</strong>
-        Lo fabricamos a medida, desde una pieza.
-        Escríbenos con tu folio y te decimos cómo.
-      `;
+      setExtraMessage(
+        "Requiere revisión de INAHER.",
+        " Guarda el folio y comparte el peso, "
+        + "los apoyos, la rosca y el ambiente "
+        + "de trabajo."
+      );
     }
 
-    function renderNoLineResult(modeLabel) {
-      resultBlueBanner.hidden = true;
+
+    function renderRequestError(
+      message
+    ) {
+      clearElement(resultList);
+
+      resultFolio.textContent =
+        "No se generó folio";
+
       resultSummary.textContent =
-        "No hay modelos activos de línea para esta selección.";
+        "No fue posible calcular "
+        + "la recomendación.";
 
-      resultFilterBlock.innerHTML =
-        '<div class="result-filter-chip">Tipo solicitado: ' + modeLabel + '</div>';
+      setFilterChip(
+        "Error al procesar los datos"
+      );
 
-      resultWarning.hidden = true;
-      resultWarning.textContent = "";
+      resultBlueBanner.hidden = true;
 
-      resultList.innerHTML = "";
+      resultWarning.hidden = false;
 
-      resultExtraMessage.innerHTML = `
-        <strong>Los articulados se dimensionan contigo para que queden bien a la primera.</strong>
-        Guarda tu folio y escríbenos.
-      `;
+      resultWarning.textContent =
+        message;
+
+      setExtraMessage(
+        "Revisa los datos capturados.",
+        " Regresa al formulario e intenta "
+        + "nuevamente."
+      );
     }
 
-    function buildResult() {
-      const loadPerPoint = calculateLoadPerPoint();
-      const sanitary = sanitaryInput.checked;
-      const threadType = threadTypeInput.value;
-      const specialMode = specialModeInput.value;
 
-      resultFolio.textContent = "Folio " + generateFolio() + " · guárdalo";
+    function buildPayload() {
+      return {
+        application:
+          getSelectedApplication(),
 
-      if (specialMode === "rotula") {
-        renderNoLineResult("Rótula");
-        return;
-      }
+        weight:
+          Number(
+            weightInput.value
+          ),
 
-      if (specialMode === "anclaje") {
-        renderNoLineResult("Anclaje al piso");
-        return;
-      }
+        support_points:
+          Number(
+            supportPointsInput.value
+          ),
 
-      if (threadType === "quarter-20") {
-        renderSpecialMeasureResult(loadPerPoint);
-        return;
-      }
+        sanitary:
+          sanitaryInput.checked,
 
-      renderRecommendedResult(loadPerPoint, sanitary);
+        thread:
+          threadTypeInput.value,
+
+        special_mode:
+          specialModeInput.value
+      };
     }
 
-    applicationForm.addEventListener("change", function () {
-      step1Continue.disabled = !getSelectedApplication();
-    });
 
-    applicationForm.addEventListener("submit", function (event) {
-      event.preventDefault();
+    async function requestRecommendation() {
+      const originalText =
+        step2Continue.textContent;
 
-      if (!applicationForm.checkValidity()) {
-        applicationForm.reportValidity();
-        return;
+      step2Continue.disabled = true;
+
+      step2Continue.textContent =
+        "Calculando...";
+
+      try {
+        const response = await fetch(
+          recommendationUrl,
+          {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+              "Content-Type":
+                "application/json",
+
+              "X-CSRFToken":
+                csrfTokenInput.value
+            },
+            body: JSON.stringify(
+              buildPayload()
+            )
+          }
+        );
+
+        let data = {};
+
+        try {
+          data = await response.json();
+        } catch (error) {
+          throw new Error(
+            "Django devolvió una "
+            + "respuesta no válida."
+          );
+        }
+
+        if (!response.ok) {
+          throw new Error(
+            data.detail
+            || (
+              "No se pudo calcular "
+              + "la recomendación."
+            )
+          );
+        }
+
+        renderResult(data);
+        showScreen(3);
+      } catch (error) {
+        renderRequestError(
+          error instanceof Error
+            ? error.message
+            : "Ocurrió un error inesperado."
+        );
+
+        showScreen(3);
+      } finally {
+        step2Continue.disabled = false;
+
+        step2Continue.textContent =
+          originalText;
       }
+    }
 
-      showScreen(2);
-    });
 
-    weightInput.addEventListener("input", updateLoadSummary);
-    supportPointsInput.addEventListener("input", updateLoadSummary);
-
-    equipmentForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-
-      if (!equipmentForm.checkValidity()) {
-        equipmentForm.reportValidity();
-        return;
+    applicationForm.addEventListener(
+      "change",
+      function () {
+        step1Continue.disabled =
+          !getSelectedApplication();
       }
+    );
 
-      buildResult();
-      showScreen(3);
-    });
 
-    backButton.addEventListener("click", function (event) {
-      if (currentScreen === 2) {
+    applicationForm.addEventListener(
+      "submit",
+      function (event) {
         event.preventDefault();
-        showScreen(1);
-        return;
-      }
 
-      if (currentScreen === 3) {
-        event.preventDefault();
+        if (
+          !applicationForm.checkValidity()
+        ) {
+          applicationForm.reportValidity();
+          return;
+        }
+
         showScreen(2);
       }
-    });
+    );
+
+
+    weightInput.addEventListener(
+      "input",
+      updateLoadSummary
+    );
+
+
+    supportPointsInput.addEventListener(
+      "input",
+      updateLoadSummary
+    );
+
+
+    equipmentForm.addEventListener(
+      "submit",
+      function (event) {
+        event.preventDefault();
+
+        if (
+          !equipmentForm.checkValidity()
+        ) {
+          equipmentForm.reportValidity();
+          return;
+        }
+
+        requestRecommendation();
+      }
+    );
+
+
+    backButton.addEventListener(
+      "click",
+      function (event) {
+        if (currentScreen === 2) {
+          event.preventDefault();
+          showScreen(1);
+          return;
+        }
+
+        if (currentScreen === 3) {
+          event.preventDefault();
+          showScreen(2);
+        }
+      }
+    );
+
 
     updateLoadSummary();
   })();

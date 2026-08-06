@@ -10,6 +10,11 @@ urlpatterns = [
         name="select_leveler",
     ),
     path(
+        "api/niveladores/recomendar/",
+        views.recommend_leveler,
+        name="recommend_leveler",
+    ),
+    path(
         "pies-de-nivelacion/verificar/",
         views.leveler,
         name="leveler",
