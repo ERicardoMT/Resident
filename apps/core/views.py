@@ -382,29 +382,52 @@ def catalogo_view(request):
     categorias = [
         {
             "name": "Antivibratorios",
-            "description": "Elementos para aislamiento y control de vibraciones.",
+            "description": (
+                "Elementos para aislamiento "
+                "y control de vibraciones."
+            ),
             "icon": "vibration",
-            "url_name": "antivibratorios", # <-- Ya conectada
+            "url_name": "antivibratorios",
         },
         {
             "name": "Patas niveladoras",
-            "description": "Soluciones de apoyo, ajuste y nivelación industrial.",
+            "description": (
+                "Soluciones de apoyo, ajuste "
+                "y nivelación industrial."
+            ),
             "icon": "leveling",
-            "url_name": "patas_niveladoras", # <-- Ajustar si en tu urls.py se llama distinto (ej. "patas")
+            "url_name": "patas_niveladoras",
         },
         {
-            "name": "Elementos de accionamiento y maniobra",
-            "description": "Componentes para control y operación de maquinaria.",
+            "name": (
+                "Elementos de accionamiento "
+                "y maniobra"
+            ),
+            "description": (
+                "Componentes para control "
+                "y operación de maquinaria."
+            ),
             "icon": "control",
-            "url_name": "accionamiento", 
+            "url_name": "accionamiento",
         },
         {
             "name": "Niveladores para mobiliario",
-            "description": "Elementos de regulación para muebles y estructuras.",
+            "description": (
+                "Elementos de regulación "
+                "para muebles y estructuras."
+            ),
             "icon": "furniture",
-            "url_name": "mobiliario", 
+            "url_name": "mobiliario",
         },
     ]
+
+    return render(
+        request,
+        "core/catalogo.html",
+        {
+            "categorias": categorias,
+        },
+    )
 
     catalog_items = CatalogItem.objects.filter(is_active=True).order_by('-id')
 
