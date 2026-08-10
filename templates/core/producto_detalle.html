@@ -67,7 +67,7 @@
         <!-- Descripción -->
         <div class="product-description">
             {% if producto.description %}
-                {{ producto.description|linebreaksbr }}
+                {{ producto.description|safe }}
             {% else %}
                 <p class="product-empty-text">
                     Ficha técnica en proceso de actualización.

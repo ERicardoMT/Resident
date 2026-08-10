@@ -5,10 +5,25 @@
 {% block url %}inaher.app{% endblock %}
 
 {% block back %}
-<a class="icon-btn" href="{% url 'catalogo' %}" aria-label="Volver al catálogo">
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="15 18 9 12 15 6"></polyline>
-  </svg>
+<a
+    class="icon-btn"
+    href="{% url 'catalogo' %}"
+    aria-label="Volver al catálogo"
+>
+    <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    >
+        <polyline
+            points="15 18 9 12 15 6"
+        ></polyline>
+    </svg>
 </a>
 {% endblock %}
 
@@ -21,6 +36,7 @@
     @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .animate-in { animation: fadeSlideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
     .badge { position: absolute; top: -10px; right: -10px; background: #e3000f; color: white; font-size: 0.6rem; font-weight: bold; padding: 3px 6px; border-radius: 12px; z-index: 10; }
+    .badge.top10 { background: #ffb400; color: #333;}
 </style>
 
 <section style="padding: 20px 15px; background-color: #ffffff; min-height: 100vh;">
@@ -30,18 +46,54 @@
     </h1>
 
     <div class="filter-menu">
-        <button class="filter-btn active" data-filter="todo">Todo</button> /
-        <button class="filter-btn" data-filter="colgantes">Colgantes antivibración</button> /
-        <button class="filter-btn" data-filter="niveladores_maq">Niveladores antivibración para maquinaria</button> /
-        <button class="filter-btn" data-filter="pies">Pies antivibración</button> /
-        <button class="filter-btn" data-filter="soportes_piso">Soportes antivibración con anclaje al piso</button> /
-        <button class="filter-btn" data-filter="tacones">Tacones antivibración</button>
+        <button
+            type="button"
+            class="filter-btn active"
+            data-filter="todo"
+        >
+            Todo
+        </button> /
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="colgantes"
+        >
+            Colgantes antivibración
+        </button> /
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="niveladores_maq"
+        >
+            Niveladores antivibración para maquinaria
+        </button> /
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="pies"
+        >
+            Pies antivibración
+        </button> /
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="soportes_piso"
+        >
+            Soportes antivibración con anclaje al piso
+        </button> /
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="tacones"
+        >
+            Tacones antivibración
+        </button>
     </div>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px;" id="product-grid">
         
         {% for producto in productos %}
-        <a href="{% url 'producto_detalle' producto.name %}" class="product-card animate-in" data-category="{{ producto.category|lower }}" style="text-decoration: none; display: block; background: #fff; border: 1px solid #eaeaea; border-radius: 4px; padding: 15px 10px; text-align: center; position: relative;">
+        <a href="{% url 'producto_detalle' producto.name %}" class="product-card animate-in" data-subcategory="{{ producto.subcategory|default:''|lower }}" style="text-decoration: none; display: block; background: #fff; border: 1px solid #eaeaea; border-radius: 4px; padding: 15px 10px; text-align: center; position: relative;">
             
             {% if producto.badge %}
                 <span class="badge {% if producto.badge == 'Top 10' or producto.badge == 'TOP 10' %}top10{% endif %}">{{ producto.badge }}</span>
@@ -69,32 +121,89 @@
     </div>
 </section>
 
+{% endblock %}
+
+{% block scripts %}
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const productCards = document.querySelectorAll('.product-card');
-        const categoryTitle = document.getElementById('category-title');
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+        const filterBtns =
+            document.querySelectorAll(
+                ".filter-btn"
+            );
 
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                categoryTitle.innerText = btn.innerText;
+        const productCards =
+            document.querySelectorAll(
+                ".product-card"
+            );
 
-                const filterValue = btn.getAttribute('data-filter');
+        const categoryTitle =
+            document.getElementById(
+                "category-title"
+            );
 
-                productCards.forEach(card => {
-                    card.classList.remove('animate-in');
-                    if (filterValue === 'todo' || card.getAttribute('data-category').includes(filterValue.substring(0,4))) {
-                        card.style.display = 'block';
-                        void card.offsetWidth; 
-                        card.classList.add('animate-in');
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
+        filterBtns.forEach(function (btn) {
+            btn.addEventListener(
+                "click",
+                function () {
+                    filterBtns.forEach(
+                        function (button) {
+                            button.classList.remove(
+                                "active"
+                            );
+                        }
+                    );
+
+                    btn.classList.add(
+                        "active"
+                    );
+
+                    categoryTitle.textContent =
+                        btn.textContent.trim();
+
+                    const filterValue =
+                        btn.getAttribute(
+                            "data-filter"
+                        );
+
+                    productCards.forEach(
+                        function (card) {
+                            const productSubcategory =
+                                (
+                                    card.getAttribute(
+                                        "data-subcategory"
+                                    ) || ""
+                                ).trim();
+
+                            const shouldShow =
+                                filterValue === "todo" ||
+                                productSubcategory ===
+                                    filterValue;
+
+                            card.classList.remove(
+                                "animate-in"
+                            );
+
+                            if (shouldShow) {
+                                card.style.display =
+                                    "block";
+
+                                void card.offsetWidth;
+
+                                card.classList.add(
+                                    "animate-in"
+                                );
+                            } else {
+                                card.style.display =
+                                    "none";
+                            }
+                        }
+                    );
+                }
+            );
         });
-    });
+    }
+);
 </script>
 {% endblock %}

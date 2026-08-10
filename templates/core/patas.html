@@ -49,21 +49,62 @@
 
     <!-- Menú de filtros (Adaptado para Patas Niveladoras) -->
     <div class="filter-menu">
-        <button class="filter-btn active" data-filter="todo">Todo</button> /
-        <button class="filter-btn" data-filter="alta resistencia">Alta resistencia</button> /
-        <button class="filter-btn" data-filter="anclaje al piso">Anclaje al piso</button> /
-        <button class="filter-btn" data-filter="antiderrapante">Antiderrapante</button> /
-        <button class="filter-btn" data-filter="antivibracion">Antivibracion</button> /
-        <button class="filter-btn" data-filter="con rotula">Con rotula</button> /
-        <button class="filter-btn" data-filter="uso rudo">Uso rudo</button>
-    </div>
+    <button
+        class="filter-btn active"
+        data-filter="todo"
+    >
+        Todo
+    </button>
+    /
+    <button
+        class="filter-btn"
+        data-filter="alta_resistencia"
+    >
+        Alta resistencia
+    </button>
+    /
+    <button
+        class="filter-btn"
+        data-filter="anclaje_piso"
+    >
+        Anclaje al piso
+    </button>
+    /
+    <button
+        class="filter-btn"
+        data-filter="antiderrapante"
+    >
+        Antiderrapante
+    </button>
+    /
+    <button
+        class="filter-btn"
+        data-filter="antivibracion"
+    >
+        Antivibración
+    </button>
+    /
+    <button
+        class="filter-btn"
+        data-filter="con_rotula"
+    >
+        Con rótula
+    </button>
+    /
+    <button
+        class="filter-btn"
+        data-filter="uso_rudo"
+    >
+        Uso rudo
+    </button>
+</div>
 
     <!-- Grid de productos -->
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px;" id="product-grid">
         
         {% for producto in productos %}
         <!-- AQUÍ ESTÁ EL CAMBIO: data-category="{{ producto.category|lower }}" -->
-        <a href="{% url 'producto_detalle' producto.name %}" class="product-card animate-in" data-category="{{ producto.category|lower }}" style="text-decoration: none; display: block; background: #fff; border: 1px solid #eaeaea; border-radius: 4px; padding: 15px 10px; text-align: center; position: relative;">
+        <a href="{% url 'producto_detalle' producto.name %}" class="product-card animate-in" data-subcategory="{{ producto.subcategory|default:''|lower }}" style="text-decoration: none; display: block; background: #fff; border: 1px solid #eaeaea; border-radius: 4px; padding: 15px 10px; text-align: center; position: relative;">
             
             {% if producto.badge %}
                 <span class="badge {% if producto.badge == 'Top 10' or producto.badge == 'TOP 10' %}top10{% endif %}">{{ producto.badge }}</span>
@@ -94,40 +135,81 @@
 
 <!-- Script de Filtrado y Animación -->
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const productCards = document.querySelectorAll('.product-card');
-        const categoryTitle = document.getElementById('category-title');
+    document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+        const filterBtns =
+            document.querySelectorAll(
+                '.filter-btn'
+            );
+
+        const productCards =
+            document.querySelectorAll(
+                '.product-card'
+            );
+
+        const categoryTitle =
+            document.getElementById(
+                'category-title'
+            );
 
         filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // 1. Cambiar estado activo en el menú
-                filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+            btn.addEventListener(
+                'click',
+                () => {
+                    filterBtns.forEach(
+                        b => b.classList.remove(
+                            'active'
+                        )
+                    );
 
-                // 2. Cambiar Título principal
-                categoryTitle.innerText = btn.innerText;
+                    btn.classList.add(
+                        'active'
+                    );
 
-                // 3. Filtrar y Animar
-                const filterValue = btn.getAttribute('data-filter');
+                    categoryTitle.innerText =
+                        btn.innerText;
 
-                productCards.forEach(card => {
-                    // Reiniciar animación quitando la clase temporalmente
-                    card.classList.remove('animate-in');
-                    
-                    if (filterValue === 'todo' || card.getAttribute('data-category') === filterValue) {
-                        card.style.display = 'block';
-                        
-                        // Forzar un "reflow" para que la animación se reproduzca de nuevo al instante
-                        void card.offsetWidth; 
-                        
-                        card.classList.add('animate-in');
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
+                    const filterValue =
+                        btn.getAttribute(
+                            'data-filter'
+                        );
+
+                    productCards.forEach(
+                        card => {
+                            card.classList.remove(
+                                'animate-in'
+                            );
+
+                            const productSubcategory =
+                                card.getAttribute(
+                                    'data-subcategory'
+                                ) || '';
+
+                            const shouldShow =
+                                filterValue === 'todo' ||
+                                productSubcategory ===
+                                    filterValue;
+
+                            if (shouldShow) {
+                                card.style.display =
+                                    'block';
+
+                                void card.offsetWidth;
+
+                                card.classList.add(
+                                    'animate-in'
+                                );
+                            } else {
+                                card.style.display =
+                                    'none';
+                            }
+                        }
+                    );
+                }
+            );
         });
-    });
+    }
+);
 </script>
 {% endblock %}
