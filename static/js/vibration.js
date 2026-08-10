@@ -63,7 +63,7 @@ unitButtons: document.querySelectorAll(
     statusText: document.getElementById("status-text"),
     start: document.getElementById("btn-start"),
     stop: document.getElementById("btn-stop"),
-    demo: document.getElementById("btn-demo"),
+    pdf: document.getElementById("btn-pdf"),
     scope: document.getElementById("scope"),
     spectrum: document.getElementById("spectrum"),
   };
@@ -348,6 +348,8 @@ function updateReadout(d) {
     d.spectrum,
     d.dominant_hz
   );
+
+  els.pdf.disabled = false;
 }
 
   // ---- Bucle de render ----
@@ -365,7 +367,7 @@ function updateReadout(d) {
     latestAnalysis = null;
     renderMeasurementUnit();
     els.start.disabled = true;
-    els.demo.disabled = true;
+    els.pdf.disabled = true;
     els.stop.disabled = false;
     setStatus(label, true);
     analyzeTimer = setInterval(analyze, ANALYZE_EVERY_MS);
@@ -381,7 +383,7 @@ function updateReadout(d) {
     // Si no llegan datos en 2.5s, avisamos.
     setTimeout(function () {
       if (running && !demoMode && samples.length === 0) {
-        setStatus("Sin datos del acelerometro. Prueba el modo demostracion.", false);
+        setStatus("Sin datos del acelerómetro. Verifica los permisos del sensor.", false);
       }
     }, 2500);
   }
@@ -395,6 +397,186 @@ function updateReadout(d) {
     els.caption.textContent = "Senal simulada";
   }
 
+  function downloadMeasurementPdf() {
+  if (
+    !latestAnalysis
+    || samples.length < 8
+  ) {
+    window.alert(
+      "Primero realiza una medición válida."
+    );
+
+    return;
+  }
+
+  var csrfInput =
+    document.querySelector(
+      "#measurement-pdf-csrf "
+      + "input[name='csrfmiddlewaretoken']"
+    );
+
+  if (!csrfInput) {
+    window.alert(
+      "No se encontró el token de seguridad."
+    );
+
+    return;
+  }
+
+  var pdfUrl =
+    els.pdf.getAttribute(
+      "data-pdf-url"
+    );
+
+  var originalText =
+    els.pdf.textContent;
+
+  els.pdf.disabled = true;
+  els.pdf.textContent =
+    "Generando...";
+
+  var payload = {
+    measurement_unit:
+      measurementUnit,
+
+    samples: samples.map(
+      function (sample) {
+        return {
+          t: sample.t,
+          x: sample.x,
+          y: sample.y,
+          z: sample.z,
+        };
+      }
+    ),
+  };
+
+  fetch(
+    pdfUrl,
+    {
+      method: "POST",
+
+      credentials:
+        "same-origin",
+
+      headers: {
+        "Content-Type":
+          "application/json",
+
+        "X-CSRFToken":
+          csrfInput.value,
+      },
+
+      body: JSON.stringify(
+        payload
+      ),
+    }
+  )
+    .then(function (response) {
+      if (!response.ok) {
+        return response
+          .json()
+          .catch(function () {
+            return {};
+          })
+          .then(function (data) {
+            throw new Error(
+              data.detail
+              || (
+                "No se pudo "
+                + "generar el PDF."
+              )
+            );
+          });
+      }
+
+      var disposition =
+        response.headers.get(
+          "Content-Disposition"
+        )
+        || "";
+
+      var filename =
+        "SMAV_INAHER_"
+        + "medicion_vibratoria.pdf";
+
+      var match =
+        disposition.match(
+          /filename="?([^"]+)"?/i
+        );
+
+      if (
+        match
+        && match[1]
+      ) {
+        filename =
+          match[1];
+      }
+
+      return response
+        .blob()
+        .then(
+          function (blob) {
+            return {
+              blob: blob,
+              filename: filename,
+            };
+          }
+        );
+    })
+    .then(function (result) {
+      var objectUrl =
+        URL.createObjectURL(
+          result.blob
+        );
+
+      var link =
+        document.createElement(
+          "a"
+        );
+
+      link.href =
+        objectUrl;
+
+      link.download =
+        result.filename;
+
+      document.body.appendChild(
+        link
+      );
+
+      link.click();
+
+      link.remove();
+
+      window.setTimeout(
+        function () {
+          URL.revokeObjectURL(
+            objectUrl
+          );
+        },
+        1000
+      );
+    })
+    .catch(function (error) {
+      window.alert(
+        error.message
+        || (
+          "No se pudo "
+          + "generar el PDF."
+        )
+      );
+    })
+    .finally(function () {
+      els.pdf.textContent =
+        originalText;
+
+      els.pdf.disabled =
+        !latestAnalysis
+        || samples.length < 8;
+    });
+}
+
   function stop() {
     running = false;
     demoMode = false;
@@ -407,7 +589,11 @@ function updateReadout(d) {
       analyzeTimer = null;
     }
     els.start.disabled = false;
-    els.demo.disabled = false;
+
+    els.pdf.disabled =
+      !latestAnalysis
+        || samples.length < 8;
+
     els.stop.disabled = true;
     setStatus("Detenido", false);
   }
@@ -454,9 +640,12 @@ function updateReadout(d) {
       });
   });
 
-  els.demo.addEventListener("click", function () {
-    startDemo();
-  });
+ els.pdf.addEventListener(
+  "click",
+  function () {
+    downloadMeasurementPdf();
+  }
+);
 
   els.stop.addEventListener("click", stop);
 

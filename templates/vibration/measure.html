@@ -138,11 +138,41 @@
     <canvas class="spectrum" id="spectrum" width="800" height="280"></canvas>
   </div>
 
-  <button class="btn btn-primary" id="btn-start">Iniciar medicion</button>
-  <div class="btn-row">
-    <button class="btn btn-ghost" id="btn-demo">Modo demostracion</button>
-    <button class="btn btn-secondary" id="btn-stop" disabled>Detener</button>
-  </div>
+<form
+  id="measurement-pdf-csrf"
+  hidden
+>
+  {% csrf_token %}
+</form>
+
+<button
+  type="button"
+  class="btn btn-primary"
+  id="btn-start"
+>
+  Iniciar medición
+</button>
+
+<div class="btn-row">
+  <button
+    type="button"
+    class="btn btn-ghost"
+    id="btn-pdf"
+    data-pdf-url="{% url 'measurement-pdf' %}"
+    disabled
+  >
+    PDF
+  </button>
+
+  <button
+    type="button"
+    class="btn btn-secondary"
+    id="btn-stop"
+    disabled
+  >
+    Detener
+  </button>
+</div>
 
 </section>
 
