@@ -6,7 +6,7 @@
 
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+      content="width=device-width, initial-scale=1"
     />
 
     <meta name="theme-color" content="#063b68" />
@@ -36,7 +36,7 @@
   </head>
 
   <body>
-    <main class="phone{% block shell_class %}{% endblock %}">
+    <main class="phone app-shell{% block shell_class %}{% endblock %}">
       <header class="topbar">
         {% block back %}
         <a class="icon-btn" href="{% url 'home' %}" aria-label="Volver al inicio">

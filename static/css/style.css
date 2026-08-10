@@ -2752,3 +2752,400 @@ a {
     display: block;
   }
 }
+
+/* =========================================================
+   BASE RESPONSIVE GLOBAL
+   Todas las páginas internas de SMAV INAHER
+   ========================================================= */
+
+
+/*
+ * Evita desbordamientos horizontales causados por
+ * contenido flexible, imágenes y textos largos.
+ */
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+
+/*
+ * Elementos multimedia.
+ */
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+canvas,
+model-viewer {
+  max-width: 100%;
+}
+
+
+/*
+ * Contenedores que participan frecuentemente en
+ * flex y grid. min-width: 0 evita que el contenido
+ * obligue a la página a crecer horizontalmente.
+ */
+
+.page,
+.card,
+.menu,
+.menu-item,
+.menu-text,
+.submenu,
+.submenu-item,
+.catalog-list,
+.catalog-entry,
+.catalog-entry-copy,
+.catalog-entry-meta,
+.stats,
+.stat,
+.management-list,
+.management-item,
+.management-copy,
+.management-controls,
+.btn-row {
+  min-width: 0;
+}
+
+
+/*
+ * Los textos extensos nunca deben empujar el diseño
+ * fuera de la pantalla.
+ */
+
+.page-title,
+.page-lead,
+.menu-text,
+.menu-text .title,
+.menu-text .subtitle,
+.catalog-entry-copy,
+.management-copy,
+.note,
+.card {
+  overflow-wrap: anywhere;
+}
+
+
+/*
+ * Formularios siempre dentro de su contenedor.
+ */
+
+input,
+select,
+textarea,
+button {
+  max-width: 100%;
+}
+
+
+/* =========================================================
+   TELÉFONOS
+   0px - 699px
+   ========================================================= */
+
+@media (max-width: 699px) {
+
+  body {
+    padding: 0;
+  }
+
+
+  /*
+   * En teléfono la aplicación ocupa toda la pantalla.
+   */
+
+  .phone.app-shell {
+    width: 100%;
+    max-width: none;
+    min-height: 100vh;
+    margin: 0;
+    border-radius: 0;
+  }
+
+
+  /*
+   * Espaciado general más seguro para teléfonos.
+   */
+
+  .app-shell:not(.home-shell) > .page {
+    width: 100%;
+    padding:
+      22px
+      clamp(14px, 4vw, 18px)
+      32px;
+  }
+
+
+  .app-shell:not(.home-shell) .card {
+    padding: clamp(14px, 4vw, 18px);
+  }
+
+
+  /*
+   * Botones secundarios.
+   * En pantallas estrechas se apilan para evitar
+   * botones demasiado angostos.
+   */
+
+  .app-shell:not(.home-shell) .btn-row {
+    flex-direction: column;
+  }
+
+
+  .app-shell:not(.home-shell)
+  .btn-row .btn {
+    flex: none;
+    width: 100%;
+  }
+
+
+  /*
+   * Resultados con textos largos.
+   */
+
+  .app-shell:not(.home-shell)
+  .result-line {
+    align-items: flex-start;
+  }
+
+
+  .app-shell:not(.home-shell)
+  .result-line .k {
+    min-width: 0;
+  }
+
+
+  /*
+   * Catálogo dinámico.
+   */
+
+  .app-shell:not(.home-shell)
+  .catalog-entry {
+    flex-direction: column;
+  }
+
+
+  .app-shell:not(.home-shell)
+  .catalog-entry-meta {
+    width: 100%;
+    text-align: left;
+  }
+}
+
+
+/* =========================================================
+   TELÉFONOS MUY PEQUEÑOS
+   0px - 360px
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+  .app-shell:not(.home-shell) > .page {
+    padding-right: 13px;
+    padding-left: 13px;
+  }
+
+
+  .app-shell:not(.home-shell)
+  .page-title {
+    font-size: 21px;
+  }
+
+
+  .app-shell:not(.home-shell)
+  .page-lead {
+    font-size: 12px;
+  }
+
+
+  .app-shell:not(.home-shell)
+  .card {
+    padding: 14px;
+  }
+}
+
+
+/* =========================================================
+   TABLETS
+   700px - 899px
+   ========================================================= */
+
+@media (
+  min-width: 700px
+) and (
+  max-width: 899px
+) {
+
+  body {
+    padding: 20px;
+  }
+
+
+  /*
+   * Las páginas internas dejan de estar encerradas
+   * en el antiguo ancho de 520px.
+   */
+
+  .phone.app-shell:not(.home-shell) {
+    width: 100%;
+    max-width: 760px;
+    min-height: calc(100vh - 40px);
+    margin: 0 auto;
+    border-radius: 22px;
+  }
+
+
+  .app-shell:not(.home-shell) > .page {
+    width: 100%;
+    padding: 30px 28px 40px;
+  }
+
+
+  .app-shell:not(.home-shell)
+  .topbar {
+    padding-right: 22px;
+    padding-left: 22px;
+  }
+
+
+  .app-shell:not(.home-shell)
+  .app-footer {
+    padding-right: 28px;
+    padding-left: 28px;
+  }
+}
+
+
+/* =========================================================
+   COMPUTADORAS
+   900px en adelante
+   ========================================================= */
+
+@media (min-width: 900px) {
+
+  body {
+    padding: 28px;
+  }
+
+
+  /*
+   * Contenedor general de las páginas internas.
+   *
+   * El inicio usa .home-shell y mantiene su diseño
+   * responsive independiente.
+   */
+
+  .phone.app-shell:not(.home-shell) {
+    width: min(
+      calc(100vw - 56px),
+      1180px
+    );
+    max-width: 1180px;
+    min-height: calc(100vh - 56px);
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 26px;
+  }
+
+
+  /*
+   * Encabezado de escritorio.
+   */
+
+  .app-shell:not(.home-shell)
+  .topbar {
+    min-height: 72px;
+    padding-right: 30px;
+    padding-left: 30px;
+  }
+
+
+  /*
+   * Área disponible para cada módulo.
+   *
+   * En los siguientes pasos cada módulo decidirá
+   * cómo aprovechar este espacio mediante grids.
+   */
+
+  .app-shell:not(.home-shell) > .page {
+    width: 100%;
+    padding: 38px 42px 48px;
+  }
+
+
+  /*
+   * Tipografía ligeramente mayor en PC.
+   */
+
+  .app-shell:not(.home-shell)
+  .page-title {
+    max-width: 900px;
+    font-size:
+      clamp(
+        27px,
+        2.4vw,
+        34px
+      );
+  }
+
+
+  .app-shell:not(.home-shell)
+  .page-lead {
+    max-width: 820px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+
+  /*
+   * Las tarjetas aprovechan mejor la pantalla grande.
+   */
+
+  .app-shell:not(.home-shell)
+  .card {
+    padding: 22px;
+  }
+
+
+  /*
+   * Footer alineado con el contenido.
+   */
+
+  .app-shell:not(.home-shell)
+  .app-footer {
+    padding-right: 42px;
+    padding-left: 42px;
+  }
+}
+
+
+/* =========================================================
+   COMPUTADORAS GRANDES
+   1200px en adelante
+   ========================================================= */
+
+@media (min-width: 1200px) {
+
+  .phone.app-shell:not(.home-shell) {
+    max-width: 1240px;
+  }
+
+
+  .app-shell:not(.home-shell) > .page {
+    padding:
+      42px
+      52px
+      52px;
+  }
+}
