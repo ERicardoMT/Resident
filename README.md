@@ -56,6 +56,9 @@ source ./postgres_env.sh
 #Migraciones si hace falta
 python manage.py migrate
 
+
+#richi es puto
+
 # Levantar el servidor local
 python manage.py runserver
 ```
