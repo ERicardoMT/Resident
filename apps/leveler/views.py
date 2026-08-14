@@ -7,34 +7,27 @@ from django.shortcuts import render
 from django.views.decorators.http import require_POST
 
 from .services import (
-    get_available_threads,
-    recommend_levelers,
+    get_selector_options,
+    recommend_levelers_v2,
 )
 
 
 def select_leveler(request):
     """
-    Muestra el selector y carga las roscas
-    disponibles en el catálogo temporal.
+    Muestra el selector usando las opciones
+    obtenidas del catálogo actualizado.
     """
 
-    available_threads = (
-        get_available_threads()
+    selector_options = (
+        get_selector_options()
     )
 
     return render(
         request,
         "leveler/select_leveler.html",
         {
-            "metric_threads": (
-                available_threads[
-                    "metric"
-                ]
-            ),
-            "standard_threads": (
-                available_threads[
-                    "standard"
-                ]
+            "selector_options": (
+                selector_options
             ),
         },
     )
@@ -43,15 +36,12 @@ def select_leveler(request):
 @require_POST
 def recommend_leveler(request):
     """
-    Recibe los datos del formulario y devuelve
-    una recomendación calculada desde el catálogo.
+    Recibe los datos del nuevo selector.
     """
 
     try:
         payload = json.loads(
-            request.body.decode(
-                "utf-8"
-            )
+            request.body.decode("utf-8")
             or "{}"
         )
     except (
@@ -79,27 +69,30 @@ def recommend_leveler(request):
             status=400,
         )
 
-    sanitary = payload.get(
-        "sanitary",
-        False,
+    features = payload.get(
+        "features",
+        [],
     )
 
-    if not isinstance(
-        sanitary,
-        bool,
-    ):
+    if not isinstance(features, list):
         return JsonResponse(
             {
                 "detail": (
-                    "El campo sanitary debe "
-                    "ser verdadero o falso."
+                    "Las características deben "
+                    "enviarse como una lista."
                 )
             },
             status=400,
         )
 
+    features = [
+        str(feature).strip()
+        for feature in features
+        if str(feature).strip()
+    ]
+
     try:
-        result = recommend_levelers(
+        result = recommend_levelers_v2(
             application=payload.get(
                 "application",
                 "",
@@ -110,16 +103,29 @@ def recommend_leveler(request):
             support_points=payload.get(
                 "support_points"
             ),
-            sanitary=sanitary,
+            features=features,
             thread=payload.get(
                 "thread",
                 "",
             ),
-            special_mode=payload.get(
-                "special_mode",
-                "normal",
+            base_diameter=payload.get(
+                "base_diameter",
+                "",
+            ),
+            screw_height=payload.get(
+                "screw_height",
+                "",
+            ),
+            screw_material=payload.get(
+                "screw_material",
+                "",
+            ),
+            base_material=payload.get(
+                "base_material",
+                "",
             ),
         )
+
     except (
         FileNotFoundError,
         ValueError,
@@ -145,8 +151,7 @@ def recommend_leveler(request):
 
 def leveler(request):
     """
-    Muestra el nivelador digital basado en
-    los sensores de orientación del teléfono.
+    Nivel digital con sensores.
     """
 
     response = render(

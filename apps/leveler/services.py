@@ -17,33 +17,23 @@ CATALOG_PATH = (
 
 MODEL_FIELD = "Modelo"
 
-CAPACITY_FIELD = (
-    "Capacidad de carga (título web)"
-)
+CAPACITY_FIELD = "Capacidad de carga"
 
-TYPE_FIELD = (
-    "Tipo (según nombre/filtros web)"
-)
+TYPE_FIELD = "Tipo"
 
 METRIC_THREADS_FIELD = "Roscas métricas"
 
 STANDARD_THREADS_FIELD = "Roscas estándar"
 
-BASE_DIAMETER_FIELD = (
-    "Diámetro de base (ficha web)"
-)
+BASE_DIAMETER_FIELD = "Diámetro de base"
 
-SCREW_HEIGHT_FIELD = (
-    "Altura de tornillo (ficha web)"
-)
+SCREW_HEIGHT_FIELD = "Altura de tornillo"
 
-SCREW_MATERIAL_FIELD = (
-    "Material de tornillo (ficha web)"
-)
+SCREW_MATERIAL_FIELD = "Material de tornillo"
 
-BASE_MATERIAL_FIELD = (
-    "Material de base (ficha web)"
-)
+BASE_MATERIAL_FIELD = "Material de base"
+
+PRODUCT_URL_FIELD = "URL de ficha"
 
 
 def normalize_text(value: Any) -> str:
@@ -297,6 +287,13 @@ def load_leveler_catalog() -> tuple[dict[str, Any], ...]:
                     )
                     or ""
                 ).strip(),
+                "product_url": str(
+                    raw_record.get(
+                        PRODUCT_URL_FIELD,
+                        "",
+                    )       
+                    or ""
+                ).strip(),
                 "base_material": str(
                     raw_record.get(
                         BASE_MATERIAL_FIELD,
@@ -369,7 +366,10 @@ def product_matches_special_mode(
     )
 
     if normalized_mode == "normal":
-        return True
+        return (
+            "rotula" not in product_type
+            and "anclaje al piso" not in product_type
+        )
 
     if normalized_mode == "rotula":
         return "rotula" in product_type
@@ -489,6 +489,9 @@ def serialize_product(
         ],
         "base_material": product[
             "base_material"
+        ],
+        "product_url": product[
+            "product_url"
         ],
     }
 
@@ -773,4 +776,477 @@ def get_available_threads() -> dict[str, list[str]]:
             standard_threads,
             key=thread_sort_key,
         ),
+    }
+def get_selector_options() -> dict[str, list[str]]:
+    """
+    Obtiene las opciones disponibles directamente
+    desde las columnas naranjas del catálogo.
+    """
+
+    catalog = load_leveler_catalog()
+
+    type_features: set[str] = set()
+    diameters: set[str] = set()
+    heights: set[str] = set()
+    screw_materials: set[str] = set()
+    base_materials: set[str] = set()
+
+    for product in catalog:
+        product_type = str(
+            product.get("type", "")
+            or ""
+        ).strip()
+
+        if product_type:
+            for feature in product_type.split("/"):
+                feature = feature.strip()
+
+                if (
+                    feature
+                    and normalize_text(feature)
+                    != "mobiliario"
+                ):
+                    type_features.add(feature)
+
+        base_diameter = str(
+            product.get(
+                "base_diameter",
+                "",
+            )
+            or ""
+        ).strip()
+
+        if base_diameter:
+            diameters.add(base_diameter)
+
+        screw_height = str(
+            product.get(
+                "screw_height",
+                "",
+            )
+            or ""
+        ).strip()
+
+        if screw_height:
+            heights.add(screw_height)
+
+        screw_material = str(
+            product.get(
+                "screw_material",
+                "",
+            )
+            or ""
+        ).strip()
+
+        if screw_material:
+            screw_materials.add(
+                screw_material
+            )
+
+        base_material = str(
+            product.get(
+                "base_material",
+                "",
+            )
+            or ""
+        ).strip()
+
+        if base_material:
+            base_materials.add(
+                base_material
+            )
+
+    threads = get_available_threads()
+
+    return {
+        "type_features": sorted(
+            type_features
+        ),
+        "metric_threads": threads[
+            "metric"
+        ],
+        "standard_threads": threads[
+            "standard"
+        ],
+        "diameters": sorted(
+            diameters
+        ),
+        "heights": sorted(
+            heights
+        ),
+        "screw_materials": sorted(
+            screw_materials
+        ),
+        "base_materials": sorted(
+            base_materials
+        ),
+    }
+def product_matches_features_v2(
+    product: dict[str, Any],
+    requested_features: list[str],
+) -> bool:
+    """
+    Comprueba que el producto contenga todas
+    las características seleccionadas.
+    """
+
+    if not requested_features:
+        return True
+
+    product_features = {
+        normalize_text(feature)
+        for feature in str(
+            product.get("type", "")
+            or ""
+        ).split("/")
+        if feature.strip()
+    }
+
+    normalized_requested = {
+        normalize_text(feature)
+        for feature in requested_features
+        if str(feature).strip()
+    }
+
+    return normalized_requested.issubset(
+        product_features
+    )
+
+
+def product_matches_exact_field_v2(
+    product: dict[str, Any],
+    field: str,
+    requested_value: str,
+) -> bool:
+    """
+    Compara exactamente una especificación del
+    catálogo. Una solicitud vacía no filtra.
+    """
+
+    requested = normalize_text(
+        requested_value
+    )
+
+    if not requested:
+        return True
+
+    product_value = normalize_text(
+        product.get(field, "")
+    )
+
+    return product_value == requested
+
+
+def serialize_product_v2(
+    product: dict[str, Any],
+) -> dict[str, Any]:
+    """
+    Serializa también la URL de ficha.
+    """
+
+    data = serialize_product(product)
+
+    data["product_url"] = str(
+        product.get(
+            "product_url",
+            "",
+        )
+        or ""
+    ).strip()
+
+    return data
+
+
+def recommend_levelers_v2(
+    application: str,
+    weight: float,
+    support_points: int,
+    features: list[str] | None = None,
+    thread: str = "",
+    base_diameter: str = "",
+    screw_height: str = "",
+    screw_material: str = "",
+    base_material: str = "",
+) -> dict[str, Any]:
+    """
+    Recomendación basada en las columnas
+    naranjas del catálogo actualizado.
+    """
+
+    try:
+        normalized_weight = float(weight)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(
+            "El peso debe ser un número válido."
+        ) from exc
+
+    try:
+        normalized_support_points = int(
+            support_points
+        )
+    except (TypeError, ValueError) as exc:
+        raise ValueError(
+            "Los puntos de apoyo deben ser "
+            "un número entero."
+        ) from exc
+
+    if normalized_weight <= 0:
+        raise ValueError(
+            "El peso debe ser mayor que cero."
+        )
+
+    if normalized_support_points <= 0:
+        raise ValueError(
+            "Los puntos de apoyo deben ser "
+            "mayores que cero."
+        )
+
+    requested_features = [
+        str(feature).strip()
+        for feature in (features or [])
+        if str(feature).strip()
+    ]
+
+    load_per_point = (
+        normalized_weight
+        / normalized_support_points
+    )
+
+    catalog = list(
+        load_leveler_catalog()
+    )
+
+    common_result = {
+        "application": application,
+        "weight_kg": round(
+            normalized_weight,
+            2,
+        ),
+        "support_points": (
+            normalized_support_points
+        ),
+        "load_per_point_kg": round(
+            load_per_point,
+            2,
+        ),
+        "requested_features": (
+            requested_features
+        ),
+        "requested_thread": str(
+            thread or ""
+        ).strip(),
+        "requested_base_diameter": str(
+            base_diameter or ""
+        ).strip(),
+        "requested_screw_height": str(
+            screw_height or ""
+        ).strip(),
+        "requested_screw_material": str(
+            screw_material or ""
+        ).strip(),
+        "requested_base_material": str(
+            base_material or ""
+        ).strip(),
+        "catalog_count": len(catalog),
+    }
+
+    candidates = [
+        product
+        for product in catalog
+        if product_matches_application(
+            product,
+            application,
+        )
+    ]
+
+    if not candidates:
+        return {
+            **common_result,
+            "status": "no_match",
+            "failed_filter": "application",
+            "message": (
+                "No existen modelos para "
+                "la aplicación seleccionada."
+            ),
+            "recommended": None,
+            "alternatives": [],
+            "matching_count": 0,
+        }
+
+    candidates = [
+        product
+        for product in candidates
+        if product["capacity_kg"]
+        >= load_per_point
+    ]
+
+    candidates = sort_products(candidates)
+
+    if not candidates:
+        return {
+            **common_result,
+            "status": "no_match",
+            "failed_filter": "capacity",
+            "message": (
+                "No existen modelos con capacidad "
+                "suficiente para la carga calculada."
+            ),
+            "recommended": None,
+            "alternatives": [],
+            "matching_count": 0,
+        }
+
+    filters = [
+        (
+            "features",
+            "las características seleccionadas",
+            lambda product: (
+                product_matches_features_v2(
+                    product,
+                    requested_features,
+                )
+            ),
+            bool(requested_features),
+        ),
+        (
+            "thread",
+            "la rosca seleccionada",
+            lambda product: (
+                product_matches_thread(
+                    product,
+                    thread,
+                )
+            ),
+            bool(str(thread or "").strip()),
+        ),
+        (
+            "base_diameter",
+            "el diámetro de base",
+            lambda product: (
+                product_matches_exact_field_v2(
+                    product,
+                    "base_diameter",
+                    base_diameter,
+                )
+            ),
+            bool(
+                str(
+                    base_diameter or ""
+                ).strip()
+            ),
+        ),
+        (
+            "screw_height",
+            "la altura de tornillo",
+            lambda product: (
+                product_matches_exact_field_v2(
+                    product,
+                    "screw_height",
+                    screw_height,
+                )
+            ),
+            bool(
+                str(
+                    screw_height or ""
+                ).strip()
+            ),
+        ),
+        (
+            "screw_material",
+            "el material del tornillo",
+            lambda product: (
+                product_matches_exact_field_v2(
+                    product,
+                    "screw_material",
+                    screw_material,
+                )
+            ),
+            bool(
+                str(
+                    screw_material or ""
+                ).strip()
+            ),
+        ),
+        (
+            "base_material",
+            "el material de base",
+            lambda product: (
+                product_matches_exact_field_v2(
+                    product,
+                    "base_material",
+                    base_material,
+                )
+            ),
+            bool(
+                str(
+                    base_material or ""
+                ).strip()
+            ),
+        ),
+    ]
+
+    for (
+        filter_name,
+        filter_label,
+        filter_function,
+        is_active,
+    ) in filters:
+        if not is_active:
+            continue
+
+        previous_candidates = candidates
+
+        candidates = [
+            product
+            for product in candidates
+            if filter_function(product)
+        ]
+
+        candidates = sort_products(
+            candidates
+        )
+
+        if not candidates:
+            return {
+                **common_result,
+                "status": "no_match",
+                "failed_filter": filter_name,
+                "message": (
+                    "No encontramos un modelo "
+                    "que también cumpla "
+                    f"{filter_label}."
+                ),
+                "recommended": None,
+                "alternatives": [
+                    serialize_product_v2(
+                        product
+                    )
+                    for product
+                    in previous_candidates[:4]
+                ],
+                "matching_count": 0,
+            }
+
+    recommended = candidates[0]
+
+    alternatives = [
+        serialize_product_v2(product)
+        for product in candidates[1:4]
+    ]
+
+    return {
+        **common_result,
+        "status": "recommended",
+        "failed_filter": None,
+        "message": (
+            "Se encontró una recomendación "
+            "compatible con las especificaciones."
+        ),
+        "recommended": (
+            serialize_product_v2(
+                recommended
+            )
+        ),
+        "alternatives": alternatives,
+        "matching_count": len(candidates),
     }
