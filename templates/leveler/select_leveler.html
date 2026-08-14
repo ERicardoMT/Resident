@@ -164,69 +164,144 @@ Elegir mi nivelador | SMAV INAHER
           El peso se reparte entre los apoyos; con este dato elegimos el modelo.
         </span>
       </div>
+<div class="selector-field">
+  <label>
+    Características requeridas
+  </label>
 
-      <label class="selector-sanitary-option">
+  <div class="selector-feature-grid">
+    {% for feature in selector_options.type_features %}
+      <label class="selector-feature-option">
         <input
-          id="selector-sanitary"
-          name="sanitary"
           type="checkbox"
+          name="features"
+          value="{{ feature }}"
         >
-        <span class="selector-sanitary-copy">
-          <strong>
-            ¿Ambiente húmedo, sanitario o corrosivo?
-          </strong>
-          <small>
-            Alimentos, farmacéutica, laboratorios,
-            lavado frecuente o vapores químicos.
-          </small>
-        </span>
+        <span>{{ feature }}</span>
       </label>
+    {% endfor %}
+  </div>
+</div>
+
 
 <div class="selector-field">
   <label for="selector-thread-type">
-    Rosca solicitada
+    Rosca
   </label>
 
   <select
     id="selector-thread-type"
-    name="thread_type"
+    name="thread"
   >
     <option value="">
       Sin preferencia
     </option>
 
-    {% if metric_threads %}
-      <optgroup label="Roscas métricas">
-        {% for thread in metric_threads %}
-          <option value="{{ thread }}">
-            {{ thread }}
-          </option>
-        {% endfor %}
-      </optgroup>
-    {% endif %}
+    <optgroup label="Roscas métricas">
+      {% for thread in selector_options.metric_threads %}
+        <option value="{{ thread }}">
+          {{ thread }}
+        </option>
+      {% endfor %}
+    </optgroup>
 
-    {% if standard_threads %}
-      <optgroup label="Roscas estándar">
-        {% for thread in standard_threads %}
-          <option value="{{ thread }}">
-            {{ thread }}
-          </option>
-        {% endfor %}
-      </optgroup>
-    {% endif %}
+    <optgroup label="Roscas estándar">
+      {% for thread in selector_options.standard_threads %}
+        <option value="{{ thread }}">
+          {{ thread }}
+        </option>
+      {% endfor %}
+    </optgroup>
   </select>
 </div>
 
-      <div class="selector-field">
-        <label for="selector-special-mode">
-          Tipo de solicitud
-        </label>
-        <select id="selector-special-mode" name="special_mode">
-          <option value="normal">Línea normal</option>
-          <option value="rotula">Rótula</option>
-          <option value="anclaje">Anclaje al piso</option>
-        </select>
-      </div>
+
+<div class="selector-field">
+  <label for="selector-base-diameter">
+    Diámetro de base
+  </label>
+
+  <select
+    id="selector-base-diameter"
+    name="base_diameter"
+  >
+    <option value="">
+      Sin preferencia
+    </option>
+
+    {% for value in selector_options.diameters %}
+      <option value="{{ value }}">
+        {{ value }}
+      </option>
+    {% endfor %}
+  </select>
+</div>
+
+
+<div class="selector-field">
+  <label for="selector-screw-height">
+    Altura de tornillo
+  </label>
+
+  <select
+    id="selector-screw-height"
+    name="screw_height"
+  >
+    <option value="">
+      Sin preferencia
+    </option>
+
+    {% for value in selector_options.heights %}
+      <option value="{{ value }}">
+        {{ value }}
+      </option>
+    {% endfor %}
+  </select>
+</div>
+
+
+<div class="selector-field">
+  <label for="selector-screw-material">
+    Material del tornillo
+  </label>
+
+  <select
+    id="selector-screw-material"
+    name="screw_material"
+  >
+    <option value="">
+      Sin preferencia
+    </option>
+
+    {% for value in selector_options.screw_materials %}
+      <option value="{{ value }}">
+        {{ value }}
+      </option>
+    {% endfor %}
+  </select>
+</div>
+
+
+<div class="selector-field">
+  <label for="selector-base-material">
+    Material de base
+  </label>
+
+  <select
+    id="selector-base-material"
+    name="base_material"
+  >
+    <option value="">
+      Sin preferencia
+    </option>
+
+    {% for value in selector_options.base_materials %}
+      <option value="{{ value }}">
+        {{ value }}
+      </option>
+    {% endfor %}
+  </select>
+</div>
 
       <p class="selector-weight-hint">
         ¿No sabes el peso exacto? Usa un aproximado
@@ -902,6 +977,36 @@ Elegir mi nivelador | SMAV INAHER
       grid-template-columns: 1fr;
     }
   }
+.selector-feature-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.selector-feature-option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 10px 12px;
+  cursor: pointer;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+}
+
+.selector-feature-option input {
+  width: 18px;
+  height: 18px;
+  min-height: 0;
+  padding: 0;
+  accent-color: var(--accent-hover);
+}
+
+.selector-feature-option span {
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 800;
+}  
 </style>
 {% endblock %}
 
@@ -962,9 +1067,9 @@ Elegir mi nivelador | SMAV INAHER
         "selector-support-points"
       );
 
-    const sanitaryInput =
-      document.getElementById(
-        "selector-sanitary"
+    const featureInputs =
+      equipmentForm.querySelectorAll(
+        'input[name="features"]'
       );
 
     const threadTypeInput =
@@ -972,9 +1077,24 @@ Elegir mi nivelador | SMAV INAHER
         "selector-thread-type"
       );
 
-    const specialModeInput =
+    const baseDiameterInput =
       document.getElementById(
-        "selector-special-mode"
+        "selector-base-diameter"
+      );
+
+    const screwHeightInput =
+      document.getElementById(
+        "selector-screw-height"
+      );
+
+    const screwMaterialInput =
+      document.getElementById(
+        "selector-screw-material"
+      );
+
+    const baseMaterialInput =
+      document.getElementById(
+        "selector-base-material"
       );
 
     const csrfTokenInput =
@@ -1253,10 +1373,19 @@ Elegir mi nivelador | SMAV INAHER
         link.className =
           "result-card-action";
 
-        link.href = catalogUrl;
+        link.href =
+          product.product_url
+          || catalogUrl;
 
         link.textContent =
-          "Ver catálogo";
+          product.product_url
+            ? "Ver ficha del producto"
+            : "Ver catálogo";
+
+        if (product.product_url) {
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+        }
 
         card.appendChild(link);
       }
@@ -1353,17 +1482,34 @@ Elegir mi nivelador | SMAV INAHER
         data.requested_thread
         || "Sin preferencia";
 
-      setFilterChip(
-        "Rosca: "
-        + requestedThread
-        + " · Tipo: "
-        + getModeLabel(
-          data.special_mode
+      const requestedFeatures =
+        Array.isArray(
+          data.requested_features
         )
+        && data.requested_features.length
+          ? data.requested_features.join(", ")
+          : "Sin preferencia";
+
+      const diameter =
+        data.requested_base_diameter
+        || "Sin preferencia";
+
+      const height =
+        data.requested_screw_height
+        || "Sin preferencia";
+
+      setFilterChip(
+        "Características: "
+        + requestedFeatures
+        + " · Rosca: "
+        + requestedThread
+        + " · Diámetro: "
+        + diameter
+        + " · Altura: "
+        + height
       );
 
-      resultBlueBanner.hidden =
-        !data.sanitary;
+      resultBlueBanner.hidden = true;
 
       resultBlueBanner.textContent =
         "Mostrando modelos con disponibilidad "
@@ -1491,31 +1637,49 @@ Elegir mi nivelador | SMAV INAHER
     }
 
 
-    function buildPayload() {
-      return {
-        application:
-          getSelectedApplication(),
+  function buildPayload() {
+    const features = Array.from(
+    featureInputs
+    )
+    .filter(function (input) {
+      return input.checked;
+    })
+    .map(function (input) {
+      return input.value;
+    });
 
-        weight:
-          Number(
-            weightInput.value
-          ),
+    return {
+      application:
+        getSelectedApplication(),
 
-        support_points:
-          Number(
-            supportPointsInput.value
-          ),
+    weight:
+      Number(
+        weightInput.value
+      ),
 
-        sanitary:
-          sanitaryInput.checked,
+    support_points:
+      Number(
+        supportPointsInput.value
+      ),
 
-        thread:
-          threadTypeInput.value,
+    features: features,
 
-        special_mode:
-          specialModeInput.value
-      };
-    }
+    thread:
+      threadTypeInput.value,
+
+    base_diameter:
+      baseDiameterInput.value,
+
+    screw_height:
+      screwHeightInput.value,
+
+    screw_material:
+      screwMaterialInput.value,
+
+    base_material:
+      baseMaterialInput.value
+  };
+}
 
 
     async function requestRecommendation() {
