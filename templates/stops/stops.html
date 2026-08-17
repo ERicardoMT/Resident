@@ -1,87 +1,2096 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Selección de topes | SMAV INAHER{% endblock %}
+
+{% block title %}
+Elegir mi antivibratorio | SMAV INAHER
+{% endblock %}
+
 
 {% block content %}
-<section class="page">
-  <h1 class="page-title">Calculo de topes</h1>
-  <p class="page-lead">
-    Dimensiona un tope elastico a partir de la carga, la rigidez y la deflexion
-    maxima admisible.
-  </p>
+<section class="page antivibration-selector-page">
 
-  <div class="card">
-    <div class="field">
-      <label for="load">Carga aplicada (N)</label>
-      <input type="number" id="load" value="500" min="0" step="10" />
+  <!-- =====================================================
+       ENCABEZADO
+       ===================================================== -->
+  <header class="selector-heading">
+
+    <span class="section-kicker">
+      Soportes antivibratorios
+    </span>
+
+    <h1 class="page-title">
+      Elegir mi antivibratorio
+    </h1>
+
+    <p class="page-lead">
+      Cuéntanos algunos datos de tu equipo y te mostraremos
+      opciones compatibles de la base de antivibratorios INAHER.
+    </p>
+
+    <div class="selector-simulation-notice">
+      <span aria-hidden="true">i</span>
+
+      <p>
+        <strong>Recomendación simulada.</strong>
+        Esta herramienta compara los datos capturados con la
+        información técnica disponible. La selección final debe
+        validarse antes de comprar o instalar.
+      </p>
     </div>
-    <div class="field">
-      <label for="stiff">Rigidez del tope (N/mm)</label>
-      <input type="number" id="stiff" value="200" min="1" step="1" />
-    </div>
-    <div class="field">
-      <label for="maxdef">Deflexion maxima admisible (mm)</label>
-      <input type="number" id="maxdef" value="4" min="0.1" step="0.1" />
-    </div>
+
+  </header>
+
+
+  <!-- =====================================================
+       DASHBOARD
+       ===================================================== -->
+  <div class="selector-dashboard">
+
+    <!-- ===================================================
+         COLUMNA IZQUIERDA
+         =================================================== -->
+    <section class="selector-input-panel">
+
+      <div class="selector-panel-heading">
+
+        <span class="selector-panel-number">
+          1
+        </span>
+
+        <div>
+          <small>
+            Datos del equipo
+          </small>
+
+          <h2>
+            Cuéntanos qué necesitas
+          </h2>
+        </div>
+
+      </div>
+
+
+      <!-- Peso -->
+      <div class="selector-field">
+
+        <label for="machine-weight">
+          ¿Cuánto pesa tu equipo?
+        </label>
+
+        <div class="selector-input-unit">
+          <input
+            type="number"
+            id="machine-weight"
+            min="1"
+            step="1"
+            inputmode="decimal"
+            value="600"
+          >
+
+          <span>
+            kg
+          </span>
+        </div>
+
+        <small>
+          Usa el peso total aproximado de la máquina,
+          incluyendo la carga que permanece normalmente
+          sobre ella.
+        </small>
+
+      </div>
+
+
+      <!-- Apoyos -->
+      <div class="selector-field">
+
+        <label for="support-count">
+          ¿Cuántos antivibratorios vas a colocar?
+        </label>
+
+        <select id="support-count">
+          <option value="2">2 apoyos</option>
+          <option value="4" selected>4 apoyos</option>
+          <option value="6">6 apoyos</option>
+          <option value="8">8 apoyos</option>
+        </select>
+
+        <small>
+          Normalmente corresponde al número de patas
+          o puntos donde la máquina descansa sobre el piso.
+        </small>
+
+      </div>
+
+
+      <!-- Carga por apoyo -->
+      <div class="selector-load-card">
+
+        <span
+          class="selector-load-icon"
+          aria-hidden="true"
+        >
+          ÷
+        </span>
+
+        <div>
+          <small>
+            Carga estimada por antivibratorio
+          </small>
+
+          <strong id="load-per-support">
+            150 kg
+          </strong>
+
+          <span id="load-explanation">
+            600 kg repartidos entre 4 apoyos.
+          </span>
+        </div>
+
+      </div>
+
+
+      <!-- Tipo de aislamiento -->
+      <div class="selector-field">
+
+        <label for="isolation-type">
+          ¿Sabes qué tipo de aislamiento buscas?
+        </label>
+
+        <select id="isolation-type">
+          <option value="all">
+            No sé, recomiéndame
+          </option>
+
+          <option value="caucho">
+            Caucho
+          </option>
+
+          <option value="resorte">
+            Resorte
+          </option>
+        </select>
+
+        <small>
+          Si no conoces la diferencia, deja
+          “No sé, recomiéndame”.
+        </small>
+
+      </div>
+
+
+      <!-- Ambiente -->
+      <div class="selector-field">
+
+        <label for="environment-type">
+          ¿En qué ambiente estará instalado?
+        </label>
+
+        <select id="environment-type">
+          <option value="normal">
+            Ambiente normal
+          </option>
+
+          <option value="wet">
+            Húmedo, sanitario o corrosivo
+          </option>
+        </select>
+
+        <small>
+          En ambientes húmedos priorizamos modelos donde
+          el inoxidable T-304 está disponible.
+        </small>
+
+      </div>
+
+
+      <!-- =================================================
+           DATOS TÉCNICOS OPCIONALES
+           ================================================= -->
+      <details class="selector-advanced">
+
+        <summary>
+          <span>
+            Tengo medidas técnicas
+          </span>
+
+          <small>
+            Opcional
+          </small>
+        </summary>
+
+
+        <div class="selector-advanced-body">
+
+          <p>
+            Estos campos son opcionales. Déjalos vacíos cuando
+            no conozcas las medidas.
+          </p>
+
+
+          <div class="selector-field">
+
+            <label for="filter-base">
+              Diámetro o tamaño de base
+            </label>
+
+            <input
+              type="text"
+              id="filter-base"
+              placeholder="Ej. 80 mm, 4 pulgadas..."
+            >
+
+            <small>
+              Se compara con el dato “Diámetro de base”
+              del Excel.
+            </small>
+
+          </div>
+
+
+          <div class="selector-field">
+
+            <label for="filter-base-height">
+              Altura de base
+            </label>
+
+            <input
+              type="text"
+              id="filter-base-height"
+              placeholder="Ej. 25 mm..."
+            >
+
+          </div>
+
+
+          <div class="selector-field">
+
+            <label for="filter-thread">
+              Rosca o diámetro del tornillo
+            </label>
+
+            <input
+              type="text"
+              id="filter-thread"
+              placeholder='Ej. 1/2"-13, M12...'
+            >
+
+          </div>
+
+
+          <div class="selector-field">
+
+            <label for="filter-screw-height">
+              Altura del tornillo
+            </label>
+
+            <input
+              type="text"
+              id="filter-screw-height"
+              placeholder='Ej. 4", 50 mm...'
+            >
+
+          </div>
+
+        </div>
+
+      </details>
+
+
+      <div
+        id="selector-error"
+        class="selector-error"
+        aria-live="polite"
+        hidden
+      ></div>
+
+
+      <button
+        type="button"
+        id="calculate-recommendation"
+        class="btn btn-primary selector-main-action"
+        disabled
+      >
+        Buscando base de datos…
+      </button>
+
+    </section>
+
+
+    <!-- ===================================================
+         COLUMNA DERECHA
+         =================================================== -->
+    <section class="selector-result-panel">
+
+      <div class="selector-panel-heading">
+
+        <span class="selector-panel-number">
+          2
+        </span>
+
+        <div>
+          <small>
+            Resultado
+          </small>
+
+          <h2>
+            Recomendación simulada
+          </h2>
+        </div>
+
+      </div>
+
+
+      <!-- Estado inicial -->
+      <div
+        id="result-empty"
+        class="selector-empty-result"
+      >
+
+        <span
+          class="selector-empty-icon"
+          aria-hidden="true"
+        >
+          ?
+        </span>
+
+        <h3>
+          Completa los datos de tu equipo
+        </h3>
+
+        <p>
+          Te mostraremos los antivibratorios cuya capacidad
+          y características coincidan mejor con lo que necesitas.
+        </p>
+
+      </div>
+
+
+      <!-- Resultado -->
+      <div
+        id="result-content"
+        hidden
+      >
+
+        <div class="selector-result-summary">
+
+          <div>
+            <small>
+              Necesitas soportar
+            </small>
+
+            <strong id="result-required-load">
+              -
+            </strong>
+          </div>
+
+          <div>
+            <small>
+              Opciones compatibles
+            </small>
+
+            <strong id="result-compatible-count">
+              -
+            </strong>
+          </div>
+
+        </div>
+
+
+        <!-- Recomendado -->
+        <article
+          id="recommended-card"
+          class="recommended-card"
+        ></article>
+
+
+        <!-- Alternativas -->
+        <section
+          id="alternatives-section"
+          class="alternatives-section"
+          hidden
+        >
+
+          <div class="alternatives-heading">
+
+            <div>
+              <small>
+                Otras posibilidades
+              </small>
+
+              <h3>
+                Alternativas compatibles
+              </h3>
+            </div>
+
+          </div>
+
+
+          <div
+            id="alternative-models"
+            class="alternative-models"
+          ></div>
+
+        </section>
+
+
+        <div class="selector-result-warning">
+
+          <strong>
+            Importante
+          </strong>
+
+          <p>
+            La compatibilidad mostrada se basa en los datos
+            disponibles de capacidad, dimensiones y materiales.
+            No evalúa todavía frecuencia natural, rigidez dinámica,
+            amortiguamiento ni transmisibilidad.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- Sin resultados -->
+      <div
+        id="result-none"
+        class="selector-no-result"
+        hidden
+      >
+
+        <span aria-hidden="true">
+          !
+        </span>
+
+        <h3>
+          No encontramos una coincidencia
+        </h3>
+
+        <p>
+          Prueba quitando alguno de los filtros técnicos
+          opcionales o revisa los datos introducidos.
+        </p>
+
+      </div>
+
+    </section>
+
   </div>
 
-  <div class="card surface">
-    <div class="result-line">
-      <span class="k">Deflexion estimada</span>
-      <span class="v" id="r-def">-</span>
-    </div>
-    <div class="result-line">
-      <span class="k">Uso de la deflexion</span>
-      <span class="v" id="r-use">-</span>
-    </div>
-    <div class="result-line">
-      <span class="k">Estado</span>
-      <span class="v" id="r-state">-</span>
-    </div>
-  </div>
-
-  <div class="note" id="note">Introduce los valores para dimensionar el tope.</div>
 </section>
+
+
+<style>
+  /* =======================================================
+     PÁGINA
+     ======================================================= */
+
+  .antivibration-selector-page {
+    width: 100%;
+  }
+
+
+  .selector-heading {
+    margin-bottom: 22px;
+  }
+
+
+  .selector-simulation-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    max-width: 850px;
+    padding: 12px 14px;
+    margin-top: 18px;
+    color: #475569;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    border-radius: 11px;
+  }
+
+
+  .selector-simulation-notice > span {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 25px;
+    height: 25px;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 800;
+    background: var(--accent-hover);
+    border-radius: 50%;
+  }
+
+
+  .selector-simulation-notice p {
+    margin: 0;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.55;
+  }
+
+
+  /* =======================================================
+     DASHBOARD
+     ======================================================= */
+
+  .selector-dashboard {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+
+  .selector-input-panel,
+  .selector-result-panel {
+    min-width: 0;
+    padding: 18px;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+
+
+  .selector-panel-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 19px;
+  }
+
+
+  .selector-panel-number {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    background:
+      linear-gradient(
+        135deg,
+        var(--primary),
+        var(--primary-500)
+      );
+    border-radius: 11px;
+  }
+
+
+  .selector-panel-heading > div {
+    min-width: 0;
+  }
+
+
+  .selector-panel-heading small {
+    display: block;
+    color: var(--accent-hover);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+
+  .selector-panel-heading h2 {
+    margin: 2px 0 0;
+    color: var(--primary);
+    font-size: 16px;
+    line-height: 1.3;
+  }
+
+
+  /* =======================================================
+     CAMPOS
+     ======================================================= */
+
+  .selector-field {
+    display: grid;
+    gap: 7px;
+    margin-bottom: 16px;
+  }
+
+
+  .selector-field label {
+    color: var(--text);
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1.4;
+  }
+
+
+  .selector-field input,
+  .selector-field select {
+    width: 100%;
+    min-height: 47px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    outline: none;
+    transition:
+      border-color 0.18s ease,
+      box-shadow 0.18s ease,
+      background-color 0.18s ease;
+  }
+
+
+  .selector-field input:focus,
+  .selector-field select:focus {
+    background: #ffffff;
+    border-color: var(--accent-hover);
+    box-shadow:
+      0 0 0 3px
+      rgba(24, 166, 217, 0.11);
+  }
+
+
+  .selector-field small {
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+
+  .selector-input-unit {
+    position: relative;
+  }
+
+
+  .selector-input-unit input {
+    padding-right: 48px;
+  }
+
+
+  .selector-input-unit > span {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 800;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+
+  /* =======================================================
+     CARGA
+     ======================================================= */
+
+  .selector-load-card {
+    display: grid;
+    grid-template-columns: 43px 1fr;
+    align-items: center;
+    gap: 11px;
+    padding: 13px;
+    margin: 2px 0 18px;
+    background:
+      linear-gradient(
+        145deg,
+        #ffffff,
+        var(--accent-soft)
+      );
+    border: 1px solid
+      rgba(24, 166, 217, 0.32);
+    border-radius: 12px;
+  }
+
+
+  .selector-load-icon {
+    display: grid;
+    place-items: center;
+    width: 43px;
+    height: 43px;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 800;
+    background: var(--accent-hover);
+    border-radius: 11px;
+  }
+
+
+  .selector-load-card > div {
+    display: grid;
+    min-width: 0;
+  }
+
+
+  .selector-load-card small {
+    color: var(--accent-hover);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+  }
+
+
+  .selector-load-card strong {
+    margin-top: 2px;
+    color: var(--primary);
+    font-size: 18px;
+  }
+
+
+  .selector-load-card div > span {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 600;
+  }
+
+
+  /* =======================================================
+     AVANZADO
+     ======================================================= */
+
+  .selector-advanced {
+    margin-top: 5px;
+    overflow: hidden;
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+
+  .selector-advanced summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+
+  .selector-advanced summary::-webkit-details-marker {
+    display: none;
+  }
+
+
+  .selector-advanced summary > span {
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+
+  .selector-advanced summary small {
+    padding: 4px 7px;
+    color: var(--muted);
+    font-size: 8px;
+    font-weight: 800;
+    background: #ffffff;
+    border-radius: 999px;
+  }
+
+
+  .selector-advanced-body {
+    padding: 2px 13px 13px;
+  }
+
+
+  .selector-advanced-body > p {
+    margin: 0 0 13px;
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+
+  .selector-advanced-body
+  .selector-field:last-child {
+    margin-bottom: 0;
+  }
+
+
+  /* =======================================================
+     BOTÓN Y ERROR
+     ======================================================= */
+
+  .selector-main-action {
+    width: 100%;
+    margin-top: 17px;
+  }
+
+
+  .selector-main-action:disabled {
+    cursor: wait;
+    opacity: 0.55;
+  }
+
+
+  .selector-error {
+    padding: 10px 12px;
+    margin-top: 13px;
+    color: #991b1b;
+    font-size: 9.5px;
+    font-weight: 700;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 9px;
+  }
+
+
+  /* =======================================================
+     RESULTADO VACÍO
+     ======================================================= */
+
+  .selector-empty-result,
+  .selector-no-result {
+    display: grid;
+    justify-items: center;
+    padding: 38px 18px;
+    color: var(--muted);
+    text-align: center;
+    background: var(--surface-alt);
+    border: 1px dashed var(--line);
+    border-radius: 13px;
+  }
+
+
+  .selector-empty-icon,
+  .selector-no-result > span {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    color: var(--primary);
+    font-size: 18px;
+    font-weight: 800;
+    background: var(--accent-soft);
+    border-radius: 50%;
+  }
+
+
+  .selector-empty-result h3,
+  .selector-no-result h3 {
+    margin: 13px 0 5px;
+    color: var(--primary);
+    font-size: 14px;
+  }
+
+
+  .selector-empty-result p,
+  .selector-no-result p {
+    max-width: 400px;
+    margin: 0;
+    font-size: 9.5px;
+    font-weight: 600;
+    line-height: 1.6;
+  }
+
+
+  /* =======================================================
+     RESUMEN
+     ======================================================= */
+
+  .selector-result-summary {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 13px;
+  }
+
+
+  .selector-result-summary > div {
+    display: grid;
+    gap: 3px;
+    padding: 11px;
+    text-align: center;
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+
+
+  .selector-result-summary small {
+    color: var(--muted);
+    font-size: 8px;
+    font-weight: 700;
+  }
+
+
+  .selector-result-summary strong {
+    color: var(--primary);
+    font-size: 14px;
+  }
+
+
+  /* =======================================================
+     RECOMENDADO
+     ======================================================= */
+
+  .recommended-card {
+    overflow: hidden;
+    background: #ffffff;
+    border: 2px solid
+      rgba(24, 166, 217, 0.48);
+    border-radius: 14px;
+    box-shadow:
+      0 8px 24px
+      rgba(3, 49, 91, 0.1);
+  }
+
+
+  .recommended-top {
+    display: grid;
+    grid-template-columns: 95px 1fr;
+    gap: 14px;
+    padding: 14px;
+  }
+
+
+  .recommended-image {
+    display: grid;
+    place-items: center;
+    width: 95px;
+    height: 95px;
+    overflow: hidden;
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+
+  .recommended-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+
+  .recommended-copy {
+    min-width: 0;
+  }
+
+
+  .recommended-badge {
+    display: inline-flex;
+    padding: 4px 7px;
+    margin-bottom: 5px;
+    color: #166534;
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    background: #dcfce7;
+    border-radius: 999px;
+  }
+
+
+  .recommended-copy h3 {
+    margin: 0;
+    color: var(--primary);
+    font-size: 20px;
+    line-height: 1.2;
+  }
+
+
+  .recommended-capacity {
+    margin: 5px 0 0;
+    color: var(--muted);
+    font-size: 9.5px;
+    font-weight: 600;
+  }
+
+
+  .recommended-capacity strong {
+    color: var(--text);
+  }
+
+
+  .recommendation-reason {
+    padding: 10px 12px;
+    margin-top: 9px;
+    color: #475569;
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1.5;
+    background: var(--accent-soft);
+    border-radius: 9px;
+  }
+
+
+  /* =======================================================
+     CAMPOS NARANJAS DEL EXCEL
+     ======================================================= */
+
+  .technical-data-grid {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--line);
+  }
+
+
+  .technical-data-item {
+    min-width: 0;
+    padding: 10px 12px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+
+  .technical-data-item:nth-child(2n) {
+    border-right: none;
+  }
+
+
+  .technical-data-item small {
+    display: block;
+    color: var(--muted);
+    font-size: 7.5px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+
+  .technical-data-item strong {
+    display: block;
+    margin-top: 3px;
+    color: var(--text);
+    font-size: 9.5px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+
+  .recommended-actions {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 12px;
+  }
+
+
+  .recommended-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 39px;
+    padding: 8px;
+    color: var(--primary);
+    font-size: 9px;
+    font-weight: 800;
+    text-align: center;
+    text-decoration: none;
+    background: #ffffff;
+    border: 1px solid var(--primary);
+    border-radius: 9px;
+  }
+
+
+  .recommended-link.primary {
+    color: #ffffff;
+    background: var(--primary);
+  }
+
+
+  /* =======================================================
+     ALTERNATIVAS
+     ======================================================= */
+
+  .alternatives-section {
+    margin-top: 18px;
+  }
+
+
+  .alternatives-heading small {
+    color: var(--accent-hover);
+    font-size: 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+
+  .alternatives-heading h3 {
+    margin: 2px 0 10px;
+    color: var(--primary);
+    font-size: 14px;
+  }
+
+
+  .alternative-models {
+    display: grid;
+    gap: 8px;
+  }
+
+
+  .alternative-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 11px;
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+
+
+  .alternative-card strong {
+    color: var(--primary);
+    font-size: 11px;
+  }
+
+
+  .alternative-card p {
+    margin: 3px 0 0;
+    color: var(--muted);
+    font-size: 8.5px;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+
+  .alternative-capacity {
+    color: var(--text);
+    font-size: 9px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+
+  /* =======================================================
+     ADVERTENCIA
+     ======================================================= */
+
+  .selector-result-warning {
+    padding: 11px 12px;
+    margin-top: 15px;
+    color: #92400e;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+  }
+
+
+  .selector-result-warning strong {
+    font-size: 9px;
+  }
+
+
+  .selector-result-warning p {
+    margin: 3px 0 0;
+    font-size: 8.5px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+
+  /* =======================================================
+     RESPONSIVE
+     ======================================================= */
+
+  @media (min-width: 900px) {
+
+    .selector-dashboard {
+      grid-template-columns:
+        minmax(0, 0.9fr)
+        minmax(0, 1.1fr);
+      align-items: start;
+      gap: 22px;
+    }
+
+
+    .selector-input-panel,
+    .selector-result-panel {
+      padding: 22px;
+    }
+
+
+    .selector-result-panel {
+      position: sticky;
+      top: 100px;
+    }
+
+
+    .selector-field label {
+      font-size: 12px;
+    }
+
+
+    .selector-field input,
+    .selector-field select {
+      font-size: 13px;
+    }
+
+  }
+
+
+  @media (max-width: 520px) {
+
+    .selector-result-summary {
+      grid-template-columns: 1fr;
+    }
+
+
+    .recommended-top {
+      grid-template-columns: 76px 1fr;
+      gap: 11px;
+    }
+
+
+    .recommended-image {
+      width: 76px;
+      height: 76px;
+    }
+
+
+    .technical-data-grid {
+      grid-template-columns: 1fr;
+    }
+
+
+    .technical-data-item,
+    .technical-data-item:nth-child(2n) {
+      border-right: none;
+    }
+
+
+    .recommended-actions {
+      grid-template-columns: 1fr;
+    }
+
+  }
+</style>
 {% endblock %}
+
 
 {% block scripts %}
 <script>
   (function () {
-    var load = document.getElementById("load");
-    var stiff = document.getElementById("stiff");
-    var maxdef = document.getElementById("maxdef");
-    var out = {
-      def: document.getElementById("r-def"),
-      use: document.getElementById("r-use"),
-      state: document.getElementById("r-state"),
-      note: document.getElementById("note"),
-    };
+    "use strict";
 
-    function compute() {
-      var F = parseFloat(load.value) || 0;
-      var k = parseFloat(stiff.value) || 1;
-      var maxD = parseFloat(maxdef.value) || 0.0001;
-      var deflection = F / k; // mm
-      var usage = (deflection / maxD) * 100;
-      out.def.textContent = deflection.toFixed(2) + " mm";
-      out.use.textContent = usage.toFixed(0) + " %";
-      if (usage <= 80) {
-        out.state.textContent = "Correcto";
-        out.note.textContent = "El tope trabaja dentro de un margen seguro.";
-      } else if (usage <= 100) {
-        out.state.textContent = "Al limite";
-        out.note.textContent = "Cerca del limite: considera un tope mas rigido.";
-      } else {
-        out.state.textContent = "Sobrecarga";
-        out.note.textContent =
-          "Deflexion excesiva: aumenta la rigidez o usa un tope mayor.";
+
+    const DATA_URL =
+      "{% static 'data/antivibratorios.json' %}";
+
+    const CATALOG_URL =
+      "{% url 'antivibratorios' %}";
+
+
+    const weightInput =
+      document.getElementById(
+        "machine-weight"
+      );
+
+    const supportCount =
+      document.getElementById(
+        "support-count"
+      );
+
+    const isolationType =
+      document.getElementById(
+        "isolation-type"
+      );
+
+    const environmentType =
+      document.getElementById(
+        "environment-type"
+      );
+
+    const filterBase =
+      document.getElementById(
+        "filter-base"
+      );
+
+    const filterBaseHeight =
+      document.getElementById(
+        "filter-base-height"
+      );
+
+    const filterThread =
+      document.getElementById(
+        "filter-thread"
+      );
+
+    const filterScrewHeight =
+      document.getElementById(
+        "filter-screw-height"
+      );
+
+    const calculateButton =
+      document.getElementById(
+        "calculate-recommendation"
+      );
+
+    const errorBox =
+      document.getElementById(
+        "selector-error"
+      );
+
+    const loadOutput =
+      document.getElementById(
+        "load-per-support"
+      );
+
+    const loadExplanation =
+      document.getElementById(
+        "load-explanation"
+      );
+
+    const resultEmpty =
+      document.getElementById(
+        "result-empty"
+      );
+
+    const resultContent =
+      document.getElementById(
+        "result-content"
+      );
+
+    const resultNone =
+      document.getElementById(
+        "result-none"
+      );
+
+    const requiredLoadOutput =
+      document.getElementById(
+        "result-required-load"
+      );
+
+    const compatibleCountOutput =
+      document.getElementById(
+        "result-compatible-count"
+      );
+
+    const recommendedCard =
+      document.getElementById(
+        "recommended-card"
+      );
+
+    const alternativesSection =
+      document.getElementById(
+        "alternatives-section"
+      );
+
+    const alternativesContainer =
+      document.getElementById(
+        "alternative-models"
+      );
+
+
+    let models = [];
+
+
+    function formatNumber(value) {
+      return new Intl.NumberFormat(
+        "es-MX",
+        {
+          maximumFractionDigits: 2,
+        }
+      ).format(value);
+    }
+
+
+    function normalize(value) {
+      return String(value || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(
+          /[\u0300-\u036f]/g,
+          ""
+        )
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+
+    function getLoadData() {
+      const weight =
+        Number(weightInput.value);
+
+      const supports =
+        Number(supportCount.value);
+
+
+      if (
+        !Number.isFinite(weight)
+        || weight <= 0
+        || !Number.isFinite(supports)
+        || supports <= 0
+      ) {
+        return null;
+      }
+
+
+      return {
+        weight,
+        supports,
+        loadPerSupport:
+          weight / supports,
+      };
+    }
+
+
+    function updateLoadPreview() {
+      const loadData =
+        getLoadData();
+
+
+      if (!loadData) {
+        loadOutput.textContent =
+          "Completa los datos";
+
+        loadExplanation.textContent =
+          "El peso debe ser mayor a cero.";
+
+        return;
+      }
+
+
+      loadOutput.textContent =
+        formatNumber(
+          loadData.loadPerSupport
+        )
+        + " kg";
+
+
+      loadExplanation.textContent =
+        formatNumber(
+          loadData.weight
+        )
+        + " kg repartidos entre "
+        + loadData.supports
+        + (
+          loadData.supports === 1
+            ? " apoyo."
+            : " apoyos."
+        );
+    }
+
+
+    function matchesOptionalText(
+      modelValue,
+      filterValue
+    ) {
+      const filter =
+        normalize(filterValue);
+
+
+      if (!filter) {
+        return true;
+      }
+
+
+      return normalize(
+        modelValue
+      ).includes(filter);
+    }
+
+
+    function modelMatches(
+      model,
+      loadData
+    ) {
+      /*
+       * 1. Capacidad:
+       * el soporte debe soportar al menos
+       * la carga calculada por punto.
+       */
+      if (
+        !Number.isFinite(
+          Number(model.capacidad_kg)
+        )
+        || Number(model.capacidad_kg)
+          < loadData.loadPerSupport
+      ) {
+        return false;
+      }
+
+
+      /*
+       * 2. Tipo de aislamiento.
+       */
+      if (
+        isolationType.value !== "all"
+        && model.tipo_aislamiento
+          !== isolationType.value
+      ) {
+        return false;
+      }
+
+
+      /*
+       * 3. Ambiente húmedo:
+       * se conservan los modelos cuyo material
+       * indica disponibilidad de inoxidable.
+       */
+      if (
+        environmentType.value === "wet"
+        && !model.inoxidable_disponible
+      ) {
+        return false;
+      }
+
+
+      /*
+       * 4. Filtros técnicos opcionales.
+       */
+      if (
+        !matchesOptionalText(
+          model.diametro_base,
+          filterBase.value
+        )
+      ) {
+        return false;
+      }
+
+
+      if (
+        !matchesOptionalText(
+          model.altura_base,
+          filterBaseHeight.value
+        )
+      ) {
+        return false;
+      }
+
+
+      if (
+        !matchesOptionalText(
+          model.diametro_tornillo,
+          filterThread.value
+        )
+      ) {
+        return false;
+      }
+
+
+      if (
+        !matchesOptionalText(
+          model.altura_tornillo,
+          filterScrewHeight.value
+        )
+      ) {
+        return false;
+      }
+
+
+      return true;
+    }
+
+
+    function recommendationScore(
+      model,
+      requiredLoad
+    ) {
+      const capacity =
+        Number(model.capacidad_kg);
+
+
+      /*
+       * Para esta simulación priorizamos
+       * la capacidad inmediatamente superior
+       * a la necesaria.
+       *
+       * Cuanto menor sea la diferencia,
+       * mejor se posiciona.
+       */
+      const excess =
+        capacity - requiredLoad;
+
+
+      let score =
+        100000 - excess;
+
+
+      /*
+       * Preferencia suave por inoxidable
+       * cuando el ambiente es húmedo.
+       */
+      if (
+        environmentType.value === "wet"
+        && model.inoxidable_disponible
+      ) {
+        score += 1000;
+      }
+
+
+      /*
+       * Si el usuario sí eligió caucho/resorte,
+       * premiamos la coincidencia.
+       */
+      if (
+        isolationType.value !== "all"
+        && model.tipo_aislamiento
+          === isolationType.value
+      ) {
+        score += 500;
+      }
+
+
+      return score;
+    }
+
+
+    function getReason(
+      model,
+      requiredLoad
+    ) {
+      const margin =
+        Number(model.capacidad_kg)
+        - requiredLoad;
+
+
+      let text =
+        "Su capacidad supera la carga calculada "
+        + "por antivibratorio";
+
+
+      if (margin >= 0) {
+        text +=
+          " con un margen aproximado de "
+          + formatNumber(margin)
+          + " kg";
+      }
+
+
+      if (
+        isolationType.value !== "all"
+      ) {
+        text +=
+          " y coincide con el tipo de "
+          + "aislamiento seleccionado";
+      }
+
+
+      if (
+        environmentType.value === "wet"
+        && model.inoxidable_disponible
+      ) {
+        text +=
+          ". Además, el Excel indica disponibilidad "
+          + "de inoxidable T-304";
+      }
+
+
+      return text + ".";
+    }
+
+
+    function technicalItem(
+      label,
+      value
+    ) {
+      return `
+        <div class="technical-data-item">
+          <small>${escapeHtml(label)}</small>
+          <strong>
+            ${escapeHtml(value || "No indicado")}
+          </strong>
+        </div>
+      `;
+    }
+
+
+    function renderRecommended(
+      model,
+      requiredLoad
+    ) {
+      const image =
+        model.imagen
+          ? `
+            <img
+              src="${escapeHtml(model.imagen)}"
+              alt="Imagen de ${escapeHtml(model.modelo)}"
+              loading="lazy"
+            >
+          `
+          : `
+            <span>
+              Sin imagen
+            </span>
+          `;
+
+
+      const technicalData = [
+        [
+          "Modelo",
+          model.modelo,
+        ],
+        [
+          "Diámetro de base",
+          model.diametro_base,
+        ],
+        [
+          "Altura de base",
+          model.altura_base,
+        ],
+        [
+          "Diámetro de tornillo",
+          model.diametro_tornillo,
+        ],
+        [
+          "Altura de tornillo",
+          model.altura_tornillo,
+        ],
+        [
+          "Capacidad de carga",
+          model.capacidad_carga,
+        ],
+        [
+          "Material de elastómero",
+          model.material_elastomero,
+        ],
+        [
+          "Material de tornillo",
+          model.material_tornillo,
+        ],
+      ]
+        .map(
+          function (item) {
+            return technicalItem(
+              item[0],
+              item[1]
+            );
+          }
+        )
+        .join("");
+
+
+      const fichaLink =
+        model.ficha_tecnica
+          ? `
+            <a
+              class="recommended-link"
+              href="${escapeHtml(model.ficha_tecnica)}"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ver ficha técnica
+            </a>
+          `
+          : `
+            <span
+              class="recommended-link"
+              aria-disabled="true"
+            >
+              Ficha no disponible
+            </span>
+          `;
+
+
+      recommendedCard.innerHTML = `
+        <div class="recommended-top">
+
+          <div class="recommended-image">
+            ${image}
+          </div>
+
+          <div class="recommended-copy">
+
+            <span class="recommended-badge">
+              Coincidencia principal
+            </span>
+
+            <h3>
+              ${escapeHtml(model.modelo)}
+            </h3>
+
+            <p class="recommended-capacity">
+              Capacidad:
+              <strong>
+                ${escapeHtml(model.capacidad_carga)}
+              </strong>
+            </p>
+
+            <div class="recommendation-reason">
+              <strong>
+                ¿Por qué aparece esta opción?
+              </strong>
+              <br>
+              ${escapeHtml(
+                getReason(
+                  model,
+                  requiredLoad
+                )
+              )}
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="technical-data-grid">
+          ${technicalData}
+        </div>
+
+
+        <div class="recommended-actions">
+
+          ${fichaLink}
+
+          <a
+            class="recommended-link primary"
+            href="${CATALOG_URL}"
+          >
+            Ver catálogo
+          </a>
+
+        </div>
+      `;
+    }
+
+
+    function renderAlternatives(
+      compatibleModels
+    ) {
+      const alternatives =
+        compatibleModels.slice(1, 4);
+
+
+      if (!alternatives.length) {
+        alternativesSection.hidden = true;
+        alternativesContainer.innerHTML = "";
+        return;
+      }
+
+
+      alternativesSection.hidden = false;
+
+
+      alternativesContainer.innerHTML =
+        alternatives
+          .map(
+            function (model) {
+              return `
+                <article class="alternative-card">
+
+                  <div>
+                    <strong>
+                      ${escapeHtml(model.modelo)}
+                    </strong>
+
+                    <p>
+                      ${escapeHtml(
+                        model.diametro_base
+                      )}
+                      ·
+                      ${escapeHtml(
+                        model.material_elastomero
+                      )}
+                    </p>
+                  </div>
+
+                  <span class="alternative-capacity">
+                    ${escapeHtml(
+                      model.capacidad_carga
+                    )}
+                  </span>
+
+                </article>
+              `;
+            }
+          )
+          .join("");
+    }
+
+
+    function calculateRecommendation() {
+      errorBox.hidden = true;
+      errorBox.textContent = "";
+
+
+      const loadData =
+        getLoadData();
+
+
+      if (!loadData) {
+        errorBox.textContent =
+          "Escribe un peso válido antes "
+          + "de calcular.";
+
+        errorBox.hidden = false;
+        return;
+      }
+
+
+      const compatible =
+        models
+          .filter(
+            function (model) {
+              return modelMatches(
+                model,
+                loadData
+              );
+            }
+          )
+          .sort(
+            function (a, b) {
+              return (
+                recommendationScore(
+                  b,
+                  loadData.loadPerSupport
+                )
+                -
+                recommendationScore(
+                  a,
+                  loadData.loadPerSupport
+                )
+              );
+            }
+          );
+
+
+      resultEmpty.hidden = true;
+
+
+      if (!compatible.length) {
+        resultContent.hidden = true;
+        resultNone.hidden = false;
+        return;
+      }
+
+
+      resultNone.hidden = true;
+      resultContent.hidden = false;
+
+
+      requiredLoadOutput.textContent =
+        formatNumber(
+          loadData.loadPerSupport
+        )
+        + " kg / apoyo";
+
+
+      compatibleCountOutput.textContent =
+        compatible.length;
+
+
+      renderRecommended(
+        compatible[0],
+        loadData.loadPerSupport
+      );
+
+
+      renderAlternatives(
+        compatible
+      );
+
+
+      if (
+        window.innerWidth < 900
+      ) {
+        resultContent.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
       }
     }
 
-    [load, stiff, maxdef].forEach(function (el) {
-      el.addEventListener("input", compute);
-    });
-    compute();
+
+    /*
+     * Actualización inmediata de la carga.
+     */
+    [
+      weightInput,
+      supportCount,
+    ].forEach(
+      function (element) {
+        element.addEventListener(
+          "input",
+          updateLoadPreview
+        );
+
+        element.addEventListener(
+          "change",
+          updateLoadPreview
+        );
+      }
+    );
+
+
+    calculateButton.addEventListener(
+      "click",
+      calculateRecommendation
+    );
+
+
+    /*
+     * Carga inicial de los 97 modelos.
+     */
+    fetch(DATA_URL)
+      .then(
+        function (response) {
+          if (!response.ok) {
+            throw new Error(
+              "No se pudo cargar la base."
+            );
+          }
+
+          return response.json();
+        }
+      )
+      .then(
+        function (data) {
+          models =
+            Array.isArray(data)
+              ? data
+              : [];
+
+
+          if (!models.length) {
+            throw new Error(
+              "La base no contiene modelos."
+            );
+          }
+
+
+          calculateButton.disabled = false;
+
+          calculateButton.textContent =
+            "Buscar antivibratorios compatibles";
+        }
+      )
+      .catch(
+        function (error) {
+          console.error(error);
+
+          calculateButton.disabled = true;
+
+          calculateButton.textContent =
+            "Base de datos no disponible";
+
+          errorBox.textContent =
+            "No se pudo cargar "
+            + "static/data/antivibratorios.json.";
+
+          errorBox.hidden = false;
+        }
+      );
+
+
+    updateLoadPreview();
   })();
 </script>
 {% endblock %}

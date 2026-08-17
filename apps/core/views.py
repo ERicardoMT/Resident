@@ -29,10 +29,10 @@ def home(request):
             "children": [
                 {
                     "icon": "stops",
-                    "title": "Elegir mi soporte",
+                    "title": "Elegir mi antivibratorio",
                     "subtitle": (
-                        "Dimensiona un soporte "
-                        "antivibratorio"
+                        "Encuentra opciones según el peso "
+                        "y las características de tu equipo"
                     ),
                     "url_name": "stops",
                 },
