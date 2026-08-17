@@ -162,58 +162,10 @@ Elegir mi antivibratorio | SMAV INAHER
       </div>
 
 
-      <!-- Tipo de aislamiento -->
-      <div class="selector-field">
-
-        <label for="isolation-type">
-          ¿Sabes qué tipo de aislamiento buscas?
-        </label>
-
-        <select id="isolation-type">
-          <option value="all">
-            Sin preferencia
-          </option>
-
-          <option value="caucho">
-            Caucho
-          </option>
-
-          <option value="resorte">
-            Resorte
-          </option>
-        </select>
-
-        <small>
-          Si no conoces la diferencia, deja
-          “Sin preferencia”.
-        </small>
-
-      </div>
 
 
-      <!-- Ambiente -->
-      <div class="selector-field">
 
-        <label for="environment-type">
-          ¿En qué ambiente estará instalado?
-        </label>
-
-        <select id="environment-type">
-          <option value="normal">
-            Ambiente normal
-          </option>
-
-          <option value="wet">
-            Húmedo, sanitario o corrosivo
-          </option>
-        </select>
-
-        <small>
-          En ambientes húmedos priorizamos modelos donde
-          el inoxidable T-304 está disponible.
-        </small>
-
-      </div>
+ 
 
 
       <!-- =================================================
@@ -234,77 +186,127 @@ Elegir mi antivibratorio | SMAV INAHER
 
         <div class="selector-advanced-body">
 
-          <p>
-            Estos campos son opcionales. Déjalos vacíos cuando
-            no conozcas las medidas.
-          </p>
+  <p>
+    Todos estos datos son opcionales.
+    Las opciones provienen directamente
+    de las columnas naranjas del catálogo.
+  </p>
 
 
-          <div class="selector-field">
+  <div class="selector-field">
+    <label for="filter-base">
+      Diámetro de base
+    </label>
 
-            <label for="filter-base">
-              Diámetro o tamaño de base
-            </label>
+    <select id="filter-base">
+      <option value="">
+        Sin preferencia
+      </option>
 
-            <input
-              type="text"
-              id="filter-base"
-              placeholder="Ej. 80 mm, 4 pulgadas..."
-            >
-
-            <small>
-              Se compara con el dato “Diámetro de base”
-              del Excel.
-            </small>
-
-          </div>
-
-
-          <div class="selector-field">
-
-            <label for="filter-base-height">
-              Altura de base
-            </label>
-
-            <input
-              type="text"
-              id="filter-base-height"
-              placeholder="Ej. 25 mm..."
-            >
-
-          </div>
+      {% for value in selector_options.base_diameters %}
+        <option value="{{ value }}">
+          {{ value }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
 
 
-          <div class="selector-field">
+  <div class="selector-field">
+    <label for="filter-base-height">
+      Altura de base
+    </label>
 
-            <label for="filter-thread">
-              Rosca o diámetro del tornillo
-            </label>
+    <select id="filter-base-height">
+      <option value="">
+        Sin preferencia
+      </option>
 
-            <input
-              type="text"
-              id="filter-thread"
-              placeholder='Ej. 1/2"-13, M12...'
-            >
+      {% for value in selector_options.base_heights %}
+        <option value="{{ value }}">
+          {{ value }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
 
-          </div>
+
+  <div class="selector-field">
+    <label for="filter-thread">
+      Diámetro de tornillo
+    </label>
+
+    <select id="filter-thread">
+      <option value="">
+        Sin preferencia
+      </option>
+
+      {% for value in selector_options.screw_diameters %}
+        <option value="{{ value }}">
+          {{ value }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
 
 
-          <div class="selector-field">
+  <div class="selector-field">
+    <label for="filter-screw-height">
+      Altura de tornillo
+    </label>
 
-            <label for="filter-screw-height">
-              Altura del tornillo
-            </label>
+    <select id="filter-screw-height">
+      <option value="">
+        Sin preferencia
+      </option>
 
-            <input
-              type="text"
-              id="filter-screw-height"
-              placeholder='Ej. 4", 50 mm...'
-            >
+      {% for value in selector_options.screw_heights %}
+        <option value="{{ value }}">
+          {{ value }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
 
-          </div>
 
-        </div>
+  <div class="selector-field">
+    <label for="filter-elastomer-material">
+      Material de elastómero
+    </label>
+
+    <select id="filter-elastomer-material">
+      <option value="">
+        Sin preferencia
+      </option>
+
+      {% for value in selector_options.elastomer_materials %}
+        <option value="{{ value }}">
+          {{ value }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+
+  <div class="selector-field">
+    <label for="filter-screw-material">
+      Material de tornillo
+    </label>
+
+    <select id="filter-screw-material">
+      <option value="">
+        Sin preferencia
+      </option>
+
+      {% for value in selector_options.screw_materials %}
+        <option value="{{ value }}">
+          {{ value }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+</div>
 
       </details>
 
@@ -316,6 +318,15 @@ Elegir mi antivibratorio | SMAV INAHER
         hidden
       ></div>
 
+{% csrf_token %}
+
+<button
+  type="button"
+  id="calculate-recommendation"
+  class="btn btn-primary selector-main-action"
+>
+  Buscar antivibratorios compatibles
+</button> 
 
       <button
         type="button"
@@ -329,12 +340,13 @@ Elegir mi antivibratorio | SMAV INAHER
       <div class="selector-simulation-notice">
         <span aria-hidden="true">i</span>
 
-        <p>
-          <strong>Recomendación simulada.</strong>
-          Esta herramienta compara los datos capturados con la
-          información técnica disponible. La selección final debe
-          validarse antes de comprar o instalar.
-        </p>
+<p>
+  <strong>Recomendación orientativa.</strong>
+  La selección utiliza únicamente la información
+  disponible en los campos técnicos marcados en
+  naranja del catálogo INAHER. La selección final
+  debe validarse antes de comprar o instalar.
+</p>
       </div>
 
       </section>
@@ -1319,8 +1331,8 @@ Elegir mi antivibratorio | SMAV INAHER
     "use strict";
 
 
-    const DATA_URL =
-      "{% static 'data/antivibratorios.json' %}";
+    const RECOMMENDATION_URL =
+      "{% url 'recommend_antivibrator' %}";
 
     const CATALOG_URL =
       "{% url 'antivibratorios' %}";
@@ -1334,16 +1346,6 @@ Elegir mi antivibratorio | SMAV INAHER
     const supportCount =
       document.getElementById(
         "support-count"
-      );
-
-    const isolationType =
-      document.getElementById(
-        "isolation-type"
-      );
-
-    const environmentType =
-      document.getElementById(
-        "environment-type"
       );
 
     const filterBase =
@@ -1366,9 +1368,24 @@ Elegir mi antivibratorio | SMAV INAHER
         "filter-screw-height"
       );
 
+    const filterElastomerMaterial =
+      document.getElementById(
+        "filter-elastomer-material"
+      );
+
+    const filterScrewMaterial =
+      document.getElementById(
+        "filter-screw-material"
+      );
+
     const calculateButton =
       document.getElementById(
         "calculate-recommendation"
+      );
+
+    const csrfInput =
+      document.querySelector(
+        "[name=csrfmiddlewaretoken]"
       );
 
     const errorBox =
@@ -1384,11 +1401,6 @@ Elegir mi antivibratorio | SMAV INAHER
     const loadExplanation =
       document.getElementById(
         "load-explanation"
-      );
-
-    const resultEmpty =
-      document.getElementById(
-        "result-empty"
       );
 
     const resultContent =
@@ -1434,14 +1446,12 @@ Elegir mi antivibratorio | SMAV INAHER
     const resultPanel =
       document.getElementById(
         "selector-result-panel"
-      );  
+      );
 
     const editDataButton =
       document.getElementById(
         "edit-selector-data"
-    );  
-
-    let models = [];
+      );
 
 
     function formatNumber(value) {
@@ -1451,19 +1461,6 @@ Elegir mi antivibratorio | SMAV INAHER
           maximumFractionDigits: 2,
         }
       ).format(value);
-    }
-
-
-    function normalize(value) {
-      return String(value || "")
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(
-          /[\u0300-\u036f]/g,
-          ""
-        )
-        .replace(/\s+/g, " ")
-        .trim();
     }
 
 
@@ -1484,7 +1481,6 @@ Elegir mi antivibratorio | SMAV INAHER
       const supports =
         Number(supportCount.value);
 
-
       if (
         !Number.isFinite(weight)
         || weight <= 0
@@ -1494,10 +1490,9 @@ Elegir mi antivibratorio | SMAV INAHER
         return null;
       }
 
-
       return {
-        weight,
-        supports,
+        weight: weight,
+        supports: supports,
         loadPerSupport:
           weight / supports,
       };
@@ -1505,11 +1500,10 @@ Elegir mi antivibratorio | SMAV INAHER
 
 
     function updateLoadPreview() {
-      const loadData =
+      const data =
         getLoadData();
 
-
-      if (!loadData) {
+      if (!data) {
         loadOutput.textContent =
           "Completa los datos";
 
@@ -1519,234 +1513,19 @@ Elegir mi antivibratorio | SMAV INAHER
         return;
       }
 
-
       loadOutput.textContent =
         formatNumber(
-          loadData.loadPerSupport
+          data.loadPerSupport
         )
         + " kg";
 
-
       loadExplanation.textContent =
         formatNumber(
-          loadData.weight
+          data.weight
         )
         + " kg repartidos entre "
-        + loadData.supports
-        + (
-          loadData.supports === 1
-            ? " apoyo."
-            : " apoyos."
-        );
-    }
-
-
-    function matchesOptionalText(
-      modelValue,
-      filterValue
-    ) {
-      const filter =
-        normalize(filterValue);
-
-
-      if (!filter) {
-        return true;
-      }
-
-
-      return normalize(
-        modelValue
-      ).includes(filter);
-    }
-
-
-    function modelMatches(
-      model,
-      loadData
-    ) {
-      /*
-       * 1. Capacidad:
-       * el soporte debe soportar al menos
-       * la carga calculada por punto.
-       */
-      if (
-        !Number.isFinite(
-          Number(model.capacidad_kg)
-        )
-        || Number(model.capacidad_kg)
-          < loadData.loadPerSupport
-      ) {
-        return false;
-      }
-
-
-      /*
-       * 2. Tipo de aislamiento.
-       */
-      if (
-        isolationType.value !== "all"
-        && model.tipo_aislamiento
-          !== isolationType.value
-      ) {
-        return false;
-      }
-
-
-      /*
-       * 3. Ambiente húmedo:
-       * se conservan los modelos cuyo material
-       * indica disponibilidad de inoxidable.
-       */
-      if (
-        environmentType.value === "wet"
-        && !model.inoxidable_disponible
-      ) {
-        return false;
-      }
-
-
-      /*
-       * 4. Filtros técnicos opcionales.
-       */
-      if (
-        !matchesOptionalText(
-          model.diametro_base,
-          filterBase.value
-        )
-      ) {
-        return false;
-      }
-
-
-      if (
-        !matchesOptionalText(
-          model.altura_base,
-          filterBaseHeight.value
-        )
-      ) {
-        return false;
-      }
-
-
-      if (
-        !matchesOptionalText(
-          model.diametro_tornillo,
-          filterThread.value
-        )
-      ) {
-        return false;
-      }
-
-
-      if (
-        !matchesOptionalText(
-          model.altura_tornillo,
-          filterScrewHeight.value
-        )
-      ) {
-        return false;
-      }
-
-
-      return true;
-    }
-
-
-    function recommendationScore(
-      model,
-      requiredLoad
-    ) {
-      const capacity =
-        Number(model.capacidad_kg);
-
-
-      /*
-       * Para esta simulación priorizamos
-       * la capacidad inmediatamente superior
-       * a la necesaria.
-       *
-       * Cuanto menor sea la diferencia,
-       * mejor se posiciona.
-       */
-      const excess =
-        capacity - requiredLoad;
-
-
-      let score =
-        100000 - excess;
-
-
-      /*
-       * Preferencia suave por inoxidable
-       * cuando el ambiente es húmedo.
-       */
-      if (
-        environmentType.value === "wet"
-        && model.inoxidable_disponible
-      ) {
-        score += 1000;
-      }
-
-
-      /*
-       * Si el usuario sí eligió caucho/resorte,
-       * premiamos la coincidencia.
-       */
-      if (
-        isolationType.value !== "all"
-        && model.tipo_aislamiento
-          === isolationType.value
-      ) {
-        score += 500;
-      }
-
-
-      return score;
-    }
-
-
-    function getReason(
-      model,
-      requiredLoad
-    ) {
-      const margin =
-        Number(model.capacidad_kg)
-        - requiredLoad;
-
-
-      let text =
-        "Su capacidad supera la carga calculada "
-        + "por antivibratorio";
-
-
-      if (margin >= 0) {
-        text +=
-          " con un margen aproximado de "
-          + formatNumber(margin)
-          + " kg";
-      }
-
-
-      if (
-        isolationType.value !== "all"
-      ) {
-        text +=
-          " y coincide con el tipo de "
-          + "aislamiento seleccionado";
-      }
-
-
-      if (
-        environmentType.value === "wet"
-        && model.inoxidable_disponible
-      ) {
-        text +=
-          ". Además, el Excel indica disponibilidad "
-          + "de inoxidable T-304";
-      }
-
-
-      return text + ".";
+        + data.supports
+        + " apoyos.";
     }
 
 
@@ -1756,9 +1535,14 @@ Elegir mi antivibratorio | SMAV INAHER
     ) {
       return `
         <div class="technical-data-item">
-          <small>${escapeHtml(label)}</small>
+          <small>
+            ${escapeHtml(label)}
+          </small>
+
           <strong>
-            ${escapeHtml(value || "No indicado")}
+            ${escapeHtml(
+              value || "No indicado"
+            )}
           </strong>
         </div>
       `;
@@ -1766,328 +1550,309 @@ Elegir mi antivibratorio | SMAV INAHER
 
 
     function renderRecommended(
-      model,
-      requiredLoad
+      product
     ) {
-      const image =
-        model.imagen
-          ? `
-            <img
-              src="${escapeHtml(model.imagen)}"
-              alt="Imagen de ${escapeHtml(model.modelo)}"
-              loading="lazy"
-            >
-          `
-          : `
-            <span>
-              Sin imagen
-            </span>
-          `;
-
-
       const technicalData = [
         [
           "Modelo",
-          model.modelo,
+          product.model,
         ],
         [
           "Diámetro de base",
-          model.diametro_base,
+          product.base_diameter,
         ],
         [
           "Altura de base",
-          model.altura_base,
+          product.base_height,
         ],
         [
           "Diámetro de tornillo",
-          model.diametro_tornillo,
+          product.screw_diameter,
         ],
         [
           "Altura de tornillo",
-          model.altura_tornillo,
+          product.screw_height,
         ],
         [
           "Capacidad de carga",
-          model.capacidad_carga,
+          product.capacity_label,
         ],
         [
           "Material de elastómero",
-          model.material_elastomero,
+          product.elastomer_material,
         ],
         [
           "Material de tornillo",
-          model.material_tornillo,
+          product.screw_material,
         ],
       ]
-        .map(
-          function (item) {
-            return technicalItem(
-              item[0],
-              item[1]
-            );
-          }
-        )
+        .map(function (item) {
+          return technicalItem(
+            item[0],
+            item[1]
+          );
+        })
         .join("");
-
-
-      const fichaLink =
-        model.ficha_tecnica
-          ? `
-            <a
-              class="recommended-link"
-              href="${escapeHtml(model.ficha_tecnica)}"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Ver ficha técnica
-            </a>
-          `
-          : `
-            <span
-              class="recommended-link"
-              aria-disabled="true"
-            >
-              Ficha no disponible
-            </span>
-          `;
 
 
       recommendedCard.innerHTML = `
         <div class="recommended-top">
 
-          <div class="recommended-image">
-            ${image}
-          </div>
-
           <div class="recommended-copy">
 
             <span class="recommended-badge">
-              Coincidencia principal
+              Recomendado
             </span>
 
             <h3>
-              ${escapeHtml(model.modelo)}
+              ${escapeHtml(product.model)}
             </h3>
 
             <p class="recommended-capacity">
               Capacidad:
               <strong>
-                ${escapeHtml(model.capacidad_carga)}
+                ${escapeHtml(
+                  product.capacity_label
+                )}
               </strong>
             </p>
 
             <div class="recommendation-reason">
-              <strong>
-                ¿Por qué aparece esta opción?
-              </strong>
-              <br>
-              ${escapeHtml(
-                getReason(
-                  model,
-                  requiredLoad
-                )
-              )}
+              Este modelo es el de menor
+              capacidad disponible que cumple
+              la carga calculada y todos los
+              filtros técnicos seleccionados.
             </div>
 
           </div>
 
         </div>
 
-
         <div class="technical-data-grid">
           ${technicalData}
         </div>
 
-
         <div class="recommended-actions">
-
-          ${fichaLink}
-
           <a
             class="recommended-link primary"
             href="${CATALOG_URL}"
           >
             Ver catálogo
           </a>
-
         </div>
       `;
     }
 
 
     function renderAlternatives(
-      compatibleModels
+      alternatives
     ) {
-      const alternatives =
-        compatibleModels.slice(1, 4);
-
-
       if (!alternatives.length) {
         alternativesSection.hidden = true;
-        alternativesContainer.innerHTML = "";
+        alternativesContainer.innerHTML =
+          "";
         return;
       }
 
-
       alternativesSection.hidden = false;
-
 
       alternativesContainer.innerHTML =
         alternatives
-          .map(
-            function (model) {
-              return `
-                <article class="alternative-card">
+          .map(function (product) {
+            return `
+              <article class="alternative-card">
 
-                  <div>
-                    <strong>
-                      ${escapeHtml(model.modelo)}
-                    </strong>
-
-                    <p>
-                      ${escapeHtml(
-                        model.diametro_base
-                      )}
-                      ·
-                      ${escapeHtml(
-                        model.material_elastomero
-                      )}
-                    </p>
-                  </div>
-
-                  <span class="alternative-capacity">
+                <div>
+                  <strong>
                     ${escapeHtml(
-                      model.capacidad_carga
+                      product.model
                     )}
-                  </span>
+                  </strong>
 
-                </article>
-              `;
-            }
-          )
+                  <p>
+                    ${escapeHtml(
+                      product.base_diameter
+                    )}
+                    ·
+                    ${escapeHtml(
+                      product.elastomer_material
+                    )}
+                  </p>
+                </div>
+
+                <span class="alternative-capacity">
+                  ${escapeHtml(
+                    product.capacity_label
+                  )}
+                </span>
+
+              </article>
+            `;
+          })
           .join("");
     }
 
 
-    function calculateRecommendation() {
+    function buildPayload() {
+      return {
+        weight:
+          Number(weightInput.value),
+
+        support_count:
+          Number(supportCount.value),
+
+        base_diameter:
+          filterBase.value,
+
+        base_height:
+          filterBaseHeight.value,
+
+        screw_diameter:
+          filterThread.value,
+
+        screw_height:
+          filterScrewHeight.value,
+
+        elastomer_material:
+          filterElastomerMaterial.value,
+
+        screw_material:
+          filterScrewMaterial.value,
+      };
+    }
+
+
+    async function calculateRecommendation() {
       errorBox.hidden = true;
       errorBox.textContent = "";
-
 
       const loadData =
         getLoadData();
 
-
       if (!loadData) {
         errorBox.textContent =
-          "Escribe un peso válido antes "
-          + "de calcular.";
+          "Escribe un peso válido.";
 
         errorBox.hidden = false;
         return;
       }
 
+      const originalText =
+        calculateButton.textContent;
 
-      const compatible =
-        models
-          .filter(
-            function (model) {
-              return modelMatches(
-                model,
-                loadData
-              );
-            }
-          )
-          .sort(
-            function (a, b) {
-              return (
-                recommendationScore(
-                  b,
-                  loadData.loadPerSupport
-                )
-                -
-                recommendationScore(
-                  a,
-                  loadData.loadPerSupport
-                )
-              );
-            }
+      calculateButton.disabled = true;
+
+      calculateButton.textContent =
+        "Calculando...";
+
+      try {
+        const response = await fetch(
+          RECOMMENDATION_URL,
+          {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+              "Content-Type":
+                "application/json",
+
+              "X-CSRFToken":
+                csrfInput.value,
+            },
+            body: JSON.stringify(
+              buildPayload()
+            ),
+          }
+        );
+
+        const data =
+          await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.detail
+            || "No se pudo calcular."
           );
+        }
 
-      inputPanel.hidden = true;
-      resultPanel.hidden = false;        
-      resultEmpty.hidden = true;
+        inputPanel.hidden = true;
+        resultPanel.hidden = false;
 
+        if (
+          data.status !== "recommended"
+          || !data.recommended
+        ) {
+          resultContent.hidden = true;
+          resultNone.hidden = false;
 
-      if (!compatible.length) {
-        resultContent.hidden = true;
-        resultNone.hidden = false;
-        return;
-      }
+          const paragraph =
+            resultNone.querySelector("p");
 
+          if (paragraph) {
+            paragraph.textContent =
+              data.message;
+          }
 
-      resultNone.hidden = true;
-      resultContent.hidden = false;
+          return;
+        }
 
+        resultNone.hidden = true;
+        resultContent.hidden = false;
 
-      requiredLoadOutput.textContent =
-        formatNumber(
-          loadData.loadPerSupport
-        )
-        + " kg / apoyo";
+        requiredLoadOutput.textContent =
+          formatNumber(
+            data.required_load_kg
+          )
+          + " kg / apoyo";
 
+        compatibleCountOutput.textContent =
+          data.matching_count;
 
-      compatibleCountOutput.textContent =
-        compatible.length;
+        renderRecommended(
+          data.recommended
+        );
 
+        renderAlternatives(
+          data.alternatives
+        );
 
-      renderRecommended(
-        compatible[0],
-        loadData.loadPerSupport
-      );
+      } catch (error) {
+        errorBox.textContent =
+          error instanceof Error
+            ? error.message
+            : "Ocurrió un error.";
 
+        errorBox.hidden = false;
 
-      renderAlternatives(
-        compatible
-      );
+      } finally {
+        calculateButton.disabled = false;
 
-
-      if (
-        window.innerWidth < 900
-      ) {
-        resultContent.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
+        calculateButton.textContent =
+          originalText;
       }
     }
 
 
-    /*
-     * Actualización inmediata de la carga.
-     */
     [
       weightInput,
       supportCount,
-    ].forEach(
-      function (element) {
-        element.addEventListener(
-          "input",
-          updateLoadPreview
-        );
+    ].forEach(function (element) {
+      element.addEventListener(
+        "input",
+        updateLoadPreview
+      );
 
-        element.addEventListener(
-          "change",
-          updateLoadPreview
-        );
-      }
-    );
+      element.addEventListener(
+        "change",
+        updateLoadPreview
+      );
+    });
 
 
     calculateButton.addEventListener(
       "click",
       calculateRecommendation
     );
+
 
     editDataButton.addEventListener(
       "click",
@@ -2103,61 +1868,8 @@ Elegir mi antivibratorio | SMAV INAHER
     );
 
 
-    /*
-     * Carga inicial de los 97 modelos.
-     */
-    fetch(DATA_URL)
-      .then(
-        function (response) {
-          if (!response.ok) {
-            throw new Error(
-              "No se pudo cargar la base."
-            );
-          }
-
-          return response.json();
-        }
-      )
-      .then(
-        function (data) {
-          models =
-            Array.isArray(data)
-              ? data
-              : [];
-
-
-          if (!models.length) {
-            throw new Error(
-              "La base no contiene modelos."
-            );
-          }
-
-
-          calculateButton.disabled = false;
-
-          calculateButton.textContent =
-            "Buscar antivibratorios compatibles";
-        }
-      )
-      .catch(
-        function (error) {
-          console.error(error);
-
-          calculateButton.disabled = true;
-
-          calculateButton.textContent =
-            "Base de datos no disponible";
-
-          errorBox.textContent =
-            "No se pudo cargar "
-            + "static/data/antivibratorios.json.";
-
-          errorBox.hidden = false;
-        }
-      );
-
-
     updateLoadPreview();
+
   })();
 </script>
 {% endblock %}
