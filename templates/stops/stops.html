@@ -6,6 +6,28 @@
 Elegir mi antivibratorio | SMAV INAHER
 {% endblock %}
 
+{% block back %}
+<a
+  class="icon-btn"
+  href="{% url 'home' %}"
+  aria-label="Volver al inicio"
+>
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+</a>
+{% endblock %}
+
 
 {% block content %}
 <section class="page antivibration-selector-page">
@@ -23,21 +45,10 @@ Elegir mi antivibratorio | SMAV INAHER
       Elegir mi antivibratorio
     </h1>
 
-    <p class="page-lead">
+    <p class="page-lead selector-intro">
       Cuéntanos algunos datos de tu equipo y te mostraremos
       opciones compatibles de la base de antivibratorios INAHER.
     </p>
-
-    <div class="selector-simulation-notice">
-      <span aria-hidden="true">i</span>
-
-      <p>
-        <strong>Recomendación simulada.</strong>
-        Esta herramienta compara los datos capturados con la
-        información técnica disponible. La selección final debe
-        validarse antes de comprar o instalar.
-      </p>
-    </div>
 
   </header>
 
@@ -47,10 +58,10 @@ Elegir mi antivibratorio | SMAV INAHER
        ===================================================== -->
   <div class="selector-dashboard">
 
-    <!-- ===================================================
-         COLUMNA IZQUIERDA
-         =================================================== -->
-    <section class="selector-input-panel">
+    <section
+      id="selector-input-panel"
+      class="selector-input-panel"
+    >
 
       <div class="selector-panel-heading">
 
@@ -160,7 +171,7 @@ Elegir mi antivibratorio | SMAV INAHER
 
         <select id="isolation-type">
           <option value="all">
-            No sé, recomiéndame
+            Sin preferencia
           </option>
 
           <option value="caucho">
@@ -174,7 +185,7 @@ Elegir mi antivibratorio | SMAV INAHER
 
         <small>
           Si no conoces la diferencia, deja
-          “No sé, recomiéndame”.
+          “Sin preferencia”.
         </small>
 
       </div>
@@ -315,13 +326,32 @@ Elegir mi antivibratorio | SMAV INAHER
         Buscando base de datos…
       </button>
 
-    </section>
+      <div class="selector-simulation-notice">
+        <span aria-hidden="true">i</span>
 
+        <p>
+          <strong>Recomendación simulada.</strong>
+          Esta herramienta compara los datos capturados con la
+          información técnica disponible. La selección final debe
+          validarse antes de comprar o instalar.
+        </p>
+      </div>
 
-    <!-- ===================================================
-         COLUMNA DERECHA
-         =================================================== -->
-    <section class="selector-result-panel">
+      </section>
+
+      <section
+        id="selector-result-panel"
+        class="selector-result-panel"
+        hidden
+      >
+
+      <button
+        type="button"
+        id="edit-selector-data"
+        class="selector-edit-data"
+      >
+        ← Modificar datos
+      </button>
 
       <div class="selector-panel-heading">
 
@@ -329,19 +359,17 @@ Elegir mi antivibratorio | SMAV INAHER
           2
         </span>
 
-        <div>
-          <small>
-            Resultado
-          </small>
+      <div>
+        <small>
+          Resultado
+        </small>
 
-          <h2>
-            Recomendación simulada
-          </h2>
-        </div>
-
+        <h2>
+          Recomendación
+        </h2>
       </div>
-
-
+      </div>
+      
       <!-- Estado inicial -->
       <div
         id="result-empty"
@@ -539,21 +567,21 @@ Elegir mi antivibratorio | SMAV INAHER
      ======================================================= */
 
   .selector-dashboard {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
+  display: block;
+  width: 100%;
+}
 
 
   .selector-input-panel,
   .selector-result-panel {
+    width: 100%;
     min-width: 0;
-    padding: 18px;
-    background: #ffffff;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-sm);
-  }
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
 
 
   .selector-panel-heading {
@@ -568,19 +596,18 @@ Elegir mi antivibratorio | SMAV INAHER
     display: grid;
     flex: 0 0 auto;
     place-items: center;
-    width: 34px;
-    height: 34px;
+
+    width: 29px;
+    height: 29px;
+
     color: #ffffff;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 800;
-    background:
-      linear-gradient(
-        135deg,
-        var(--primary),
-        var(--primary-500)
-      );
-    border-radius: 11px;
-  }
+
+    background: var(--primary);
+
+    border-radius: 50%;
+}
 
 
   .selector-panel-heading > div {
@@ -612,14 +639,22 @@ Elegir mi antivibratorio | SMAV INAHER
 
   .selector-field {
     display: grid;
-    gap: 7px;
-    margin-bottom: 16px;
-  }
+    gap: 8px;
+
+    padding: 15px 16px;
+    margin-bottom: 12px;
+
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+
+    box-shadow: var(--shadow-sm);
+}
 
 
   .selector-field label {
-    color: var(--text);
-    font-size: 11px;
+    color: var(--primary);
+    font-size: 13px;
     font-weight: 800;
     line-height: 1.4;
   }
@@ -657,9 +692,9 @@ Elegir mi antivibratorio | SMAV INAHER
 
   .selector-field small {
     color: var(--muted);
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 600;
-    line-height: 1.5;
+   line-height: 1.5;
   }
 
 
@@ -823,8 +858,17 @@ Elegir mi antivibratorio | SMAV INAHER
 
   .selector-main-action {
     width: 100%;
-    margin-top: 17px;
-  }
+    min-height: 54px;
+    margin-top: 16px;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    border-radius: 13px;
+
+    box-shadow:
+      0 8px 18px rgba(24, 166, 217, 0.16);
+}
 
 
   .selector-main-action:disabled {
@@ -832,6 +876,24 @@ Elegir mi antivibratorio | SMAV INAHER
     opacity: 0.55;
   }
 
+  .selector-edit-data {
+    padding: 0;
+    margin-bottom: 15px;
+
+    color: var(--primary);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 800;
+
+    background: transparent;
+    border: none;
+
+    cursor: pointer;
+  } 
+
+.selector-edit-data:hover {
+  color: var(--accent-hover);
+}
 
   .selector-error {
     padding: 10px 12px;
@@ -849,13 +911,23 @@ Elegir mi antivibratorio | SMAV INAHER
      RESULTADO VACÍO
      ======================================================= */
 
+  .selector-result-panel[hidden],
+  .selector-empty-result[hidden],
+  .selector-no-result[hidden],
+  #result-content[hidden] {
+    display: none !important;
+}
+
   .selector-empty-result,
   .selector-no-result {
     display: grid;
     justify-items: center;
+
     padding: 38px 18px;
+
     color: var(--muted);
     text-align: center;
+
     background: var(--surface-alt);
     border: 1px dashed var(--line);
     border-radius: 13px;
@@ -1199,40 +1271,7 @@ Elegir mi antivibratorio | SMAV INAHER
      RESPONSIVE
      ======================================================= */
 
-  @media (min-width: 900px) {
 
-    .selector-dashboard {
-      grid-template-columns:
-        minmax(0, 0.9fr)
-        minmax(0, 1.1fr);
-      align-items: start;
-      gap: 22px;
-    }
-
-
-    .selector-input-panel,
-    .selector-result-panel {
-      padding: 22px;
-    }
-
-
-    .selector-result-panel {
-      position: sticky;
-      top: 100px;
-    }
-
-
-    .selector-field label {
-      font-size: 12px;
-    }
-
-
-    .selector-field input,
-    .selector-field select {
-      font-size: 13px;
-    }
-
-  }
 
 
   @media (max-width: 520px) {
@@ -1387,6 +1426,20 @@ Elegir mi antivibratorio | SMAV INAHER
         "alternative-models"
       );
 
+    const inputPanel =
+      document.getElementById(
+        "selector-input-panel"
+      );
+
+    const resultPanel =
+      document.getElementById(
+        "selector-result-panel"
+      );  
+
+    const editDataButton =
+      document.getElementById(
+        "edit-selector-data"
+    );  
 
     let models = [];
 
@@ -1961,7 +2014,8 @@ Elegir mi antivibratorio | SMAV INAHER
             }
           );
 
-
+      inputPanel.hidden = true;
+      resultPanel.hidden = false;        
       resultEmpty.hidden = true;
 
 
@@ -2033,6 +2087,19 @@ Elegir mi antivibratorio | SMAV INAHER
     calculateButton.addEventListener(
       "click",
       calculateRecommendation
+    );
+
+    editDataButton.addEventListener(
+      "click",
+      function () {
+        resultPanel.hidden = true;
+        inputPanel.hidden = false;
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
     );
 
 
