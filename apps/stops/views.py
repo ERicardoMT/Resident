@@ -14,18 +14,21 @@ from .services import (
 
 def stops(request):
     """
-    Muestra el selector de antivibratorios
-    con opciones obtenidas directamente
-    de las columnas naranjas del catálogo.
+    Muestra el selector y carga las opciones
+    disponibles desde el catálogo.
     """
 
-    selector_options = get_selector_options()
+    selector_options = (
+        get_selector_options()
+    )
 
     return render(
         request,
         "stops/stops.html",
         {
-            "selector_options": selector_options,
+            "selector_options": (
+                selector_options
+            ),
         },
     )
 
@@ -33,13 +36,15 @@ def stops(request):
 @require_POST
 def recommend_antivibrator(request):
     """
-    Calcula una recomendación utilizando
-    exclusivamente los campos naranjas.
+    Recibe los datos del formulario y devuelve
+    una recomendación calculada desde el catálogo.
     """
 
     try:
         payload = json.loads(
-            request.body.decode("utf-8")
+            request.body.decode(
+                "utf-8"
+            )
             or "{}"
         )
     except (
@@ -56,12 +61,15 @@ def recommend_antivibrator(request):
             status=400,
         )
 
-    if not isinstance(payload, dict):
+    if not isinstance(
+        payload,
+        dict,
+    ):
         return JsonResponse(
             {
                 "detail": (
-                    "La solicitud debe ser "
-                    "un objeto JSON."
+                    "El cuerpo de la solicitud "
+                    "debe ser un objeto JSON."
                 )
             },
             status=400,

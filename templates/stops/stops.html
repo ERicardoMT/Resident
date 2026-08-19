@@ -81,36 +81,42 @@ Elegir mi antivibratorio | SMAV INAHER
 
       </div>
 
+  <form id="antivibration-form">
+    {% csrf_token %}
 
-      <!-- Peso -->
-      <div class="selector-field">
 
-        <label for="machine-weight">
-          ¿Cuánto pesa tu equipo?
-        </label>
+ <!-- Peso -->
+<div class="selector-field">
 
-        <div class="selector-input-unit">
-          <input
-            type="number"
-            id="machine-weight"
-            min="1"
-            step="1"
-            inputmode="decimal"
-            value="600"
-          >
+  <label for="machine-weight">
+    ¿Cuánto pesa tu equipo?
+  </label>
 
-          <span>
-            kg
-          </span>
-        </div>
+  <div class="selector-input-unit">
 
-        <small>
-          Usa el peso total aproximado de la máquina,
-          incluyendo la carga que permanece normalmente
-          sobre ella.
-        </small>
+    <input
+      type="number"
+      id="machine-weight"
+      min="1"
+      step="1"
+      inputmode="decimal"
+      value="600"
+      required
+    >
 
-      </div>
+    <span>
+      kg
+    </span>
+
+  </div>
+
+  <small>
+    Usa el peso total aproximado de la máquina,
+    incluyendo la carga que permanece normalmente
+    sobre ella.
+  </small>
+
+</div>
 
 
       <!-- Apoyos -->
@@ -321,23 +327,18 @@ Elegir mi antivibratorio | SMAV INAHER
 {% csrf_token %}
 
 <button
-  type="button"
+  type="submit"
   id="calculate-recommendation"
   class="btn btn-primary selector-main-action"
 >
   Buscar antivibratorios compatibles
 </button> 
 
-<p>
-  <strong>Recomendación orientativa.</strong>
-  La selección utiliza únicamente la información
-  disponible en los campos técnicos marcados en
-  naranja del catálogo INAHER. La selección final
-  debe validarse antes de comprar o instalar.
-</p>
-      </div>
 
-      </section>
+      </div>
+  </form>
+
+  </section>
 
       <section
         id="selector-result-panel"
@@ -1325,6 +1326,11 @@ Elegir mi antivibratorio | SMAV INAHER
     const CATALOG_URL =
       "{% url 'antivibratorios' %}";
 
+    const selectorForm =
+      document.getElementById(
+        "antivibration-form"
+    );
+
 
     const weightInput =
       document.getElementById(
@@ -1372,7 +1378,7 @@ Elegir mi antivibratorio | SMAV INAHER
       );
 
     const csrfInput =
-      document.querySelector(
+      selectorForm.querySelector(
         "[name=csrfmiddlewaretoken]"
       );
 
@@ -1390,6 +1396,11 @@ Elegir mi antivibratorio | SMAV INAHER
       document.getElementById(
         "load-explanation"
       );
+
+    const resultEmpty =
+      document.getElementById(
+      "result-empty"
+    );
 
     const resultContent =
       document.getElementById(
@@ -1708,116 +1719,137 @@ Elegir mi antivibratorio | SMAV INAHER
           filterScrewMaterial.value,
       };
     }
+    function renderResult(data) {
+  inputPanel.hidden = true;
+  resultPanel.hidden = false;
+
+  resultEmpty.hidden = true;
 
 
-    async function calculateRecommendation() {
-      errorBox.hidden = true;
-      errorBox.textContent = "";
+  if (
+    data.status !== "recommended"
+    || !data.recommended
+  ) {
+    resultContent.hidden = true;
+    resultNone.hidden = false;
 
-      const loadData =
-        getLoadData();
+    const noResultMessage =
+      resultNone.querySelector("p");
 
-      if (!loadData) {
-        errorBox.textContent =
-          "Escribe un peso válido.";
-
-        errorBox.hidden = false;
-        return;
-      }
-
-      const originalText =
-        calculateButton.textContent;
-
-      calculateButton.disabled = true;
-
-      calculateButton.textContent =
-        "Calculando...";
-
-      try {
-        const response = await fetch(
-          RECOMMENDATION_URL,
-          {
-            method: "POST",
-            credentials: "same-origin",
-            headers: {
-              "Content-Type":
-                "application/json",
-
-              "X-CSRFToken":
-                csrfInput.value,
-            },
-            body: JSON.stringify(
-              buildPayload()
-            ),
-          }
-        );
-
-        const data =
-          await response.json();
-
-        if (!response.ok) {
-          throw new Error(
-            data.detail
-            || "No se pudo calcular."
-          );
-        }
-
-        inputPanel.hidden = true;
-        resultPanel.hidden = false;
-
-        if (
-          data.status !== "recommended"
-          || !data.recommended
-        ) {
-          resultContent.hidden = true;
-          resultNone.hidden = false;
-
-          const paragraph =
-            resultNone.querySelector("p");
-
-          if (paragraph) {
-            paragraph.textContent =
-              data.message;
-          }
-
-          return;
-        }
-
-        resultNone.hidden = true;
-        resultContent.hidden = false;
-
-        requiredLoadOutput.textContent =
-          formatNumber(
-            data.required_load_kg
-          )
-          + " kg / apoyo";
-
-        compatibleCountOutput.textContent =
-          data.matching_count;
-
-        renderRecommended(
-          data.recommended
-        );
-
-        renderAlternatives(
-          data.alternatives
-        );
-
-      } catch (error) {
-        errorBox.textContent =
-          error instanceof Error
-            ? error.message
-            : "Ocurrió un error.";
-
-        errorBox.hidden = false;
-
-      } finally {
-        calculateButton.disabled = false;
-
-        calculateButton.textContent =
-          originalText;
-      }
+    if (noResultMessage) {
+      noResultMessage.textContent =
+        data.message
+        || "No encontramos una coincidencia.";
     }
+
+    return;
+  }
+
+
+  resultNone.hidden = true;
+  resultContent.hidden = false;
+
+
+  requiredLoadOutput.textContent =
+    formatNumber(
+      data.required_load_kg
+    )
+    + " kg / apoyo";
+
+
+  compatibleCountOutput.textContent =
+    data.matching_count;
+
+
+  renderRecommended(
+    data.recommended
+  );
+
+
+  renderAlternatives(
+    data.alternatives || []
+  );
+  }
+
+
+    async function requestRecommendation() {
+  const originalText =
+    calculateButton.textContent;
+
+  calculateButton.disabled = true;
+
+  calculateButton.textContent =
+    "Calculando...";
+
+  errorBox.hidden = true;
+  errorBox.textContent = "";
+
+  try {
+    const response = await fetch(
+      RECOMMENDATION_URL,
+      {
+        method: "POST",
+
+        credentials: "same-origin",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+
+          "X-CSRFToken":
+            csrfInput.value
+        },
+
+        body: JSON.stringify(
+          buildPayload()
+        )
+      }
+    );
+
+
+    let data = {};
+
+    try {
+      data = await response.json();
+
+    } catch (error) {
+      throw new Error(
+        "Django devolvió una "
+        + "respuesta no válida."
+      );
+    }
+
+
+    if (!response.ok) {
+      throw new Error(
+        data.detail
+        || (
+          "No se pudo calcular "
+          + "la recomendación."
+        )
+      );
+    }
+
+
+    renderResult(data);
+
+
+  } catch (error) {
+    errorBox.textContent =
+      error instanceof Error
+        ? error.message
+        : "Ocurrió un error inesperado.";
+
+    errorBox.hidden = false;
+
+
+  } finally {
+    calculateButton.disabled = false;
+
+    calculateButton.textContent =
+      originalText;
+  }
+}
 
 
     [
@@ -1836,9 +1868,20 @@ Elegir mi antivibratorio | SMAV INAHER
     });
 
 
-    calculateButton.addEventListener(
-      "click",
-      calculateRecommendation
+    selectorForm.addEventListener(
+  "submit",
+  function (event) {
+    event.preventDefault();
+
+    if (
+      !selectorForm.checkValidity()
+    ) {
+      selectorForm.reportValidity();
+      return;
+    }
+
+    requestRecommendation();
+      }
     );
 
 
