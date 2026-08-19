@@ -177,9 +177,9 @@ Elegir mi antivibratorio | SMAV INAHER
       <!-- =================================================
            DATOS TÉCNICOS OPCIONALES
            ================================================= -->
-      <details class="selector-advanced">
+      <section class="selector-advanced">
 
-        <summary>
+        <div class="selector-advanced-heading">
           <span>
             Tengo medidas técnicas
           </span>
@@ -187,16 +187,12 @@ Elegir mi antivibratorio | SMAV INAHER
           <small>
             Opcional
           </small>
-        </summary>
+        </div>
 
 
         <div class="selector-advanced-body">
 
-  <p>
-    Todos estos datos son opcionales.
-    Las opciones provienen directamente
-    de las columnas naranjas del catálogo.
-  </p>
+  
 
 
   <div class="selector-field">
@@ -314,7 +310,7 @@ Elegir mi antivibratorio | SMAV INAHER
 
 </div>
 
-      </details>
+</section>
 
 
       <div
@@ -800,30 +796,23 @@ Elegir mi antivibratorio | SMAV INAHER
   }
 
 
-  .selector-advanced summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 13px;
-    cursor: pointer;
-    list-style: none;
+  .selector-advanced-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px;
   }
 
 
-  .selector-advanced summary::-webkit-details-marker {
-    display: none;
-  }
 
-
-  .selector-advanced summary > span {
+  .selector-advanced-heading > span {
     color: var(--primary);
     font-size: 11px;
     font-weight: 800;
   }
 
-
-  .selector-advanced summary small {
+  .selector-advanced-heading small {
     padding: 4px 7px;
     color: var(--muted);
     font-size: 8px;
