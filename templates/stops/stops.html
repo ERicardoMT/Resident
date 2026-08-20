@@ -177,143 +177,7 @@ Elegir mi antivibratorio | SMAV INAHER
       <!-- =================================================
            DATOS TÉCNICOS OPCIONALES
            ================================================= -->
-      <section class="selector-advanced">
-
-        <div class="selector-advanced-heading">
-          <span>
-            Tengo medidas técnicas
-          </span>
-
-          <small>
-            Opcional
-          </small>
-        </div>
-
-
-        <div class="selector-advanced-body">
-
-  
-
-
-  <div class="selector-field">
-    <label for="filter-base">
-      Diámetro de base
-    </label>
-
-    <select id="filter-base">
-      <option value="">
-        Sin preferencia
-      </option>
-
-      {% for value in selector_options.base_diameters %}
-        <option value="{{ value }}">
-          {{ value }}
-        </option>
-      {% endfor %}
-    </select>
-  </div>
-
-
-  <div class="selector-field">
-    <label for="filter-base-height">
-      Altura de base
-    </label>
-
-    <select id="filter-base-height">
-      <option value="">
-        Sin preferencia
-      </option>
-
-      {% for value in selector_options.base_heights %}
-        <option value="{{ value }}">
-          {{ value }}
-        </option>
-      {% endfor %}
-    </select>
-  </div>
-
-
-  <div class="selector-field">
-    <label for="filter-thread">
-      Diámetro de tornillo
-    </label>
-
-    <select id="filter-thread">
-      <option value="">
-        Sin preferencia
-      </option>
-
-      {% for value in selector_options.screw_diameters %}
-        <option value="{{ value }}">
-          {{ value }}
-        </option>
-      {% endfor %}
-    </select>
-  </div>
-
-
-  <div class="selector-field">
-    <label for="filter-screw-height">
-      Altura de tornillo
-    </label>
-
-    <select id="filter-screw-height">
-      <option value="">
-        Sin preferencia
-      </option>
-
-      {% for value in selector_options.screw_heights %}
-        <option value="{{ value }}">
-          {{ value }}
-        </option>
-      {% endfor %}
-    </select>
-  </div>
-
-
-  <div class="selector-field">
-    <label for="filter-elastomer-material">
-      Material de elastómero
-    </label>
-
-    <select id="filter-elastomer-material">
-      <option value="">
-        Sin preferencia
-      </option>
-
-      {% for value in selector_options.elastomer_materials %}
-        <option value="{{ value }}">
-          {{ value }}
-        </option>
-      {% endfor %}
-    </select>
-  </div>
-
-
-  <div class="selector-field">
-    <label for="filter-screw-material">
-      Material de tornillo
-    </label>
-
-    <select id="filter-screw-material">
-      <option value="">
-        Sin preferencia
-      </option>
-
-      {% for value in selector_options.screw_materials %}
-        <option value="{{ value }}">
-          {{ value }}
-        </option>
-      {% endfor %}
-    </select>
-  </div>
-
-</div>
-
-</section>
-
-
-      <div
+<div
         id="selector-error"
         class="selector-error"
         aria-live="polite"
@@ -467,10 +331,10 @@ Elegir mi antivibratorio | SMAV INAHER
           </strong>
 
           <p>
-            La compatibilidad mostrada se basa en los datos
-            disponibles de capacidad, dimensiones y materiales.
-            No evalúa todavía frecuencia natural, rigidez dinámica,
-            amortiguamiento ni transmisibilidad.
+            La recomendación prioriza la capacidad necesaria
+            según el peso y el número de apoyos. Revisa las
+            dimensiones y materiales del modelo recomendado
+            antes de comprar o instalar.
           </p>
 
         </div>
@@ -494,8 +358,9 @@ Elegir mi antivibratorio | SMAV INAHER
         </h3>
 
         <p>
-          Prueba quitando alguno de los filtros técnicos
-          opcionales o revisa los datos introducidos.
+          Revisa el peso y el número de apoyos.
+          Si los datos son correctos, consulta con
+          nuestro equipo para una selección especial.
         </p>
 
       </div>
@@ -1331,36 +1196,6 @@ Elegir mi antivibratorio | SMAV INAHER
         "support-count"
       );
 
-    const filterBase =
-      document.getElementById(
-        "filter-base"
-      );
-
-    const filterBaseHeight =
-      document.getElementById(
-        "filter-base-height"
-      );
-
-    const filterThread =
-      document.getElementById(
-        "filter-thread"
-      );
-
-    const filterScrewHeight =
-      document.getElementById(
-        "filter-screw-height"
-      );
-
-    const filterElastomerMaterial =
-      document.getElementById(
-        "filter-elastomer-material"
-      );
-
-    const filterScrewMaterial =
-      document.getElementById(
-        "filter-screw-material"
-      );
-
     const calculateButton =
       document.getElementById(
         "calculate-recommendation"
@@ -1608,8 +1443,8 @@ Elegir mi antivibratorio | SMAV INAHER
             <div class="recommendation-reason">
               Este modelo es el de menor
               capacidad disponible que cumple
-              la carga calculada y todos los
-              filtros técnicos seleccionados.
+              la carga calculada para el peso
+              y los apoyos indicados.
             </div>
 
           </div>
@@ -1688,26 +1523,10 @@ Elegir mi antivibratorio | SMAV INAHER
 
         support_count:
           Number(supportCount.value),
-
-        base_diameter:
-          filterBase.value,
-
-        base_height:
-          filterBaseHeight.value,
-
-        screw_diameter:
-          filterThread.value,
-
-        screw_height:
-          filterScrewHeight.value,
-
-        elastomer_material:
-          filterElastomerMaterial.value,
-
-        screw_material:
-          filterScrewMaterial.value,
       };
     }
+
+
     function renderResult(data) {
   inputPanel.hidden = true;
   resultPanel.hidden = false;
