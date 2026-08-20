@@ -1325,6 +1325,537 @@ Elegir mi nivelador | SMAV INAHER
   }
 
 
+
+  /* =======================================================
+     NIVELADORES DESTACADO Y ALTERNATIVAS DESPLEGABLES
+     ======================================================= */
+
+
+  /*
+   * El modelo recomendado siempre ocupa
+   * todo el ancho.
+   */
+
+  .result-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+
+  .result-card-featured {
+    width: 100%;
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border:
+      2px solid
+      #86d5f2;
+
+    border-radius: 19px;
+
+    box-shadow:
+      0 14px 34px
+      rgba(3, 49, 91, 0.11);
+  }
+
+
+  .result-card-featured
+  .result-product-head {
+    grid-template-columns:
+      112px
+      minmax(0, 1fr);
+
+    gap: 17px;
+
+    padding: 18px;
+  }
+
+
+  .result-card-featured
+  .result-product-image {
+    width: 112px;
+    height: 112px;
+
+    padding: 8px;
+
+    background:
+      linear-gradient(
+        145deg,
+        #ffffff,
+        #edf7fb
+      );
+
+    border: 1px solid #cde5ef;
+    border-radius: 16px;
+  }
+
+
+  .result-card-featured
+  .result-badge {
+    padding: 6px 10px;
+
+    color: #166534;
+
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+
+    background: #dcfce7;
+
+    border: 1px solid #bbf7d0;
+    border-radius: 999px;
+  }
+
+
+  .result-card-featured
+  .result-product-kicker {
+    margin-top: 2px;
+
+    color: var(--accent-hover);
+
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+  }
+
+
+  .result-card-featured h3 {
+    margin-top: 3px;
+
+    color: var(--primary);
+
+    font-size: 29px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+
+  .result-card-featured
+  .result-product-type {
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+
+  .result-card-featured
+  .result-product-capacity {
+    width: 100%;
+    min-width: 0;
+
+    margin-top: 10px;
+
+    background: #f4f8fb;
+
+    border: 1px solid #d6e5ed;
+    border-radius: 11px;
+  }
+
+
+  /*
+   * Encabezado "Otras posibilidades".
+   */
+
+  .leveler-alternatives-heading {
+    display: grid;
+    gap: 2px;
+
+    padding-top: 7px;
+    margin-top: 4px;
+  }
+
+
+  .leveler-alternatives-heading small {
+    color: var(--accent-hover);
+
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+
+    text-transform: uppercase;
+  }
+
+
+  .leveler-alternatives-heading h3 {
+    margin: 0;
+
+    color: var(--primary);
+
+    font-size: 15px;
+    font-weight: 900;
+  }
+
+
+  .leveler-alternatives-heading p {
+    margin: 2px 0 3px;
+
+    color: var(--muted);
+
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+
+  /*
+   * Tarjetas compactas.
+   */
+
+  .leveler-alternative-card {
+    display: block;
+    width: 100%;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 1px solid #d9e6ed;
+    border-radius: 15px;
+
+    box-shadow:
+      0 6px 17px
+      rgba(3, 49, 91, 0.055);
+
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+  }
+
+
+  .leveler-alternative-card:hover {
+    border-color: #a5daed;
+
+    box-shadow:
+      0 9px 22px
+      rgba(3, 49, 91, 0.085);
+  }
+
+
+  .leveler-alternative-card[open] {
+    border-color: #7dcdec;
+
+    box-shadow:
+      0 12px 28px
+      rgba(3, 49, 91, 0.11);
+  }
+
+
+  /*
+   * Toda la parte superior se puede tocar.
+   */
+
+  .leveler-alternative-summary {
+    display: grid;
+
+    grid-template-columns:
+      72px
+      minmax(0, 1fr)
+      auto;
+
+    align-items: center;
+
+    gap: 12px;
+
+    min-height: 96px;
+
+    padding: 11px;
+
+    list-style: none;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color:
+      transparent;
+  }
+
+
+  .leveler-alternative-summary::-webkit-details-marker {
+    display: none;
+  }
+
+
+  .leveler-alternative-summary::marker {
+    content: "";
+  }
+
+
+  .leveler-alternative-summary:focus-visible {
+    outline:
+      3px solid
+      rgba(24, 166, 217, 0.25);
+
+    outline-offset: -3px;
+  }
+
+
+  /*
+   * Imagen alternativa.
+   */
+
+  .leveler-alternative-card
+  .leveler-alternative-image {
+    width: 72px;
+    height: 72px;
+
+    padding: 5px;
+
+    background:
+      linear-gradient(
+        145deg,
+        #ffffff,
+        #edf7fb
+      );
+
+    border: 1px solid #d5e7ef;
+    border-radius: 12px;
+  }
+
+
+  /*
+   * Datos rápidos.
+   */
+
+  .leveler-alternative-copy {
+    display: grid;
+    gap: 2px;
+
+    min-width: 0;
+  }
+
+
+  .leveler-alternative-kicker {
+    color: var(--accent-hover);
+
+    font-size: 7px;
+    font-weight: 900;
+    letter-spacing: 0.55px;
+
+    text-transform: uppercase;
+  }
+
+
+  .leveler-alternative-model {
+    color: var(--primary);
+
+    font-size: 15px;
+    font-weight: 900;
+    line-height: 1.2;
+  }
+
+
+  .leveler-alternative-type {
+    overflow: hidden;
+
+    color: var(--muted);
+
+    font-size: 8.5px;
+    font-weight: 600;
+    line-height: 1.4;
+
+    text-overflow: ellipsis;
+  }
+
+
+  .leveler-alternative-capacity {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    margin-top: 4px;
+  }
+
+
+  .leveler-alternative-capacity small {
+    color: var(--muted);
+
+    font-size: 7px;
+    font-weight: 700;
+  }
+
+
+  .leveler-alternative-capacity b {
+    color: var(--primary);
+
+    font-size: 9px;
+    font-weight: 900;
+  }
+
+
+  /*
+   * Indicador Ver datos.
+   */
+
+  .leveler-alternative-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    min-height: 34px;
+
+    padding: 7px 9px;
+
+    color: var(--accent-hover);
+
+    background: #eef9fd;
+
+    border: 1px solid #bde5f3;
+    border-radius: 9px;
+  }
+
+
+  .leveler-alternative-toggle-label {
+    font-size: 8px;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+
+
+  .leveler-alternative-arrow {
+    display: inline-block;
+
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1;
+
+    transition:
+      transform 0.2s ease;
+  }
+
+
+  .leveler-alternative-card[open]
+  .leveler-alternative-arrow {
+    transform: rotate(90deg);
+  }
+
+
+  /*
+   * Información que aparece al desplegar.
+   */
+
+  .leveler-alternative-expanded {
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border-top: 1px solid #dce8ef;
+  }
+
+
+  .leveler-alternative-expanded
+  .result-spec-title {
+    border-top: none;
+  }
+
+
+  .leveler-alternative-expanded
+  .result-spec-grid {
+    border-bottom: none;
+  }
+
+
+  .leveler-alternative-expanded
+  .result-thread-section {
+    margin: 0;
+  }
+
+
+  .leveler-alternative-action {
+    padding:
+      0
+      16px
+      16px;
+  }
+
+
+  .leveler-alternative-action
+  .result-card-action {
+    width: 100%;
+    margin: 0;
+  }
+
+
+  /*
+   * Móvil.
+   */
+
+  @media (max-width: 560px) {
+
+    .result-card-featured
+    .result-product-head {
+      grid-template-columns:
+        76px
+        minmax(0, 1fr);
+
+      gap: 11px;
+
+      padding: 13px;
+    }
+
+
+    .result-card-featured
+    .result-product-image {
+      width: 76px;
+      height: 76px;
+    }
+
+
+    .result-card-featured h3 {
+      font-size: 23px;
+    }
+
+
+    .leveler-alternative-summary {
+      grid-template-columns:
+        68px
+        minmax(0, 1fr)
+        35px;
+
+      gap: 10px;
+
+      min-height: 90px;
+
+      padding: 10px;
+    }
+
+
+    .leveler-alternative-card
+    .leveler-alternative-image {
+      width: 68px;
+      height: 68px;
+    }
+
+
+    .leveler-alternative-toggle {
+      width: 35px;
+      height: 35px;
+
+      min-height: 35px;
+
+      padding: 0;
+    }
+
+
+    .leveler-alternative-toggle-label {
+      display: none;
+    }
+
+
+    .leveler-alternative-arrow {
+      font-size: 21px;
+    }
+
+  }
+
+
 </style>
 {% endblock %}
 
@@ -1572,34 +2103,15 @@ Elegir mi nivelador | SMAV INAHER
     }
 
 
-    function renderProductCard(
-      product,
-      featured
+    function getProductThreads(
+      product
     ) {
-      const card =
-        document.createElement(
-          "article"
-        );
-
-
-      card.className =
-        "result-card";
-
-
-      if (featured) {
-        card.classList.add(
-          "result-card-featured"
-        );
-      }
-
-
       const metricThreads =
         Array.isArray(
           product.metric_threads
         )
           ? product.metric_threads.join(", ")
           : "";
-
 
       const standardThreads =
         Array.isArray(
@@ -1608,109 +2120,75 @@ Elegir mi nivelador | SMAV INAHER
           ? product.standard_threads.join(", ")
           : "";
 
+      return {
+        metric: metricThreads,
+        standard: standardThreads,
+      };
+    }
 
-      const badge = featured
-        ? `
-          <span class="result-badge">
-            Recomendado
-          </span>
-        `
-        : `
-          <span class="result-alternative-label">
-            Alternativa compatible
-          </span>
+
+    function getProductImageMarkup(
+      product
+    ) {
+      if (product.image_url) {
+        return `
+          <img
+            src="${product.image_url}"
+            alt="Imagen del nivelador ${product.model || ""}"
+            loading="lazy"
+          >
         `;
+      }
 
 
-      const imageMarkup =
-        product.image_url
-          ? `
-            <img
-              src="${product.image_url}"
-              alt="Imagen del nivelador ${product.model || ""}"
-              loading="lazy"
-            >
-          `
-          : `
-            <div class="result-product-image-placeholder">
-              <span aria-hidden="true">
-                ◫
-              </span>
+      return `
+        <div
+          class="result-product-image-placeholder"
+        >
+          <span aria-hidden="true">
+            ◫
+          </span>
 
-              <small>
-                Imagen no disponible
-              </small>
-            </div>
-          `;
-
-
-      const productLink =
-        product.product_url
-          ? `
-            <a
-              class="result-card-action"
-              href="${product.product_url}"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Ver ficha del producto
-            </a>
-          `
-          : `
-            <a
-              class="result-card-action"
-              href="${catalogUrl}"
-            >
-              Ver catálogo
-            </a>
-          `;
-
-
-      card.innerHTML = `
-        <div class="result-product-head">
-
-          <div class="result-product-image">
-            ${imageMarkup}
-          </div>
-
-
-          <div class="result-product-copy">
-
-            ${badge}
-
-
-            <span class="result-product-kicker">
-              Modelo seleccionado
-            </span>
-
-
-            <h3>
-              ${product.model || "Modelo"}
-            </h3>
-
-
-            <span class="result-product-type">
-              ${product.type || "Nivelador"}
-            </span>
-
-
-            <div class="result-product-capacity">
-
-              <small>
-                Capacidad por punto
-              </small>
-
-              <strong>
-                ${product.capacity_label || "—"}
-              </strong>
-
-            </div>
-
-          </div>
-
+          <small>
+            Imagen no disponible
+          </small>
         </div>
+      `;
+    }
 
 
+    function getProductLinkMarkup(
+      product
+    ) {
+      if (product.product_url) {
+        return `
+          <a
+            class="result-card-action"
+            href="${product.product_url}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Ver ficha del producto
+          </a>
+        `;
+      }
+
+
+      return `
+        <a
+          class="result-card-action"
+          href="${catalogUrl}"
+        >
+          Ver catálogo
+        </a>
+      `;
+    }
+
+
+    function getProductSpecificationsMarkup(
+      product
+    ) {
+      return `
         <div class="result-spec-title">
 
           <div>
@@ -1776,8 +2254,20 @@ Elegir mi nivelador | SMAV INAHER
           </div>
 
         </div>
+      `;
+    }
 
 
+    function getProductThreadMarkup(
+      product
+    ) {
+      const threads =
+        getProductThreads(
+          product
+        );
+
+
+      return `
         <div class="result-thread-section">
 
           <div>
@@ -1786,7 +2276,7 @@ Elegir mi nivelador | SMAV INAHER
             </small>
 
             <strong>
-              ${metricThreads || "No disponibles"}
+              ${threads.metric || "No disponibles"}
             </strong>
           </div>
 
@@ -1797,20 +2287,349 @@ Elegir mi nivelador | SMAV INAHER
             </small>
 
             <strong>
-              ${standardThreads || "No disponibles"}
+              ${threads.standard || "No disponibles"}
             </strong>
+          </div>
+
+        </div>
+      `;
+    }
+
+
+    /*
+     * PRODUCTO PRINCIPAL
+     *
+     * El recomendado siempre se muestra
+     * completamente abierto y destacado.
+     */
+    function renderFeaturedProduct(
+      product
+    ) {
+      const card =
+        document.createElement(
+          "article"
+        );
+
+
+      card.className =
+        "result-card result-card-featured";
+
+
+      card.innerHTML = `
+        <div class="result-product-head">
+
+          <div class="result-product-image">
+            ${getProductImageMarkup(
+              product
+            )}
+          </div>
+
+
+          <div class="result-product-copy">
+
+            <span class="result-badge">
+              Recomendado
+            </span>
+
+
+            <span class="result-product-kicker">
+              Modelo seleccionado
+            </span>
+
+
+            <h3>
+              ${product.model || "Modelo"}
+            </h3>
+
+
+            <span class="result-product-type">
+              ${product.type || "Nivelador"}
+            </span>
+
+
+            <div
+              class="result-product-capacity"
+            >
+
+              <small>
+                Capacidad por punto
+              </small>
+
+              <strong>
+                ${product.capacity_label || "—"}
+              </strong>
+
+            </div>
+
           </div>
 
         </div>
 
 
-        ${productLink}
+        ${getProductSpecificationsMarkup(
+          product
+        )}
+
+
+        ${getProductThreadMarkup(
+          product
+        )}
+
+
+        ${getProductLinkMarkup(
+          product
+        )}
       `;
 
 
       return card;
     }
 
+
+    /*
+     * ALTERNATIVAS
+     *
+     * Aparecen compactas.
+     * Al tocarlas muestran todos sus datos.
+     */
+    function renderAlternativeProduct(
+      product
+    ) {
+      const details =
+        document.createElement(
+          "details"
+        );
+
+
+      details.className =
+        "leveler-alternative-card";
+
+
+      details.innerHTML = `
+        <summary
+          class="leveler-alternative-summary"
+        >
+
+          <div
+            class="
+              result-product-image
+              leveler-alternative-image
+            "
+          >
+            ${getProductImageMarkup(
+              product
+            )}
+          </div>
+
+
+          <div
+            class="leveler-alternative-copy"
+          >
+
+            <span
+              class="leveler-alternative-kicker"
+            >
+              Opción compatible
+            </span>
+
+
+            <strong
+              class="leveler-alternative-model"
+            >
+              ${product.model || "Modelo"}
+            </strong>
+
+
+            <span
+              class="leveler-alternative-type"
+            >
+              ${product.type || "Nivelador"}
+            </span>
+
+
+            <div
+              class="
+                leveler-alternative-capacity
+              "
+            >
+              <small>
+                Capacidad
+              </small>
+
+              <b>
+                ${product.capacity_label || "—"}
+              </b>
+            </div>
+
+          </div>
+
+
+          <div
+            class="leveler-alternative-toggle"
+            aria-hidden="true"
+          >
+
+            <span
+              class="
+                leveler-alternative-toggle-label
+              "
+            >
+              Ver datos
+            </span>
+
+            <span
+              class="
+                leveler-alternative-arrow
+              "
+            >
+              ›
+            </span>
+
+          </div>
+
+        </summary>
+
+
+        <div
+          class="leveler-alternative-expanded"
+        >
+
+          ${getProductSpecificationsMarkup(
+            product
+          )}
+
+
+          ${getProductThreadMarkup(
+            product
+          )}
+
+
+          <div
+            class="
+              leveler-alternative-action
+            "
+          >
+            ${getProductLinkMarkup(
+              product
+            )}
+          </div>
+
+        </div>
+      `;
+
+
+      /*
+       * Solo una alternativa abierta
+       * al mismo tiempo.
+       */
+      details.addEventListener(
+        "toggle",
+        function () {
+
+          if (!details.open) {
+            return;
+          }
+
+
+          resultList
+            .querySelectorAll(
+              ".leveler-alternative-card[open]"
+            )
+            .forEach(
+              function (other) {
+
+                if (other !== details) {
+                  other.open = false;
+                }
+
+              }
+            );
+        }
+      );
+
+
+      return details;
+    }
+
+
+    /*
+     * Encabezado visual antes de las
+     * alternativas.
+     */
+    function appendAlternatives(
+      alternatives,
+      kicker,
+      title
+    ) {
+      if (
+        !Array.isArray(alternatives)
+        || !alternatives.length
+      ) {
+        return;
+      }
+
+
+      const heading =
+        document.createElement(
+          "div"
+        );
+
+
+      heading.className =
+        "leveler-alternatives-heading";
+
+
+      heading.innerHTML = `
+        <small>
+          ${kicker || "Otras posibilidades"}
+        </small>
+
+        <h3>
+          ${title || "Alternativas compatibles"}
+        </h3>
+
+        <p>
+          Toca cualquier modelo para consultar
+          todos sus datos técnicos.
+        </p>
+      `;
+
+
+      resultList.appendChild(
+        heading
+      );
+
+
+      alternatives.forEach(
+        function (product) {
+
+          resultList.appendChild(
+            renderAlternativeProduct(
+              product
+            )
+          );
+
+        }
+      );
+    }
+
+
+    /*
+     * Mantenemos este nombre para no afectar
+     * otras partes del flujo.
+     */
+    function renderProductCard(
+      product,
+      featured
+    ) {
+      return featured
+        ? renderFeaturedProduct(
+            product
+          )
+        : renderAlternativeProduct(
+            product
+          );
+    }
 
     function setFilterChip(text) {
       clearElement(
@@ -1932,22 +2751,25 @@ Elegir mi nivelador | SMAV INAHER
         data.status === "recommended"
         && data.recommended
       ) {
+        /*
+         * Recomendado:
+         * siempre grande y completamente visible.
+         */
         resultList.appendChild(
-          renderProductCard(
-            data.recommended,
-            true
+          renderFeaturedProduct(
+            data.recommended
           )
         );
 
-        data.alternatives.forEach(
-          function (product) {
-            resultList.appendChild(
-              renderProductCard(
-                product,
-                false
-              )
-            );
-          }
+
+        /*
+         * Alternativas:
+         * compactas y desplegables.
+         */
+        appendAlternatives(
+          data.alternatives || [],
+          "Otras posibilidades",
+          "Alternativas compatibles"
         );
 
         if (data.alternatives.length) {
@@ -1976,15 +2798,10 @@ Elegir mi nivelador | SMAV INAHER
         resultWarning.textContent =
           data.message;
 
-        data.alternatives.forEach(
-          function (product) {
-            resultList.appendChild(
-              renderProductCard(
-                product,
-                false
-              )
-            );
-          }
+        appendAlternatives(
+          data.alternatives || [],
+          "Opciones disponibles",
+          "Modelos compatibles para revisar"
         );
 
         setExtraMessage(

@@ -209,28 +209,12 @@ Elegir mi antivibratorio | SMAV INAHER
       <button
         type="button"
         id="edit-selector-data"
-        class="selector-edit-data"
-      >
-        ← Modificar datos
-      </button>
+        hidden
+        aria-hidden="true"
+        tabindex="-1"
+      ></button>
 
-      <div class="selector-panel-heading">
 
-        <span class="selector-panel-number">
-          2
-        </span>
-
-      <div>
-        <small>
-          Resultado
-        </small>
-
-        <h2>
-          Recomendación
-        </h2>
-      </div>
-      </div>
-      
       <!-- Estado inicial -->
       <div
         id="result-empty"
@@ -364,6 +348,173 @@ Elegir mi antivibratorio | SMAV INAHER
         </p>
 
       </div>
+
+
+      <!-- =================================================
+           CONTACTO INAHER
+           ================================================= -->
+      <div class="result-contact-box">
+
+        <div class="result-contact-copy">
+
+          <small>
+            ¿Necesitas ayuda?
+          </small>
+
+          <strong>
+            Habla con INAHER
+          </strong>
+
+          <span>
+            Podemos ayudarte a confirmar la selección,
+            resolver dudas o revisar una aplicación especial.
+          </span>
+
+        </div>
+
+
+        <div
+          class="result-contact-actions"
+          aria-label="Opciones de contacto con INAHER"
+        >
+
+          <!-- WhatsApp -->
+          <a
+            class="
+              result-contact-btn
+              result-contact-btn-whatsapp
+            "
+            href="https://api.whatsapp.com/send?phone=525588090939&amp;text=Informaci%C3%B3n%20por%20favor"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Contactar a INAHER por WhatsApp"
+          >
+
+            <svg
+              class="
+                result-contact-icon
+                result-contact-icon-fill
+              "
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.198.297-.767.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.009-.371-.011-.57-.011-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479s1.065 2.875 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.981.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.89-9.884 2.64.001 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.99c-.003 5.45-4.437 9.884-9.892 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"
+              ></path>
+            </svg>
+
+            <span>
+              WhatsApp
+            </span>
+
+          </a>
+
+
+          <!-- Instagram -->
+          <a
+            class="
+              result-contact-btn
+              result-contact-btn-instagram
+            "
+            href="https://www.instagram.com/inaher.mex/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visitar el Instagram oficial de INAHER"
+          >
+
+            <svg
+              class="result-contact-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect
+                x="2"
+                y="2"
+                width="20"
+                height="20"
+                rx="5"
+                ry="5"
+              ></rect>
+
+              <path
+                d="
+                  M16 11.37
+                  A4 4 0 1 1 12.63 8
+                  4 4 0 0 1 16 11.37Z
+                "
+              ></path>
+
+              <line
+                x1="17.5"
+                y1="6.5"
+                x2="17.51"
+                y2="6.5"
+              ></line>
+            </svg>
+
+            <span>
+              Instagram
+            </span>
+
+          </a>
+
+
+          <!-- Llamada -->
+          <a
+            class="
+              result-contact-btn
+              result-contact-btn-phone
+            "
+            href="tel:+525645253604"
+            aria-label="Llamar a INAHER"
+          >
+
+            <svg
+              class="result-contact-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="
+                  M22 16.92v3
+                  a2 2 0 0 1-2.18 2
+                  19.79 19.79 0 0 1-8.63-3.07
+                  19.5 19.5 0 0 1-6-6
+                  19.79 19.79 0 0 1-3.07-8.67
+                  A2 2 0 0 1 4.11 2h3
+                  a2 2 0 0 1 2 1.72
+                  12.84 12.84 0 0 0 .7 2.81
+                  2 2 0 0 1-.45 2.11
+                  L8.09 9.91
+                  a16 16 0 0 0 6 6
+                  l1.27-1.27
+                  a2 2 0 0 1 2.11-.45
+                  12.84 12.84 0 0 0 2.81.7
+                  A2 2 0 0 1 22 16.92Z
+                "
+              ></path>
+            </svg>
+
+            <span>
+              Llamada
+            </span>
+
+          </a>
+
+        </div>
+
+      </div>
+
 
     </section>
 
@@ -1606,6 +1757,864 @@ Elegir mi antivibratorio | SMAV INAHER
   }
 
 
+
+  /* =======================================================
+     ENCABEZADO NUEVO DEL RESULTADO
+     ======================================================= */
+
+  .selector-result-hero {
+    position: relative;
+    display: grid;
+    gap: 13px;
+    padding: 16px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    color: #ffffff;
+    background:
+      linear-gradient(
+        135deg,
+        var(--primary) 0%,
+        #075e96 100%
+      );
+    border:
+      1px solid
+      rgba(24, 166, 217, 0.45);
+    border-radius: 17px;
+    box-shadow:
+      0 12px 26px
+      rgba(3, 49, 91, 0.18);
+  }
+
+
+  .selector-result-hero::after {
+    position: absolute;
+    right: -38px;
+    bottom: -55px;
+    width: 150px;
+    height: 150px;
+    content: "";
+    background:
+      rgba(255, 255, 255, 0.06);
+    border:
+      1px solid
+      rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+
+  .selector-result-hero
+  .selector-edit-data {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: start;
+    gap: 6px;
+    min-height: 36px;
+    padding: 8px 11px;
+    margin: 0;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 800;
+    background:
+      rgba(255, 255, 255, 0.12);
+    border:
+      1px solid
+      rgba(255, 255, 255, 0.28);
+    border-radius: 999px;
+    cursor: pointer;
+    transition:
+      background-color 0.18s ease,
+      border-color 0.18s ease,
+      transform 0.18s ease;
+  }
+
+
+  .selector-result-hero
+  .selector-edit-data:hover {
+    color: #ffffff;
+    background:
+      rgba(255, 255, 255, 0.2);
+    border-color:
+      rgba(255, 255, 255, 0.48);
+  }
+
+
+  .selector-result-hero
+  .selector-edit-data:active {
+    transform: scale(0.97);
+  }
+
+
+  .selector-result-hero
+  .selector-panel-heading {
+    position: relative;
+    z-index: 2;
+    align-items: center;
+    margin: 0;
+  }
+
+
+  .selector-result-hero
+  .selector-panel-number {
+    width: 38px;
+    height: 38px;
+    color: var(--primary);
+    font-size: 14px;
+    background: #ffffff;
+    box-shadow:
+      0 5px 14px
+      rgba(0, 0, 0, 0.15);
+  }
+
+
+  .selector-result-hero
+  .selector-panel-heading small {
+    color: #9ee8ff;
+    font-size: 8px;
+  }
+
+
+  .selector-result-hero
+  .selector-panel-heading h2 {
+    margin-top: 2px;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 900;
+  }
+
+
+  .selector-result-hero-description {
+    max-width: 430px;
+    margin: 5px 0 0;
+    color:
+      rgba(255, 255, 255, 0.78);
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+
+  /* =======================================================
+     CONTACTO INAHER
+     ======================================================= */
+
+  .result-contact-box {
+    padding: 15px;
+    margin-top: 18px;
+    background:
+      linear-gradient(
+        145deg,
+        #ffffff,
+        #f3f9fc
+      );
+    border: 1px solid #d5e5ee;
+    border-radius: 16px;
+    box-shadow:
+      0 8px 22px
+      rgba(3, 49, 91, 0.07);
+  }
+
+
+  .result-contact-copy {
+    display: grid;
+    gap: 3px;
+  }
+
+
+  .result-contact-copy small {
+    color: var(--accent-hover);
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+
+  .result-contact-copy strong {
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+
+  .result-contact-copy > span {
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+
+  .result-contact-actions {
+    display: grid;
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 13px;
+  }
+
+
+  .result-contact-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 0;
+    min-height: 48px;
+    padding: 10px 12px;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
+    text-decoration: none;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition:
+      background-color 0.18s ease,
+      border-color 0.18s ease,
+      box-shadow 0.18s ease,
+      transform 0.18s ease;
+  }
+
+
+  .result-contact-icon {
+    flex: 0 0 auto;
+    width: 19px;
+    height: 19px;
+  }
+
+
+  .result-contact-icon-fill {
+    fill: currentColor;
+  }
+
+
+  /* WhatsApp */
+
+  .result-contact-btn-whatsapp {
+    color: #ffffff;
+    background: #25d366;
+    border-color: #159447;
+    box-shadow:
+      0 5px 13px
+      rgba(21, 148, 71, 0.2);
+  }
+
+
+  .result-contact-btn-whatsapp:hover {
+    color: #ffffff;
+    background: #1fb957;
+    border-color: #12823e;
+  }
+
+
+  /* Instagram */
+
+  .result-contact-btn-instagram {
+    color: #ffffff;
+    background:
+      linear-gradient(
+        135deg,
+        #833ab4 0%,
+        #c13584 38%,
+        #e1306c 62%,
+        #f77737 100%
+      );
+    border-color: #a62b74;
+    box-shadow:
+      0 5px 13px
+      rgba(193, 53, 132, 0.25);
+  }
+
+
+  .result-contact-btn-instagram:hover {
+    color: #ffffff;
+    background:
+      linear-gradient(
+        135deg,
+        #702b9f 0%,
+        #ac2d76 38%,
+        #ca285e 62%,
+        #dc652c 100%
+      );
+    border-color: #89215f;
+  }
+
+
+  /* Llamada */
+
+  .result-contact-btn-phone {
+    color: #8c2929;
+    background: #fde1e1;
+    border-color: #dc7777;
+    box-shadow:
+      0 5px 13px
+      rgba(185, 70, 70, 0.14);
+  }
+
+
+  .result-contact-btn-phone:hover {
+    color: #782020;
+    background: #f8cdcd;
+    border-color: #c95c5c;
+  }
+
+
+  .result-contact-btn:hover {
+    transform: translateY(-2px);
+  }
+
+
+  .result-contact-btn:active {
+    transform:
+      translateY(0)
+      scale(0.98);
+  }
+
+
+  .result-contact-btn:focus-visible {
+    outline:
+      3px solid
+      rgba(24, 166, 217, 0.28);
+    outline-offset: 3px;
+  }
+
+
+  @media (max-width: 390px) {
+
+    .result-contact-actions {
+      grid-template-columns: 1fr;
+    }
+
+    .selector-result-hero {
+      padding: 14px;
+    }
+
+    .selector-result-hero
+    .selector-panel-heading h2 {
+      font-size: 18px;
+    }
+
+  }
+
+
+
+  /* =======================================================
+     RESULTADO COMPACTO Y ALTERNATIVAS DESPLEGABLES
+     ======================================================= */
+
+
+  /*
+   * Elimina visualmente el concepto de una
+   * gran tarjeta de "Resultado".
+   *
+   * Ahora solamente mostramos una navegación
+   * pequeña y clara.
+   */
+
+  .selector-result-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 13px;
+    margin-bottom: 17px;
+    border-bottom: 1px solid #d7e4ec;
+  }
+
+
+  .selector-edit-data-modern {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 6px 11px 6px 7px;
+    margin: 0;
+
+    color: var(--primary);
+
+    font-family: inherit;
+    text-align: left;
+
+    background: #ffffff;
+
+    border: 1px solid #cbdde8;
+    border-radius: 12px;
+
+    box-shadow:
+      0 4px 12px
+      rgba(3, 49, 91, 0.06);
+
+    cursor: pointer;
+
+    transition:
+      border-color 0.18s ease,
+      box-shadow 0.18s ease,
+      transform 0.18s ease;
+  }
+
+
+  .selector-edit-data-modern:hover {
+    color: var(--primary);
+    border-color: var(--accent-hover);
+
+    box-shadow:
+      0 6px 16px
+      rgba(3, 49, 91, 0.10);
+  }
+
+
+  .selector-edit-data-modern:active {
+    transform: scale(0.98);
+  }
+
+
+  .selector-edit-data-icon {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+
+    width: 31px;
+    height: 31px;
+
+    color: #ffffff;
+
+    font-size: 23px;
+    font-weight: 700;
+    line-height: 1;
+
+    background: var(--primary);
+
+    border-radius: 9px;
+  }
+
+
+  .selector-edit-data-copy {
+    display: grid;
+    gap: 1px;
+  }
+
+
+  .selector-edit-data-copy strong {
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 900;
+  }
+
+
+  .selector-edit-data-copy small {
+    color: var(--muted);
+    font-size: 7px;
+    font-weight: 700;
+  }
+
+
+  .selector-result-toolbar-copy {
+    display: grid;
+    justify-items: end;
+    min-width: 0;
+    text-align: right;
+  }
+
+
+  .selector-result-toolbar-copy small {
+    color: var(--accent-hover);
+    font-size: 7px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+
+  .selector-result-toolbar-copy strong {
+    max-width: 240px;
+    margin-top: 2px;
+
+    color: var(--primary);
+
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1.3;
+  }
+
+
+  /* =======================================================
+     ALTERNATIVAS TIPO ACORDEÓN
+     ======================================================= */
+
+
+  .alternative-models {
+    display: grid;
+    gap: 11px;
+  }
+
+
+  .alternative-card.alternative-accordion {
+    display: block;
+    padding: 0;
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 1px solid #d7e4ec;
+    border-radius: 16px;
+
+    box-shadow:
+      0 7px 19px
+      rgba(3, 49, 91, 0.06);
+
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+  }
+
+
+  .alternative-card.alternative-accordion:hover {
+    border-color: #9bd8ed;
+
+    box-shadow:
+      0 9px 23px
+      rgba(3, 49, 91, 0.09);
+  }
+
+
+  .alternative-card.alternative-accordion[open] {
+    border-color: #7bcbe9;
+
+    box-shadow:
+      0 12px 28px
+      rgba(3, 49, 91, 0.11);
+  }
+
+
+  /*
+   * Toda la cabecera se puede tocar.
+   */
+
+  .alternative-summary {
+    display: grid;
+    grid-template-columns:
+      72px
+      minmax(0, 1fr)
+      auto;
+
+    align-items: center;
+
+    gap: 13px;
+
+    min-height: 96px;
+
+    padding: 12px;
+
+    list-style: none;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color:
+      transparent;
+  }
+
+
+  .alternative-summary::-webkit-details-marker {
+    display: none;
+  }
+
+
+  .alternative-summary::marker {
+    display: none;
+    content: "";
+  }
+
+
+  .alternative-summary:focus-visible {
+    outline:
+      3px solid
+      rgba(24, 166, 217, 0.25);
+
+    outline-offset: -3px;
+  }
+
+
+  /*
+   * Imagen.
+   */
+
+  .alternative-accordion
+  .alternative-image {
+    display: grid;
+    place-items: center;
+
+    width: 72px;
+    height: 72px;
+
+    padding: 6px;
+
+    overflow: hidden;
+
+    background:
+      linear-gradient(
+        145deg,
+        #ffffff,
+        #eef7fb
+      );
+
+    border: 1px solid #d9e8ef;
+    border-radius: 12px;
+  }
+
+
+  .alternative-accordion
+  .alternative-image img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+  }
+
+
+  .alternative-image-placeholder {
+    display: grid;
+    place-items: center;
+
+    width: 100%;
+    height: 100%;
+
+    color: #8ca0b0;
+  }
+
+
+  .alternative-image-placeholder span {
+    font-size: 24px;
+  }
+
+
+  /*
+   * Nombre y datos rápidos.
+   */
+
+  .alternative-accordion
+  .alternative-copy {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+
+
+  .alternative-kicker {
+    color: var(--accent-hover);
+
+    font-size: 7px;
+    font-weight: 900;
+    letter-spacing: 0.65px;
+
+    text-transform: uppercase;
+  }
+
+
+  .alternative-accordion
+  .alternative-copy > strong {
+    color: var(--primary);
+
+    font-size: 14px;
+    font-weight: 900;
+    line-height: 1.2;
+  }
+
+
+  .alternative-accordion
+  .alternative-copy > span {
+    color: var(--muted);
+
+    font-size: 8px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+
+  .alternative-summary-capacity {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-top: 4px;
+  }
+
+
+  .alternative-summary-capacity small {
+    color: var(--muted);
+
+    font-size: 7px;
+    font-weight: 700;
+  }
+
+
+  .alternative-summary-capacity b {
+    color: var(--primary);
+
+    font-size: 9px;
+    font-weight: 900;
+  }
+
+
+  /*
+   * Botón visual "Ver datos".
+   * No es otro botón real:
+   * toda la tarjeta abre el acordeón.
+   */
+
+  .alternative-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 7px 8px;
+
+    color: var(--accent-hover);
+
+    background: #edf9fd;
+
+    border: 1px solid #bde4f2;
+    border-radius: 9px;
+  }
+
+
+  .alternative-toggle-label {
+    font-size: 8px;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+
+
+  .alternative-toggle-arrow {
+    display: inline-block;
+
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1;
+
+    transition:
+      transform 0.2s ease;
+  }
+
+
+  .alternative-accordion[open]
+  .alternative-toggle-arrow {
+    transform: rotate(90deg);
+  }
+
+
+  /*
+   * Zona que aparece al tocar.
+   */
+
+  .alternative-expanded {
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border-top: 1px solid #dce8ef;
+  }
+
+
+  .alternative-expanded
+  .recommended-spec-heading {
+    border-top: none;
+  }
+
+
+  .alternative-expanded
+  .technical-data-grid {
+    border-top: none;
+  }
+
+
+  .alternative-expanded
+  .recommended-actions {
+    border-top: 1px solid #e2ebf1;
+  }
+
+
+  /*
+   * En teléfono se parece más al resultado
+   * de Elegir mi nivelador.
+   */
+
+  @media (max-width: 520px) {
+
+    .selector-result-toolbar {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+
+    .selector-edit-data-modern {
+      align-self: flex-start;
+    }
+
+
+    .selector-result-toolbar-copy {
+      justify-items: start;
+      text-align: left;
+    }
+
+
+    .selector-result-toolbar-copy strong {
+      max-width: none;
+    }
+
+
+    .alternative-summary {
+      grid-template-columns:
+        68px
+        minmax(0, 1fr)
+        auto;
+
+      gap: 10px;
+
+      min-height: 91px;
+
+      padding: 11px;
+    }
+
+
+    .alternative-accordion
+    .alternative-image {
+      width: 68px;
+      height: 68px;
+    }
+
+
+    .alternative-toggle {
+      width: 34px;
+      height: 34px;
+
+      padding: 0;
+
+      justify-content: center;
+    }
+
+
+    .alternative-toggle-label {
+      display: none;
+    }
+
+
+    .alternative-toggle-arrow {
+      font-size: 20px;
+    }
+
+  }
+
+
 </style>
 {% endblock %}
 
@@ -2014,6 +3023,9 @@ Elegir mi antivibratorio | SMAV INAHER
         alternatives
           .map(function (product) {
 
+            /*
+             * Imagen del producto.
+             */
             const image =
               product.image_url
                 ? `
@@ -2021,84 +3033,292 @@ Elegir mi antivibratorio | SMAV INAHER
                     src="${escapeHtml(
                       product.image_url
                     )}"
-                    alt=""
+                    alt="Imagen del modelo ${escapeHtml(
+                      product.model
+                    )}"
                     loading="lazy"
                   >
                 `
                 : `
-                  <span aria-hidden="true">
-                    ◫
-                  </span>
+                  <div
+                    class="alternative-image-placeholder"
+                    aria-hidden="true"
+                  >
+                    <span>
+                      ◫
+                    </span>
+                  </div>
                 `;
 
 
+            /*
+             * Los mismos datos técnicos que aparecen
+             * en el producto recomendado.
+             */
+            const technicalData = [
+              [
+                "Diámetro de base",
+                product.base_diameter,
+              ],
+              [
+                "Altura de base",
+                product.base_height,
+              ],
+              [
+                "Diámetro de tornillo",
+                product.screw_diameter,
+              ],
+              [
+                "Altura de tornillo",
+                product.screw_height,
+              ],
+              [
+                "Material de elastómero",
+                product.elastomer_material,
+              ],
+              [
+                "Material de tornillo",
+                product.screw_material,
+              ],
+            ]
+              .map(function (item) {
+                return technicalItem(
+                  item[0],
+                  item[1]
+                );
+              })
+              .join("");
+
+
+            /*
+             * Ficha técnica.
+             */
             const sheet =
               product.technical_sheet_url
                 ? `
                   <a
-                    class="alternative-sheet-link"
+                    class="recommended-link"
                     href="${escapeHtml(
                       product.technical_sheet_url
                     )}"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Ver ficha
+                    Ver ficha técnica
                   </a>
                 `
-                : "";
+                : `
+                  <span
+                    class="
+                      recommended-link
+                      recommended-link-disabled
+                    "
+                  >
+                    Ficha no disponible
+                  </span>
+                `;
 
 
             return `
-              <article class="alternative-card">
+              <details
+                class="
+                  alternative-card
+                  alternative-accordion
+                "
+              >
 
-                <div class="alternative-image">
-                  ${image}
+                <summary
+                  class="alternative-summary"
+                >
+
+                  <div class="alternative-image">
+                    ${image}
+                  </div>
+
+
+                  <div class="alternative-copy">
+
+                    <small
+                      class="alternative-kicker"
+                    >
+                      Opción compatible
+                    </small>
+
+                    <strong>
+                      ${escapeHtml(
+                        product.model
+                      )}
+                    </strong>
+
+
+                    <span>
+                      Base:
+                      ${escapeHtml(
+                        product.base_diameter
+                        || "No indicada"
+                      )}
+                    </span>
+
+
+                    <span>
+                      ${escapeHtml(
+                        product.elastomer_material
+                        || "Material no indicado"
+                      )}
+                    </span>
+
+
+                    <div
+                      class="
+                        alternative-summary-capacity
+                      "
+                    >
+                      <small>
+                        Capacidad
+                      </small>
+
+                      <b>
+                        ${escapeHtml(
+                          product.capacity_label
+                        )}
+                      </b>
+                    </div>
+
+                  </div>
+
+
+                  <div
+                    class="alternative-toggle"
+                    aria-hidden="true"
+                  >
+                    <span
+                      class="
+                        alternative-toggle-label
+                      "
+                    >
+                      Ver datos
+                    </span>
+
+                    <span
+                      class="
+                        alternative-toggle-arrow
+                      "
+                    >
+                      ›
+                    </span>
+                  </div>
+
+                </summary>
+
+
+                <div
+                  class="alternative-expanded"
+                >
+
+                  <div
+                    class="
+                      recommended-spec-heading
+                      alternative-spec-heading
+                    "
+                  >
+
+                    <div>
+                      <small>
+                        Información del producto
+                      </small>
+
+                      <strong>
+                        Datos para validar instalación
+                      </strong>
+                    </div>
+
+
+                    <span>
+                      Catálogo INAHER
+                    </span>
+
+                  </div>
+
+
+                  <div
+                    class="
+                      technical-data-grid
+                      alternative-technical-grid
+                    "
+                  >
+                    ${technicalData}
+                  </div>
+
+
+                  <div
+                    class="
+                      recommended-actions
+                      alternative-actions
+                    "
+                  >
+
+                    ${sheet}
+
+
+                    <a
+                      class="
+                        recommended-link
+                        primary
+                      "
+                      href="${CATALOG_URL}"
+                    >
+                      Ver catálogo
+                    </a>
+
+                  </div>
+
                 </div>
 
-                <div class="alternative-copy">
-
-                  <strong>
-                    ${escapeHtml(
-                      product.model
-                    )}
-                  </strong>
-
-                  <span>
-                    Base:
-                    ${escapeHtml(
-                      product.base_diameter
-                      || "No indicada"
-                    )}
-                  </span>
-
-                  <span>
-                    ${escapeHtml(
-                      product.elastomer_material
-                      || "Material no indicado"
-                    )}
-                  </span>
-
-                </div>
-
-                <div class="alternative-meta">
-
-                  <strong>
-                    ${escapeHtml(
-                      product.capacity_label
-                    )}
-                  </strong>
-
-                  ${sheet}
-
-                </div>
-
-              </article>
+              </details>
             `;
           })
           .join("");
-    }
 
+
+      /*
+       * Solo deja abierta una alternativa a la vez.
+       * Así no se vuelve una pantalla interminable.
+       */
+      const accordions =
+        alternativesContainer.querySelectorAll(
+          ".alternative-accordion"
+        );
+
+
+      accordions.forEach(
+        function (accordion) {
+
+          accordion.addEventListener(
+            "toggle",
+            function () {
+
+              if (!accordion.open) {
+                return;
+              }
+
+
+              accordions.forEach(
+                function (otherAccordion) {
+
+                  if (
+                    otherAccordion
+                    !== accordion
+                  ) {
+                    otherAccordion.open =
+                      false;
+                  }
+                }
+              );
+            }
+          );
+        }
+      );
+    }
 
     function buildPayload() {
       return {
