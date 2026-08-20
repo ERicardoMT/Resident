@@ -34,8 +34,7 @@ SCREW_MATERIAL_FIELD = "Material de tornillo"
 BASE_MATERIAL_FIELD = "Material de base"
 
 PRODUCT_URL_FIELD = "URL de ficha"
-
-
+IMAGE_URL_FIELD = "Imagen principal"
 def normalize_text(value: Any) -> str:
     """
     Normaliza textos para facilitar las comparaciones.
@@ -294,6 +293,13 @@ def load_leveler_catalog() -> tuple[dict[str, Any], ...]:
                     )       
                     or ""
                 ).strip(),
+                "image_url": str(
+                    raw_record.get(
+                        IMAGE_URL_FIELD,
+                        "",
+                    )
+                    or ""
+                ).strip(),
                 "base_material": str(
                     raw_record.get(
                         BASE_MATERIAL_FIELD,
@@ -493,6 +499,10 @@ def serialize_product(
         "product_url": product[
             "product_url"
         ],
+        "image_url": product.get(
+            "image_url",
+            "",
+        ),
     }
 
 

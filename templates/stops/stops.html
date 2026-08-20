@@ -1164,6 +1164,448 @@ Elegir mi antivibratorio | SMAV INAHER
     }
 
   }
+
+  /* =======================================================
+     RESULTADOS CON MULTIMEDIA
+     ======================================================= */
+
+  .recommended-card {
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #a8dff4;
+    border-radius: 20px;
+    box-shadow:
+      0 16px 38px
+      rgba(3, 49, 91, 0.10);
+  }
+
+
+  .recommended-top {
+    display: grid;
+    grid-template-columns:
+      minmax(150px, 190px)
+      minmax(0, 1fr);
+    align-items: stretch;
+    gap: 22px;
+    padding: 22px;
+  }
+
+
+  .recommended-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 190px;
+    padding: 12px;
+    overflow: hidden;
+    background:
+      linear-gradient(
+        145deg,
+        #ffffff,
+        #eef7fb
+      );
+    border: 1px solid #d7e8f1;
+    border-radius: 16px;
+  }
+
+
+  .recommended-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+
+  .recommended-image-placeholder {
+    display: grid;
+    place-items: center;
+    gap: 5px;
+    color: #8093a5;
+    text-align: center;
+  }
+
+
+  .recommended-image-placeholder span {
+    font-size: 34px;
+  }
+
+
+  .recommended-image-placeholder small {
+    font-size: 9px;
+    font-weight: 700;
+  }
+
+
+  .recommended-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+  }
+
+
+  .recommended-badge {
+    align-self: flex-start;
+    padding: 6px 10px;
+    margin: 0 0 8px;
+    color: #166534;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    background: #dcfce7;
+    border: 1px solid #bbf7d0;
+    border-radius: 999px;
+  }
+
+
+  .recommended-kicker {
+    color: var(--accent-hover);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+
+  .recommended-copy h3 {
+    margin: 4px 0 11px;
+    color: var(--primary);
+    font-size:
+      clamp(
+        25px,
+        3vw,
+        34px
+      );
+    font-weight: 900;
+    line-height: 1.05;
+  }
+
+
+  .recommended-capacity-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    max-width: 430px;
+    padding: 10px 12px;
+    color: var(--primary);
+    background: #f5f9fc;
+    border: 1px solid #d9e6ef;
+    border-radius: 11px;
+  }
+
+
+  .recommended-capacity-box span {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+
+  .recommended-capacity-box strong {
+    font-size: 13px;
+    font-weight: 900;
+    text-align: right;
+  }
+
+
+  .recommendation-reason {
+    display: grid;
+    gap: 4px;
+    max-width: 560px;
+    padding: 12px 14px;
+    margin-top: 12px;
+    color: #3c566d;
+    font-size: 10px;
+    line-height: 1.55;
+    background: #eaf7fc;
+    border-left: 4px solid var(--accent-hover);
+    border-radius: 10px;
+  }
+
+
+  .recommendation-reason strong {
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 900;
+  }
+
+
+  .recommended-spec-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 15px 20px;
+    background: #f8fbfd;
+    border-top: 1px solid #dce8ef;
+    border-bottom: 1px solid #dce8ef;
+  }
+
+
+  .recommended-spec-heading div {
+    display: grid;
+    gap: 2px;
+  }
+
+
+  .recommended-spec-heading small {
+    color: var(--accent-hover);
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+
+  .recommended-spec-heading strong {
+    color: var(--primary);
+    font-size: 12px;
+  }
+
+
+  .recommended-spec-heading > span {
+    padding: 5px 8px;
+    color: #557184;
+    font-size: 8px;
+    font-weight: 800;
+    background: #ffffff;
+    border: 1px solid #d7e3eb;
+    border-radius: 999px;
+  }
+
+
+  .technical-data-grid {
+    display: grid;
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(0, 1fr)
+      );
+    gap: 0;
+    border: none;
+  }
+
+
+  .technical-data-item,
+  .technical-data-item:nth-child(2n) {
+    padding: 14px 16px;
+    background: #ffffff;
+    border-right: 1px solid #e2ebf1;
+    border-bottom: 1px solid #e2ebf1;
+  }
+
+
+  .technical-data-item:nth-child(3n) {
+    border-right: none;
+  }
+
+
+  .technical-data-item small {
+    color: #718699;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.55px;
+  }
+
+
+  .technical-data-item strong {
+    margin-top: 5px;
+    color: var(--primary);
+    font-size: 10.5px;
+    font-weight: 800;
+    line-height: 1.45;
+  }
+
+
+  .recommended-actions {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 16px 20px 20px;
+  }
+
+
+  .recommended-link {
+    min-height: 46px;
+    font-size: 10.5px;
+    border-radius: 11px;
+  }
+
+
+  .recommended-link-disabled {
+    color: #94a3b8;
+    background: #f1f5f9;
+    border-color: #d9e2ea;
+  }
+
+
+  .alternative-models {
+    gap: 10px;
+  }
+
+
+  .alternative-card {
+    display: grid;
+    grid-template-columns:
+      64px
+      minmax(0, 1fr)
+      auto;
+    align-items: center;
+    gap: 13px;
+    padding: 12px;
+    background: #ffffff;
+    border: 1px solid #dbe6ed;
+    border-radius: 13px;
+    box-shadow:
+      0 5px 15px
+      rgba(3, 49, 91, 0.05);
+  }
+
+
+  .alternative-image {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    padding: 5px;
+    overflow: hidden;
+    color: #8ba0b1;
+    background: #f2f7fa;
+    border-radius: 10px;
+  }
+
+
+  .alternative-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+
+  .alternative-copy {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+  }
+
+
+  .alternative-copy > strong {
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+
+  .alternative-copy > span {
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+
+  .alternative-meta {
+    display: grid;
+    justify-items: end;
+    gap: 7px;
+  }
+
+
+  .alternative-meta > strong {
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+
+
+  .alternative-sheet-link {
+    padding: 6px 9px;
+    color: var(--accent-hover);
+    font-size: 8.5px;
+    font-weight: 900;
+    text-decoration: none;
+    background: #eef9fd;
+    border: 1px solid #bfe5f3;
+    border-radius: 8px;
+  }
+
+
+  @media (max-width: 680px) {
+
+    .recommended-top {
+      grid-template-columns: 1fr;
+      gap: 15px;
+      padding: 16px;
+    }
+
+
+    .recommended-image {
+      height: 205px;
+    }
+
+
+    .recommended-copy h3 {
+      font-size: 27px;
+    }
+
+
+    .technical-data-grid {
+      grid-template-columns: 1fr;
+    }
+
+
+    .technical-data-item,
+    .technical-data-item:nth-child(2n),
+    .technical-data-item:nth-child(3n) {
+      border-right: none;
+    }
+
+
+    .recommended-spec-heading {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+
+    .recommended-actions {
+      grid-template-columns: 1fr;
+      padding:
+        14px
+        16px
+        18px;
+    }
+
+
+    .alternative-card {
+      grid-template-columns:
+        55px
+        minmax(0, 1fr);
+    }
+
+
+    .alternative-image {
+      width: 55px;
+      height: 55px;
+    }
+
+
+    .alternative-meta {
+      grid-column: 1 / -1;
+      grid-template-columns:
+        1fr
+        auto;
+      align-items: center;
+      justify-items: initial;
+    }
+
+  }
+
+
 </style>
 {% endblock %}
 
@@ -1377,10 +1819,6 @@ Elegir mi antivibratorio | SMAV INAHER
     ) {
       const technicalData = [
         [
-          "Modelo",
-          product.model,
-        ],
-        [
           "Diámetro de base",
           product.base_diameter,
         ],
@@ -1395,10 +1833,6 @@ Elegir mi antivibratorio | SMAV INAHER
         [
           "Altura de tornillo",
           product.screw_height,
-        ],
-        [
-          "Capacidad de carga",
-          product.capacity_label,
         ],
         [
           "Material de elastómero",
@@ -1418,8 +1852,59 @@ Elegir mi antivibratorio | SMAV INAHER
         .join("");
 
 
+      const imageMarkup =
+        product.image_url
+          ? `
+            <img
+              src="${escapeHtml(
+                product.image_url
+              )}"
+              alt="Imagen del modelo ${escapeHtml(
+                product.model
+              )}"
+              loading="lazy"
+            >
+          `
+          : `
+            <div class="recommended-image-placeholder">
+              <span aria-hidden="true">◫</span>
+              <small>Imagen no disponible</small>
+            </div>
+          `;
+
+
+      const technicalSheetMarkup =
+        product.technical_sheet_url
+          ? `
+            <a
+              class="recommended-link"
+              href="${escapeHtml(
+                product.technical_sheet_url
+              )}"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ver ficha técnica
+            </a>
+          `
+          : `
+            <span
+              class="
+                recommended-link
+                recommended-link-disabled
+              "
+            >
+              Ficha no disponible
+            </span>
+          `;
+
+
       recommendedCard.innerHTML = `
         <div class="recommended-top">
+
+          <div class="recommended-image">
+            ${imageMarkup}
+          </div>
 
           <div class="recommended-copy">
 
@@ -1427,41 +1912,83 @@ Elegir mi antivibratorio | SMAV INAHER
               Recomendado
             </span>
 
+            <span class="recommended-kicker">
+              Modelo seleccionado
+            </span>
+
             <h3>
               ${escapeHtml(product.model)}
             </h3>
 
-            <p class="recommended-capacity">
-              Capacidad:
+            <div class="recommended-capacity-box">
+
+              <span>
+                Capacidad máxima
+              </span>
+
               <strong>
                 ${escapeHtml(
                   product.capacity_label
                 )}
               </strong>
-            </p>
+
+            </div>
 
             <div class="recommendation-reason">
-              Este modelo es el de menor
-              capacidad disponible que cumple
-              la carga calculada para el peso
-              y los apoyos indicados.
+
+              <strong>
+                ¿Por qué te lo recomendamos?
+              </strong>
+
+              <span>
+                Es el modelo de menor capacidad
+                disponible que soporta correctamente
+                la carga calculada para el peso y
+                número de apoyos que indicaste.
+              </span>
+
             </div>
 
           </div>
 
         </div>
 
+
+        <div class="recommended-spec-heading">
+
+          <div>
+            <small>
+              Información del producto
+            </small>
+
+            <strong>
+              Especificaciones para validar
+            </strong>
+          </div>
+
+          <span>
+            Datos reales del catálogo
+          </span>
+
+        </div>
+
+
         <div class="technical-data-grid">
           ${technicalData}
         </div>
 
+
         <div class="recommended-actions">
+
+          ${technicalSheetMarkup}
+
           <a
             class="recommended-link primary"
             href="${CATALOG_URL}"
           >
             Ver catálogo
           </a>
+
         </div>
       `;
     }
@@ -1472,42 +1999,99 @@ Elegir mi antivibratorio | SMAV INAHER
     ) {
       if (!alternatives.length) {
         alternativesSection.hidden = true;
+
         alternativesContainer.innerHTML =
           "";
+
         return;
       }
 
+
       alternativesSection.hidden = false;
+
 
       alternativesContainer.innerHTML =
         alternatives
           .map(function (product) {
+
+            const image =
+              product.image_url
+                ? `
+                  <img
+                    src="${escapeHtml(
+                      product.image_url
+                    )}"
+                    alt=""
+                    loading="lazy"
+                  >
+                `
+                : `
+                  <span aria-hidden="true">
+                    ◫
+                  </span>
+                `;
+
+
+            const sheet =
+              product.technical_sheet_url
+                ? `
+                  <a
+                    class="alternative-sheet-link"
+                    href="${escapeHtml(
+                      product.technical_sheet_url
+                    )}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Ver ficha
+                  </a>
+                `
+                : "";
+
+
             return `
               <article class="alternative-card">
 
-                <div>
+                <div class="alternative-image">
+                  ${image}
+                </div>
+
+                <div class="alternative-copy">
+
                   <strong>
                     ${escapeHtml(
                       product.model
                     )}
                   </strong>
 
-                  <p>
+                  <span>
+                    Base:
                     ${escapeHtml(
                       product.base_diameter
+                      || "No indicada"
                     )}
-                    ·
+                  </span>
+
+                  <span>
                     ${escapeHtml(
                       product.elastomer_material
+                      || "Material no indicado"
                     )}
-                  </p>
+                  </span>
+
                 </div>
 
-                <span class="alternative-capacity">
-                  ${escapeHtml(
-                    product.capacity_label
-                  )}
-                </span>
+                <div class="alternative-meta">
+
+                  <strong>
+                    ${escapeHtml(
+                      product.capacity_label
+                    )}
+                  </strong>
+
+                  ${sheet}
+
+                </div>
 
               </article>
             `;

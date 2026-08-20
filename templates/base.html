@@ -148,5 +148,104 @@
     </main>
 
     {% block scripts %}{% endblock %}
+
+    <!--
+      Botón Atrás global.
+
+      Si el usuario llegó desde otra página
+      del mismo sistema, vuelve exactamente
+      a esa página.
+
+      El href original queda como respaldo.
+    -->
+    <script id="smav-global-back-navigation">
+      (function () {
+        "use strict";
+
+
+        const topbar =
+          document.querySelector(
+            ".topbar"
+          );
+
+
+        if (!topbar) {
+          return;
+        }
+
+
+        const backButton =
+          topbar.querySelector(
+            [
+              'a.icon-btn[aria-label^="Volver"]',
+              'a.icon-btn[aria-label^="Regresar"]'
+            ].join(",")
+          );
+
+
+        if (!backButton) {
+          return;
+        }
+
+
+        backButton.addEventListener(
+          "click",
+          function (event) {
+
+            let previousIsSameSite =
+              false;
+
+
+            try {
+
+              if (document.referrer) {
+
+                const previousUrl =
+                  new URL(
+                    document.referrer
+                  );
+
+
+                previousIsSameSite =
+                  previousUrl.origin
+                  === window.location.origin;
+
+              }
+
+            } catch (error) {
+
+              previousIsSameSite =
+                false;
+
+            }
+
+
+            /*
+             * Solo usamos history.back()
+             * cuando sabemos que la página
+             * anterior pertenece a SMAV.
+             *
+             * Si el usuario abrió directamente
+             * la página, se conserva el href
+             * original como respaldo.
+             */
+            if (previousIsSameSite) {
+
+              event.preventDefault();
+
+              event.stopImmediatePropagation();
+
+              window.history.back();
+
+            }
+
+          },
+          true
+        );
+
+      })();
+    </script>
+
+
   </body>
 </html>

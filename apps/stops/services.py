@@ -23,6 +23,8 @@ SCREW_HEIGHT_FIELD = "Altura de tornillo"
 CAPACITY_FIELD = "Capacidad de carga"
 ELASTOMER_MATERIAL_FIELD = "Material de elastómero"
 SCREW_MATERIAL_FIELD = "Material de tornillo"
+IMAGE_FIELD = "Imagen"
+TECHNICAL_SHEET_FIELD = "Ficha técnica"
 
 
 def normalize_text(value: Any) -> str:
@@ -56,6 +58,35 @@ def normalize_text(value: Any) -> str:
     )
 
     return text.strip()
+
+
+
+def extract_first_url(
+    value: Any,
+) -> str:
+    """
+    Extrae la primera URL encontrada.
+
+    Algunas celdas contienen una URL seguida
+    de una explicación entre paréntesis.
+    """
+
+    text = str(
+        value or ""
+    ).strip()
+
+    match = re.search(
+        r"https?://[^\s]+",
+        text,
+    )
+
+    if not match:
+        return ""
+
+    return match.group(0).rstrip(
+        ".,;)"
+    )
+
 
 
 def parse_capacity_kg(
@@ -236,6 +267,20 @@ def load_antivibration_catalog(
                     or ""
                 ).strip(),
 
+                "image_url": extract_first_url(
+                    raw_record.get(
+                        IMAGE_FIELD,
+                        "",
+                    )
+                ),
+
+                "technical_sheet_url": extract_first_url(
+                    raw_record.get(
+                        TECHNICAL_SHEET_FIELD,
+                        "",
+                    )
+                ),
+
                 "excel_row": (
                     raw_record.get(
                         "_excel_row"
@@ -351,6 +396,20 @@ def serialize_product(
             product[
                 "screw_material"
             ]
+        ),
+
+        "image_url": (
+            product.get(
+                "image_url",
+                "",
+            )
+        ),
+
+        "technical_sheet_url": (
+            product.get(
+                "technical_sheet_url",
+                "",
+            )
         ),
     }
 

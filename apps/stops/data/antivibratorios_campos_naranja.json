@@ -1,21 +1,56 @@
 {
-  "source_file": "Base de datos de soportes antivibracion.xlsx",
+  "source_file": "Base de datos de soportes antivibracion (1).xlsx",
+  "selection_rule": "Campos técnicos usados por el recomendador + Imagen + Ficha técnica del Excel",
   "sheets": [
     {
       "sheet": "Antivibratorios",
       "header_row": 1,
-      "orange_fields": [
-        "Modelo",
-        "Diámetro de base",
-        "Altura de base",
-        "Diámetro de tornillo",
-        "Altura de tornillo",
-        "Capacidad de carga",
-        "Material de elastómero",
-        "Material de tornillo"
+      "fields": [
+        {
+          "name": "Modelo",
+          "column": "C"
+        },
+        {
+          "name": "Diámetro de base",
+          "column": "D"
+        },
+        {
+          "name": "Altura de base",
+          "column": "E"
+        },
+        {
+          "name": "Diámetro de tornillo",
+          "column": "F"
+        },
+        {
+          "name": "Altura de tornillo",
+          "column": "G"
+        },
+        {
+          "name": "Capacidad de carga",
+          "column": "H"
+        },
+        {
+          "name": "Material de elastómero",
+          "column": "I"
+        },
+        {
+          "name": "Material de tornillo",
+          "column": "J"
+        },
+        {
+          "name": "Imagen",
+          "column": "K"
+        },
+        {
+          "name": "Ficha técnica",
+          "column": "L"
+        }
       ],
       "records": [
         {
+          "Línea": "SPY",
+          "Tipo": "Tacones antivibración",
           "Modelo": "SPY",
           "Diámetro de base": "50 x 300 mm (ancho x largo)",
           "Altura de base": "25 mm",
@@ -24,9 +59,13 @@
           "Capacidad de carga": "1500 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/barra-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-SPY.pdf",
           "_excel_row": 2
         },
         {
+          "Línea": "CDC-2",
+          "Tipo": "Colgantes antivibración",
           "Modelo": "CDC-2",
           "Diámetro de base": "2.5\" (ancho de caja, sin orejas)",
           "Altura de base": "4.125\"",
@@ -35,9 +74,13 @@
           "Capacidad de carga": "120 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/11/CDC-2-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2022/12/Linea-CDC-2.pdf",
           "_excel_row": 3
         },
         {
+          "Línea": "CDR",
+          "Tipo": "Colgantes antivibración",
           "Modelo": "CDR-2",
           "Diámetro de base": "2.5\" (ancho de caja, sin orejas)",
           "Altura de base": "4.125\"",
@@ -46,9 +89,13 @@
           "Capacidad de carga": "120 KG",
           "Material de elastómero": "— (aislamiento por resorte)",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/11/3-9.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-CDR.pdf",
           "_excel_row": 4
         },
         {
+          "Línea": "CDR",
+          "Tipo": "Colgantes antivibración",
           "Modelo": "CDR-3",
           "Diámetro de base": "3.625\" (ancho de caja, sin orejas)",
           "Altura de base": "6\"",
@@ -57,9 +104,13 @@
           "Capacidad de carga": "400 KG",
           "Material de elastómero": "— (aislamiento por resorte)",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/11/3-9.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-CDR.pdf",
           "_excel_row": 5
         },
         {
+          "Línea": "CDR",
+          "Tipo": "Colgantes antivibración",
           "Modelo": "CDR-4",
           "Diámetro de base": "3.625\" (ancho de caja, sin orejas)",
           "Altura de base": "6\"",
@@ -68,9 +119,13 @@
           "Capacidad de carga": "600 KG",
           "Material de elastómero": "— (aislamiento por resorte)",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/11/3-9.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-CDR.pdf",
           "_excel_row": 6
         },
         {
+          "Línea": "CIR",
+          "Tipo": "Colgantes antivibración",
           "Modelo": "CIR-44",
           "Diámetro de base": "44 mm (diám. mayor)",
           "Altura de base": "45 mm (altura total)",
@@ -79,9 +134,13 @@
           "Capacidad de carga": "50 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2026/02/CIR-1.png",
+          "Ficha técnica": "https://inahermex.com/producto/colgante-antivibratorio-linea-cir-de-50-a-100-kg/  (sin PDF propio: ficha en la página)",
           "_excel_row": 7
         },
         {
+          "Línea": "CIR",
+          "Tipo": "Colgantes antivibración",
           "Modelo": "CIR-64",
           "Diámetro de base": "64 mm (diám. mayor)",
           "Altura de base": "42 mm (altura total)",
@@ -90,9 +149,13 @@
           "Capacidad de carga": "100 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2026/02/CIR-1.png",
+          "Ficha técnica": "https://inahermex.com/producto/colgante-antivibratorio-linea-cir-de-50-a-100-kg/  (sin PDF propio: ficha en la página)",
           "_excel_row": 8
         },
         {
+          "Línea": "IVH",
+          "Tipo": "Niveladores antivibración para maquinaria",
           "Modelo": "IVH-3",
           "Diámetro de base": "3\"",
           "Altura de base": "1 1/8\"",
@@ -101,9 +164,13 @@
           "Capacidad de carga": "300 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/1-61-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-IVH.pdf",
           "_excel_row": 9
         },
         {
+          "Línea": "IVH",
+          "Tipo": "Niveladores antivibración para maquinaria",
           "Modelo": "IVH-4",
           "Diámetro de base": "4\"",
           "Altura de base": "2\"",
@@ -112,9 +179,13 @@
           "Capacidad de carga": "850 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/ivh4-1.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-IVH.pdf",
           "_excel_row": 10
         },
         {
+          "Línea": "IVH",
+          "Tipo": "Niveladores antivibración para maquinaria",
           "Modelo": "IVH-6",
           "Diámetro de base": "6\"",
           "Altura de base": "2\"",
@@ -123,9 +194,13 @@
           "Capacidad de carga": "1800 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/ivh-6.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-IVH.pdf",
           "_excel_row": 11
         },
         {
+          "Línea": "IVH",
+          "Tipo": "Niveladores antivibración para maquinaria",
           "Modelo": "IVH-9",
           "Diámetro de base": "9\"",
           "Altura de base": "2 5/8\"",
@@ -134,9 +209,13 @@
           "Capacidad de carga": "3000 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/1-99.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-IVH.pdf",
           "_excel_row": 12
         },
         {
+          "Línea": "IVH",
+          "Tipo": "Niveladores antivibración para maquinaria",
           "Modelo": "IVH-12",
           "Diámetro de base": "12\"",
           "Altura de base": "2 5/8\"",
@@ -145,9 +224,13 @@
           "Capacidad de carga": "4500 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/IVH12-1.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-IVH.pdf",
           "_excel_row": 13
         },
         {
+          "Línea": "TK",
+          "Tipo": "Niveladores antivibración para maquinaria",
           "Modelo": "TK",
           "Diámetro de base": "120 mm",
           "Altura de base": "45 mm",
@@ -156,9 +239,13 @@
           "Capacidad de carga": "600 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/TK-2.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-TK.pdf",
           "_excel_row": 14
         },
         {
+          "Línea": "CET",
+          "Tipo": "Pies antivibración",
           "Modelo": "CET-60",
           "Diámetro de base": "60 mm",
           "Altura de base": "23 mm",
@@ -167,9 +254,13 @@
           "Capacidad de carga": "350 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2026/02/Todos-los-CET-1.png",
+          "Ficha técnica": "https://inahermex.com/producto/nivelador-antivibratorio-linea-cet-de-350-a-900-kg/  (sin PDF propio: ficha en la página)",
           "_excel_row": 15
         },
         {
+          "Línea": "CET",
+          "Tipo": "Pies antivibración",
           "Modelo": "CET-80",
           "Diámetro de base": "80 mm",
           "Altura de base": "28 mm",
@@ -178,9 +269,13 @@
           "Capacidad de carga": "600 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2026/02/Todos-los-CET-1.png",
+          "Ficha técnica": "https://inahermex.com/producto/nivelador-antivibratorio-linea-cet-de-350-a-900-kg/  (sin PDF propio: ficha en la página)",
           "_excel_row": 16
         },
         {
+          "Línea": "CET",
+          "Tipo": "Pies antivibración",
           "Modelo": "CET-100",
           "Diámetro de base": "100 mm",
           "Altura de base": "35 mm",
@@ -189,9 +284,13 @@
           "Capacidad de carga": "900 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2026/02/Todos-los-CET-1.png",
+          "Ficha técnica": "https://inahermex.com/producto/nivelador-antivibratorio-linea-cet-de-350-a-900-kg/  (sin PDF propio: ficha en la página)",
           "_excel_row": 17
         },
         {
+          "Línea": "MSH-880",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MSH-880",
           "Diámetro de base": "88 mm",
           "Altura de base": "40 mm",
@@ -200,9 +299,13 @@
           "Capacidad de carga": "600 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MSH-880-.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-MSH-880.pdf",
           "_excel_row": 18
         },
         {
+          "Línea": "MXI-700",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MXI-700",
           "Diámetro de base": "70 mm",
           "Altura de base": "25 mm",
@@ -211,9 +314,13 @@
           "Capacidad de carga": "400 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MXI.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MXI-700.pdf",
           "_excel_row": 19
         },
         {
+          "Línea": "SBS",
+          "Tipo": "Tacones antivibración",
           "Modelo": "SBS-80",
           "Diámetro de base": "80 x 80 mm",
           "Altura de base": "30 mm",
@@ -222,9 +329,13 @@
           "Capacidad de carga": "450 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/portada-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-SBS-OF.pdf",
           "_excel_row": 20
         },
         {
+          "Línea": "SBS",
+          "Tipo": "Tacones antivibración",
           "Modelo": "SBS-120",
           "Diámetro de base": "120 x 120 mm",
           "Altura de base": "30 mm",
@@ -233,9 +344,13 @@
           "Capacidad de carga": "900 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/09/PORTADA-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-SBS-OF.pdf",
           "_excel_row": 21
         },
         {
+          "Línea": "LL",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "LL",
           "Diámetro de base": "132mm x 75mm",
           "Altura de base": "54 mm",
@@ -244,9 +359,13 @@
           "Capacidad de carga": "700 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/LL-3.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-LL-1.pdf",
           "_excel_row": 22
         },
         {
+          "Línea": "HST",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "HST",
           "Diámetro de base": "4.750\"  x 3\" (base inferior)",
           "Altura de base": "3.400\" (altura total; caucho .400\")",
@@ -255,9 +374,13 @@
           "Capacidad de carga": "200 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/11/HST-1-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-HST.pdf",
           "_excel_row": 23
         },
         {
+          "Línea": "RDM",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "RDM-350",
           "Diámetro de base": "8\" x 4.350\"",
           "Altura de base": "5.750\"",
@@ -266,9 +389,13 @@
           "Capacidad de carga": "350 KG",
           "Material de elastómero": "— (aislamiento por resorte)",
           "Material de tornillo": "Acero galvanizado",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2023/04/2-5.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/Linea-RDMOF.pdf",
           "_excel_row": 24
         },
         {
+          "Línea": "RDM",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "RDM-600",
           "Diámetro de base": "8\" x 4.350\"",
           "Altura de base": "5.750\"",
@@ -277,9 +404,13 @@
           "Capacidad de carga": "600 KG",
           "Material de elastómero": "— (aislamiento por resorte)",
           "Material de tornillo": "Acero galvanizado",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2023/04/2-5.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/Linea-RDMOF.pdf",
           "_excel_row": 25
         },
         {
+          "Línea": "HFF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "HFF1515M4",
           "Diámetro de base": "15 mm",
           "Altura de base": "15 mm",
@@ -288,9 +419,13 @@
           "Capacidad de carga": "12 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/1-97.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/LINEA-HFF-OFICIAL.pdf",
           "_excel_row": 26
         },
         {
+          "Línea": "HFF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "HFF2030M6",
           "Diámetro de base": "20 mm",
           "Altura de base": "30 mm",
@@ -299,9 +434,13 @@
           "Capacidad de carga": "15 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/1-97.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/LINEA-HFF-OFICIAL.pdf",
           "_excel_row": 27
         },
         {
+          "Línea": "HFF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "HFF3030M8",
           "Diámetro de base": "30 mm",
           "Altura de base": "30 mm",
@@ -310,9 +449,13 @@
           "Capacidad de carga": "45 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/1-97.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/LINEA-HFF-OFICIAL.pdf",
           "_excel_row": 28
         },
         {
+          "Línea": "HFF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "HFF4230M6",
           "Diámetro de base": "42 mm",
           "Altura de base": "30 mm",
@@ -321,9 +464,13 @@
           "Capacidad de carga": "80 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/1-97.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/LINEA-HFF-OFICIAL.pdf",
           "_excel_row": 29
         },
         {
+          "Línea": "HFF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "HFF5030M10",
           "Diámetro de base": "50 mm",
           "Altura de base": "30 mm",
@@ -332,9 +479,13 @@
           "Capacidad de carga": "120 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/1-97.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/LINEA-HFF-OFICIAL.pdf",
           "_excel_row": 30
         },
         {
+          "Línea": "HFF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "HFF7550M12",
           "Diámetro de base": "75 mm",
           "Altura de base": "50 mm",
@@ -343,9 +494,13 @@
           "Capacidad de carga": "150 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/1-97.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/LINEA-HFF-OFICIAL.pdf",
           "_excel_row": 31
         },
         {
+          "Línea": "MLW",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MLW-80",
           "Diámetro de base": "82/60 mm (mayor/menor)",
           "Altura de base": "40 mm",
@@ -354,9 +509,13 @@
           "Capacidad de carga": "220 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/1-4-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MLW.pdf",
           "_excel_row": 32
         },
         {
+          "Línea": "MLW",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MLW-50",
           "Diámetro de base": "50/40 mm (mayor/menor)",
           "Altura de base": "40 mm",
@@ -365,9 +524,13 @@
           "Capacidad de carga": "150 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/1-4-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MLW.pdf",
           "_excel_row": 33
         },
         {
+          "Línea": "MLW",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MLW-40",
           "Diámetro de base": "40/30 mm (mayor/menor)",
           "Altura de base": "30 mm",
@@ -376,9 +539,13 @@
           "Capacidad de carga": "90 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/1-4-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MLW.pdf",
           "_excel_row": 34
         },
         {
+          "Línea": "MLW",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MLW-30",
           "Diámetro de base": "30/20 mm (mayor/menor)",
           "Altura de base": "30 mm",
@@ -387,9 +554,13 @@
           "Capacidad de carga": "50 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/1-4-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MLW.pdf",
           "_excel_row": 35
         },
         {
+          "Línea": "SCN-90",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "SCN-90",
           "Diámetro de base": "137 x 91 mm",
           "Altura de base": "115 mm (altura total)",
@@ -398,9 +569,13 @@
           "Capacidad de carga": "300 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2023/01/scn-1.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-SCN-90.pdf",
           "_excel_row": 36
         },
         {
+          "Línea": "XT-45",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "XT-45",
           "Diámetro de base": "140 x 85 mm",
           "Altura de base": "43.4 mm",
@@ -409,9 +584,13 @@
           "Capacidad de carga": "500 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/XT-2.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-XT-45.1.pdf",
           "_excel_row": 37
         },
         {
+          "Línea": "REBO",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "REBO 22979",
           "Diámetro de base": "4.5\" x 2.3\"",
           "Altura de base": "1.8\"",
@@ -420,9 +599,13 @@
           "Capacidad de carga": "250 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/REBO-CHICO-5.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-REBO.pdf",
           "_excel_row": 38
         },
         {
+          "Línea": "REBO",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "REBO 24260",
           "Diámetro de base": "5.5\" x 2.3\"",
           "Altura de base": "1.8\"",
@@ -431,9 +614,13 @@
           "Capacidad de carga": "400 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2023/01/3-11.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-REBO.pdf",
           "_excel_row": 39
         },
         {
+          "Línea": "REBO",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "REBO 22981",
           "Diámetro de base": "6.5\" x 2.3\"",
           "Altura de base": "1.8\"",
@@ -442,9 +629,13 @@
           "Capacidad de carga": "600 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/REBO-GRANDE.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-REBO.pdf",
           "_excel_row": 40
         },
         {
+          "Línea": "REBO",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "REBO 24261",
           "Diámetro de base": "7.5\" x 3.3\"",
           "Altura de base": "1.8\"",
@@ -453,9 +644,13 @@
           "Capacidad de carga": "950 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2023/01/rebo-1.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-REBO.pdf",
           "_excel_row": 41
         },
         {
+          "Línea": "ACD-9",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "ACD-9",
           "Diámetro de base": "9\" x 9\"",
           "Altura de base": "5\"",
@@ -464,9 +659,13 @@
           "Capacidad de carga": "3000 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/cubo-grande-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-ACD-9.pdf",
           "_excel_row": 42
         },
         {
+          "Línea": "CS",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "CS 12",
           "Diámetro de base": "68 x 106 mm",
           "Altura de base": "51 mm",
@@ -475,9 +674,13 @@
           "Capacidad de carga": "150 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/CS-12.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-CS.pdf",
           "_excel_row": 43
         },
         {
+          "Línea": "CS",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "CS 16",
           "Diámetro de base": "101 x 120 mm",
           "Altura de base": "73 mm",
@@ -486,9 +689,13 @@
           "Capacidad de carga": "700 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/09/CS.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-CS.pdf",
           "_excel_row": 44
         },
         {
+          "Línea": "TBQ",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "TBQ",
           "Diámetro de base": "101.6 mm",
           "Altura de base": "66 mm",
@@ -497,9 +704,13 @@
           "Capacidad de carga": "850 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2026/02/5.png",
+          "Ficha técnica": "https://inahermex.com/producto/tacon-antivibratorio-linea-tbq-para-850-kg/  (sin PDF propio: ficha en la página)",
           "_excel_row": 45
         },
         {
+          "Línea": "MSF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MSF-100",
           "Diámetro de base": "100 mm",
           "Altura de base": "55 mm",
@@ -508,9 +719,13 @@
           "Capacidad de carga": "400 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MSF-2-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/Linea-MSF-25.pdf",
           "_excel_row": 46
         },
         {
+          "Línea": "MSF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MSF-80",
           "Diámetro de base": "80 mm",
           "Altura de base": "45 mm",
@@ -519,9 +734,13 @@
           "Capacidad de carga": "350 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MSF-2-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/Linea-MSF-25.pdf",
           "_excel_row": 47
         },
         {
+          "Línea": "MSF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MSF-3*2",
           "Diámetro de base": "3\"",
           "Altura de base": "2 1/2\"",
@@ -530,9 +749,13 @@
           "Capacidad de carga": "220 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MSF-2-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/Linea-MSF-25.pdf",
           "_excel_row": 48
         },
         {
+          "Línea": "MSF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MSF-3",
           "Diámetro de base": "3\"",
           "Altura de base": "1 1/2\"",
@@ -541,9 +764,13 @@
           "Capacidad de carga": "200 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MSF-2-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/Linea-MSF-25.pdf",
           "_excel_row": 49
         },
         {
+          "Línea": "MSF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MSF-2",
           "Diámetro de base": "2\"",
           "Altura de base": "1 1/2\"",
@@ -552,9 +779,13 @@
           "Capacidad de carga": "160 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MSF-2-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/Linea-MSF-25.pdf",
           "_excel_row": 50
         },
         {
+          "Línea": "MSF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MSF-63",
           "Diámetro de base": "63 mm",
           "Altura de base": "68 mm",
@@ -563,9 +794,13 @@
           "Capacidad de carga": "200 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MSF-2-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/Linea-MSF-25.pdf",
           "_excel_row": 51
         },
         {
+          "Línea": "MSF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MSF-2*1",
           "Diámetro de base": "2\"",
           "Altura de base": "1\"",
@@ -574,9 +809,13 @@
           "Capacidad de carga": "150 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MSF-2-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/Linea-MSF-25.pdf",
           "_excel_row": 52
         },
         {
+          "Línea": "MSF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MSF-40",
           "Diámetro de base": "40 mm",
           "Altura de base": "35 mm",
@@ -585,9 +824,13 @@
           "Capacidad de carga": "90 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MSF-2-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/Linea-MSF-25.pdf",
           "_excel_row": 53
         },
         {
+          "Línea": "MSF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MSF-4022",
           "Diámetro de base": "40 mm",
           "Altura de base": "22 mm",
@@ -596,9 +839,13 @@
           "Capacidad de carga": "60 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MSF-2-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/Linea-MSF-25.pdf",
           "_excel_row": 54
         },
         {
+          "Línea": "MSF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MSF-35",
           "Diámetro de base": "35 mm",
           "Altura de base": "30 mm",
@@ -607,9 +854,13 @@
           "Capacidad de carga": "50 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MSF-2-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/Linea-MSF-25.pdf",
           "_excel_row": 55
         },
         {
+          "Línea": "MSF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MSF-32",
           "Diámetro de base": "32 mm",
           "Altura de base": "32 mm",
@@ -618,9 +869,13 @@
           "Capacidad de carga": "50 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MSF-2-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/Linea-MSF-25.pdf",
           "_excel_row": 56
         },
         {
+          "Línea": "MSF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MSF-30",
           "Diámetro de base": "30 mm",
           "Altura de base": "30 mm",
@@ -629,9 +884,13 @@
           "Capacidad de carga": "50 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MSF-2-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/Linea-MSF-25.pdf",
           "_excel_row": 57
         },
         {
+          "Línea": "MSF",
+          "Tipo": "Soportes antivibración con anclaje al piso",
           "Modelo": "MSF-25",
           "Diámetro de base": "25 mm",
           "Altura de base": "20 mm",
@@ -640,9 +899,13 @@
           "Capacidad de carga": "35 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MSF-2-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/Linea-MSF-25.pdf",
           "_excel_row": 58
         },
         {
+          "Línea": "TM-2",
+          "Tipo": "Tope antivibración",
           "Modelo": "TM-2",
           "Diámetro de base": "2\"",
           "Altura de base": "2\"",
@@ -651,9 +914,13 @@
           "Capacidad de carga": "200 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2023/04/TM-1.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-TM-50.pdf",
           "_excel_row": 59
         },
         {
+          "Línea": "SR-730",
+          "Tipo": "Tacones antivibración",
           "Modelo": "SR-730",
           "Diámetro de base": "7.3 x 3.125\"",
           "Altura de base": "1.95\"",
@@ -662,9 +929,13 @@
           "Capacidad de carga": "1500 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2023/01/SR-730-4-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-SR.pdf",
           "_excel_row": 60
         },
         {
+          "Línea": "DN-65",
+          "Tipo": "Tacones antivibración",
           "Modelo": "DN-65",
           "Diámetro de base": "65/45 mm (Ø mayor/menor)",
           "Altura de base": "35 mm",
@@ -673,9 +944,13 @@
           "Capacidad de carga": "150 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/DN-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-DN-65.pdf",
           "_excel_row": 61
         },
         {
+          "Línea": "MG-55",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MG-55",
           "Diámetro de base": "50 mm",
           "Altura de base": "40 mm",
@@ -684,9 +959,13 @@
           "Capacidad de carga": "150 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2026/02/2-vistas-1.png",
+          "Ficha técnica": "https://inahermex.com/producto/tacon-antivibratorio-de-caucho-linea-mg-55-para-150-kg/  (sin PDF propio: ficha en la página)",
           "_excel_row": 62
         },
         {
+          "Línea": "MLY",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MLY-80",
           "Diámetro de base": "82/60 mm (mayor/menor)",
           "Altura de base": "40 mm",
@@ -695,9 +974,13 @@
           "Capacidad de carga": "220 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/MLY-1-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/LINEA-MLY.pdf",
           "_excel_row": 63
         },
         {
+          "Línea": "MLY",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MLY-50",
           "Diámetro de base": "50/40 mm (mayor/menor)",
           "Altura de base": "40 mm",
@@ -706,9 +989,13 @@
           "Capacidad de carga": "150 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/MLY-1-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/LINEA-MLY.pdf",
           "_excel_row": 64
         },
         {
+          "Línea": "MLY",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MLY-40",
           "Diámetro de base": "40/30 mm (mayor/menor)",
           "Altura de base": "30 mm",
@@ -717,9 +1004,13 @@
           "Capacidad de carga": "90 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/MLY-1-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/LINEA-MLY.pdf",
           "_excel_row": 65
         },
         {
+          "Línea": "MLY",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MLY-30",
           "Diámetro de base": "30/20 mm (mayor/menor)",
           "Altura de base": "30 mm",
@@ -728,9 +1019,13 @@
           "Capacidad de carga": "50 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/MLY-1-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/09/LINEA-MLY.pdf",
           "_excel_row": 66
         },
         {
+          "Línea": "MLZ",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MLZ-80",
           "Diámetro de base": "82/60 mm (mayor/menor)",
           "Altura de base": "40 mm",
@@ -739,9 +1034,13 @@
           "Capacidad de carga": "220 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/MLZ-OF-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/Linea-MLZ.pdf",
           "_excel_row": 67
         },
         {
+          "Línea": "MLZ",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MLZ-50",
           "Diámetro de base": "50/40 mm (mayor/menor)",
           "Altura de base": "40 mm",
@@ -750,9 +1049,13 @@
           "Capacidad de carga": "150 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/MLZ-OF-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/Linea-MLZ.pdf",
           "_excel_row": 68
         },
         {
+          "Línea": "MLZ",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MLZ-40",
           "Diámetro de base": "40/30 mm (mayor/menor)",
           "Altura de base": "30 mm",
@@ -761,9 +1064,13 @@
           "Capacidad de carga": "90 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/MLZ-OF-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/Linea-MLZ.pdf",
           "_excel_row": 69
         },
         {
+          "Línea": "MLZ",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MLZ-30",
           "Diámetro de base": "30/20 mm (mayor/menor)",
           "Altura de base": "30 mm",
@@ -772,9 +1079,13 @@
           "Capacidad de carga": "50 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/MLZ-OF-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/Linea-MLZ.pdf",
           "_excel_row": 70
         },
         {
+          "Línea": "MPC",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MPC-100",
           "Diámetro de base": "100 mm",
           "Altura de base": "55 mm",
@@ -783,9 +1094,13 @@
           "Capacidad de carga": "400 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/7-4.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-MPC-25.pdf",
           "_excel_row": 71
         },
         {
+          "Línea": "MPC",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MPC-80",
           "Diámetro de base": "80 mm",
           "Altura de base": "45 mm",
@@ -794,9 +1109,13 @@
           "Capacidad de carga": "350 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/7-4.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-MPC-25.pdf",
           "_excel_row": 72
         },
         {
+          "Línea": "MPC",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MPC-3*2",
           "Diámetro de base": "3\"",
           "Altura de base": "2 1/2\"",
@@ -805,9 +1124,13 @@
           "Capacidad de carga": "320 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/7-4.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-MPC-25.pdf",
           "_excel_row": 73
         },
         {
+          "Línea": "MPC",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MPC-3",
           "Diámetro de base": "3\"",
           "Altura de base": "1 1/2\"",
@@ -816,9 +1139,13 @@
           "Capacidad de carga": "300 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/7-4.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-MPC-25.pdf",
           "_excel_row": 74
         },
         {
+          "Línea": "MPC",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MPC-2",
           "Diámetro de base": "2\"",
           "Altura de base": "1 1/2\"",
@@ -827,9 +1154,13 @@
           "Capacidad de carga": "160 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/7-4.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-MPC-25.pdf",
           "_excel_row": 75
         },
         {
+          "Línea": "MPC",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MPC-63",
           "Diámetro de base": "63 mm",
           "Altura de base": "68 mm",
@@ -838,9 +1169,13 @@
           "Capacidad de carga": "250 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/7-4.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-MPC-25.pdf",
           "_excel_row": 76
         },
         {
+          "Línea": "MPC",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MPC-2*1",
           "Diámetro de base": "2\"",
           "Altura de base": "1\"",
@@ -849,9 +1184,13 @@
           "Capacidad de carga": "150 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/7-4.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-MPC-25.pdf",
           "_excel_row": 77
         },
         {
+          "Línea": "MPC",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MPC-40",
           "Diámetro de base": "40 mm",
           "Altura de base": "35 mm",
@@ -860,9 +1199,13 @@
           "Capacidad de carga": "90 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/7-4.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-MPC-25.pdf",
           "_excel_row": 78
         },
         {
+          "Línea": "MPC",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MPC-4022",
           "Diámetro de base": "40 mm",
           "Altura de base": "22 mm",
@@ -871,9 +1214,13 @@
           "Capacidad de carga": "60 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/7-4.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-MPC-25.pdf",
           "_excel_row": 79
         },
         {
+          "Línea": "MPC",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MPC-35",
           "Diámetro de base": "35 mm",
           "Altura de base": "30 mm",
@@ -882,9 +1229,13 @@
           "Capacidad de carga": "50 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/7-4.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-MPC-25.pdf",
           "_excel_row": 80
         },
         {
+          "Línea": "MPC",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MPC-32",
           "Diámetro de base": "32 mm",
           "Altura de base": "32 mm",
@@ -893,9 +1244,13 @@
           "Capacidad de carga": "50 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/7-4.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-MPC-25.pdf",
           "_excel_row": 81
         },
         {
+          "Línea": "MPC",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MPC-30",
           "Diámetro de base": "30 mm",
           "Altura de base": "30 mm",
@@ -904,9 +1259,13 @@
           "Capacidad de carga": "50 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/7-4.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-MPC-25.pdf",
           "_excel_row": 82
         },
         {
+          "Línea": "MPC",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MPC-25",
           "Diámetro de base": "25 mm",
           "Altura de base": "20 mm",
@@ -915,9 +1274,13 @@
           "Capacidad de carga": "35 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/7-4.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/08/LINEA-MPC-25.pdf",
           "_excel_row": 83
         },
         {
+          "Línea": "MCD",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MCD-40",
           "Diámetro de base": "40 x 40 mm",
           "Altura de base": "20 mm",
@@ -926,9 +1289,13 @@
           "Capacidad de carga": "90 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2026/02/MCD.png",
+          "Ficha técnica": "https://inahermex.com/producto/tacon-antivibratorio-de-caucho-linea-mcd-de-90-a-150-kg/  (sin PDF propio: ficha en la página)",
           "_excel_row": 84
         },
         {
+          "Línea": "MCD",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MCD-50",
           "Diámetro de base": "50 x 50 mm",
           "Altura de base": "25 mm",
@@ -937,9 +1304,13 @@
           "Capacidad de carga": "150 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2026/02/MCD.png",
+          "Ficha técnica": "https://inahermex.com/producto/tacon-antivibratorio-de-caucho-linea-mcd-de-90-a-150-kg/  (sin PDF propio: ficha en la página)",
           "_excel_row": 85
         },
         {
+          "Línea": "MHD",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MHD-100",
           "Diámetro de base": "100 mm",
           "Altura de base": "55 mm",
@@ -948,9 +1319,13 @@
           "Capacidad de carga": "300 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MHD-principal.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MHD.pdf",
           "_excel_row": 86
         },
         {
+          "Línea": "MHD",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MHD-80",
           "Diámetro de base": "80 mm",
           "Altura de base": "45 mm",
@@ -959,9 +1334,13 @@
           "Capacidad de carga": "250 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MHD-principal.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MHD.pdf",
           "_excel_row": 87
         },
         {
+          "Línea": "MHD",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MHD-3*2",
           "Diámetro de base": "3\"",
           "Altura de base": "2 1/2\"",
@@ -970,9 +1349,13 @@
           "Capacidad de carga": "220 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MHD-principal.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MHD.pdf",
           "_excel_row": 88
         },
         {
+          "Línea": "MHD",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MHD-3",
           "Diámetro de base": "3\"",
           "Altura de base": "1 1/2\"",
@@ -981,9 +1364,13 @@
           "Capacidad de carga": "200 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MHD-principal.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MHD.pdf",
           "_excel_row": 89
         },
         {
+          "Línea": "MHD",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MHD-2",
           "Diámetro de base": "2\"",
           "Altura de base": "1 1/2\"",
@@ -992,9 +1379,13 @@
           "Capacidad de carga": "160 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MHD-principal.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MHD.pdf",
           "_excel_row": 90
         },
         {
+          "Línea": "MHD",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MHD-63",
           "Diámetro de base": "63 mm",
           "Altura de base": "68 mm",
@@ -1003,9 +1394,13 @@
           "Capacidad de carga": "200 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MHD-principal.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MHD.pdf",
           "_excel_row": 91
         },
         {
+          "Línea": "MHD",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MHD-2*1",
           "Diámetro de base": "2\"",
           "Altura de base": "1\"",
@@ -1014,9 +1409,13 @@
           "Capacidad de carga": "150 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MHD-principal.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MHD.pdf",
           "_excel_row": 92
         },
         {
+          "Línea": "MHD",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MHD-40",
           "Diámetro de base": "40 mm",
           "Altura de base": "35 mm",
@@ -1025,9 +1424,13 @@
           "Capacidad de carga": "90 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MHD-principal.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MHD.pdf",
           "_excel_row": 93
         },
         {
+          "Línea": "MHD",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MHD-4022",
           "Diámetro de base": "40 mm",
           "Altura de base": "22 mm",
@@ -1036,9 +1439,13 @@
           "Capacidad de carga": "60 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MHD-principal.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MHD.pdf",
           "_excel_row": 94
         },
         {
+          "Línea": "MHD",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MHD-35",
           "Diámetro de base": "35 mm",
           "Altura de base": "30 mm",
@@ -1047,9 +1454,13 @@
           "Capacidad de carga": "50 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MHD-principal.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MHD.pdf",
           "_excel_row": 95
         },
         {
+          "Línea": "MHD",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MHD-32",
           "Diámetro de base": "32 mm",
           "Altura de base": "32 mm",
@@ -1058,9 +1469,13 @@
           "Capacidad de carga": "50 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MHD-principal.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MHD.pdf",
           "_excel_row": 96
         },
         {
+          "Línea": "MHD",
+          "Tipo": "Tacones antivibración",
           "Modelo": "MHD-30",
           "Diámetro de base": "30 mm",
           "Altura de base": "30 mm",
@@ -1069,9 +1484,13 @@
           "Capacidad de carga": "50 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2022/08/MHD-principal.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-MHD.pdf",
           "_excel_row": 97
         },
         {
+          "Línea": "THN",
+          "Tipo": "Tapete antivibratorio",
           "Modelo": "THN",
           "Diámetro de base": "9\" x 9\"",
           "Altura de base": "1/2\" (grosor)",
@@ -1080,6 +1499,8 @@
           "Capacidad de carga": "2000 KG",
           "Material de elastómero": "Caucho (NR/SBR) negro, 65 ± 5 Shore A",
           "Material de tornillo": "Acero galvanizado (inoxidable T-304 sobre pedido)",
+          "Imagen": "https://inahermex.com/wp-content/uploads/2025/03/tapete-1-1030x1030.png",
+          "Ficha técnica": "https://inahermex.com/wp-content/uploads/2025/04/Linea-THN.pdf",
           "_excel_row": 98
         }
       ]

@@ -896,6 +896,435 @@ Elegir mi nivelador | SMAV INAHER
   font-size: 11px;
   font-weight: 800;
 }  
+
+  /* =======================================================
+     RESULTADOS NIVELADOR V2
+     ======================================================= */
+
+  .result-filter-chip {
+    padding: 12px 15px;
+    color: #38556b;
+    font-size: 11px;
+    font-weight: 800;
+    background:
+      linear-gradient(
+        135deg,
+        #ffffff,
+        #f1f8fc
+      );
+    border: 1px solid #d2e3ed;
+  }
+
+
+  .result-list {
+    gap: 16px;
+  }
+
+
+  .result-card {
+    padding: 0;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #d7e4ec;
+    border-radius: 18px;
+    box-shadow:
+      0 10px 26px
+      rgba(3, 49, 91, 0.08);
+  }
+
+
+  .result-card-featured {
+    background: #ffffff;
+    border: 2px solid #89d3ef;
+    box-shadow:
+      0 14px 34px
+      rgba(3, 49, 91, 0.12);
+  }
+
+
+  .result-product-head {
+    display: grid;
+    grid-template-columns:
+      105px
+      minmax(0, 1fr);
+    align-items: center;
+    gap: 17px;
+    padding: 18px;
+  }
+
+
+  .result-product-icon {
+    display: grid;
+    place-items: center;
+    width: 105px;
+    height: 105px;
+    color: var(--primary);
+    background:
+      linear-gradient(
+        145deg,
+        #ffffff,
+        #e9f6fc
+      );
+    border: 1px solid #c8e5f1;
+    border-radius: 16px;
+  }
+
+
+  .result-product-icon svg {
+    width: 60px;
+    height: 60px;
+  }
+
+
+  .result-product-copy {
+    min-width: 0;
+  }
+
+
+  .result-badge,
+  .result-alternative-label {
+    display: inline-flex;
+    padding: 5px 8px;
+    margin-bottom: 6px;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    border-radius: 999px;
+  }
+
+
+  .result-badge {
+    color: #166534;
+    background: #dcfce7;
+    border: 1px solid #bbf7d0;
+  }
+
+
+  .result-alternative-label {
+    color: #075985;
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
+  }
+
+
+  .result-card h3 {
+    margin: 0;
+    color: var(--primary);
+    font-size:
+      clamp(
+        23px,
+        2.5vw,
+        31px
+      );
+    font-weight: 900;
+    line-height: 1.05;
+  }
+
+
+  .result-product-type {
+    display: block;
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+
+  .result-product-capacity {
+    display: inline-grid;
+    gap: 2px;
+    min-width: 170px;
+    padding: 9px 12px;
+    margin-top: 11px;
+    background: #f3f8fb;
+    border: 1px solid #d7e5ed;
+    border-radius: 10px;
+  }
+
+
+  .result-product-capacity small {
+    color: var(--muted);
+    font-size: 8px;
+    font-weight: 800;
+  }
+
+
+  .result-product-capacity strong {
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+
+  .result-spec-title {
+    padding: 11px 16px;
+    color: var(--accent-hover);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    background: #f8fbfd;
+    border-top: 1px solid #e0eaf0;
+    border-bottom: 1px solid #e0eaf0;
+  }
+
+
+  .result-spec-grid {
+    display: grid;
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+
+  .result-spec-grid > div {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+    padding: 13px 16px;
+    border-right: 1px solid #e3ebf0;
+    border-bottom: 1px solid #e3ebf0;
+  }
+
+
+  .result-spec-grid > div:nth-child(2n) {
+    border-right: none;
+  }
+
+
+  .result-spec-grid small,
+  .result-thread-section small {
+    color: var(--muted);
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.35px;
+    text-transform: uppercase;
+  }
+
+
+  .result-spec-grid strong,
+  .result-thread-section strong {
+    color: var(--primary);
+    font-size: 10.5px;
+    font-weight: 800;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+
+  .result-thread-section {
+    display: grid;
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+    gap: 10px;
+    padding: 14px 16px;
+    background: #fbfdfe;
+  }
+
+
+  .result-thread-section > div {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+    padding: 10px 11px;
+    background: #ffffff;
+    border: 1px solid #dce7ed;
+    border-radius: 10px;
+  }
+
+
+  .result-card-action {
+    width: auto;
+    min-height: 46px;
+    margin: 0 16px 16px;
+    color: #ffffff;
+    font-size: 11px;
+    background: var(--primary);
+    border: 2px solid var(--primary);
+    border-radius: 11px;
+  }
+
+
+  .result-card-action:hover {
+    color: #ffffff;
+    background: #0a4f82;
+  }
+
+
+  @media (min-width: 900px) {
+
+    .result-list {
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
+      align-items: start;
+    }
+
+
+    .result-card-featured {
+      grid-column: 1 / -1;
+    }
+
+
+    .result-card-featured
+    .result-product-head {
+      grid-template-columns:
+        135px
+        minmax(0, 1fr);
+    }
+
+
+    .result-card-featured
+    .result-product-icon {
+      width: 135px;
+      height: 135px;
+    }
+
+  }
+
+
+  @media (max-width: 560px) {
+
+    .result-product-head {
+      grid-template-columns:
+        78px
+        minmax(0, 1fr);
+      gap: 12px;
+      padding: 14px;
+    }
+
+
+    .result-product-icon {
+      width: 78px;
+      height: 78px;
+    }
+
+
+    .result-product-icon svg {
+      width: 45px;
+      height: 45px;
+    }
+
+
+    .result-card h3 {
+      font-size: 22px;
+    }
+
+
+    .result-product-capacity {
+      min-width: 0;
+      width: 100%;
+    }
+
+
+    .result-spec-grid,
+    .result-thread-section {
+      grid-template-columns: 1fr;
+    }
+
+
+    .result-spec-grid > div,
+    .result-spec-grid > div:nth-child(2n) {
+      border-right: none;
+    }
+
+  }
+
+
+
+
+  /* =======================================================
+     IMAGENES REALES DE NIVELADORES
+     ======================================================= */
+
+  .result-product-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 105px;
+    height: 105px;
+    padding: 8px;
+    overflow: hidden;
+    background:
+      linear-gradient(
+        145deg,
+        #ffffff,
+        #edf7fb
+      );
+    border: 1px solid #cfe4ee;
+    border-radius: 15px;
+  }
+
+
+  .result-product-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+
+  .result-product-image-placeholder {
+    display: grid;
+    place-items: center;
+    gap: 4px;
+    color: #8ba0b1;
+    text-align: center;
+  }
+
+
+  .result-product-image-placeholder span {
+    font-size: 30px;
+  }
+
+
+  .result-product-image-placeholder small {
+    font-size: 8px;
+    font-weight: 700;
+  }
+
+
+  .result-product-kicker {
+    display: block;
+    margin-bottom: 3px;
+    color: var(--accent-hover);
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+  }
+
+
+  @media (min-width: 900px) {
+
+    .result-card-featured
+    .result-product-image {
+      width: 135px;
+      height: 135px;
+    }
+
+  }
+
+
+  @media (max-width: 560px) {
+
+    .result-product-image {
+      width: 78px;
+      height: 78px;
+    }
+
+  }
+
+
 </style>
 {% endblock %}
 
@@ -1152,107 +1581,232 @@ Elegir mi nivelador | SMAV INAHER
           "article"
         );
 
+
       card.className =
         "result-card";
+
 
       if (featured) {
         card.classList.add(
           "result-card-featured"
         );
-
-        const badge =
-          document.createElement(
-            "span"
-          );
-
-        badge.className =
-          "result-badge";
-
-        badge.textContent =
-          "Recomendado";
-
-        card.appendChild(badge);
       }
 
-      const title =
-        document.createElement("h3");
 
-      title.textContent =
-        product.model;
+      const metricThreads =
+        Array.isArray(
+          product.metric_threads
+        )
+          ? product.metric_threads.join(", ")
+          : "";
 
-      card.appendChild(title);
 
-      addProductRow(
-        card,
-        "Capacidad",
-        product.capacity_label
-      );
+      const standardThreads =
+        Array.isArray(
+          product.standard_threads
+        )
+          ? product.standard_threads.join(", ")
+          : "";
 
-      addProductRow(
-        card,
-        "Tipo",
-        product.type
-      );
 
-      addProductRow(
-        card,
-        "Diámetro de base",
-        product.base_diameter
-      );
+      const badge = featured
+        ? `
+          <span class="result-badge">
+            Recomendado
+          </span>
+        `
+        : `
+          <span class="result-alternative-label">
+            Alternativa compatible
+          </span>
+        `;
 
-      addProductRow(
-        card,
-        "Altura de tornillo",
-        product.screw_height
-      );
 
-      addProductRow(
-        card,
-        "Material del tornillo",
-        product.screw_material
-      );
+      const imageMarkup =
+        product.image_url
+          ? `
+            <img
+              src="${product.image_url}"
+              alt="Imagen del nivelador ${product.model || ""}"
+              loading="lazy"
+            >
+          `
+          : `
+            <div class="result-product-image-placeholder">
+              <span aria-hidden="true">
+                ◫
+              </span>
 
-      addProductRow(
-        card,
-        "Material de la base",
-        product.base_material
-      );
+              <small>
+                Imagen no disponible
+              </small>
+            </div>
+          `;
 
-      addProductRow(
-        card,
-        "Roscas métricas",
-        product.metric_threads
-      );
 
-      addProductRow(
-        card,
-        "Roscas estándar",
-        product.standard_threads
-      );
+      const productLink =
+        product.product_url
+          ? `
+            <a
+              class="result-card-action"
+              href="${product.product_url}"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ver ficha del producto
+            </a>
+          `
+          : `
+            <a
+              class="result-card-action"
+              href="${catalogUrl}"
+            >
+              Ver catálogo
+            </a>
+          `;
 
-      if (featured) {
-        const link =
-          document.createElement("a");
 
-        link.className =
-          "result-card-action";
+      card.innerHTML = `
+        <div class="result-product-head">
 
-        link.href =
-          product.product_url
-          || catalogUrl;
+          <div class="result-product-image">
+            ${imageMarkup}
+          </div>
 
-        link.textContent =
-          product.product_url
-            ? "Ver ficha del producto"
-            : "Ver catálogo";
 
-        if (product.product_url) {
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
-        }
+          <div class="result-product-copy">
 
-        card.appendChild(link);
-      }
+            ${badge}
+
+
+            <span class="result-product-kicker">
+              Modelo seleccionado
+            </span>
+
+
+            <h3>
+              ${product.model || "Modelo"}
+            </h3>
+
+
+            <span class="result-product-type">
+              ${product.type || "Nivelador"}
+            </span>
+
+
+            <div class="result-product-capacity">
+
+              <small>
+                Capacidad por punto
+              </small>
+
+              <strong>
+                ${product.capacity_label || "—"}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="result-spec-title">
+
+          <div>
+            <small>
+              Información del producto
+            </small>
+
+            <strong>
+              Datos para validar instalación
+            </strong>
+          </div>
+
+          <span>
+            Catálogo INAHER
+          </span>
+
+        </div>
+
+
+        <div class="result-spec-grid">
+
+          <div>
+            <small>
+              Diámetro de base
+            </small>
+
+            <strong>
+              ${product.base_diameter || "No indicado"}
+            </strong>
+          </div>
+
+
+          <div>
+            <small>
+              Altura de tornillo
+            </small>
+
+            <strong>
+              ${product.screw_height || "No indicada"}
+            </strong>
+          </div>
+
+
+          <div>
+            <small>
+              Material del tornillo
+            </small>
+
+            <strong>
+              ${product.screw_material || "No indicado"}
+            </strong>
+          </div>
+
+
+          <div>
+            <small>
+              Material de base
+            </small>
+
+            <strong>
+              ${product.base_material || "No indicado"}
+            </strong>
+          </div>
+
+        </div>
+
+
+        <div class="result-thread-section">
+
+          <div>
+            <small>
+              Roscas métricas disponibles
+            </small>
+
+            <strong>
+              ${metricThreads || "No disponibles"}
+            </strong>
+          </div>
+
+
+          <div>
+            <small>
+              Roscas estándar disponibles
+            </small>
+
+            <strong>
+              ${standardThreads || "No disponibles"}
+            </strong>
+          </div>
+
+        </div>
+
+
+        ${productLink}
+      `;
+
 
       return card;
     }
@@ -1342,36 +1896,28 @@ Elegir mi nivelador | SMAV INAHER
         )
         + " apoyos):";
 
-      const requestedThread =
-        data.requested_thread
-        || "Sin preferencia";
-
       const requestedFeatures =
         Array.isArray(
           data.requested_features
         )
         && data.requested_features.length
           ? data.requested_features.join(", ")
-          : "Sin preferencia";
+          : "Sin características especiales";
 
-      const diameter =
-        data.requested_base_diameter
-        || "Sin preferencia";
 
-      const height =
-        data.requested_screw_height
-        || "Sin preferencia";
+      const applicationLabel =
+        data.application === "furniture"
+          ? "Mobiliario"
+          : "Maquinaria y equipos industriales";
+
 
       setFilterChip(
-        "Características: "
+        "Aplicación: "
+        + applicationLabel
+        + " · Características: "
         + requestedFeatures
-        + " · Rosca: "
-        + requestedThread
-        + " · Diámetro: "
-        + diameter
-        + " · Altura: "
-        + height
       );
+
 
       resultBlueBanner.hidden = true;
 
@@ -1413,8 +1959,8 @@ Elegir mi nivelador | SMAV INAHER
         } else {
           setExtraMessage(
             "Coincidencia encontrada.",
-            " Este modelo cumple los filtros "
-            + "capturados."
+            " Este modelo cumple la carga y las "
+            + "características capturadas."
           );
         }
 
