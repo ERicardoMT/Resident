@@ -174,3 +174,188 @@ class CatalogItem(models.Model):
 
     def __str__(self):
         return self.name
+    
+class AntivibrationTechnicalData(models.Model):
+    """
+    Información técnica de un soporte antivibratorio.
+
+    Los campos utilizados para la recomendación
+    provienen de la hoja de cálculo de INAHER.
+    """
+
+    product = models.OneToOneField(
+        CatalogItem,
+        on_delete=models.CASCADE,
+        related_name="antivibration_data",
+    )
+
+    model_code = models.CharField(
+        max_length=160,
+        unique=True,
+        db_index=True,
+    )
+
+    base_diameter = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    base_height = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    screw_diameter = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    screw_height = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    capacity_label = models.CharField(
+        max_length=120,
+        blank=True,
+    )
+
+    capacity_kg = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        db_index=True,
+    )
+
+    elastomer_material = models.TextField(
+        blank=True,
+    )
+
+    screw_material = models.TextField(
+        blank=True,
+    )
+
+    source_file = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    source_sheet = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    source_row = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+    )
+
+    raw_data = models.JSONField(
+        default=dict,
+        blank=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    def __str__(self):
+        return self.model_code
+
+
+class LevelerTechnicalData(models.Model):
+    """
+    Información técnica de un nivelador.
+
+    Los campos utilizados para la recomendación
+    provienen de la hoja de cálculo de INAHER.
+    """
+
+    product = models.OneToOneField(
+        CatalogItem,
+        on_delete=models.CASCADE,
+        related_name="leveler_data",
+    )
+
+    model_code = models.CharField(
+        max_length=160,
+        unique=True,
+        db_index=True,
+    )
+
+    capacity_label = models.CharField(
+        max_length=120,
+        blank=True,
+    )
+
+    capacity_kg = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        db_index=True,
+    )
+
+    type_label = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    metric_threads = models.TextField(
+        blank=True,
+    )
+
+    standard_threads = models.TextField(
+        blank=True,
+    )
+
+    base_diameter = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    screw_height = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    screw_material = models.TextField(
+        blank=True,
+    )
+
+    base_material = models.TextField(
+        blank=True,
+    )
+
+    product_url = models.URLField(
+        max_length=700,
+        blank=True,
+    )
+
+    source_file = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    source_sheet = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    source_row = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+    )
+
+    raw_data = models.JSONField(
+        default=dict,
+        blank=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    def __str__(self):
+        return self.model_code
