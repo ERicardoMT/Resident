@@ -36,9 +36,9 @@
 
         <!-- Imagen del producto -->
         <div class="product-image-box">
-            {% if producto.image %}
+            {% if producto.catalog_image_url %}
                 <img
-                    src="{{ producto.image.url }}"
+                    src="{{ producto.catalog_image_url }}"
                     alt="{{ producto.name }}"
                     class="product-image"
                 >

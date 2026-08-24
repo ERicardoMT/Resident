@@ -159,13 +159,67 @@ class CatalogItem(models.Model):
         return self.model_3d or self.ar_model
 
     @property
-    def model_url(self):
-        model_file = self.model_file
+    def catalog_image_url(self):
+        """
+        Devuelve la mejor imagen disponible para cualquier
+        producto del catálogo.
 
-        if not model_file:
-            return ""
+        Prioridad:
+        1. Imagen subida manualmente.
+        2. Imagen importada del Excel de antivibratorios.
+        3. Imagen importada del Excel de niveladores.
+        """
 
-        return model_file.url
+        # Imagen subida desde el panel.
+        if self.image and self.image.name:
+            return self.image.url
+
+        technical_sources = (
+            "antivibration_data",
+            "leveler_data",
+        )
+
+        image_fields = (
+            "Imagen",
+            "Imagen principal (URL)",
+            "Imagen principal",
+            "URL de imagen",
+            "Imagen URL",
+        )
+
+        for relation_name in technical_sources:
+            technical_data = getattr(
+                self,
+                relation_name,
+                None,
+            )
+
+            if not technical_data:
+                continue
+
+            raw_data = (
+                technical_data.raw_data
+                or {}
+            )
+
+            for field_name in image_fields:
+                image_url = str(
+                    raw_data.get(
+                        field_name,
+                        "",
+                    )
+                    or ""
+                ).strip()
+
+                if image_url.startswith(
+                    (
+                        "http://",
+                        "https://",
+                    )
+                ):
+                    return image_url
+
+        return ""
 
     class Meta:
         ordering = ["sort_order", "name"]

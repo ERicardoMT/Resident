@@ -82,17 +82,22 @@ def get_value(
 ):
     """
     Obtiene un campo independientemente
-    de mayúsculas o acentos.
+    de mayúsculas o acentos, respetando
+    el orden de prioridad de names.
     """
 
-    normalized_names = {
-        normalize(name)
-        for name in names
+    normalized_record = {
+        normalize(key): value
+        for key, value in record.items()
     }
 
-    for key, value in record.items():
-        if normalize(key) in normalized_names:
-            return value
+    for name in names:
+        normalized_name = normalize(name)
+
+        if normalized_name in normalized_record:
+            return normalized_record[
+                normalized_name
+            ]
 
     return ""
 
@@ -415,8 +420,6 @@ def antivibration_subcategory(
         "Subcategoria",
         "Tipo",
         "Familia",
-        "Línea",
-        "Linea",
     )
 
     text = normalize(

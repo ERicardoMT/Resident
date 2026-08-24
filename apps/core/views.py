@@ -438,10 +438,20 @@ def catalogo_view(request):
     )
 
 def antivibratorios_view(request):
-    productos = CatalogItem.objects.filter(
-        category=CatalogCategory.ANTIVIBRATORIOS,
-        is_active=True,
-    ).order_by("-id")
+    productos = (
+        CatalogItem.objects
+        .filter(
+            category=(
+                CatalogCategory
+                .ANTIVIBRATORIOS
+            ),
+            is_active=True,
+        )
+        .select_related(
+            "antivibration_data"
+        )
+        .order_by("-id")
+    )
 
     return render(
         request,
@@ -452,10 +462,20 @@ def antivibratorios_view(request):
     )
 
 def patas_niveladoras_view(request):
-    productos = CatalogItem.objects.filter(
-        category=CatalogCategory.PATAS_NIVELADORAS,
-        is_active=True,
-    ).order_by("-id")
+    productos = (
+        CatalogItem.objects
+        .filter(
+            category=(
+                CatalogCategory
+                .PATAS_NIVELADORAS
+            ),
+            is_active=True,
+        )
+        .select_related(
+            "leveler_data"
+        )
+        .order_by("-id")
+    )
 
     return render(
         request,
@@ -480,10 +500,20 @@ def accionamiento_view(request):
     )
 
 def mobiliario_view(request):
-    productos = CatalogItem.objects.filter(
-        category=CatalogCategory.MOBILIARIO,
-        is_active=True,
-    ).order_by("-id")
+    productos = (
+        CatalogItem.objects
+        .filter(
+            category=(
+                CatalogCategory
+                .MOBILIARIO
+            ),
+            is_active=True,
+        )
+        .select_related(
+            "leveler_data"
+        )
+        .order_by("-id")
+    )
 
     return render(
         request,
