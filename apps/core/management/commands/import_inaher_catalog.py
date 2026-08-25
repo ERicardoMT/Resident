@@ -226,17 +226,30 @@ def read_records(
 
             value = cell.value
 
-            # Cuando la celda tiene hipervínculo,
-            # conservamos el URL real.
+            # Si la propia celda ya contiene una URL válida,
+            # conservamos ese valor.
+            #
+            # Solo usamos el hipervínculo interno de Excel
+            # cuando la celda no contiene directamente una URL.
             if (
                 cell.hyperlink
                 and normalize(header).startswith(
                     "url"
                 )
             ):
-                value = (
-                    cell.hyperlink.target
-                    or value
+                current_value = str(
+                    value or ""
+                ).strip()
+
+                if not current_value.startswith(
+                    (
+                        "http://",
+                        "https://",
+                    )
+                ):
+                    value = (
+                        cell.hyperlink.target
+                        or value
                 )
 
             value = json_safe_value(
@@ -266,18 +279,43 @@ def build_description(
     record: dict[str, Any],
 ) -> str:
     """
-    Genera una ficha técnica básica para
-    la página de detalle del catálogo.
+    Genera la ficha técnica HTML.
 
-    Todos los valores son escapados antes
-    de introducirlos en HTML.
+    Normaliza los nombres de las columnas
+    y coloca Imagen y Ficha técnica
+    al final, siempre en ese orden.
     """
 
     rows = []
 
+    image_row = ""
+    technical_sheet_row = ""
+
+    field_labels = {
+        "imagen": "Imagen",
+        "imagen principal (url)": "Imagen",
+        "imagen principal": "Imagen",
+
+        "ficha tecnica": "Ficha técnica",
+        "url de ficha": "Ficha técnica",
+    }
+
+    ignored_fields = {
+        "vista previa",
+        "vista previa (excel 365 / sheets)",
+    }
+
     for field, value in record.items():
 
         if field.startswith("_"):
+            continue
+
+        normalized_field = normalize(
+            field
+        )
+
+        # Ignorar columnas auxiliares.
+        if normalized_field in ignored_fields:
             continue
 
         text = str(
@@ -287,8 +325,13 @@ def build_description(
         if not text:
             continue
 
+        display_field = field_labels.get(
+            normalized_field,
+            str(field),
+        )
+
         safe_field = escape(
-            str(field)
+            display_field
         )
 
         safe_value = escape(
@@ -309,11 +352,39 @@ def build_description(
                 "</a>"
             )
 
-        rows.append(
+        row = (
             "<tr>"
             f"<th>{safe_field}</th>"
             f"<td>{safe_value}</td>"
             "</tr>"
+        )
+
+        # Guardamos estas dos filas para
+        # colocarlas siempre al final.
+        if display_field == "Imagen":
+            image_row = row
+            continue
+
+        if display_field == "Ficha técnica":
+            technical_sheet_row = row
+            continue
+
+        rows.append(
+            row
+        )
+
+    # Orden fijo:
+    # 1. Imagen
+    # 2. Ficha técnica
+
+    if image_row:
+        rows.append(
+            image_row
+        )
+
+    if technical_sheet_row:
+        rows.append(
+            technical_sheet_row
         )
 
     if not rows:
