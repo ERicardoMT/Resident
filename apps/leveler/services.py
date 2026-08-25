@@ -797,7 +797,7 @@ def recommend_levelers_v2(
     capacity_queryset = (
         application_queryset
         .filter(
-            capacity_kg__gte=(
+            capacity_kg__gt=(
                 load_per_point
             )
         )

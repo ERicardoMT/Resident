@@ -249,7 +249,7 @@ def recommend_antivibrators(
     candidates = (
         catalog_queryset
         .filter(
-            capacity_kg__gte=(
+            capacity_kg__gt=(
                 required_load
             )
         )
