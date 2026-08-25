@@ -220,6 +220,82 @@ class CatalogItem(models.Model):
                     return image_url
 
         return ""
+    
+    @property
+    def catalog_technical_sheet_url(self):
+        """
+        Devuelve la mejor ficha técnica disponible.
+
+        Busca primero un URL técnico explícito
+        y después los datos importados del Excel.
+        """
+
+        technical_sources = (
+            "antivibration_data",
+            "leveler_data",
+        )
+
+        sheet_fields = (
+            "Ficha técnica",
+            "Ficha tecnica",
+            "URL de ficha",
+            "Ficha técnica (URL)",
+            "Ficha tecnica (URL)",
+            "Ficha",
+        )
+
+        for relation_name in technical_sources:
+            technical_data = getattr(
+                self,
+                relation_name,
+                None,
+            )
+
+            if not technical_data:
+                continue
+
+            # Los niveladores tienen product_url
+            # como campo propio.
+            direct_url = str(
+                getattr(
+                    technical_data,
+                    "product_url",
+                    "",
+                )
+                or ""
+            ).strip()
+
+            if direct_url.startswith(
+                (
+                    "http://",
+                    "https://",
+                )
+            ):
+                return direct_url.split()[0]
+
+            raw_data = (
+                technical_data.raw_data
+                or {}
+            )
+
+            for field_name in sheet_fields:
+                sheet_url = str(
+                    raw_data.get(
+                        field_name,
+                        "",
+                    )
+                    or ""
+                ).strip()
+
+                if sheet_url.startswith(
+                    (
+                        "http://",
+                        "https://",
+                    )
+                ):
+                    return sheet_url.split()[0]
+
+        return ""
 
     class Meta:
         ordering = ["sort_order", "name"]

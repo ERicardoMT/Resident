@@ -94,6 +94,12 @@ def serialize_product(
 
         "screw_material":
             product.screw_material,
+
+        "image_url":
+            product.product.catalog_image_url,
+
+        "technical_sheet_url":
+            product.product.catalog_technical_sheet_url,
     }
 
 
