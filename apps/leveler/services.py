@@ -341,56 +341,12 @@ def serialize_capacity(
 def get_image_url(
     product: LevelerTechnicalData,
 ) -> str:
-    """
-    Usa primero una imagen cargada
-    directamente en CatalogItem.
 
-    Como respaldo busca una URL
-    almacenada en la fila original
-    importada desde Excel.
-    """
 
-    catalog_product = (
-        product.product
+    return (
+        product.product.catalog_image_url
+        or ""
     )
-
-    if (
-        catalog_product.image
-        and catalog_product.image.name
-    ):
-        try:
-            return (
-                catalog_product.image.url
-            )
-        except ValueError:
-            pass
-
-    raw_data = (
-        product.raw_data
-        if isinstance(
-            product.raw_data,
-            dict,
-        )
-        else {}
-    )
-
-    for field_name in (
-        "Imagen principal",
-        "Imagen",
-        "URL de imagen",
-    ):
-        value = str(
-            raw_data.get(
-                field_name,
-                "",
-            )
-            or ""
-        ).strip()
-
-        if value:
-            return value
-
-    return ""
 
 
 def serialize_product(
