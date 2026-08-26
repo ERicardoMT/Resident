@@ -151,6 +151,28 @@ class CatalogItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property
+    def model_url(self):
+        """
+        Devuelve la URL del archivo GLB disponible.
+
+        Usa primero model_3d y conserva compatibilidad
+        con los archivos antiguos almacenados en ar_model.
+        """
+
+        model_file = self.model_file
+
+        if (
+            not model_file
+            or not model_file.name
+        ):
+            return ""
+
+        try:
+            return model_file.url
+        except ValueError:
+            return ""
+
+    @property
     def model_file(self):
         """
         Usa primero el modelo agregado con la implementación actual.
