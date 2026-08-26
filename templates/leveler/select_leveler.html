@@ -172,29 +172,10 @@ Elegir mi nivelador | SMAV INAHER
           El peso se reparte entre los apoyos; con este dato elegimos el modelo.
         </span>
       </div>
-<div class="selector-field">
-  <label>
-    ¿Necesitas alguna característica especial?
-  </label>
 
-  <div class="selector-feature-grid">
-    {% for feature in selector_options.type_features %}
-      <label class="selector-feature-option">
-        <input
-          type="checkbox"
-          name="features"
-          value="{{ feature }}"
-        >
-        <span>{{ feature }}</span>
-      </label>
-    {% endfor %}
-  </div>
-</div>
-
-
-<p class="selector-weight-hint">
-        ¿No sabes el peso exacto? Usa un aproximado
-      </p>
+    <p class="selector-weight-hint">
+      ¿No sabes el peso exacto? Usa un aproximado
+    </p>
 
       <button
         id="selector-step-2-continue"
@@ -241,6 +222,100 @@ Elegir mi nivelador | SMAV INAHER
     <p id="result-summary" class="result-summary"></p>
 
     <div id="result-filter-block" class="result-filter-block"></div>
+
+    <div
+      id="result-feature-selector"
+      class="result-feature-selector"
+    >
+      <details
+          id="result-feature-details"
+          class="result-feature-details"
+      >
+          <summary class="result-feature-summary">
+
+            <div class="result-feature-summary-copy">
+              <span class="result-feature-kicker">
+                Ajustar recomendación
+              </span>
+
+              <strong>
+                Características especiales
+              </strong>
+
+              <small id="result-feature-selection-label">
+                Sin características especiales
+              </small>
+            </div>
+
+            <span
+              class="result-feature-arrow"
+              aria-hidden="true"
+            >
+              ›
+            </span>
+
+          </summary>
+
+
+          <div
+            id="result-feature-menu"
+            class="result-feature-menu"
+          >
+
+            <p class="result-feature-help">
+              Selecciona una o varias características y
+              actualizaremos la recomendación automáticamente.
+            </p>
+
+
+            <div class="result-feature-grid">
+
+              {% for feature in selector_options.type_features %}
+
+                <label class="result-feature-option">
+
+                  <input
+                    type="checkbox"
+                    name="features"
+                    value="{{ feature }}"
+                  >
+
+                  <span class="result-feature-check">
+                    ✓
+                  </span>
+
+                  <span class="result-feature-name">
+                    {{ feature }}
+                  </span>
+
+                </label>
+
+              {% endfor %}
+
+            </div>
+
+            <div class="result-feature-footer">
+
+              <span
+                id="result-feature-status"
+                class="result-feature-status"
+                aria-live="polite"
+              ></span>
+
+              <button
+                id="result-feature-clear"
+                type="button"
+                class="result-feature-clear"
+              >
+                Limpiar selección
+              </button>
+
+            </div>
+
+          </div>
+
+      </details>
+    </div>
 
     <div id="result-warning" class="result-warning" hidden></div>
 
@@ -915,7 +990,322 @@ Elegir mi nivelador | SMAV INAHER
     border: 1px solid #d2e3ed;
   }
 
+  /* =======================================================
+   FILTRO DE CARACTERÍSTICAS EN RESULTADO
+   ======================================================= */
 
+  .result-feature-selector {
+    margin-top: 10px;
+    margin-bottom: 16px;
+  }
+
+  .result-feature-details {
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #cfe1eb;
+    border-radius: 14px;
+
+    box-shadow:
+      0 7px 18px
+    rgba(3, 49, 91, 0.06);
+
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .result-feature-details[open] {
+    border-color: #7fcce9;
+
+    box-shadow:
+      0 11px 25px
+    rgba(3, 49, 91, 0.1);
+  }
+
+
+  .result-feature-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 14px;
+
+    min-height: 65px;
+    padding: 13px 16px;
+
+    list-style: none;
+
+    cursor: pointer;
+
+    background:
+      linear-gradient(
+        135deg,
+      #ffffff,
+      #f1f9fc
+      );
+
+    -webkit-tap-highlight-color: transparent;
+  }
+
+
+  .result-feature-summary::-webkit-details-marker {
+    display: none;
+  }
+
+
+  .result-feature-summary::marker {
+    content: "";
+  }
+
+
+  .result-feature-summary-copy {
+    display: grid;
+    gap: 2px;
+
+    min-width: 0;
+  }
+
+
+  .result-feature-kicker {
+    color: var(--accent-hover);
+
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.65px;
+
+    text-transform: uppercase;
+  }
+
+
+  .result-feature-summary strong {
+    color: var(--primary);
+
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+
+  .result-feature-summary small {
+    color: var(--muted);
+
+    font-size: 9px;
+    font-weight: 700;
+
+    line-height: 1.4;
+  }
+
+
+  .result-feature-arrow {
+    display: grid;
+    flex: 0 0 auto;
+
+    place-items: center;
+
+    width: 34px;
+    height: 34px;
+
+    color: var(--accent-hover);
+
+    font-size: 25px;
+    font-weight: 800;
+
+    background: #e8f7fc;
+
+    border: 1px solid #bfe5f2;
+    border-radius: 10px;
+
+    transition:
+      transform 0.2s ease;
+  }
+
+
+  .result-feature-details[open]
+  .result-feature-arrow {
+    transform: rotate(90deg);
+  }
+
+
+  .result-feature-menu {
+    padding: 15px;
+
+    background: #fbfdfe;
+
+    border-top: 1px solid #dce8ef;
+  }
+
+
+  .result-feature-help {
+    margin: 0 0 12px;
+
+    color: var(--muted);
+
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+
+  .result-feature-grid {
+    display: grid;
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+
+    gap: 9px;
+  }
+
+
+  .result-feature-option {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    min-height: 47px;
+    padding: 10px 12px;
+
+    cursor: pointer;
+
+    background: #ffffff;
+
+    border: 1px solid #d5e4ec;
+    border-radius: 11px;
+
+    transition:
+      border-color 0.18s ease,
+      background-color 0.18s ease,
+      box-shadow 0.18s ease,
+      transform 0.18s ease;
+  }
+
+
+  .result-feature-option:hover {
+    border-color: #8ed3eb;
+
+    transform: translateY(-1px);
+  }
+
+
+  .result-feature-option input {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+    pointer-events: none;
+  }
+
+
+  .result-feature-check {
+    display: grid;
+    flex: 0 0 auto;
+
+    place-items: center;
+
+    width: 22px;
+    height: 22px;
+
+    color: transparent;
+
+    font-size: 12px;
+    font-weight: 900;
+
+    background: #f1f6f9;
+
+    border: 1px solid #bcced9;
+    border-radius: 6px;
+
+    transition:
+      color 0.18s ease,
+      background-color 0.18s ease,
+      border-color 0.18s ease;
+  }
+
+
+  .result-feature-name {
+    color: var(--primary);
+
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+
+  .result-feature-option:has(input:checked) {
+    background: #edf9fd;
+    border-color: #53bde4;
+
+    box-shadow:
+      0 4px 12px
+    rgba(24, 166, 217, 0.12);
+  }
+
+
+  .result-feature-option
+  input:checked
+  ~ .result-feature-check {
+    color: #ffffff;
+
+    background: var(--accent-hover);
+
+    border-color: var(--accent-hover);
+  }
+
+
+  .result-feature-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-top: 13px;
+  }
+
+
+  .result-feature-status {
+    color: var(--accent-hover);
+
+    font-size: 9px;
+    font-weight: 800;
+  }
+
+
+  .result-feature-clear {
+    min-height: 34px;
+    padding: 7px 11px;
+
+    color: var(--primary);
+
+    font: inherit;
+    font-size: 9px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    background: #ffffff;
+
+    border: 1px solid #cbdce5;
+    border-radius: 9px;
+  }
+
+
+  .result-feature-clear:hover {
+    border-color: #7bc9e6;
+  }
+
+
+  @media (max-width: 560px) {
+
+    .result-feature-grid {
+      grid-template-columns: 1fr;
+    }
+
+  }
   .result-list {
     gap: 16px;
   }
@@ -1917,9 +2307,25 @@ Elegir mi nivelador | SMAV INAHER
       );
 
     const featureInputs =
-      equipmentForm.querySelectorAll(
-        'input[name="features"]'
+      document.querySelectorAll(
+        '#result-feature-menu '
+        + 'input[name="features"]'
       );
+    
+    const resultFeatureSelectionLabel =
+      document.getElementById(
+      "result-feature-selection-label"
+      );
+
+    const resultFeatureStatus =
+      document.getElementById(
+        "result-feature-status"
+      );
+
+    const resultFeatureClear =
+      document.getElementById(
+        "result-feature-clear"
+      );  
 
     const csrfTokenInput =
       equipmentForm.querySelector(
@@ -2895,15 +3301,44 @@ Elegir mi nivelador | SMAV INAHER
       };
     }
 
+    function updateFeatureSelectionLabel() {
+      const selectedFeatures =
+        Array.from(
+          featureInputs
+        )
+          .filter(function (input) {
+            return input.checked;
+          })
+          .map(function (input) {
+            return input.value;
+          });
+
+
+      if (!selectedFeatures.length) {
+        resultFeatureSelectionLabel.textContent =
+          "Sin características especiales";
+
+        return;
+      }
+
+
+      resultFeatureSelectionLabel.textContent =
+        selectedFeatures.join(" · ");
+    }
 
     async function requestRecommendation() {
       const originalText =
         step2Continue.textContent;
 
-      step2Continue.disabled = true;
+      const comingFromForm =
+        currentScreen !== 3;
 
-      step2Continue.textContent =
-        "Calculando...";
+      if (comingFromForm) {
+        step2Continue.disabled = true;
+
+        step2Continue.textContent =
+          "Calculando...";
+      }
 
       try {
         const response = await fetch(
@@ -2956,10 +3391,12 @@ Elegir mi nivelador | SMAV INAHER
 
         showScreen(3);
       } finally {
-        step2Continue.disabled = false;
+        if (comingFromForm) {
+          step2Continue.disabled = false;
 
-        step2Continue.textContent =
-          originalText;
+          step2Continue.textContent =
+            originalText;
+        }
       }
     }
 
@@ -3018,6 +3455,49 @@ Elegir mi nivelador | SMAV INAHER
       }
     );
 
+    featureInputs.forEach(
+      function (input) {
+
+        input.addEventListener(
+          "change",
+          async function () {
+
+            updateFeatureSelectionLabel();
+
+            resultFeatureStatus.textContent =
+              "Actualizando recomendación...";
+
+            await requestRecommendation();
+
+            resultFeatureStatus.textContent =
+              "Recomendación actualizada";
+            }
+        );
+
+      }
+    );
+
+    resultFeatureClear.addEventListener(
+      "click",
+      async function () {
+
+        featureInputs.forEach(
+          function (input) {
+            input.checked = false;
+          }
+        );
+
+        updateFeatureSelectionLabel();
+
+        resultFeatureStatus.textContent =
+          "Actualizando recomendación...";
+
+        await requestRecommendation();
+
+        resultFeatureStatus.textContent =
+          "Recomendación actualizada";
+      }
+    );
 
     backButton.addEventListener(
       "click",
