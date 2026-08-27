@@ -141,6 +141,7 @@ Elegir mi nivelador | SMAV INAHER
           name="weight"
           type="number"
           min="0.01"
+          max="9999"
           step="0.01"
           inputmode="decimal"
           value="600"
@@ -157,6 +158,7 @@ Elegir mi nivelador | SMAV INAHER
           name="support_points"
           type="number"
           min="1"
+          max="99"
           step="1"
           inputmode="numeric"
           value="4"
@@ -250,9 +252,7 @@ Elegir mi nivelador | SMAV INAHER
             <span
               class="result-feature-arrow"
               aria-hidden="true"
-            >
-              ›
-            </span>
+            ></span>
 
           </summary>
 
@@ -1034,7 +1034,6 @@ Elegir mi nivelador | SMAV INAHER
     padding: 13px 16px;
 
     list-style: none;
-
     cursor: pointer;
 
     background:
@@ -1095,33 +1094,53 @@ Elegir mi nivelador | SMAV INAHER
   }
 
 
-  .result-feature-arrow {
-    display: grid;
-    flex: 0 0 auto;
+    .result-feature-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-    place-items: center;
+      flex: 0 0 42px;
 
-    width: 34px;
-    height: 34px;
+      width: 38px;
+      height: 42px;
 
-    color: var(--accent-hover);
+      padding: 0;
+      margin: 0;
 
-    font-size: 25px;
-    font-weight: 800;
+      color: var(--accent-hover);
 
-    background: #e8f7fc;
+      background: #e8f7fc;
 
-    border: 1px solid #bfe5f2;
-    border-radius: 10px;
+      border: 1px solid #bfe5f2;
+      border-radius: 11px;
 
-    transition:
-      transform 0.2s ease;
-  }
+      box-sizing: border-box;
+    }
+
+    .result-feature-arrow::before {
+      content: "";
+
+      display: block;
+
+      width: 9px;
+      height: 9px;
+
+      border-right: 3px solid currentColor;
+      border-bottom: 3px solid currentColor;
+
+      transform: rotate(45deg);
+      transform-origin: center;
+
+      transition:
+        transform 0.2s ease;
+    }
 
 
   .result-feature-details[open]
-  .result-feature-arrow {
-    transform: rotate(90deg);
+  .result-feature-arrow::before {
+    transform:
+      translateY(2px)
+      rotate(225deg);
   }
 
 
@@ -1287,7 +1306,7 @@ Elegir mi nivelador | SMAV INAHER
 
     cursor: pointer;
 
-    background: #ffffff;
+    background: #cbf0c1;
 
     border: 1px solid #cbdce5;
     border-radius: 9px;
@@ -1532,19 +1551,39 @@ Elegir mi nivelador | SMAV INAHER
 
   .result-card-action {
     width: auto;
+
+    min-width: 175px;
     min-height: 46px;
+
+    padding: 0 18px;
     margin: 0 16px 16px;
+
     color: #ffffff;
+
     font-size: 11px;
+    font-weight: 800;
+
     background: var(--primary);
-    border: 2px solid var(--primary);
+
+    border:
+      2px solid
+      var(--primary);
+
     border-radius: 11px;
+
+    transition:
+      background-color 0.18s ease,
+      border-color 0.18s ease,
+      transform 0.18s ease;
   }
 
 
   .result-card-action:hover {
     color: #ffffff;
+
     background: #417ead;
+
+    border-color: #417ead;
   }
 
 
@@ -3429,15 +3468,39 @@ Elegir mi nivelador | SMAV INAHER
 
     weightInput.addEventListener(
       "input",
-      updateLoadSummary
-    );
+      function () {
+        const value = Number(
+          weightInput.value
+        );
 
+        if (
+          Number.isFinite(value)
+          && value > 9999
+        ) {
+          weightInput.value = "";
+        }
+
+        updateLoadSummary();
+      }
+    );
 
     supportPointsInput.addEventListener(
       "input",
-      updateLoadSummary
-    );
+      function () {
+        const value = Number(
+          supportPointsInput.value
+        );
 
+        if (
+          Number.isFinite(value)
+          && value > 99
+        ) {
+          supportPointsInput.value = "";
+        }
+
+        updateLoadSummary();
+      }
+    );
 
     equipmentForm.addEventListener(
       "submit",

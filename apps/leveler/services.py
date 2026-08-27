@@ -672,6 +672,18 @@ def recommend_levelers_v2(
             "ser mayores que cero."
         )
 
+    if normalized_weight > Decimal("9999"):
+        raise ValueError(
+            "El peso máximo permitido "
+            "no debe superar 5 dígitos."
+        )
+
+    if normalized_support_points > 99:
+        raise ValueError(
+            "El máximo permitido es "
+            "no debe superar 2 dígitos."
+        )
+
     category = (
         application_category(
             application
