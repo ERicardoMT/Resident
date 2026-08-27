@@ -10,6 +10,7 @@ from apps.core.models import (
     LevelerTechnicalData,
 )
 
+MAX_RECOMMENDATIONS = 8
 
 def normalize_text(
     value: Any,
@@ -994,7 +995,7 @@ def recommend_levelers_v2(
                     )
                     for product
                     in previous_candidates[
-                        :4
+                        :MAX_RECOMMENDATIONS
                     ]
                 ],
 
@@ -1017,7 +1018,7 @@ def recommend_levelers_v2(
             product
         )
         for product
-        in candidates[1:4]
+        in candidates[1:MAX_RECOMMENDATIONS]
     ]
 
     return {

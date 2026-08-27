@@ -8,6 +8,7 @@ from apps.core.models import (
     CatalogCategory,
 )
 
+MAX_RECOMMENDATIONS = 8
 
 def get_catalog_queryset():
     """
@@ -419,7 +420,7 @@ def recommend_antivibrators(
                 )
                 for product
                 in previous_candidates[
-                    :4
+                    :MAX_RECOMMENDATIONS
                 ]
             ]
 
@@ -453,7 +454,9 @@ def recommend_antivibrators(
     )
 
     products = list(
-        candidates[:4]
+        candidates[
+            :MAX_RECOMMENDATIONS
+        ]
     )
 
     recommended = (
@@ -464,7 +467,7 @@ def recommend_antivibrators(
         serialize_product(
             product
         )
-        for product in products[1:]
+        for product in products[1:MAX_RECOMMENDATIONS]
     ]
 
     return {
