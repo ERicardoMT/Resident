@@ -139,11 +139,10 @@ Elegir mi nivelador | SMAV INAHER
         <input
           id="selector-weight"
           name="weight"
-          type="number"
-          min="0.01"
-          max="9999"
-          step="0.01"
+          type="text"
           inputmode="decimal"
+          maxlength="7"
+          autocomplete="off"
           value="600"
           required
         >
@@ -156,11 +155,10 @@ Elegir mi nivelador | SMAV INAHER
         <input
           id="selector-support-points"
           name="support_points"
-          type="number"
-          min="1"
-          max="99"
-          step="1"
+          type="text"
           inputmode="numeric"
+          maxlength="2"
+          autocomplete="off"
           value="4"
           required
         >
@@ -2447,9 +2445,11 @@ Elegir mi nivelador | SMAV INAHER
 
       if (
         !Number.isFinite(weight)
-        || !Number.isFinite(supports)
+        || !Number.isInteger(supports)
         || weight <= 0
+        || weight > 9999
         || supports <= 0
+        || supports > 99
       ) {
         return null;
       }
@@ -3469,43 +3469,167 @@ Elegir mi nivelador | SMAV INAHER
     weightInput.addEventListener(
       "input",
       function () {
-        const value = Number(
-          weightInput.value
+        let value =
+          weightInput.value;
+
+      /*
+      * Eliminar cualquier carácter
+      * que no sea número o punto.
+      */
+      value = value.replace(
+        /[^0-9.]/g,
+        ""
+      );
+
+      /*
+      * Permitir solamente un punto.
+      */
+      const firstDot =
+        value.indexOf(".");
+
+      if (firstDot !== -1) {
+        value =
+          value.slice(
+            0,
+            firstDot + 1
+          )
+          +
+          value
+            .slice(
+              firstDot + 1
+            )
+            .replace(/\./g, "");
+      }
+
+      /*
+      * Separar parte entera
+      * y decimales.
+      */
+      let parts =
+        value.split(".");
+
+      /*
+      * Máximo 4 dígitos enteros.
+      */
+      parts[0] =
+        parts[0].slice(
+          0,
+          4
         );
 
-        if (
-          Number.isFinite(value)
-          && value > 9999
-        ) {
-          weightInput.value = "";
-        }
+      /*
+      * Máximo 2 decimales.
+      */
+      if (parts.length > 1) {
+        parts[1] =
+          parts[1].slice(
+            0,
+            2
+          );
 
-        updateLoadSummary();
+        value =
+          parts[0]
+          + "."
+          + parts[1];
+      } else {
+        value =
+          parts[0];
       }
-    );
+
+      weightInput.value =
+        value;
+
+      updateLoadSummary();
+    }
+  );
 
     supportPointsInput.addEventListener(
       "input",
       function () {
-        const value = Number(
-          supportPointsInput.value
-        );
+        let value =
+          supportPointsInput.value;
 
-        if (
-          Number.isFinite(value)
-          && value > 99
-        ) {
-          supportPointsInput.value = "";
-        }
+      /*
+      * Solo números.
+      */
+      value = value.replace(
+        /\D/g,
+        ""
+      );
 
-        updateLoadSummary();
-      }
-    );
+      /*
+      * Máximo 2 dígitos.
+      */
+      value = value.slice(
+        0,
+        2
+      );
+
+      /*
+      * Eliminar ceros iniciales.
+      */
+      value = value.replace(
+        /^0+/,
+        ""
+      );
+
+      supportPointsInput.value =
+        value;
+
+      updateLoadSummary();
+    }
+  );
 
     equipmentForm.addEventListener(
       "submit",
       function (event) {
         event.preventDefault();
+
+        const weight =
+          Number(
+            weightInput.value
+          );
+
+        const supportPoints =
+          Number(
+            supportPointsInput.value
+        );
+
+
+        if (
+          !Number.isFinite(weight)
+          || weight <= 0
+          || weight > 9999
+        ) {
+          weightInput.setCustomValidity(
+            "Ingresa un peso válido entre 0.01 y 9999 kg."
+          );
+
+          weightInput.reportValidity();
+
+          return;
+        }
+
+        weightInput.setCustomValidity("");
+
+
+        if (
+          !Number.isInteger(
+            supportPoints
+          )
+          || supportPoints < 1
+          || supportPoints > 99
+        ) {
+          supportPointsInput.setCustomValidity(
+            "Ingresa entre 1 y 99 puntos de apoyo."
+          );
+
+          supportPointsInput.reportValidity();
+
+          return;
+      }
+
+        supportPointsInput.setCustomValidity("");
 
         if (
           !equipmentForm.checkValidity()
