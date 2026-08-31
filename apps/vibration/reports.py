@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from io import BytesIO
-from pathlib import Path
 from typing import Any
 
-from django.conf import settings
+from django.contrib.staticfiles import finders
 from django.utils import timezone
 
 from reportlab.lib import colors
@@ -49,14 +48,11 @@ def _draw_logo(
     Dibuja el logo local de INAHER si está disponible.
     """
 
-    logo_path = (
-        Path(settings.BASE_DIR)
-        / "static"
-        / "img"
-        / "inaher-logo.png"
-    )
+    logo_path = finders.find(
+    "img/inaher-logo.png"
+)
 
-    if not logo_path.exists():
+    if not logo_path:
         return
 
     try:
@@ -396,20 +392,6 @@ def build_measurement_pdf(
         page_height - header_height,
         page_width,
         header_height,
-        fill=1,
-        stroke=0,
-    )
-
-    pdf.setFillColor(
-        colors.white
-    )
-
-    pdf.roundRect(
-        margin,
-        page_height - 80,
-        125,
-        48,
-        7,
         fill=1,
         stroke=0,
     )

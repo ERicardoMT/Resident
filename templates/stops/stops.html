@@ -463,6 +463,42 @@ Elegir mi antivibratorio | SMAV INAHER
 
           </a>
 
+          <!-- Correo -->
+          <a
+            class="
+              result-contact-btn
+              result-contact-btn-email
+            "
+            href="mailto:ventas@inahermex.com"
+            aria-label="Enviar correo a ventas de INAHER"
+          >
+            <svg
+              class="result-contact-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect
+                x="3"
+                y="5"
+                width="18"
+                height="14"
+                rx="2"
+              ></rect>
+
+              <path
+                d="m3 7 9 6 9-6"
+              ></path>
+            </svg>
+
+            <span>
+              Correo
+            </span>
+          </a>
 
           <!-- Llamada -->
           <a
@@ -1952,7 +1988,7 @@ Elegir mi antivibratorio | SMAV INAHER
   .result-contact-actions {
     display: grid;
     grid-template-columns:
-      repeat(3, minmax(0, 1fr));
+      repeat(4, minmax(0, 1fr));
     gap: 8px;
     margin-top: 13px;
   }
@@ -2045,6 +2081,28 @@ Elegir mi antivibratorio | SMAV INAHER
     border-color: #89215f;
   }
 
+  /* Correo */
+
+  .result-contact-btn-email {
+    color: #6a4a22;
+
+    background: #f5e8d4;
+
+    border-color: #d9bd94;
+
+    box-shadow:
+      0 5px 13px
+    rgba(150, 108, 55, 0.16);
+  }
+
+  .result-contact-btn-email:hover {
+    color: #5b3d1b;
+
+    background: #ead4b3;
+
+    border-color: #cba875;
+  }
+
 
   /* Llamada */
 
@@ -2084,6 +2142,12 @@ Elegir mi antivibratorio | SMAV INAHER
     outline-offset: 3px;
   }
 
+  @media (max-width: 700px) {
+    .result-contact-actions {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+  }
 
   @media (max-width: 390px) {
 

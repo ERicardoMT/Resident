@@ -2480,7 +2480,7 @@ a {
   z-index: 1;
   display: grid;
   grid-template-columns:
-    repeat(3, minmax(0, 1fr));
+    repeat(4, minmax(0, 1fr));
   gap: 9px;
   margin-top: 18px;
 }
@@ -2565,6 +2565,14 @@ a {
 .home-contact-action-icon {
   color: #ffffff;
   background: rgba(24, 166, 217, 0.3);
+}
+
+.home-contact-action-email
+.home-contact-action-icon {
+  color: #ffffff;
+
+  background:
+    rgba(198, 157, 99, 0.38);
 }
 
 .home-contact-action-copy {
