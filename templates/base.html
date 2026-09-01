@@ -149,6 +149,90 @@
 
     {% block scripts %}{% endblock %}
 
+    <script id="smav-email-contact">
+      (function () {
+        "use strict";
+
+
+        const emailLinks =
+          document.querySelectorAll(
+            ".js-email-contact"
+          );
+
+
+        if (!emailLinks.length) {
+          return;
+        }
+
+
+        function isMobileDevice() {
+
+          if (
+            navigator.userAgentData
+            && typeof navigator.userAgentData.mobile
+              === "boolean"
+          ) {
+            return navigator.userAgentData.mobile;
+          }
+
+          const mobileUserAgent =
+            /Android|iPhone|iPod|Mobile/i.test(
+              navigator.userAgent
+            );
+
+
+          const isTouchIPad =
+            /Macintosh/i.test(
+              navigator.userAgent
+            )
+            && navigator.maxTouchPoints > 1;
+
+
+          return (
+            mobileUserAgent
+            || isTouchIPad
+          );
+        }
+
+
+        const gmailComposeUrl =
+          (
+            "https://mail.google.com/"
+            + "mail/?view=cm"
+            + "&fs=1"
+            + "&to=ventas%40inahermex.com"
+          );
+
+
+        emailLinks.forEach(
+          function (link) {
+
+            link.addEventListener(
+              "click",
+              function (event) {
+
+              if (isMobileDevice()) {
+                return;
+              }
+
+              event.preventDefault();
+
+
+              window.open(
+                gmailComposeUrl,
+                "_blank",
+                "noopener,noreferrer"
+              );
+
+            },
+          );
+
+        }
+      );
+
+    })();
+  </script>
+
     <!--
       Botón Atrás global.
 
