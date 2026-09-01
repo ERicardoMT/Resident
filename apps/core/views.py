@@ -1,8 +1,13 @@
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlparse
+from urllib.request import Request, urlopen
+
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
+from django.http import Http404, HttpResponse, StreamingHttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 from django.urls import reverse
 
 from .forms import (
@@ -560,6 +565,258 @@ def agregar_producto_view(request):
             "form": form,
         },
     )
+
+ALLOWED_3D_MODEL_HOSTS = {
+    "inahermex.com",
+    "www.inahermex.com",
+}
+
+
+def is_allowed_3d_model_url(
+    source_url,
+):
+    """
+    Impide que el proxy 3D pueda utilizarse
+    para solicitar servidores arbitrarios.
+    """
+
+    try:
+        parsed = urlparse(
+            source_url
+        )
+    except ValueError:
+        return False
+
+    return (
+        parsed.scheme == "https"
+        and parsed.hostname
+        in ALLOWED_3D_MODEL_HOSTS
+    )
+
+
+@require_GET
+def catalog_model_3d_proxy(
+    request,
+    product_id,
+):
+    """
+    Entrega un GLB remoto como recurso del mismo dominio.
+
+    Los modelos originales actualmente responden
+    correctamente, pero no incluyen CORS.
+
+    El navegador solicita este endpoint de Django
+    y Django realiza la petición al origen remoto.
+    """
+
+    product = get_object_or_404(
+        CatalogItem.objects.select_related(
+            "antivibration_data",
+            "leveler_data",
+        ),
+        pk=product_id,
+        is_active=True,
+    )
+
+    source_url = (
+        product.external_model_3d_url
+    )
+
+    if not source_url:
+        raise Http404(
+            "Este producto no tiene modelo 3D."
+        )
+
+    if not is_allowed_3d_model_url(
+        source_url
+    ):
+        raise Http404(
+            "Origen de modelo 3D no autorizado."
+        )
+
+
+    headers = {
+        "User-Agent": (
+            "SMAV-INAHER-3D-Proxy/1.0"
+        ),
+        "Accept": (
+            "model/gltf-binary,"
+            "application/octet-stream,"
+            "*/*"
+        ),
+    }
+
+
+    # model-viewer puede pedir únicamente
+    # una sección del GLB.
+    range_header = request.headers.get(
+        "Range"
+    )
+
+    if range_header:
+        headers["Range"] = (
+            range_header
+        )
+
+
+    upstream_request = Request(
+        source_url,
+        headers=headers,
+    )
+
+
+    try:
+        upstream = urlopen(
+            upstream_request,
+            timeout=45,
+        )
+
+    except HTTPError as exc:
+
+        # 416, 404, etc.
+        return HttpResponse(
+            status=exc.code,
+        )
+
+    except URLError:
+
+        return HttpResponse(
+            "No fue posible obtener "
+            "el modelo 3D.",
+            status=502,
+            content_type="text/plain",
+        )
+
+
+    final_source_url = (
+        upstream.geturl()
+    )
+
+    if not is_allowed_3d_model_url(
+        final_source_url
+    ):
+        upstream.close()
+
+        return HttpResponse(
+            "URL final de modelo 3D no autorizada.",
+            status=502,
+            content_type="text/plain",
+        )
+
+
+    status = getattr(
+        upstream,
+        "status",
+        200,
+    )
+
+
+    content_type = (
+        upstream.headers.get(
+            "Content-Type",
+            "model/gltf-binary",
+        )
+        .split(";")[0]
+        .strip()
+    )
+
+
+    # El proveedor debe seguir entregando
+    # un archivo binario compatible.
+    if content_type not in {
+        "model/gltf-binary",
+        "application/octet-stream",
+        "binary/octet-stream",
+    }:
+        upstream.close()
+
+        return HttpResponse(
+            "El proveedor remoto no devolvió "
+            "un modelo GLB válido.",
+            status=502,
+            content_type="text/plain",
+        )
+
+
+    def stream_model():
+        try:
+            while True:
+
+                chunk = upstream.read(
+                    64 * 1024
+                )
+
+                if not chunk:
+                    break
+
+                yield chunk
+
+        finally:
+            upstream.close()
+
+
+    response = StreamingHttpResponse(
+        stream_model(),
+        status=status,
+        content_type="model/gltf-binary",
+    )
+
+
+    # Conservar encabezados importantes
+    # del servidor original.
+    passthrough_headers = (
+        "Content-Length",
+        "Content-Range",
+        "ETag",
+        "Last-Modified",
+    )
+
+
+    for header_name in passthrough_headers:
+
+        header_value = (
+            upstream.headers.get(
+                header_name
+            )
+        )
+
+        if header_value:
+            response[
+                header_name
+            ] = header_value
+
+
+    # Nuestra propia respuesta sí puede ser usada
+    # por model-viewer.
+    response[
+        "Accept-Ranges"
+    ] = "bytes"
+
+    response[
+        "Access-Control-Allow-Origin"
+    ] = "*"
+
+    response[
+        "X-Content-Type-Options"
+    ] = "nosniff"
+
+    response[
+        "Content-Disposition"
+    ] = (
+        f'inline; filename="'
+        f'{product.pk}.glb"'
+    )
+
+    response[
+        "Cache-Control"
+    ] = (
+        "public, max-age=3600"
+    )
+
+
+    return response
+
+
 
 def producto_detalle_view(request, nombre_producto):
     producto_encontrado = CatalogItem.objects.filter(

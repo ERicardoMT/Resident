@@ -1,5 +1,6 @@
 from django.core.validators import FileExtensionValidator
 from django.db import models
+from django.urls import reverse
 
 class CatalogCategory(models.TextChoices):
     ANTIVIBRATORIOS = (
@@ -151,26 +152,102 @@ class CatalogItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property
+    def external_model_3d_url(self):
+        """
+        Devuelve el origen remoto del modelo 3D.
+
+        Los modelos importados desde Excel se
+        conservan dentro de raw_data para evitar
+        duplicar archivos binarios en PostgreSQL.
+        """
+
+        technical_sources = (
+            "antivibration_data",
+            "leveler_data",
+        )
+
+        possible_fields = (
+            "3D",
+            "Modelo 3D",
+            "URL 3D",
+            "3D URL",
+            "Modelo 3D (URL)",
+        )
+
+        for relation_name in technical_sources:
+
+            technical_data = getattr(
+                self,
+                relation_name,
+                None,
+            )
+
+            if not technical_data:
+                continue
+
+            raw_data = (
+                technical_data.raw_data
+                or {}
+            )
+
+            for field_name in possible_fields:
+
+                source_url = str(
+                    raw_data.get(
+                        field_name,
+                        "",
+                    )
+                    or ""
+                ).strip()
+
+                if source_url.startswith(
+                    (
+                        "https://",
+                        "http://",
+                    )
+                ):
+                    return source_url
+
+        return ""
+
+
+    @property
     def model_url(self):
         """
-        Devuelve la URL del archivo GLB disponible.
+        URL utilizada por <model-viewer>.
 
-        Usa primero model_3d y conserva compatibilidad
-        con los archivos antiguos almacenados en ar_model.
+        Prioridad:
+        1. Archivo model_3d/ar_model existente.
+        2. Proxy Django del modelo remoto.
+
+        El proxy resuelve proveedores externos
+        que no permiten CORS en navegador.
         """
 
         model_file = self.model_file
 
         if (
-            not model_file
-            or not model_file.name
+            model_file
+            and model_file.name
         ):
-            return ""
+            try:
+                return model_file.url
+            except ValueError:
+                pass
 
-        try:
-            return model_file.url
-        except ValueError:
-            return ""
+        if (
+            self.pk
+            and self.external_model_3d_url
+        ):
+            return reverse(
+                "catalog_model_3d",
+                kwargs={
+                    "product_id": self.pk,
+                },
+            )
+
+        return ""
+
 
     @property
     def model_file(self):

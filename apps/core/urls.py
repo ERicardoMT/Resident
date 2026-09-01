@@ -83,6 +83,11 @@ urlpatterns = [
         name="mobiliario",
     ),
     path(
+        "catalogo/modelo-3d/<int:product_id>/",
+        views.catalog_model_3d_proxy,
+        name="catalog_model_3d",
+    ),
+    path(
         "catalogo/producto/<str:nombre_producto>/",
         views.producto_detalle_view,
         name="producto_detalle",
