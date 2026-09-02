@@ -194,17 +194,15 @@ Elegir mi antivibratorio | SMAV INAHER
   Buscar antivibratorios compatibles
 </button> 
 
+</form>
 
-      </div>
-  </form>
+</section>
 
-  </section>
-
-      <section
-        id="selector-result-panel"
-        class="selector-result-panel"
-        hidden
-      >
+<section
+  id="selector-result-panel"
+  class="selector-result-panel"
+  hidden
+>
 
       <button
         type="button"
@@ -2798,7 +2796,7 @@ Elegir mi antivibratorio | SMAV INAHER
   display: grid;
 
   grid-template-columns:
-    112px
+    105px
     minmax(0, 1fr);
 
   align-items: center;
@@ -3921,13 +3919,13 @@ function renderRecommended(
     }
 
 
-    function renderResult(data) {
-  inputPanel.hidden = true;
-  resultPanel.hidden = false;
+  function renderResult(data) {
+    inputPanel.hidden = true;
+    resultPanel.hidden = false;
 
-  resultEmpty.hidden = true;
+    resultEmpty.hidden = true;
 
-  selectorHeading.hidden = true;
+    selectorHeading.hidden = true;
 
 antivibrationResultFolio.textContent =
   "Folio "
@@ -3994,6 +3992,11 @@ antivibrationResultSummary.textContent =
     data.alternatives || []
   );
   }
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
 
 
     async function requestRecommendation() {
