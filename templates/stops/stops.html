@@ -406,14 +406,14 @@ Elegir mi antivibratorio | SMAV INAHER
 
       <div class="antivibration-result-header">
 
-  <span class="section-kicker">
-    Resultado
-  </span>
+        <span class="section-kicker">
+          Otras recomendaciones
+        </span>
 
-  <div class="result-header">
-    <h1 class="page-title result-page-title">
-      Recomendación
-    </h1>
+        <div class="result-header">
+          <h1 class="page-title result-page-title">
+            Alternativas compatibles
+          </h1>
 
     <span
       id="antivibration-result-folio"
@@ -512,6 +512,41 @@ Elegir mi antivibratorio | SMAV INAHER
           </p>
 
         </div>
+
+        <div class="antivibration-guidance-note">
+
+          <strong>
+            Reducen vibración, no movimiento —
+            trabajan en el eje vertical.
+          </strong>
+
+          <p>
+            ¿Tu máquina se jala, recibe golpes,
+            no tiene buena cimentación o está en planta alta?
+
+            <a
+              id="antivibration-guidance-whatsapp"
+              href="https://api.whatsapp.com/send?phone=525588090939"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Escríbenos antes de comprar
+            </a>
+
+            — abre WhatsApp con tu folio.
+          </p>
+
+        </div>
+        <p class="antivibration-responsibility-note">
+          La instalación, uso y aplicación del producto son
+          responsabilidad del cliente. INAHER no se hace responsable
+          por daños derivados de una instalación incorrecta,
+          sobrecarga, mal uso o una aplicación distinta a la
+          especificada en la ficha técnica. Resultado orientativo
+          con los datos que capturaste; no constituye garantía.
+          Valida tu selección con nuestro equipo antes de instalar:
+          es gratis.
+        </p>
 
       </div>
 
@@ -1497,6 +1532,85 @@ Elegir mi antivibratorio | SMAV INAHER
     font-size: 8.5px;
     font-weight: 600;
     line-height: 1.5;
+  }
+
+  /* =======================================================
+   ORIENTACIÓN ANTES DE COMPRAR
+   ======================================================= */
+
+  .antivibration-guidance-note {
+    padding: 14px 16px;
+    margin-top: 12px;
+
+    color: #38556c;
+
+    background: #eaf6fc;
+
+    border-left:
+      5px solid
+      var(--accent-hover);
+
+    border-radius:
+      0
+      11px
+      11px
+      0;
+  }
+
+
+.antivibration-guidance-note strong {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #1f5f8c;
+
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.4;
+}
+
+
+  .antivibration-guidance-note p {
+    margin: 0;
+
+    color: #526b7d;
+
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.55;
+  }
+
+
+  .antivibration-guidance-note a {
+    color: #1f5f8c;
+
+    font-weight: 900;
+    text-decoration: underline;
+
+    text-underline-offset: 2px;
+  }
+
+
+  .antivibration-guidance-note a:hover {
+    color: var(--accent-hover);
+  }
+
+  .antivibration-responsibility-note {
+    margin:
+      13px
+      4px
+      0;
+
+    color: #7a8d9c;
+
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.6;
+  }
+
+  .antivibration-responsibility-note {
+    max-width: 900px;
   }
 
 
@@ -2867,6 +2981,28 @@ Elegir mi antivibratorio | SMAV INAHER
       font-size: 20px;
     }
 
+    .antivibration-guidance-note {
+      padding: 12px 13px;
+    }
+
+    .antivibration-guidance-note strong {
+      font-size: 10.5px;
+    }
+
+    .antivibration-guidance-note p {
+      font-size: 9px;
+    }
+
+    .antivibration-responsibility-note {
+      margin:
+      9px
+      2px
+      0;
+
+      font-size: 8.5px;
+      line-height: 1.5;
+    }
+
   }
 
 
@@ -3612,6 +3748,11 @@ Elegir mi antivibratorio | SMAV INAHER
       document.getElementById(
         "antivibration-result-folio"
       );
+    
+      const antivibrationGuidanceWhatsapp =
+      document.getElementById(
+        "antivibration-guidance-whatsapp"
+    );  
 
     const antivibrationResultSummary =
       document.getElementById(
@@ -4336,10 +4477,33 @@ function renderRecommended(
 
     selectorHeading.hidden = true;
 
+const folio =
+  generateAntivibrationFolio();
+
+
 antivibrationResultFolio.textContent =
   "Folio "
-  + generateAntivibrationFolio()
+  + folio
   + " · guárdalo";
+
+const guidanceWhatsappMessage =
+  (
+    "Buen día, necesito ayuda para validar "
+    + "mi selección de antivibratorio. "
+    + "Mi folio es: "
+    + folio
+  );
+
+
+antivibrationGuidanceWhatsapp.href =
+  (
+    "https://api.whatsapp.com/send"
+    + "?phone=525588090939"
+    + "&text="
+    + encodeURIComponent(
+        guidanceWhatsappMessage
+      )
+  );  
 
 antivibrationResultSummary.textContent =
   "Para "
