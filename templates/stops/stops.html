@@ -38,7 +38,7 @@ Elegir mi antivibratorio | SMAV INAHER
   <header class="selector-heading">
 
     <span class="section-kicker">
-      Soportes antivibratorios
+      Soportes antivibratorios INAHER®
     </span>
 
     <h1 class="page-title">
@@ -167,6 +167,166 @@ Elegir mi antivibratorio | SMAV INAHER
 
       </div>
 
+      <!-- =====================================================
+     REVISA ANTES DE INSTALAR
+     ===================================================== -->
+<section
+  class="installation-review"
+  aria-labelledby="installation-review-title"
+>
+
+  <h3
+    id="installation-review-title"
+    class="installation-review-title"
+  >
+    Revisa antes de instalar
+  </h3>
+
+
+  <div class="installation-review-list">
+
+
+    <!-- 1 -->
+    <details
+      class="installation-review-item"
+      open
+    >
+
+      <summary class="installation-review-summary">
+
+        <span class="installation-review-number">
+          1
+        </span>
+
+        <strong>
+          ¿Peso cargado a un lado?
+        </strong>
+
+        <span
+          class="installation-review-arrow"
+          aria-hidden="true"
+        ></span>
+
+      </summary>
+
+      <div class="installation-review-content">
+
+        <p>
+          ¿El motor o el peso está más hacia un lado?
+          Ese lado carga más: quizá necesites un soporte
+          de mayor capacidad. Escríbenos y lo confirmamos.
+        </p>
+
+      </div>
+
+    </details>
+
+
+    <!-- 2 -->
+    <details class="installation-review-item">
+
+      <summary class="installation-review-summary">
+
+        <span class="installation-review-number">
+          2
+        </span>
+
+        <strong>
+          ¿Planta alta o azotea?
+        </strong>
+
+        <span
+          class="installation-review-arrow"
+          aria-hidden="true"
+        ></span>
+
+      </summary>
+
+      <div class="installation-review-content">
+
+        <p>
+          ¿Tu máquina está en planta alta o azotea?
+          El piso de arriba vibra distinto que el firme
+          de planta baja. Escríbenos antes de comprar.
+        </p>
+
+      </div>
+
+    </details>
+
+
+    <!-- 3 -->
+    <details class="installation-review-item">
+
+      <summary class="installation-review-summary">
+
+        <span class="installation-review-number">
+          3
+        </span>
+
+        <strong>
+          ¿Piso desnivelado?
+        </strong>
+
+        <span
+          class="installation-review-arrow"
+          aria-hidden="true"
+        ></span>
+
+      </summary>
+
+      <div class="installation-review-content">
+
+        <p>
+          ¿El piso está desnivelado?
+          Tu máquina cargará dispareja.
+          Mídelo con el nivel de esta app.
+        </p>
+
+      </div>
+
+    </details>
+
+
+    <!-- 4 -->
+    <details class="installation-review-item">
+
+      <summary class="installation-review-summary">
+
+        <span class="installation-review-number">
+          4
+        </span>
+
+        <strong>
+          ¿Barreno pasado o roscado?
+        </strong>
+
+        <span
+          class="installation-review-arrow"
+          aria-hidden="true"
+        ></span>
+
+      </summary>
+
+      <div class="installation-review-content">
+
+        <p>
+          ¿Cómo se sujeta tu máquina?
+          Hay dos monturas: barreno pasado
+          (el birlo atraviesa y lleva tuerca)
+          o roscado (se enrosca directo).
+          Verifica la tuya en la ficha o pregúntanos.
+        </p>
+
+      </div>
+
+    </details>
+
+
+  </div>
+
+</section>
+
 
 
 
@@ -177,7 +337,7 @@ Elegir mi antivibratorio | SMAV INAHER
       <!-- =================================================
            DATOS TÉCNICOS OPCIONALES
            ================================================= -->
-<div
+      <div
         id="selector-error"
         class="selector-error"
         aria-live="polite"
@@ -3127,6 +3287,255 @@ Elegir mi antivibratorio | SMAV INAHER
 
 }
 
+/* =======================================================
+   REVISA ANTES DE INSTALAR
+   ======================================================= */
+
+.installation-review {
+  display: grid;
+  gap: 10px;
+
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+
+.installation-review-title {
+  margin: 0;
+
+  color: var(--primary);
+
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+
+.installation-review-list {
+  display: grid;
+  gap: 8px;
+}
+
+
+/* Tarjeta */
+
+.installation-review-item {
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border: 1px solid #cfe2ec;
+  border-radius: 13px;
+
+  box-shadow:
+    0 4px 12px
+    rgba(3, 49, 91, 0.04);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.installation-review-item[open] {
+  border-color: #9ed9ef;
+
+  box-shadow:
+    0 7px 18px
+    rgba(3, 49, 91, 0.07);
+}
+
+
+/* Encabezado pulsable */
+
+.installation-review-summary {
+  display: grid;
+
+  grid-template-columns:
+    38px
+    minmax(0, 1fr)
+    22px;
+
+  align-items: center;
+
+  gap: 10px;
+
+  min-height: 56px;
+
+  padding: 9px 12px;
+
+  list-style: none;
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color:
+    transparent;
+}
+
+
+.installation-review-summary::-webkit-details-marker {
+  display: none;
+}
+
+
+.installation-review-summary::marker {
+  content: "";
+}
+
+
+.installation-review-summary:focus-visible {
+  outline:
+    3px solid
+    rgba(24, 166, 217, 0.22);
+
+  outline-offset: -3px;
+}
+
+
+/* Número circular */
+
+.installation-review-number {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  color: #1479ad;
+
+  font-size: 14px;
+  font-weight: 900;
+
+  background: #e9f7fd;
+
+  border-radius: 50%;
+}
+
+
+/* Pregunta */
+
+.installation-review-summary strong {
+  color: var(--primary);
+
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.3;
+}
+
+
+/* Flecha */
+
+.installation-review-arrow {
+  width: 9px;
+  height: 9px;
+
+  justify-self: center;
+
+  border-right: 2px solid #8ba7b9;
+  border-bottom: 2px solid #8ba7b9;
+
+  transform:
+    rotate(45deg)
+    translateY(-2px);
+
+  transition:
+    transform 0.2s ease;
+}
+
+
+.installation-review-item[open]
+.installation-review-arrow {
+  transform:
+    rotate(225deg)
+    translate(-1px, -1px);
+}
+
+
+/* Texto desplegado */
+
+.installation-review-content {
+  padding:
+    0
+    45px
+    13px
+    60px;
+}
+
+
+.installation-review-content p {
+  margin: 0;
+
+  color: #60788d;
+
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+
+/* =======================================================
+   MÓVIL
+   ======================================================= */
+
+@media (max-width: 560px) {
+
+  .installation-review {
+    margin-top: 13px;
+    margin-bottom: 13px;
+  }
+
+
+  .installation-review-title {
+    font-size: 13px;
+  }
+
+
+  .installation-review-summary {
+    grid-template-columns:
+      36px
+      minmax(0, 1fr)
+      20px;
+
+    gap: 9px;
+
+    min-height: 54px;
+
+    padding:
+      8px
+      10px;
+  }
+
+
+  .installation-review-number {
+    width: 36px;
+    height: 36px;
+
+    font-size: 13px;
+  }
+
+
+  .installation-review-summary strong {
+    font-size: 11px;
+  }
+
+
+  .installation-review-content {
+    padding:
+      0
+      38px
+      12px
+      55px;
+  }
+
+
+  .installation-review-content p {
+    font-size: 9.5px;
+  }
+
+}
+
 </style>
 {% endblock %}
 
@@ -4128,6 +4537,43 @@ antivibrationResultSummary.textContent =
 
 
     updateLoadPreview();
+
+const installationReviewItems =
+  document.querySelectorAll(
+    ".installation-review-item"
+  );
+
+
+installationReviewItems.forEach(
+  function (item) {
+
+    item.addEventListener(
+      "toggle",
+      function () {
+
+        if (!item.open) {
+          return;
+        }
+
+
+        installationReviewItems.forEach(
+          function (otherItem) {
+
+            if (
+              otherItem !== item
+              && otherItem.open
+            ) {
+              otherItem.open = false;
+            }
+
+          }
+        );
+
+      }
+    );
+
+  }
+);
 
   })();
 </script>
