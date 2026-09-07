@@ -141,6 +141,16 @@
 
       {% block content %}{% endblock %}
 
+      {% if request.resolver_match.url_name != 'home' %}
+      <div
+        class="global-contact-slot"
+        aria-label="Contacto directo con INAHER"
+      >
+        {% include "core/partials/contact_direct.html" %}
+      </div>
+      {% endif %}
+
+
       <footer class="app-footer">
         <span>Sistema de Medición y Análisis Vibratorio</span>
         <strong>INAHER</strong>

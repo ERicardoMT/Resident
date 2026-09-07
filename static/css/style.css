@@ -2391,8 +2391,31 @@ a {
     height: 42px;
   }
 }
+
 /* =========================================================
-   Contacto de la página principal
+   Contacto directo global
+   ========================================================= */
+
+.global-contact-slot {
+  width: 100%;
+  padding:
+    0
+    clamp(14px, 4vw, 42px)
+    34px;
+}
+
+.global-contact-slot .home-contact {
+  margin-top: 0;
+}
+
+@media (min-width: 900px) {
+  .global-contact-slot {
+    padding-bottom: 48px;
+  }
+}
+
+/* =========================================================
+   Contacto directo
    ========================================================= */
 
 .home-contact {
@@ -2672,30 +2695,30 @@ a {
     font-size: 12px;
   }
 
-  .home-shell .home-contact {
+  .home-contact {
     padding: 26px 28px;
     margin-top: 28px;
   }
 
-  .home-shell .home-contact-heading-icon {
+  .home-contact-heading-icon {
     width: 54px;
     height: 54px;
   }
 
-  .home-shell .home-contact-copy h2 {
+  .home-contact-copy h2 {
     font-size: 22px;
   }
 
-  .home-shell .home-contact-copy p {
+  .home-contact-copy p {
     font-size: 12px;
   }
 
-  .home-shell .home-contact-actions {
+  .home-contact-actions {
     gap: 14px;
     margin-top: 22px;
   }
 
-  .home-shell .home-contact-action {
+  .home-contact-action {
     grid-template-columns: 48px 1fr;
     align-items: center;
     justify-items: start;
@@ -2704,17 +2727,15 @@ a {
     text-align: left;
   }
 
-  .home-shell .home-contact-action-icon {
+  .home-contact-action-icon {
     width: 44px;
     height: 44px;
   }
 
-  .home-shell
   .home-contact-action-copy strong {
     font-size: 13px;
   }
 
-  .home-shell
   .home-contact-action-copy small {
     display: block;
     font-size: 9.5px;
