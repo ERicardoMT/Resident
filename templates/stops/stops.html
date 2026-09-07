@@ -95,11 +95,13 @@ Elegir mi antivibratorio | SMAV INAHER
   <div class="selector-input-unit">
 
     <input
-      type="number"
+      type="text"
       id="machine-weight"
-      min="1"
-      step="1"
-      inputmode="decimal"
+      name="weight"
+      inputmode="numeric"
+      maxlength="5"
+      pattern="[0-9]{1,5}"
+      autocomplete="off"
       value="600"
       required
     >
@@ -3803,6 +3805,45 @@ Elegir mi antivibratorio | SMAV INAHER
       document.getElementById(
         "edit-selector-data"
       );
+
+    weightInput.addEventListener(
+      "input",
+      function () {
+
+        let value =
+          weightInput.value;
+
+        value = value.replace(
+          /\D/g,
+          ""
+        );
+
+        /*
+        * Máximo 5 dígitos.
+        */
+        value = value.slice(
+          0,
+          5
+        );
+
+        weightInput.value =
+          value;
+      }
+    );
+    
+    weightInput.addEventListener(
+      "beforeinput",
+      function (event) {
+
+      if (
+        event.data
+        && /\D/.test(event.data)
+      ) {
+        event.preventDefault();
+      }
+
+    }
+  );
 
 
     function generateAntivibrationFolio() {

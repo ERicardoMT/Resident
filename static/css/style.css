@@ -3157,3 +3157,203 @@ button {
       52px;
   }
 }
+
+/* =======================================================
+   WHATSAPP FLOTANTE GLOBAL
+   ======================================================= */
+
+.global-whatsapp-fab {
+  position: fixed;
+
+  top: 50%;
+  right: 22px;
+
+  z-index: 1300;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  width: 58px;
+  height: 58px;
+
+  padding: 0;
+
+  overflow: hidden;
+
+  color: #ffffff;
+  text-decoration: none;
+
+  background: #25d366;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.35);
+
+  border-radius: 15px;
+
+  box-shadow:
+    0 10px 26px
+    rgba(0, 0, 0, 0.22);
+
+  transform:
+    translateY(-50%);
+
+  transition:
+    width 0.22s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.global-whatsapp-fab-icon {
+  display: grid;
+  flex: 0 0 auto;
+
+  place-items: center;
+
+  width: 28px;
+  height: 28px;
+}
+
+
+.global-whatsapp-fab-icon svg {
+  display: block;
+
+  width: 28px;
+  height: 28px;
+
+  fill: currentColor;
+}
+
+
+.global-whatsapp-fab-label {
+  max-width: 0;
+
+  overflow: hidden;
+
+  opacity: 0;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  white-space: nowrap;
+
+  transition:
+    max-width 0.22s ease,
+    opacity 0.18s ease;
+}
+
+
+.global-whatsapp-fab:hover
+.global-whatsapp-fab-label,
+.global-whatsapp-fab:focus-visible
+.global-whatsapp-fab-label {
+  max-width: 90px;
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+
+  .global-whatsapp-fab:hover,
+  .global-whatsapp-fab:focus-visible {
+    width: 158px;
+
+    background: #20bd5a;
+
+    box-shadow:
+      0 13px 30px
+      rgba(0, 0, 0, 0.26);
+
+    transform:
+      translateY(-50%)
+      translateX(-2px);
+  }
+
+
+  .global-whatsapp-fab:hover
+  .global-whatsapp-fab-label,
+  .global-whatsapp-fab:focus-visible
+  .global-whatsapp-fab-label {
+    max-width: 90px;
+    opacity: 1;
+  }
+
+}
+
+@media (max-width: 700px) {
+
+  .global-whatsapp-fab {
+    top: auto;
+
+    right: 16px;
+
+    bottom:
+      calc(
+        82px
+        + env(safe-area-inset-bottom)
+      );
+
+    width: 52px;
+    height: 52px;
+
+    padding: 0;
+
+    transform: none;
+
+    border-radius: 14px;
+
+    box-shadow:
+      0 8px 22px
+      rgba(0, 0, 0, 0.22);
+  }
+
+
+  .global-whatsapp-fab-icon,
+  .global-whatsapp-fab-icon svg {
+    width: 25px;
+    height: 25px;
+  }
+
+
+  .global-whatsapp-fab-label {
+    display: none;
+  }
+
+  body {
+  padding-bottom:
+    calc(
+      76px
+      + env(safe-area-inset-bottom)
+    );
+  }
+
+}
+
+@media (max-width: 390px) {
+
+  .global-whatsapp-fab {
+    right: 12px;
+
+    bottom:
+      calc(
+        78px
+        + env(safe-area-inset-bottom)
+      );
+
+    width: 48px;
+    height: 48px;
+  }
+
+
+  .global-whatsapp-fab-icon,
+  .global-whatsapp-fab-icon svg {
+    width: 23px;
+    height: 23px;
+  }
+
+}
+

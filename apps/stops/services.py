@@ -226,6 +226,21 @@ def recommend_antivibrators(
             "mayor que cero."
         )
 
+    if normalized_weight > Decimal("99999"):
+        raise ValueError(
+            "El peso máximo permitido no "
+            "debe superar los 5 dígitos."
+        )
+
+    if (
+        normalized_weight
+        != normalized_weight.to_integral_value()
+    ):
+        raise ValueError(
+            "El peso debe ser un "
+            "número entero."
+        )
+
     if normalized_support_count <= 0:
         raise ValueError(
             "El número de apoyos debe "
