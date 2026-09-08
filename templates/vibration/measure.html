@@ -27,156 +27,874 @@
 
 
 {% block content %}
+
 <section class="page">
-  <h1 class="page-title">Medicion vibratoria</h1>
-  <p class="page-lead">
-    Coloca el dispositivo sobre la maquina o superficie a medir y pulsa iniciar.
-    El acelerometro captura las vibraciones y calcula la frecuencia dominante.
-  </p>
 
-  <div class="card">
-<div class="reading">
-  <span class="value" id="hz-value">0.0</span>
-  <span class="unit">Hz</span>
 
-  <div class="caption" id="hz-caption">
+  <!-- =====================================================
+       ENCABEZADO
+       ===================================================== -->
+  <header class="measurement-heading">
+
+    <span class="measurement-kicker">
+      Soportes antivibratorios INAHER®
+    </span>
+
+    <h1 class="page-title">
+      Medir vibración
+    </h1>
+
+    <p class="page-lead measurement-intro">
+      Con el sensor de tu teléfono: la frecuencia de
+      vibración de tu máquina, en Hz.
+    </p>
+
+  </header>
+
+
+  <!-- =====================================================
+       INDICACIONES ANTES DE MEDIR
+       ===================================================== -->
+  <section
+    class="measurement-preparation"
+    aria-label="Indicaciones antes de medir"
+  >
+
+    <div class="measurement-preparation-item">
+
+      <span
+        class="measurement-preparation-icon"
+        aria-hidden="true"
+      >
+        ✓
+      </span>
+
+      <span>
+        Teléfono apoyado firme sobre el chasis,
+        no en la mano
+      </span>
+
+    </div>
+
+
+    <div class="measurement-preparation-item">
+
+      <span
+        class="measurement-preparation-icon"
+        aria-hidden="true"
+      >
+        ✓
+      </span>
+
+      <span>
+        Sobre estructura rígida, no sobre tapas
+        o lámina delgada
+      </span>
+
+    </div>
+
+
+    <div class="measurement-preparation-item">
+
+      <span
+        class="measurement-preparation-icon"
+        aria-hidden="true"
+      >
+        ✓
+      </span>
+
+      <span>
+        Sin funda gruesa · máquina encendida
+        y trabajando
+      </span>
+
+    </div>
+
+  </section>
+
+
+
+
+
+  <!-- =====================================================
+       MEDICIÓN AVANZADA
+  
+       ===================================================== -->
+  <!-- =====================================================
+     MEDICIÓN PRINCIPAL
+     Usa el indicador Hz original que ya funciona
+     ===================================================== -->
+
+<section
+  class="measurement-simple-card"
+  id="measurement-simple-card"
+>
+
+  <div class="measurement-simple-header">
+
+    <span
+      class="measurement-simple-kicker"
+      id="measurement-simple-kicker"
+    >
+      LISTO PARA MEDIR
+    </span>
+
+  </div>
+
+
+  <!-- Círculo -->
+  <div class="measurement-simple-ring-wrap">
+
+    <svg
+      class="measurement-simple-ring"
+      viewBox="0 0 160 160"
+      aria-hidden="true"
+    >
+
+      <circle
+        class="measurement-simple-ring-bg"
+        cx="80"
+        cy="80"
+        r="64"
+      ></circle>
+
+      <circle
+        class="measurement-simple-ring-progress"
+        id="measurement-simple-ring-progress"
+        cx="80"
+        cy="80"
+        r="64"
+      ></circle>
+
+    </svg>
+
+
+    <div class="measurement-simple-ring-center">
+
+      <!-- ==========================================
+           ESTE ES EL INDICADOR ORIGINAL QUE FUNCIONA
+           ========================================== -->
+
+      <div class="measurement-simple-reading">
+
+        <span
+          class="value"
+          id="hz-value"
+        >
+          0.0
+        </span>
+
+        <span class="measurement-simple-unit">
+          Hz
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="measurement-simple-title"
+    id="hz-caption"
+  >
     Frecuencia dominante
   </div>
-</div>
 
 
-<div class="measurement-unit-control">
-
-  <span class="measurement-unit-label">
-    Unidad de vibración
-  </span>
-
-  <div
-    class="measurement-unit-switch"
-    role="group"
-    aria-label="Cambiar unidad de vibración"
+  <p
+    class="measurement-simple-help"
+    id="measurement-simple-help"
   >
+    Coloca el teléfono y pulsa iniciar
+  </p>
+
+
+  <!-- Barra de progreso -->
+  <div class="measurement-simple-progressbar">
+
+    <div
+      class="measurement-simple-progressbar-fill"
+      id="measurement-simple-progressbar-fill"
+    ></div>
+
+  </div>
+
+
+  <!-- Botón sencillo -->
+  <div class="measurement-simple-actions">
+
     <button
       type="button"
-      class="measurement-unit-button is-active"
-      data-vibration-unit="acceleration"
-      aria-pressed="true"
+      class="btn btn-primary"
+      id="measurement-simple-start"
+      onclick="document.getElementById('btn-start').click();"
     >
-      m/s²
+      Iniciar medición
     </button>
+
 
     <button
       type="button"
-      class="measurement-unit-button"
-      data-vibration-unit="velocity"
-      aria-pressed="false"
+      class="btn btn-secondary"
+      id="measurement-simple-stop"
+      onclick="document.getElementById('btn-stop').click();"
+      hidden
     >
-      mm/s
+      Detener
     </button>
+
   </div>
-
-  <small
-    id="measurement-unit-description"
-    class="measurement-unit-description"
-  >
-    Aceleración vibratoria
-  </small>
-
-</div>
-
-
-<div class="stats">
-    <div class="stats">
-      <div class="stat">
-        <div class="label">RPM</div>
-        <div class="num" id="stat-rpm">0</div>
-      </div>
-      <div class="stat">
-        <div class="label">Muestreo</div>
-        <div class="num" id="stat-fs">0 Hz</div>
-      </div>
-<div class="stat">
-  <div
-    class="label"
-    id="stat-rms-label"
-  >
-    RMS aceleración
-  </div>
-
-  <div class="num" id="stat-rms">
-    0.000 m/s²
-  </div>
-</div>
-
-<div class="stat">
-  <div
-    class="label"
-    id="stat-peak-label"
-  >
-    Pico aceleración
-  </div>
-
-  <div class="num" id="stat-peak">
-    0.000 m/s²
-  </div>
-</div>
-    </div>
-    <div class="status">
-      <span class="dot" id="status-dot"></span>
-      <span id="status-text">Detenido</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="label" style="font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700;margin-bottom:8px;">
-      Senal en tiempo real
-    </div>
-    <canvas class="scope" id="scope" width="800" height="240"></canvas>
-    <div class="label" style="font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700;margin:16px 0 8px;">
-      Espectro de frecuencias (FFT)
-    </div>
-    <canvas class="spectrum" id="spectrum" width="800" height="280"></canvas>
-  </div>
-
-<form
-  id="measurement-pdf-csrf"
-  hidden
->
-  {% csrf_token %}
-</form>
-
-<button
-  type="button"
-  class="btn btn-primary"
-  id="btn-start"
->
-  Iniciar medición
-</button>
-
-<div class="btn-row">
-  <button
-    type="button"
-    class="btn btn-ghost"
-    id="btn-pdf"
-    data-pdf-url="{% url 'measurement-pdf' %}"
-    disabled
-  >
-    PDF
-  </button>
-
-  <button
-    type="button"
-    class="btn btn-secondary"
-    id="btn-stop"
-    disabled
-  >
-    Detener
-  </button>
-</div>
 
 </section>
 
+  <details
+    class="measurement-advanced"
+    id="measurement-advanced"
+  >
+
+    <summary class="measurement-advanced-summary">
+      Medición avanzada
+    </summary>
+
+
+    <div class="measurement-advanced-content">
+
+
+      <!-- =================================================
+           DATOS AVANZADOS
+           ================================================= -->
+      <div class="card">
+
+
+
+
+
+        <!-- Unidad -->
+        <div class="measurement-unit-control">
+
+          <span class="measurement-unit-label">
+            Unidad de vibración
+          </span>
+
+
+          <div
+            class="measurement-unit-switch"
+            role="group"
+            aria-label="Cambiar unidad de vibración"
+          >
+
+            <button
+              type="button"
+              class="measurement-unit-button is-active"
+              data-vibration-unit="acceleration"
+              aria-pressed="true"
+            >
+              m/s²
+            </button>
+
+
+            <button
+              type="button"
+              class="measurement-unit-button"
+              data-vibration-unit="velocity"
+              aria-pressed="false"
+            >
+              mm/s
+            </button>
+
+          </div>
+
+
+          <small
+            id="measurement-unit-description"
+            class="measurement-unit-description"
+          >
+            Aceleración vibratoria
+          </small>
+
+        </div>
+
+
+        <!-- Estadísticas -->
+        <div class="stats">
+
+          <div class="stat">
+
+            <div class="label">
+              RPM
+            </div>
+
+            <div
+              class="num"
+              id="stat-rpm"
+            >
+              0
+            </div>
+
+          </div>
+
+
+          <div class="stat">
+
+            <div class="label">
+              Muestreo
+            </div>
+
+            <div
+              class="num"
+              id="stat-fs"
+            >
+              0 Hz
+            </div>
+
+          </div>
+
+
+          <div class="stat">
+
+            <div
+              class="label"
+              id="stat-rms-label"
+            >
+              RMS aceleración
+            </div>
+
+            <div
+              class="num"
+              id="stat-rms"
+            >
+              0.000 m/s²
+            </div>
+
+          </div>
+
+
+          <div class="stat">
+
+            <div
+              class="label"
+              id="stat-peak-label"
+            >
+              Pico aceleración
+            </div>
+
+            <div
+              class="num"
+              id="stat-peak"
+            >
+              0.000 m/s²
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Estado -->
+        <div class="status">
+
+          <span
+            class="dot"
+            id="status-dot"
+          ></span>
+
+          <span id="status-text">
+            Detenido
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           GRÁFICAS
+           ================================================= -->
+      <div class="card">
+
+        <div
+          class="label"
+          style="
+            font-size:11px;
+            text-transform:uppercase;
+            letter-spacing:.6px;
+            color:var(--muted);
+            font-weight:700;
+            margin-bottom:8px;
+          "
+        >
+          Señal en tiempo real
+        </div>
+
+
+        <canvas
+          class="scope"
+          id="scope"
+          width="800"
+          height="240"
+        ></canvas>
+
+
+        <div
+          class="label"
+          style="
+            font-size:11px;
+            text-transform:uppercase;
+            letter-spacing:.6px;
+            color:var(--muted);
+            font-weight:700;
+            margin:16px 0 8px;
+          "
+        >
+          Espectro de frecuencias (FFT)
+        </div>
+
+
+        <canvas
+          class="spectrum"
+          id="spectrum"
+          width="800"
+          height="280"
+        ></canvas>
+
+      </div>
+
+
+      <!-- =================================================
+           CSRF PARA PDF
+           ================================================= -->
+      <form
+        id="measurement-pdf-csrf"
+        hidden
+      >
+        {% csrf_token %}
+      </form>
+
+
+      <!-- =================================================
+           BOTONES AVANZADOS
+           ================================================= -->
+      <button
+        type="button"
+        class="btn btn-primary"
+        id="btn-start"
+      >
+        Iniciar medición
+      </button>
+
+
+      <div class="btn-row">
+
+        <button
+          type="button"
+          class="btn btn-ghost"
+          id="btn-pdf"
+          data-pdf-url="{% url 'measurement-pdf' %}"
+          disabled
+        >
+          PDF
+        </button>
+
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          id="btn-stop"
+          disabled
+        >
+          Detener
+        </button>
+
+      </div>
+
+
+    </div>
+
+  </details>
+
+
+</section>
+
+
 <style>
+
+
+.measurement-simple-card[hidden] {
+  display: none !important;
+}  
+
+.measurement-simple-card {
+  max-width: 760px;
+  margin: 0 auto 20px;
+  padding: 22px 20px 20px;
+  background: #ffffff;
+  border: 1px solid #d9e5ee;
+  border-radius: 22px;
+  box-shadow: 0 10px 24px rgba(7, 44, 84, 0.06);
+}
+
+.measurement-simple-header {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.measurement-simple-kicker {
+  display: inline-block;
+  color: #4ab8f1;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.measurement-simple-ring-wrap {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin: 8px auto 6px;
+}
+
+.measurement-simple-ring {
+  width: 220px;
+  height: 220px;
+  transform: rotate(-90deg);
+}
+
+.measurement-simple-ring-bg {
+  fill: none;
+  stroke: #e7edf3;
+  stroke-width: 12;
+}
+
+.measurement-simple-ring-progress {
+  fill: none;
+  stroke: #43b4ee;
+  stroke-width: 12;
+  stroke-linecap: round;
+  stroke-dasharray: 402;
+  stroke-dashoffset: 402;
+  transition: stroke-dashoffset 0.2s linear;
+}
+
+.measurement-simple-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.measurement-simple-reading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  color: #16457d;
+  font-weight: 900;
+}
+
+.measurement-simple-reading span:first-child {
+  font-size: 64px;
+  line-height: 1;
+}
+
+.measurement-simple-unit {
+  font-size: 22px;
+  line-height: 1.2;
+  margin-bottom: 10px;
+  color: #3e97cd;
+}
+
+.measurement-simple-title {
+  margin: 6px 0 6px;
+  text-align: center;
+  color: #5d7087;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.measurement-simple-help {
+  margin: 0 0 12px;
+  text-align: center;
+  color: #6d7e91;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.measurement-simple-progressbar {
+  width: 100%;
+  max-width: 440px;
+  height: 10px;
+  margin: 0 auto 14px;
+  background: #e8edf3;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.measurement-simple-progressbar-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #49baf3 0%, #2b92d2 100%);
+  border-radius: 999px;
+  transition: width 0.2s linear;
+}
+
+.measurement-simple-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.measurement-simple-actions button {
+  min-width: 180px;
+}
+
+.measurement-advanced {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #d9e5ee;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.measurement-advanced-summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 16px 20px;
+  font-size: 16px;
+  font-weight: 900;
+  color: #17457d;
+  background: #f5f9fc;
+  border-bottom: 1px solid #d9e5ee;
+}
+
+.measurement-advanced-summary::-webkit-details-marker {
+  display: none;
+}
+
+.measurement-advanced-summary::after {
+  content: "▾";
+  float: right;
+  color: #2d8fca;
+}
+
+.measurement-advanced[open] .measurement-advanced-summary::after {
+  content: "▴";
+}
+
+.measurement-advanced-content {
+  padding: 18px 18px 20px;
+}
+
+@media (max-width: 640px) {
+  .measurement-simple-card {
+    padding: 18px 14px 16px;
+    border-radius: 18px;
+  }
+
+  .measurement-simple-ring-wrap,
+  .measurement-simple-ring {
+    width: 170px;
+    height: 170px;
+  }
+
+  .measurement-simple-reading span:first-child {
+    font-size: 48px;
+  }
+
+  .measurement-simple-unit {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+
+  .measurement-simple-title {
+    font-size: 16px;
+  }
+
+  .measurement-simple-help {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .measurement-simple-actions {
+    flex-direction: column;
+  }
+
+  .measurement-simple-actions button {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* =======================================================
+   ENCABEZADO DE MEDICIÓN
+   ======================================================= */
+
+.measurement-heading {
+  margin-bottom: 18px;
+}
+
+
+.measurement-kicker {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: var(--accent-hover);
+
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.1px;
+
+  text-transform: uppercase;
+}
+
+
+.measurement-intro {
+  max-width: 720px;
+
+  margin-bottom: 0;
+}
+
+
+/* =======================================================
+   INDICACIONES ANTES DE MEDIR
+   ======================================================= */
+
+.measurement-preparation {
+  display: grid;
+  gap: 10px;
+
+  max-width: 720px;
+
+  margin:
+    0
+    0
+    20px;
+}
+
+
+.measurement-preparation-item {
+  display: grid;
+
+  grid-template-columns:
+    28px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 11px;
+
+  min-height: 58px;
+
+  padding:
+    12px
+    15px;
+
+  color: #28658d;
+
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+
+  background: #ffffff;
+
+  border: 1px solid #d6e4ec;
+  border-radius: 13px;
+
+  box-shadow:
+    0 5px 14px
+    rgba(3, 49, 91, 0.05);
+}
+
+
+.measurement-preparation-icon {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+
+  color: #208dc1;
+
+  font-size: 13px;
+  font-weight: 900;
+
+  border:
+    1.5px solid
+    #57abd1;
+
+  border-radius: 5px;
+
+  background: #f6fcff;
+}
+
+
+/* =======================================================
+   RESPONSIVE
+   ======================================================= */
+
+@media (max-width: 560px) {
+
+  .measurement-heading {
+    margin-bottom: 14px;
+  }
+
+
+  .measurement-kicker {
+    margin-bottom: 5px;
+
+    font-size: 8.5px;
+    letter-spacing: 0.9px;
+  }
+
+
+  .measurement-intro {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+
+  .measurement-preparation {
+    gap: 9px;
+
+    margin-bottom: 16px;
+  }
+
+
+  .measurement-preparation-item {
+    grid-template-columns:
+      25px
+      minmax(0, 1fr);
+
+    gap: 9px;
+
+    min-height: 54px;
+
+    padding:
+      11px
+      12px;
+
+    font-size: 11px;
+
+    border-radius: 12px;
+  }
+
+
+  .measurement-preparation-icon {
+    width: 22px;
+    height: 22px;
+
+    font-size: 11px;
+  }
+
+}
+
   .measurement-unit-control {
     display: grid;
     gap: 7px;
@@ -244,6 +962,11 @@
     font-size: 9.5px;
     font-weight: 600;
   }
+
+  [hidden] {
+  display: none !important;
+}
+
 </style>
 
 {% endblock %}

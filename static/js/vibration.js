@@ -23,6 +23,20 @@ var COLORS = {
   var WINDOW_MS = 3000; // ventana de analisis
   var ANALYZE_EVERY_MS = 700; // frecuencia de envio a la API
   var MAX_SCOPE_POINTS = 300;
+    // -----------------------------------------
+  // Medición sencilla de 10 segundos
+  // -----------------------------------------
+
+  var SIMPLE_MEASUREMENT_DURATION_MS =
+    10000;
+
+  var SIMPLE_RING_RADIUS =
+    64;
+
+  var SIMPLE_RING_CIRCUMFERENCE =
+    2
+    * Math.PI
+    * SIMPLE_RING_RADIUS;
 
   var samples = []; // {t, x, y, z}
   var scopeBuffer = []; // magnitud - 9.81 aprox, para el osciloscopio
@@ -35,6 +49,9 @@ var COLORS = {
   var lastAnalyzeInFlight = false;
   var measurementUnit = "acceleration";
   var latestAnalysis = null;
+  var simpleUiAnimationFrame =null;
+  var simpleMeasurementStartedAt =null;
+  var simpleAutoStopTimer =null;
 
   var els = {
     hz: document.getElementById("hz-value"),
@@ -66,6 +83,38 @@ unitButtons: document.querySelectorAll(
     pdf: document.getElementById("btn-pdf"),
     scope: document.getElementById("scope"),
     spectrum: document.getElementById("spectrum"),
+        // Nueva vista sencilla
+    simpleCard: document.getElementById(
+      "measurement-simple-card"
+    ),
+
+    simpleKicker: document.getElementById(
+      "measurement-simple-kicker"
+    ),
+
+    simpleHelp: document.getElementById(
+      "measurement-simple-help"
+    ),
+
+    simpleProgressBarFill: document.getElementById(
+      "measurement-simple-progressbar-fill"
+    ),
+
+    simpleRingProgress: document.getElementById(
+      "measurement-simple-ring-progress"
+    ),
+
+    simpleStart: document.getElementById(
+      "measurement-simple-start"
+    ),
+
+    simpleStop: document.getElementById(
+      "measurement-simple-stop"
+    ),
+
+    advancedPanel: document.getElementById(
+      "measurement-advanced"
+    ),
   };
 
   var scopeCtx = els.scope.getContext("2d");
@@ -78,6 +127,279 @@ unitButtons: document.querySelectorAll(
 
   function now() {
     return performance.now();
+  }
+
+    // =====================================================
+  // VISTA SENCILLA DE MEDICIÓN
+  // =====================================================
+
+
+  function setSimpleRingProgress(percent) {
+
+    var safePercent =
+      Math.max(
+        0,
+        Math.min(
+          100,
+          percent
+        )
+      );
+
+
+    var offset =
+      SIMPLE_RING_CIRCUMFERENCE
+      -
+      (
+        SIMPLE_RING_CIRCUMFERENCE
+        * safePercent
+      )
+      / 100;
+
+
+    if (els.simpleRingProgress) {
+
+      els.simpleRingProgress.style
+        .strokeDasharray =
+          String(
+            SIMPLE_RING_CIRCUMFERENCE
+          );
+
+
+      els.simpleRingProgress.style
+        .strokeDashoffset =
+          String(
+            offset
+          );
+    }
+
+
+    if (els.simpleProgressBarFill) {
+
+      els.simpleProgressBarFill.style
+        .width =
+          safePercent + "%";
+    }
+  }
+
+function setSimpleIdleState() {
+
+  if (els.simpleKicker) {
+    els.simpleKicker.textContent =
+      "LISTO PARA MEDIR";
+  }
+
+  if (els.simpleHelp) {
+    els.simpleHelp.textContent =
+      "Coloca el teléfono y pulsa iniciar";
+  }
+
+  var simpleStartButton =
+    document.getElementById(
+      "measurement-simple-start"
+    );
+
+  var simpleStopButton =
+    document.getElementById(
+      "measurement-simple-stop"
+    );
+
+  if (simpleStartButton) {
+    simpleStartButton.hidden =
+      false;
+  }
+
+  if (simpleStopButton) {
+    simpleStopButton.hidden =
+      true;
+  }
+
+  setSimpleRingProgress(
+    0
+  );
+}
+
+function setSimpleMeasuringState() {
+
+  if (els.simpleKicker) {
+    els.simpleKicker.textContent =
+      "MIDIENDO...";
+  }
+
+  if (els.simpleHelp) {
+    els.simpleHelp.textContent =
+      "Mantén el teléfono quieto · 10 segundos";
+  }
+
+   var simpleStartButton =
+    document.getElementById(
+      "measurement-simple-start"
+    );
+
+  var simpleStopButton =
+    document.getElementById(
+      "measurement-simple-stop"
+    );
+
+
+  if (els.simpleStart) {
+    els.simpleStart.hidden =
+      true;
+  }
+
+  if (els.simpleStop) {
+    els.simpleStop.hidden =
+      false;
+  }
+
+  if (els.advancedPanel) {
+    els.advancedPanel.open =
+      false;
+  }
+}
+
+
+  function setSimpleFinishedState() {
+
+    if (els.simpleKicker) {
+      els.simpleKicker.textContent =
+        "RESULTADO";
+    }
+
+
+    if (els.simpleHelp) {
+      els.simpleHelp.textContent =
+        "Medición completada";
+    }
+
+
+    if (els.simpleStart) {
+      els.simpleStart.hidden =
+        false;
+    }
+
+
+    if (els.simpleStop) {
+      els.simpleStop.hidden =
+        true;
+    }
+
+
+    setSimpleRingProgress(
+      100
+    );
+  }
+
+
+
+  function stopSimpleUiAnimation() {
+
+    if (
+      simpleUiAnimationFrame
+      !== null
+    ) {
+
+      cancelAnimationFrame(
+        simpleUiAnimationFrame
+      );
+
+
+      simpleUiAnimationFrame =
+        null;
+    }
+  }
+
+
+
+  function startSimpleUiAnimation() {
+
+    stopSimpleUiAnimation();
+
+
+    simpleMeasurementStartedAt =
+      performance.now();
+
+
+    function tick(currentTime) {
+
+      var elapsed =
+        currentTime
+        -
+        simpleMeasurementStartedAt;
+
+
+      var percent =
+        Math.min(
+          100,
+          (
+            elapsed
+            /
+            SIMPLE_MEASUREMENT_DURATION_MS
+          )
+          * 100
+        );
+
+
+      setSimpleRingProgress(
+        percent
+      );
+
+
+      var remainingMs =
+        Math.max(
+          0,
+          SIMPLE_MEASUREMENT_DURATION_MS
+          -
+          elapsed
+        );
+
+
+      var remainingSeconds =
+        Math.max(
+          0,
+          Math.ceil(
+            remainingMs
+            / 1000
+          )
+        );
+
+
+      if (els.simpleHelp) {
+
+        els.simpleHelp.textContent =
+          "Mantén el teléfono quieto · "
+          +
+          remainingSeconds
+          +
+          (
+            remainingSeconds === 1
+              ? " segundo"
+              : " segundos"
+          );
+      }
+
+
+      if (
+        elapsed
+        <
+        SIMPLE_MEASUREMENT_DURATION_MS
+      ) {
+
+        simpleUiAnimationFrame =
+          requestAnimationFrame(
+            tick
+          );
+
+      } else {
+
+        stopSimpleUiAnimation();
+      }
+    }
+
+
+    simpleUiAnimationFrame =
+      requestAnimationFrame(
+        tick
+      );
   }
 
   function formatMeasurement(
@@ -330,26 +652,47 @@ function setMeasurementUnit(unit) {
   }
 
 function updateReadout(d) {
+
   latestAnalysis = d;
 
-  els.hz.textContent =
-    d.dominant_hz.toFixed(1);
+
+  // Valor antiguo.
+  // Aunque ahora queda oculto en Medición avanzada,
+  // lo mantenemos para no romper la lógica existente.
+  if (els.hz) {
+
+    els.hz.textContent =
+      d.dominant_hz.toFixed(1);
+
+  }
+
+
+  // NUEVO INDICADOR PRINCIPAL
+ 
+
 
   els.rpm.textContent =
-    Math.round(d.rpm);
+    Math.round(
+      d.rpm
+    );
+
 
   els.fs.textContent =
     d.sample_rate_hz.toFixed(0)
     + " Hz";
 
+
   renderMeasurementUnit();
+
 
   drawSpectrum(
     d.spectrum,
     d.dominant_hz
   );
 
-  els.pdf.disabled = false;
+
+  els.pdf.disabled =
+    false;
 }
 
   // ---- Bucle de render ----
@@ -359,19 +702,110 @@ function updateReadout(d) {
     requestAnimationFrame(renderLoop);
   }
 
-  // ---- Arranque / parada ----
   function startCommon(label) {
+
     running = true;
+
     samples = [];
+
     scopeBuffer = [];
-    latestAnalysis = null;
+
+    latestAnalysis =
+      null;
+
+
     renderMeasurementUnit();
-    els.start.disabled = true;
-    els.pdf.disabled = true;
-    els.stop.disabled = false;
-    setStatus(label, true);
-    analyzeTimer = setInterval(analyze, ANALYZE_EVERY_MS);
-    requestAnimationFrame(renderLoop);
+
+
+    // Botones de la medición avanzada
+    els.start.disabled =
+      true;
+
+    els.pdf.disabled =
+      true;
+
+    els.stop.disabled =
+      false;
+
+
+    setStatus(
+      label,
+      true
+    );
+
+
+ 
+
+    setSimpleMeasuringState();
+
+    startSimpleUiAnimation();
+
+
+    // Cancela cualquier temporizador anterior
+    if (simpleAutoStopTimer) {
+
+      clearTimeout(
+        simpleAutoStopTimer
+      );
+
+      simpleAutoStopTimer =
+        null;
+    }
+
+
+    // Detener automáticamente a los 10 segundos
+    simpleAutoStopTimer =
+      setTimeout(
+        function () {
+
+          if (!running) {
+            return;
+          }
+
+
+          /*
+           * Intentamos obtener un último análisis
+           * antes de finalizar.
+           */
+          analyze();
+
+
+          /*
+           * Damos un pequeño margen a la petición
+           * y después finalizamos.
+           */
+          window.setTimeout(
+            function () {
+
+              if (!running) {
+                return;
+              }
+
+
+              stop(
+                true
+              );
+
+            },
+            300
+          );
+
+        },
+        SIMPLE_MEASUREMENT_DURATION_MS
+      );
+
+
+    // Análisis periódico existente
+    analyzeTimer =
+      setInterval(
+        analyze,
+        ANALYZE_EVERY_MS
+      );
+
+
+    requestAnimationFrame(
+      renderLoop
+    );
   }
 
   function startReal() {
@@ -577,25 +1011,118 @@ function updateReadout(d) {
     });
 }
 
-  function stop() {
-    running = false;
-    demoMode = false;
+   function stop(
+    completedAutomatically
+  ) {
+
+    running =
+      false;
+
+    demoMode =
+      false;
+
+
+    // Detener sensor real
     if (motionHandler) {
-      window.removeEventListener("devicemotion", motionHandler, true);
-      motionHandler = null;
+
+      window.removeEventListener(
+        "devicemotion",
+        motionHandler,
+        true
+      );
+
+      motionHandler =
+        null;
     }
+
+
+    // Detener análisis periódico
     if (analyzeTimer) {
-      clearInterval(analyzeTimer);
-      analyzeTimer = null;
+
+      clearInterval(
+        analyzeTimer
+      );
+
+      analyzeTimer =
+        null;
     }
-    els.start.disabled = false;
+
+
+    // Detener temporizador automático
+    if (simpleAutoStopTimer) {
+
+      clearTimeout(
+        simpleAutoStopTimer
+      );
+
+      simpleAutoStopTimer =
+        null;
+    }
+
+
+    // Detener animación del círculo
+    stopSimpleUiAnimation();
+
+
+    // Botones avanzados
+    els.start.disabled =
+      false;
+
 
     els.pdf.disabled =
       !latestAnalysis
-        || samples.length < 8;
+      ||
+      samples.length < 8;
 
-    els.stop.disabled = true;
-    setStatus("Detenido", false);
+
+    els.stop.disabled =
+      true;
+
+
+    setStatus(
+      "Detenido",
+      false
+    );
+
+
+    // =========================================
+    // ESTADO DE LA VISTA SIMPLE
+    // =========================================
+
+    if (
+      completedAutomatically
+      &&
+      latestAnalysis
+    ) {
+
+      setSimpleFinishedState();
+
+     
+
+      return;
+    }
+
+
+    /*
+     * Si el usuario pulsó Detener manualmente
+     * pero ya existe una medición válida,
+     * mostramos el último resultado.
+     */
+    if (latestAnalysis) {
+
+      setSimpleFinishedState();
+
+
+      return;
+    }
+
+
+    /*
+     * Si se detuvo demasiado pronto
+     * y todavía no había resultado válido.
+     */
+    setSimpleIdleState();
+
   }
 
   // iOS 13+ requiere solicitar permiso tras un gesto del usuario.
@@ -626,19 +1153,76 @@ function updateReadout(d) {
   }
 );
 
-  els.start.addEventListener("click", function () {
-    requestMotionPermission()
-      .then(function (granted) {
-        if (!granted) {
-          setStatus("Permiso de movimiento denegado.", false);
-          return;
-        }
-        startReal();
-      })
-      .catch(function () {
-        setStatus("No se pudo acceder al acelerometro.", false);
-      });
-  });
+function handleStartMeasurement() {
+
+  if (running) {
+    return;
+  }
+
+  requestMotionPermission()
+    .then(function (granted) {
+
+      if (!granted) {
+
+        setStatus(
+          "Permiso de movimiento denegado.",
+          false
+        );
+
+        return;
+      }
+
+      startReal();
+
+    })
+    .catch(function () {
+
+      setStatus(
+        "No se pudo acceder al acelerómetro.",
+        false
+      );
+
+    });
+}
+
+
+els.start.addEventListener(
+  "click",
+  handleStartMeasurement
+);
+
+// =====================================================
+// BOTONES DE LA MEDICIÓN SENCILLA
+// =====================================================
+
+document.addEventListener(
+  "click",
+  function (event) {
+
+    
+
+    if (startButton) {
+
+      event.preventDefault();
+
+      handleStartMeasurement();
+
+      return;
+    }
+
+
+    if (stopButton) {
+
+      event.preventDefault();
+
+      stop(
+        false
+      );
+
+    }
+
+  }
+);
 
  els.pdf.addEventListener(
   "click",
@@ -647,10 +1231,53 @@ function updateReadout(d) {
   }
 );
 
-  els.stop.addEventListener("click", stop);
+    els.stop.addEventListener(
+    "click",
+    function () {
+
+      stop(
+        false
+      );
+
+    }
+  );
 
   // Estado inicial de los lienzos.
 setMeasurementUnit("acceleration");
 drawScope();
 drawSpectrum([], 0);
+  setSimpleIdleState();
+
+  
+ 
+  if (
+    els.advancedPanel
+    &&
+    els.simpleCard
+  ) {
+
+    els.advancedPanel.addEventListener(
+      "toggle",
+      function () {
+
+        if (els.advancedPanel.open) {
+
+
+          els.simpleCard.hidden =
+            true;
+
+        } else {
+
+
+          els.simpleCard.hidden =
+            false;
+
+        }
+
+      }
+    );
+  } 
+setSimpleIdleState();
+
+ 
 })();
