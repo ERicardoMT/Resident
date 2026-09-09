@@ -49,6 +49,7 @@ var COLORS = {
   var lastAnalyzeInFlight = false;
   var measurementUnit = "acceleration";
   var latestAnalysis = null;
+  var preparedShareFile = null;
   var simpleUiAnimationFrame =null;
   var SIMPLE_MEASUREMENT_DURATION_MS =10000;
   var SIMPLE_PROGRESS_INTERVAL_MS =100;
@@ -82,8 +83,20 @@ unitButtons: document.querySelectorAll(
     statusText: document.getElementById("status-text"),
     start: document.getElementById("btn-start"),
     stop: document.getElementById("btn-stop"),
-    pdf: document.getElementById("btn-pdf"),
-    scope: document.getElementById("scope"),
+    pdf:
+      document.getElementById(
+        "btn-pdf"
+      ),
+    
+    sharePdf:
+      document.getElementById(
+        "btn-share-pdf"
+      ),
+
+    scope:
+      document.getElementById(
+        "scope"
+    ),
     spectrum: document.getElementById("spectrum"),
         // Nueva vista sencilla
     simpleCard: document.getElementById(
@@ -1210,6 +1223,8 @@ function startCommon(label) {
 
   latestAnalysis = null;
 
+  preparedShareFile =
+    null;
 
   renderMeasurementUnit();
 
@@ -1218,8 +1233,16 @@ function startCommon(label) {
 
   els.pdf.disabled = true;
 
-  els.stop.disabled = false;
+  if (els.sharePdf) {
 
+    els.sharePdf.disabled =
+      true;
+
+    els.sharePdf.textContent =
+      "Enviar a INAHER";
+  }
+
+  els.stop.disabled = false;
 
   setStatus(
     label,
@@ -1280,6 +1303,489 @@ function startCommon(label) {
     requestAnimationFrame(demoTick);
     els.caption.textContent = "Senal simulada";
   }
+
+function requestMeasurementPdfFile() {
+
+  if (
+    !latestAnalysis
+    || samples.length < 8
+  ) {
+    return Promise.reject(
+      new Error(
+        "Primero realiza una medición válida."
+      )
+    );
+  }
+
+
+  var csrfInput =
+    document.querySelector(
+      "#measurement-pdf-csrf "
+      + "input[name='csrfmiddlewaretoken']"
+    );
+
+
+  if (!csrfInput) {
+    return Promise.reject(
+      new Error(
+        "No se encontró el token de seguridad."
+      )
+    );
+  }
+
+
+  var pdfUrl =
+    els.pdf.getAttribute(
+      "data-pdf-url"
+    );
+
+
+  var payload = {
+
+    measurement_unit:
+      measurementUnit,
+
+    samples: samples.map(
+      function (sample) {
+
+        return {
+          t: sample.t,
+          x: sample.x,
+          y: sample.y,
+          z: sample.z,
+        };
+
+      }
+    ),
+  };
+
+
+  return fetch(
+    pdfUrl,
+    {
+      method: "POST",
+
+      credentials:
+        "same-origin",
+
+      headers: {
+        "Content-Type":
+          "application/json",
+
+        "X-CSRFToken":
+          csrfInput.value,
+      },
+
+      body:
+        JSON.stringify(
+          payload
+        ),
+    }
+  )
+
+    .then(function (response) {
+
+      if (!response.ok) {
+
+        return response
+          .json()
+          .catch(function () {
+            return {};
+          })
+          .then(function (data) {
+
+            throw new Error(
+              data.detail
+              || "No se pudo generar el PDF."
+            );
+
+          });
+      }
+
+
+      var disposition =
+        response.headers.get(
+          "Content-Disposition"
+        )
+        || "";
+
+
+      var filename =
+        "SMAV_INAHER_"
+        + "medicion_vibratoria.pdf";
+
+
+      var match =
+        disposition.match(
+          /filename="?([^"]+)"?/i
+        );
+
+
+      if (
+        match
+        && match[1]
+      ) {
+
+        filename =
+          match[1];
+
+      }
+
+
+      return response
+        .blob()
+        .then(
+          function (blob) {
+
+            return new File(
+              [blob],
+              filename,
+              {
+                type:
+                  "application/pdf",
+              }
+            );
+
+          }
+        );
+
+    });
+}
+
+function prepareMeasurementPdfForShare() {
+
+  preparedShareFile =
+    null;
+
+
+  if (
+    !latestAnalysis
+    || samples.length < 8
+  ) {
+
+    if (els.sharePdf) {
+      els.sharePdf.disabled =
+        true;
+    }
+
+    return;
+  }
+
+
+  if (els.sharePdf) {
+
+    els.sharePdf.disabled =
+      true;
+
+    els.sharePdf.textContent =
+      "Preparando PDF...";
+
+  }
+
+
+  requestMeasurementPdfFile()
+
+    .then(function (file) {
+
+      preparedShareFile =
+        file;
+
+
+      if (els.sharePdf) {
+
+        els.sharePdf.disabled =
+          false;
+
+        els.sharePdf.textContent =
+          "Enviar a INAHER";
+
+      }
+
+    })
+
+    .catch(function (error) {
+
+      console.error(
+        "[SMAV PDF]",
+        error
+      );
+
+
+      preparedShareFile =
+        null;
+
+
+      if (els.sharePdf) {
+
+        els.sharePdf.disabled =
+          false;
+
+        els.sharePdf.textContent =
+          "Enviar a INAHER";
+
+      }
+
+    });
+}
+
+function downloadSharedPdfFile(
+  file
+) {
+
+  var objectUrl =
+    URL.createObjectURL(
+      file
+    );
+
+
+  var link =
+    document.createElement(
+      "a"
+    );
+
+
+  link.href =
+    objectUrl;
+
+  link.download =
+    file.name;
+
+
+  document.body.appendChild(
+    link
+  );
+
+
+  link.click();
+
+  link.remove();
+
+
+  window.setTimeout(
+    function () {
+
+      URL.revokeObjectURL(
+        objectUrl
+      );
+
+    },
+    1500
+  );
+}
+
+function openInaherMailDraft() {
+
+  var email =
+    "ventas@inahermex.com";
+
+
+  var subject =
+    "Reporte de medición vibratoria "
+    + "SMAV INAHER";
+
+
+  var body =
+    "Hola INAHER,%0D%0A%0D%0A"
+    + "Adjunto mi reporte de medición "
+    + "vibratoria generado desde SMAV.%0D%0A%0D%0A"
+    + "El archivo PDF acaba de descargarse "
+    + "en mi dispositivo.%0D%0A";
+
+
+  var mailto =
+    "mailto:"
+    + email
+    + "?subject="
+    + encodeURIComponent(
+        subject
+      )
+    + "&body="
+    + body;
+
+
+  window.location.href =
+    mailto;
+}
+
+function shareMeasurementPdf() {
+
+  if (
+    !latestAnalysis
+    || samples.length < 8
+  ) {
+
+    window.alert(
+      "Primero realiza una medición válida."
+    );
+
+    return;
+  }
+
+
+  /*
+   * Si todavía no está preparado,
+   * lo generamos.
+   *
+   * Después el usuario deberá
+   * pulsar nuevamente.
+   */
+  if (!preparedShareFile) {
+
+    if (els.sharePdf) {
+
+      els.sharePdf.disabled =
+        true;
+
+      els.sharePdf.textContent =
+        "Preparando PDF...";
+
+    }
+
+
+    requestMeasurementPdfFile()
+
+      .then(function (file) {
+
+        preparedShareFile =
+          file;
+
+
+        if (els.sharePdf) {
+
+          els.sharePdf.disabled =
+            false;
+
+          els.sharePdf.textContent =
+            "Compartir PDF";
+
+        }
+
+
+        window.alert(
+          "El PDF está listo. "
+          + "Pulsa nuevamente para compartirlo."
+        );
+
+      })
+
+      .catch(function (error) {
+
+        if (els.sharePdf) {
+
+          els.sharePdf.disabled =
+            false;
+
+          els.sharePdf.textContent =
+            "Enviar a INAHER";
+
+        }
+
+
+        window.alert(
+          error.message
+          || "No se pudo preparar el PDF."
+        );
+
+      });
+
+
+    return;
+  }
+
+
+  /*
+   * Web Share API con archivos.
+   *
+   * iPhone / Android y algunos
+   * navegadores de escritorio.
+   */
+  var shareData = {
+
+    title:
+      "Reporte de medición "
+      + "vibratoria SMAV INAHER",
+
+    text:
+      "Enviar este reporte a "
+      + "ventas@inahermex.com",
+
+    files: [
+      preparedShareFile,
+    ],
+  };
+
+
+  var canShareFiles =
+    (
+      navigator.share
+      && navigator.canShare
+      && navigator.canShare(
+        {
+          files: [
+            preparedShareFile,
+          ],
+        }
+      )
+    );
+
+
+  if (canShareFiles) {
+
+    navigator.share(
+      shareData
+    )
+
+      .catch(function (error) {
+
+        /*
+         * El usuario simplemente cerró
+         * el menú de compartir.
+         */
+        if (
+          error
+          && error.name ===
+            "AbortError"
+        ) {
+          return;
+        }
+
+
+        console.error(
+          "[SMAV SHARE]",
+          error
+        );
+
+
+        window.alert(
+          "No se pudo abrir "
+          + "el menú de compartir."
+        );
+
+      });
+
+
+    return;
+  }
+
+
+  /*
+   * FALLBACK PARA COMPUTADORAS
+   * SIN WEB SHARE DE ARCHIVOS.
+   */
+  downloadSharedPdfFile(
+    preparedShareFile
+  );
+
+
+  window.setTimeout(
+    function () {
+
+      openInaherMailDraft();
+
+    },
+    450
+  );
+}
 
   function downloadMeasurementPdf() {
   if (
@@ -1499,7 +2005,8 @@ function stop() {
     samples.length < 8;
 
 
-  els.stop.disabled = true;
+  els.stop.disabled =
+    true;
 
 
   setStatus(
@@ -1509,8 +2016,25 @@ function stop() {
 
 
   /*
-   * Detenemos solamente la interfaz.
+  * Preparamos el reporte para compartir
+  * cuando termina una medición válida.
    */
+  if (
+    els.sharePdf
+    &&
+    latestAnalysis
+    &&
+    samples.length >= 8
+  ) {
+
+    prepareMeasurementPdfForShare();
+
+  }
+
+
+  /*
+  * Detenemos solamente la interfaz.
+  */
   smavStopSimpleMeasurementUi();
 }
 
@@ -1584,41 +2108,25 @@ els.start.addEventListener(
 // BOTONES DE LA MEDICIÓN SENCILLA
 // =====================================================
 
-document.addEventListener(
-  "click",
-  function (event) {
-
-    
-
-    if (startButton) {
-
-      event.preventDefault();
-
-      handleStartMeasurement();
-
-      return;
-    }
-
-
-    if (stopButton) {
-
-      event.preventDefault();
-
-      stop(
-        false
-      );
-
-    }
-
-  }
-);
-
- els.pdf.addEventListener(
+els.pdf.addEventListener(
   "click",
   function () {
     downloadMeasurementPdf();
   }
 );
+
+if (els.sharePdf) {
+
+  els.sharePdf.addEventListener(
+    "click",
+    function () {
+
+      shareMeasurementPdf();
+
+    }
+  );
+
+}
 
     els.stop.addEventListener(
     "click",
