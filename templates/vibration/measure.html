@@ -221,31 +221,42 @@
 
   </div>
 
+<div class="measurement-simple-controls">
 
-  <!-- Botón sencillo -->
-  <div class="measurement-simple-actions">
+  <button
+    type="button"
+    class="btn btn-primary"
+    id="btn-start"
+  >
+    Iniciar medición
+  </button>
+
+
+  <div class="btn-row">
 
     <button
       type="button"
-      class="btn btn-primary"
-      id="measurement-simple-start"
-      onclick="document.getElementById('btn-start').click();"
+      class="btn btn-ghost"
+      id="btn-pdf"
+      data-pdf-url="{% url 'measurement-pdf' %}"
+      disabled
     >
-      Iniciar medición
+      PDF
     </button>
 
 
     <button
       type="button"
       class="btn btn-secondary"
-      id="measurement-simple-stop"
-      onclick="document.getElementById('btn-stop').click();"
-      hidden
+      id="btn-stop"
+      disabled
     >
       Detener
     </button>
 
   </div>
+
+</div>
 
 </section>
 
@@ -472,44 +483,6 @@
         {% csrf_token %}
       </form>
 
-
-      <!-- =================================================
-           BOTONES AVANZADOS
-           ================================================= -->
-      <button
-        type="button"
-        class="btn btn-primary"
-        id="btn-start"
-      >
-        Iniciar medición
-      </button>
-
-
-      <div class="btn-row">
-
-        <button
-          type="button"
-          class="btn btn-ghost"
-          id="btn-pdf"
-          data-pdf-url="{% url 'measurement-pdf' %}"
-          disabled
-        >
-          PDF
-        </button>
-
-
-        <button
-          type="button"
-          class="btn btn-secondary"
-          id="btn-stop"
-          disabled
-        >
-          Detener
-        </button>
-
-      </div>
-
-
     </div>
 
   </details>
@@ -625,20 +598,27 @@
 
 .measurement-simple-progressbar {
   width: 100%;
-  max-width: 440px;
   height: 10px;
-  margin: 0 auto 14px;
-  background: #e8edf3;
+
+  background: #e5edf4;
+
   border-radius: 999px;
+
   overflow: hidden;
 }
 
+
 .measurement-simple-progressbar-fill {
+  display: block;
+
   width: 0%;
   height: 100%;
-  background: linear-gradient(90deg, #49baf3 0%, #2b92d2 100%);
+
+  background: var(--accent);
+
   border-radius: 999px;
-  transition: width 0.2s linear;
+
+  transition: none !important;
 }
 
 .measurement-simple-actions {
@@ -965,6 +945,18 @@
 
   [hidden] {
   display: none !important;
+}
+
+.measurement-simple-controls {
+  margin-top: 14px;
+}
+
+.measurement-simple-controls > .btn {
+  width: 100%;
+}
+
+.measurement-simple-controls .btn-row {
+  margin-top: 10px;
 }
 
 </style>

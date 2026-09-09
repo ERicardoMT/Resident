@@ -50,8 +50,10 @@ var COLORS = {
   var measurementUnit = "acceleration";
   var latestAnalysis = null;
   var simpleUiAnimationFrame =null;
+  var SIMPLE_MEASUREMENT_DURATION_MS =10000;
+  var SIMPLE_PROGRESS_INTERVAL_MS =100;
   var simpleMeasurementStartedAt =null;
-  var simpleAutoStopTimer =null;
+  var simpleProgressAnimation =null;
 
   var els = {
     hz: document.getElementById("hz-value"),
@@ -128,6 +130,579 @@ unitButtons: document.querySelectorAll(
   function now() {
     return performance.now();
   }
+// ======================================================
+// SMAV - INTERFAZ SIMPLE DE MEDICIÓN
+// Esta lógica NO controla el acelerómetro.
+// Solo controla texto, barra y temporizador visual.
+// ======================================================
+
+var SMAV_SIMPLE_DURATION_MS =
+  10000;
+
+var SMAV_SIMPLE_TICK_MS =
+  100;
+
+var smavSimpleTimer =
+  null;
+
+var smavSimpleStartedAt =
+  0;
+
+
+
+function smavSetSimpleIdle() {
+
+  var kicker =
+    document.getElementById(
+      "measurement-simple-kicker"
+    );
+
+  var help =
+    document.getElementById(
+      "measurement-simple-help"
+    );
+
+  var bar =
+    document.getElementById(
+      "measurement-simple-progressbar-fill"
+    );
+
+
+  if (kicker) {
+
+    kicker.textContent =
+      "LISTO PARA MEDIR";
+
+  }
+
+
+  if (help) {
+
+    help.textContent =
+      "Coloca el teléfono y pulsa iniciar";
+
+  }
+
+
+  if (bar) {
+
+    bar.style.width =
+      "0%";
+
+  }
+}
+
+
+
+function smavSetSimpleMeasuring() {
+
+  var kicker =
+    document.getElementById(
+      "measurement-simple-kicker"
+    );
+
+  var help =
+    document.getElementById(
+      "measurement-simple-help"
+    );
+
+
+  if (kicker) {
+
+    kicker.textContent =
+      "MIDIENDO...";
+
+  }
+
+
+  if (help) {
+
+    help.textContent =
+      "Mantén el teléfono quieto · 10 segundos";
+
+  }
+}
+
+
+
+function smavSetSimpleFinished() {
+
+  var kicker =
+    document.getElementById(
+      "measurement-simple-kicker"
+    );
+
+  var help =
+    document.getElementById(
+      "measurement-simple-help"
+    );
+
+  var bar =
+    document.getElementById(
+      "measurement-simple-progressbar-fill"
+    );
+
+
+  if (kicker) {
+
+    kicker.textContent =
+      "MEDICIÓN COMPLETADA";
+
+  }
+
+
+  if (help) {
+
+    help.textContent =
+      "Resultado obtenido en 10 segundos";
+
+  }
+
+
+  if (bar) {
+
+    bar.style.width =
+      "100%";
+
+  }
+}
+
+
+
+function smavStopSimpleMeasurementUi() {
+
+  if (
+    smavSimpleTimer !== null
+  ) {
+
+    clearInterval(
+      smavSimpleTimer
+    );
+
+    smavSimpleTimer =
+      null;
+  }
+}
+
+
+
+function smavStartSimpleMeasurementUi() {
+
+  smavStopSimpleMeasurementUi();
+
+
+  var bar =
+    document.getElementById(
+      "measurement-simple-progressbar-fill"
+    );
+
+  var help =
+    document.getElementById(
+      "measurement-simple-help"
+    );
+
+
+  smavSimpleStartedAt =
+    Date.now();
+
+
+  if (bar) {
+
+    bar.style.width =
+      "0%";
+
+  }
+
+
+  smavSetSimpleMeasuring();
+
+
+  smavSimpleTimer =
+    setInterval(
+      function () {
+
+        var elapsed =
+          Date.now()
+          -
+          smavSimpleStartedAt;
+
+
+        var progress =
+          elapsed
+          /
+          SMAV_SIMPLE_DURATION_MS;
+
+
+        progress =
+          Math.max(
+            0,
+            Math.min(
+              1,
+              progress
+            )
+          );
+
+
+        var percentage =
+          progress * 100;
+
+
+        if (bar) {
+
+          bar.style.width =
+            percentage + "%";
+
+        }
+
+
+        var remainingMilliseconds =
+          Math.max(
+            0,
+            SMAV_SIMPLE_DURATION_MS
+            -
+            elapsed
+          );
+
+
+        var remainingSeconds =
+          Math.ceil(
+            remainingMilliseconds
+            /
+            1000
+          );
+
+
+        if (
+          help
+          &&
+          progress < 1
+        ) {
+
+          help.textContent =
+            "Mantén el teléfono quieto · "
+            +
+            remainingSeconds
+            +
+            (
+              remainingSeconds === 1
+                ? " segundo"
+                : " segundos"
+            );
+
+        }
+
+
+        /*
+         * Llegamos a 10 segundos.
+         */
+        if (progress >= 1) {
+
+          smavStopSimpleMeasurementUi();
+
+
+          if (bar) {
+
+            bar.style.width =
+              "100%";
+
+          }
+
+
+          /*
+           * Detenemos la medición real.
+           */
+          if (running) {
+
+            stop();
+
+          }
+
+
+          smavSetSimpleFinished();
+
+        }
+
+      },
+      SMAV_SIMPLE_TICK_MS
+    );
+}
+  // =====================================================
+// INTERFAZ DE MEDICIÓN DE 10 SEGUNDOS
+// =====================================================
+
+function setSimpleIdleState() {
+
+  var kicker =
+    document.getElementById(
+      "measurement-simple-kicker"
+    );
+
+  var help =
+    document.getElementById(
+      "measurement-simple-help"
+    );
+
+  var progress =
+    document.getElementById(
+      "measurement-simple-progressbar-fill"
+    );
+
+
+  if (kicker) {
+    kicker.textContent =
+      "LISTO PARA MEDIR";
+  }
+
+
+  if (help) {
+    help.textContent =
+      "Coloca el teléfono y pulsa iniciar";
+  }
+
+
+  if (progress) {
+
+  progress.style.transform =
+    "scaleX(0)";
+
+  progress.style.webkitTransform =
+    "scaleX(0)";
+
+}
+}
+
+
+
+
+
+
+
+function setSimpleFinishedState() {
+
+  var kicker =
+    document.getElementById(
+      "measurement-simple-kicker"
+    );
+
+  var help =
+    document.getElementById(
+      "measurement-simple-help"
+    );
+
+  var progress =
+    document.getElementById(
+      "measurement-simple-progressbar-fill"
+    );
+
+
+  if (kicker) {
+    kicker.textContent =
+      "MEDICIÓN COMPLETADA";
+  }
+
+
+  if (help) {
+    help.textContent =
+      "Resultado obtenido en 10 segundos";
+  }
+
+
+ if (progress) {
+
+  progress.style.transform =
+    "scaleX(1)";
+
+  progress.style.webkitTransform =
+    "scaleX(1)";
+
+}
+}
+
+
+
+function stopSimpleProgress() {
+
+  if (
+    simpleProgressTimer
+    !== null
+  ) {
+
+    clearInterval(
+      simpleProgressTimer
+    );
+
+    simpleProgressTimer =
+      null;
+  }
+}
+
+
+
+function startSimpleProgress() {
+
+  var progress =
+    document.getElementById(
+      "measurement-simple-progressbar-fill"
+    );
+
+  var help =
+    document.getElementById(
+      "measurement-simple-help"
+    );
+
+
+  stopSimpleProgress();
+
+
+  simpleMeasurementStartedAt =
+    Date.now();
+
+
+  /*
+   * Estado inicial.
+   */
+  if (progress) {
+
+    progress.style.width =
+      "0%";
+
+  }
+
+
+  if (help) {
+
+    help.textContent =
+      "Mantén el teléfono quieto · 10 segundos";
+
+  }
+
+
+  /*
+   * Actualizamos cada 100 ms.
+   * Esto funciona de manera consistente
+   * en Safari, Chrome, Firefox y Edge.
+   */
+  simpleProgressTimer =
+    setInterval(
+      function () {
+
+        var currentTime =
+          Date.now();
+
+
+        var elapsed =
+          currentTime
+          -
+          simpleMeasurementStartedAt;
+
+
+        /*
+         * Porcentaje entre 0 y 100.
+         */
+        var percentage =
+          (
+            elapsed
+            /
+            SIMPLE_MEASUREMENT_DURATION_MS
+          )
+          * 100;
+
+
+        percentage =
+          Math.max(
+            0,
+            Math.min(
+              100,
+              percentage
+            )
+          );
+
+
+        /*
+         * Actualizamos directamente
+         * el ancho de la barra.
+         */
+        if (progress) {
+
+          progress.style.width =
+            percentage.toFixed(2)
+            +
+            "%";
+
+        }
+
+
+        /*
+         * Segundos restantes.
+         */
+        var remainingMs =
+          SIMPLE_MEASUREMENT_DURATION_MS
+          -
+          elapsed;
+
+
+        remainingMs =
+          Math.max(
+            0,
+            remainingMs
+          );
+
+
+        var remainingSeconds =
+          Math.ceil(
+            remainingMs
+            /
+            1000
+          );
+
+
+        if (
+          help
+          &&
+          elapsed
+          <
+          SIMPLE_MEASUREMENT_DURATION_MS
+        ) {
+
+          help.textContent =
+            "Mantén el teléfono quieto · "
+            +
+            remainingSeconds
+            +
+            (
+              remainingSeconds === 1
+                ? " segundo"
+                : " segundos"
+            );
+
+        }
+
+
+        /*
+         * Llegamos a los 10 segundos.
+         */
+        if (
+          elapsed
+          >=
+          SIMPLE_MEASUREMENT_DURATION_MS
+        ) {
+
+          if (progress) {
+
+            progress.style.width =
+              "100%";
+
+          }
+
+
+          stopSimpleProgress();
+
+        }
+
+      },
+      SIMPLE_PROGRESS_INTERVAL_MS
+    );
+}
 
     // =====================================================
   // VISTA SENCILLA DE MEDICIÓN
@@ -183,39 +758,44 @@ unitButtons: document.querySelectorAll(
 
 function setSimpleIdleState() {
 
-  if (els.simpleKicker) {
-    els.simpleKicker.textContent =
+  var kicker =
+    document.getElementById(
+      "measurement-simple-kicker"
+    );
+
+  var help =
+    document.getElementById(
+      "measurement-simple-help"
+    );
+
+  var progress =
+    document.getElementById(
+      "measurement-simple-progressbar-fill"
+    );
+
+
+  if (kicker) {
+
+    kicker.textContent =
       "LISTO PARA MEDIR";
+
   }
 
-  if (els.simpleHelp) {
-    els.simpleHelp.textContent =
+
+  if (help) {
+
+    help.textContent =
       "Coloca el teléfono y pulsa iniciar";
+
   }
 
-  var simpleStartButton =
-    document.getElementById(
-      "measurement-simple-start"
-    );
 
-  var simpleStopButton =
-    document.getElementById(
-      "measurement-simple-stop"
-    );
+  if (progress) {
 
-  if (simpleStartButton) {
-    simpleStartButton.hidden =
-      false;
+    progress.style.width =
+      "0%";
+
   }
-
-  if (simpleStopButton) {
-    simpleStopButton.hidden =
-      true;
-  }
-
-  setSimpleRingProgress(
-    0
-  );
 }
 
 function setSimpleMeasuringState() {
@@ -258,36 +838,47 @@ function setSimpleMeasuringState() {
 }
 
 
-  function setSimpleFinishedState() {
+ function setSimpleFinishedState() {
 
-    if (els.simpleKicker) {
-      els.simpleKicker.textContent =
-        "RESULTADO";
-    }
-
-
-    if (els.simpleHelp) {
-      els.simpleHelp.textContent =
-        "Medición completada";
-    }
-
-
-    if (els.simpleStart) {
-      els.simpleStart.hidden =
-        false;
-    }
-
-
-    if (els.simpleStop) {
-      els.simpleStop.hidden =
-        true;
-    }
-
-
-    setSimpleRingProgress(
-      100
+  var kicker =
+    document.getElementById(
+      "measurement-simple-kicker"
     );
+
+  var help =
+    document.getElementById(
+      "measurement-simple-help"
+    );
+
+  var progress =
+    document.getElementById(
+      "measurement-simple-progressbar-fill"
+    );
+
+
+  if (kicker) {
+
+    kicker.textContent =
+      "MEDICIÓN COMPLETADA";
+
   }
+
+
+  if (help) {
+
+    help.textContent =
+      "Resultado obtenido en 10 segundos";
+
+  }
+
+
+  if (progress) {
+
+    progress.style.width =
+      "100%";
+
+  }
+}
 
 
 
@@ -308,99 +899,6 @@ function setSimpleMeasuringState() {
     }
   }
 
-
-
-  function startSimpleUiAnimation() {
-
-    stopSimpleUiAnimation();
-
-
-    simpleMeasurementStartedAt =
-      performance.now();
-
-
-    function tick(currentTime) {
-
-      var elapsed =
-        currentTime
-        -
-        simpleMeasurementStartedAt;
-
-
-      var percent =
-        Math.min(
-          100,
-          (
-            elapsed
-            /
-            SIMPLE_MEASUREMENT_DURATION_MS
-          )
-          * 100
-        );
-
-
-      setSimpleRingProgress(
-        percent
-      );
-
-
-      var remainingMs =
-        Math.max(
-          0,
-          SIMPLE_MEASUREMENT_DURATION_MS
-          -
-          elapsed
-        );
-
-
-      var remainingSeconds =
-        Math.max(
-          0,
-          Math.ceil(
-            remainingMs
-            / 1000
-          )
-        );
-
-
-      if (els.simpleHelp) {
-
-        els.simpleHelp.textContent =
-          "Mantén el teléfono quieto · "
-          +
-          remainingSeconds
-          +
-          (
-            remainingSeconds === 1
-              ? " segundo"
-              : " segundos"
-          );
-      }
-
-
-      if (
-        elapsed
-        <
-        SIMPLE_MEASUREMENT_DURATION_MS
-      ) {
-
-        simpleUiAnimationFrame =
-          requestAnimationFrame(
-            tick
-          );
-
-      } else {
-
-        stopSimpleUiAnimation();
-      }
-    }
-
-
-    simpleUiAnimationFrame =
-      requestAnimationFrame(
-        tick
-      );
-  }
 
   function formatMeasurement(
   value,
@@ -702,111 +1200,63 @@ function updateReadout(d) {
     requestAnimationFrame(renderLoop);
   }
 
-  function startCommon(label) {
+function startCommon(label) {
 
-    running = true;
+  running = true;
 
-    samples = [];
+  samples = [];
 
-    scopeBuffer = [];
+  scopeBuffer = [];
 
-    latestAnalysis =
-      null;
-
-
-    renderMeasurementUnit();
+  latestAnalysis = null;
 
 
-    // Botones de la medición avanzada
-    els.start.disabled =
-      true;
-
-    els.pdf.disabled =
-      true;
-
-    els.stop.disabled =
-      false;
+  renderMeasurementUnit();
 
 
-    setStatus(
-      label,
-      true
+  els.start.disabled = true;
+
+  els.pdf.disabled = true;
+
+  els.stop.disabled = false;
+
+
+  setStatus(
+    label,
+    true
+  );
+
+
+  analyzeTimer =
+    setInterval(
+      analyze,
+      ANALYZE_EVERY_MS
     );
 
 
- 
-
-    setSimpleMeasuringState();
-
-    startSimpleUiAnimation();
+  requestAnimationFrame(
+    renderLoop
+  );
 
 
-    // Cancela cualquier temporizador anterior
-    if (simpleAutoStopTimer) {
+  /*
+   * La interfaz visual se ejecuta aparte.
+   * Si llegara a fallar, NO rompe
+   * la medición del acelerómetro.
+   */
+  try {
 
-      clearTimeout(
-        simpleAutoStopTimer
-      );
+    smavStartSimpleMeasurementUi();
 
-      simpleAutoStopTimer =
-        null;
-    }
+  } catch (error) {
 
-
-    // Detener automáticamente a los 10 segundos
-    simpleAutoStopTimer =
-      setTimeout(
-        function () {
-
-          if (!running) {
-            return;
-          }
-
-
-          /*
-           * Intentamos obtener un último análisis
-           * antes de finalizar.
-           */
-          analyze();
-
-
-          /*
-           * Damos un pequeño margen a la petición
-           * y después finalizamos.
-           */
-          window.setTimeout(
-            function () {
-
-              if (!running) {
-                return;
-              }
-
-
-              stop(
-                true
-              );
-
-            },
-            300
-          );
-
-        },
-        SIMPLE_MEASUREMENT_DURATION_MS
-      );
-
-
-    // Análisis periódico existente
-    analyzeTimer =
-      setInterval(
-        analyze,
-        ANALYZE_EVERY_MS
-      );
-
-
-    requestAnimationFrame(
-      renderLoop
+    console.error(
+      "[SMAV UI] Error:",
+      error
     );
+
   }
+}
 
   function startReal() {
     demoMode = false;
@@ -1011,119 +1461,58 @@ function updateReadout(d) {
     });
 }
 
-   function stop(
-    completedAutomatically
-  ) {
+function stop() {
 
-    running =
-      false;
+  running = false;
 
-    demoMode =
-      false;
+  demoMode = false;
 
 
-    // Detener sensor real
-    if (motionHandler) {
+  if (motionHandler) {
 
-      window.removeEventListener(
-        "devicemotion",
-        motionHandler,
-        true
-      );
-
-      motionHandler =
-        null;
-    }
-
-
-    // Detener análisis periódico
-    if (analyzeTimer) {
-
-      clearInterval(
-        analyzeTimer
-      );
-
-      analyzeTimer =
-        null;
-    }
-
-
-    // Detener temporizador automático
-    if (simpleAutoStopTimer) {
-
-      clearTimeout(
-        simpleAutoStopTimer
-      );
-
-      simpleAutoStopTimer =
-        null;
-    }
-
-
-    // Detener animación del círculo
-    stopSimpleUiAnimation();
-
-
-    // Botones avanzados
-    els.start.disabled =
-      false;
-
-
-    els.pdf.disabled =
-      !latestAnalysis
-      ||
-      samples.length < 8;
-
-
-    els.stop.disabled =
-      true;
-
-
-    setStatus(
-      "Detenido",
-      false
+    window.removeEventListener(
+      "devicemotion",
+      motionHandler,
+      true
     );
 
-
-    // =========================================
-    // ESTADO DE LA VISTA SIMPLE
-    // =========================================
-
-    if (
-      completedAutomatically
-      &&
-      latestAnalysis
-    ) {
-
-      setSimpleFinishedState();
-
-     
-
-      return;
-    }
-
-
-    /*
-     * Si el usuario pulsó Detener manualmente
-     * pero ya existe una medición válida,
-     * mostramos el último resultado.
-     */
-    if (latestAnalysis) {
-
-      setSimpleFinishedState();
-
-
-      return;
-    }
-
-
-    /*
-     * Si se detuvo demasiado pronto
-     * y todavía no había resultado válido.
-     */
-    setSimpleIdleState();
-
+    motionHandler = null;
   }
+
+
+  if (analyzeTimer) {
+
+    clearInterval(
+      analyzeTimer
+    );
+
+    analyzeTimer = null;
+  }
+
+
+  els.start.disabled = false;
+
+
+  els.pdf.disabled =
+    !latestAnalysis
+    ||
+    samples.length < 8;
+
+
+  els.stop.disabled = true;
+
+
+  setStatus(
+    "Detenido",
+    false
+  );
+
+
+  /*
+   * Detenemos solamente la interfaz.
+   */
+  smavStopSimpleMeasurementUi();
+}
 
   // iOS 13+ requiere solicitar permiso tras un gesto del usuario.
   function requestMotionPermission() {
@@ -1246,7 +1635,6 @@ document.addEventListener(
 setMeasurementUnit("acceleration");
 drawScope();
 drawSpectrum([], 0);
-  setSimpleIdleState();
 
   
  
@@ -1277,7 +1665,6 @@ drawSpectrum([], 0);
       }
     );
   } 
-setSimpleIdleState();
 
  
 })();
