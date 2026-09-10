@@ -268,6 +268,198 @@
 
 </section>
 
+<!-- SMAV_RESULTADOS_MEDICION_V1 -->
+<section
+  class="measurement-result"
+  id="measurement-result"
+  hidden
+  aria-live="polite"
+>
+
+  <div class="measurement-result-heading">
+
+    <span class="measurement-result-kicker">
+      RESULTADO DE LA MEDICIÓN
+    </span>
+
+    <h2 class="measurement-result-title">
+      Resultado de tu medición
+    </h2>
+
+    <p
+      class="measurement-result-folio"
+      id="measurement-result-folio"
+    ></p>
+
+  </div>
+
+
+  <!-- ======================================================
+       RESULTADO 1
+       ====================================================== -->
+
+  <div
+    class="measurement-result-state"
+    id="measurement-result-state-1"
+    hidden
+  >
+
+    <div
+      class="measurement-result-alert
+             measurement-result-alert-danger"
+    >
+
+      <div class="measurement-result-alert-title">
+        No se obtuvo una lectura clara.
+      </div>
+
+      <p>
+        Intenta de nuevo apoyando mejor el teléfono.
+        Si sigue igual, continúa con la selección de tu
+        soporte con el peso de tu máquina o equipo.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- ======================================================
+       RESULTADO 2
+       ====================================================== -->
+
+  <div
+    class="measurement-result-state"
+    id="measurement-result-state-2"
+    hidden
+  >
+
+    <div
+      class="measurement-result-alert
+             measurement-result-alert-danger"
+    >
+
+      <div class="measurement-result-alert-title">
+        ⚠ La vibración superó lo que el teléfono puede medir.
+      </div>
+
+      <p>
+        Escríbenos con tu folio y lo revisamos contigo.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- ======================================================
+       RESULTADO 3
+       FRECUENCIA MENOR A 25 Hz
+       ====================================================== -->
+
+  <div
+    class="measurement-result-state"
+    id="measurement-result-state-3"
+    hidden
+  >
+
+    <div class="measurement-result-quality">
+      ✓ Medición confiable · señal estable y clara
+    </div>
+
+
+    <div
+      class="measurement-result-frequency"
+      id="measurement-result-frequency-3"
+    ></div>
+
+
+    <p class="measurement-result-message">
+
+      Tu frecuencia quedó registrada en el folio
+
+      <strong id="measurement-result-folio-inline-3"></strong>.
+
+      Escríbenos y con ese dato te recomendamos justo
+      lo que tu equipo necesita — sin comprar de más
+      ni de menos.
+
+    </p>
+
+
+    <p
+      class="measurement-result-low-frequency"
+      id="measurement-result-low-frequency"
+    >
+
+      Tu equipo vibra en frecuencia baja.
+      En ese rango el soporte adecuado suele ser de resorte,
+      y ese se dimensiona para que quede bien a la primera.
+      Guarda tu folio y escríbenos.
+
+    </p>
+
+  </div>
+
+
+  <!-- ======================================================
+       RESULTADO 4
+       FRECUENCIA IGUAL O MAYOR A 25 Hz
+       ====================================================== -->
+
+  <div
+    class="measurement-result-state"
+    id="measurement-result-state-4"
+    hidden
+  >
+
+    <div class="measurement-result-quality">
+      ✓ Medición confiable · señal estable y clara
+    </div>
+
+
+    <div
+      class="measurement-result-frequency"
+      id="measurement-result-frequency-4"
+    ></div>
+
+
+    <p class="measurement-result-message">
+
+      Tu frecuencia quedó registrada en tu folio.
+      Elige tu antivibratorio por peso y número de apoyos.
+
+    </p>
+
+  </div>
+
+
+  <!-- ======================================================
+       LEYENDAS DEL PDF
+       ====================================================== -->
+
+  <div class="measurement-result-legend">
+
+    <p>
+      Medido con el sensor de tu teléfono:
+      valor orientativo, puede variar según el modelo
+      de teléfono y la forma de apoyo.
+    </p>
+
+
+    <p>
+      La medición es orientativa, con los datos que capturó
+      el sensor de tu teléfono; no constituye garantía.
+      La instalación, uso y aplicación del producto son
+      responsabilidad del cliente.
+      Valida tu caso con nuestro equipo antes de comprar:
+      es gratis.
+    </p>
+
+  </div>
+
+</section>
+
   <details
     class="measurement-advanced"
     id="measurement-advanced"
@@ -965,6 +1157,169 @@
 
 .measurement-simple-controls .btn-row {
   margin-top: 10px;
+}
+
+
+
+/* SMAV_RESULTADOS_MEDICION_CSS_V1 */
+
+.measurement-result {
+  max-width: 760px;
+  margin: 20px auto 0;
+  padding: 22px 20px 20px;
+  background: #ffffff;
+  border: 1px solid #d9e5ee;
+  border-radius: 22px;
+  box-shadow: 0 10px 24px rgba(7, 44, 84, 0.06);
+}
+
+.measurement-result-heading {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.measurement-result-kicker {
+  display: block;
+  color: #4ab8f1;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.measurement-result-title {
+  margin: 6px 0 3px;
+  color: #17457d;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.measurement-result-folio {
+  margin: 0;
+  color: #6d7e91;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.measurement-result-state[hidden] {
+  display: none !important;
+}
+
+.measurement-result-alert {
+  padding: 16px 17px;
+  border-radius: 15px;
+  border: 1px solid #f0b8c0;
+  background: #fff1f3;
+  color: #7e2431;
+}
+
+.measurement-result-alert-title {
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.measurement-result-alert p {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+.measurement-result-quality {
+  padding: 10px 14px;
+  border: 1px solid #b8dfc7;
+  border-radius: 999px;
+  background: #f1fbf4;
+  color: #277445;
+  font-size: 13px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.measurement-result-frequency {
+  margin: 18px 0 5px;
+  color: #17457d;
+  font-size: 42px;
+  line-height: 1;
+  font-weight: 900;
+  text-align: center;
+}
+
+.measurement-result-message {
+  margin: 12px auto 0;
+  max-width: 650px;
+  color: #526b82;
+  font-size: 14px;
+  line-height: 1.55;
+  font-weight: 600;
+  text-align: center;
+}
+
+.measurement-result-low-frequency {
+  margin: 12px auto 0;
+  max-width: 650px;
+  padding: 13px 15px;
+  border-left: 4px solid #e6a23c;
+  border-radius: 10px;
+  background: #fff8eb;
+  color: #855c1a;
+  font-size: 14px;
+  line-height: 1.55;
+  font-weight: 600;
+}
+
+.measurement-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.measurement-result-actions .btn {
+  min-width: 190px;
+  text-align: center;
+}
+
+.measurement-result-legend {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #d9e5ee;
+}
+
+.measurement-result-legend p {
+  margin: 7px 0;
+  color: #718296;
+  font-size: 11px;
+  line-height: 1.55;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+
+  .measurement-result {
+    padding: 18px 14px 16px;
+    border-radius: 18px;
+  }
+
+  .measurement-result-title {
+    font-size: 21px;
+  }
+
+  .measurement-result-frequency {
+    font-size: 36px;
+  }
+
+  .measurement-result-actions {
+    flex-direction: column;
+  }
+
+  .measurement-result-actions .btn {
+    width: 100%;
+    min-width: 0;
+  }
+
 }
 
 </style>
