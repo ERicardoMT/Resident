@@ -230,6 +230,7 @@ Elegir mi nivelador | SMAV INAHER
       <details
           id="result-feature-details"
           class="result-feature-details"
+          open
       >
           <summary class="result-feature-summary">
 
@@ -331,6 +332,26 @@ Elegir mi nivelador | SMAV INAHER
 </section>
 
 <style>
+
+  .result-feature-details > summary {
+    list-style: none;
+    cursor: default;
+  }
+
+  .result-feature-details > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .result-feature-details > summary::marker {
+    content: "";
+  }
+
+  .result-feature-details > summary .result-feature-arrow,
+  .result-feature-details > summary .result-feature-chevron,
+  .result-feature-details > summary [aria-hidden="true"] {
+    display: none;
+  }
+
   .selector-screen[hidden] {
     display: none;
   }
