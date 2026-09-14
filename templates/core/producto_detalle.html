@@ -1491,61 +1491,55 @@
     }
 
 
-    function resetCamera() {
+    async function resetCamera() {
+
+        if (!modelReady) {
+            setViewerFeedback(
+                "Espera a que termine de cargar el modelo."
+            );
+            return;
+        }
+
         cameraTheta = 0;
 
-        /*
-         * El Modelo 3D normal no debe conservar una
-         * transformación aplicada temporalmente para RA.
-         */
-        viewer.setAttribute(
-            "orientation",
-            "0deg 0deg 0deg"
-        );
+        viewer.orientation =
+            "0deg 0deg 0deg";
 
-        viewer.setAttribute(
-            "scale",
-            "1 1 1"
-        );
-
-        viewer.setAttribute(
-            "camera-orbit",
-            "0deg 75deg 105%"
-        );
-
-        viewer.setAttribute(
-            "camera-target",
-            "auto auto auto"
-        );
-
-        viewer.setAttribute(
-            "field-of-view",
-            "auto"
-        );
+        viewer.scale =
+            "1 1 1";
 
         if (
             typeof viewer.updateFraming
             === "function"
         ) {
-            viewer.updateFraming();
+            await viewer.updateFraming();
         }
 
-        requestAnimationFrame(() => {
-            if (
-                typeof viewer.jumpCameraToGoal
-                === "function"
-            ) {
-                viewer.jumpCameraToGoal();
-            }
+        viewer.cameraTarget =
+            "auto auto auto";
 
-            /*
-             * Esperamos otro cuadro para asegurarnos de
-             * que getCameraOrbit devuelva la vista inicial.
-             */
-            requestAnimationFrame(
-                saveReferenceOrbit
-            );
-        });
+        viewer.fieldOfView =
+            "auto";
+
+        viewer.cameraOrbit =
+            "0deg 75deg 105%";
+
+        if (viewer.updateComplete) {
+            await viewer.updateComplete;
+        }
+
+        if (
+            typeof viewer.jumpCameraToGoal
+            === "function"
+        ) {
+            viewer.jumpCameraToGoal();
+        }
+
+        requestAnimationFrame(
+            function () {
+                saveReferenceOrbit();
+            }
+        );
 
         setViewerFeedback(
             "Vista centrada al frente."

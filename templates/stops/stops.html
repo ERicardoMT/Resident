@@ -462,12 +462,12 @@ Elegir mi antivibratorio | SMAV INAHER
       <div class="antivibration-result-header">
 
         <span class="section-kicker">
-          Otras recomendaciones
+          Resultado
         </span>
 
         <div class="result-header">
           <h1 class="page-title result-page-title">
-            Alternativas compatibles
+            Recomendación
           </h1>
 
     <span
@@ -484,9 +484,99 @@ Elegir mi antivibratorio | SMAV INAHER
   ></p>
 
   <div
+    id="antivibration-result-chip"
     class="result-filter-chip antivibration-result-chip"
   >
     Soportes antivibratorios · Selección por capacidad
+  </div>
+
+  <div
+    id="antivibration-category-selector"
+    class="result-feature-selector"
+  >
+    <details
+      id="antivibration-category-details"
+      class="result-feature-details"
+      open
+    >
+      <summary class="result-feature-summary">
+
+        <div class="result-feature-summary-copy">
+          <span class="result-feature-kicker">
+            Ajustar recomendación
+          </span>
+
+          <strong>
+            Categoría de antivibratorio
+          </strong>
+
+          <small id="antivibration-category-selection-label">
+            Todas las categorías
+          </small>
+        </div>
+
+        <span
+          class="result-feature-arrow"
+          aria-hidden="true"
+        ></span>
+
+      </summary>
+
+      <div class="result-feature-menu">
+
+        <p class="result-feature-help">
+          Selecciona el tipo de antivibratorio que necesitas
+          y actualizaremos la recomendación automáticamente.
+        </p>
+
+        <div class="result-feature-grid">
+
+          {% for category in selector_options.subcategories %}
+
+            <label class="result-feature-option">
+
+              <input
+                type="checkbox"
+                name="antivibration_subcategory"
+                value="{{ category.value }}"
+                data-label="{{ category.label }}"
+              >
+
+              <span class="result-feature-check">
+                ✓
+              </span>
+
+              <span class="result-feature-name">
+                {{ category.label }}
+              </span>
+
+            </label>
+
+          {% endfor %}
+
+        </div>
+
+        <div class="result-feature-footer">
+
+          <span
+            id="antivibration-category-status"
+            class="result-feature-status"
+            aria-live="polite"
+          ></span>
+
+          <button
+            id="antivibration-category-clear"
+            type="button"
+            class="result-feature-clear"
+          >
+            Limpiar selección
+          </button>
+
+        </div>
+
+      </div>
+
+    </details>
   </div>
 
 </div>
@@ -2867,6 +2957,323 @@ Elegir mi antivibratorio | SMAV INAHER
    RESULTADO UNIFICADO CON NIVELADORES
    ======================================================= */
 
+/* =======================================================
+   SELECTOR DE CATEGORÍAS EN RESULTADO
+   ======================================================= */
+
+.result-feature-selector {
+  margin-top: 10px;
+  margin-bottom: 16px;
+}
+
+
+.result-feature-details {
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border: 1px solid #cfe1eb;
+  border-radius: 14px;
+
+  box-shadow:
+    0 7px 18px
+    rgba(3, 49, 91, 0.06);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.result-feature-details[open] {
+  border-color: #7fcce9;
+
+  box-shadow:
+    0 11px 25px
+    rgba(3, 49, 91, 0.10);
+}
+
+.result-feature-details > summary {
+  list-style: none;
+}
+
+.result-feature-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.result-feature-details > summary::marker {
+  content: "";
+}
+
+
+.result-feature-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  min-height: 65px;
+
+  padding: 13px 16px;
+
+  list-style: none;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff,
+      #f1f9fc
+    );
+
+  -webkit-tap-highlight-color:
+    transparent;
+}
+
+
+.result-feature-summary-copy {
+  display: grid;
+
+  gap: 2px;
+
+  min-width: 0;
+}
+
+
+.result-feature-kicker {
+  color: var(--accent-hover);
+
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.65px;
+
+  text-transform: uppercase;
+}
+
+
+.result-feature-summary strong {
+  color: var(--primary);
+
+  font-size: 13px;
+  font-weight: 900;
+}
+
+
+.result-feature-summary small {
+  color: var(--muted);
+
+  font-size: 9px;
+  font-weight: 700;
+
+  line-height: 1.4;
+}
+
+.result-feature-arrow {
+  display: none;
+}
+
+
+.result-feature-menu {
+  padding: 15px;
+
+  background: #fbfdfe;
+
+  border-top:
+    1px solid #dce8ef;
+}
+
+
+.result-feature-help {
+  margin: 0 0 12px;
+
+  color: var(--muted);
+
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+
+.result-feature-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 9px;
+}
+
+
+.result-feature-option {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  min-height: 47px;
+
+  padding: 10px 12px;
+
+  cursor: pointer;
+
+  background: #ffffff;
+
+  border:
+    1px solid #d5e4ec;
+
+  border-radius: 11px;
+
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+
+.result-feature-option:hover {
+  border-color: #8ed3eb;
+
+  transform:
+    translateY(-1px);
+}
+
+.result-feature-option input {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+
+.result-feature-check {
+  display: grid;
+
+  flex: 0 0 auto;
+
+  place-items: center;
+
+  width: 22px;
+  height: 22px;
+
+  color: transparent;
+
+  font-size: 12px;
+  font-weight: 900;
+
+  background: #f1f6f9;
+
+  border:
+    1px solid #bcced9;
+
+  border-radius: 6px;
+
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+
+.result-feature-name {
+  color: var(--primary);
+
+  font-size: 10px;
+  font-weight: 800;
+
+  line-height: 1.4;
+}
+
+
+.result-feature-option:has(
+  input:checked
+) {
+  background: #edf9fd;
+
+  border-color: #53bde4;
+
+  box-shadow:
+    0 4px 12px
+    rgba(24, 166, 217, 0.12);
+}
+
+
+.result-feature-option
+input:checked
+~ .result-feature-check {
+  color: #ffffff;
+
+  background:
+    var(--accent-hover);
+
+  border-color:
+    var(--accent-hover);
+}
+
+
+.result-feature-footer {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-top: 13px;
+}
+
+
+.result-feature-status {
+  color: var(--accent-hover);
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+
+.result-feature-clear {
+  min-height: 34px;
+
+  padding: 7px 11px;
+
+  color: var(--primary);
+
+  font: inherit;
+  font-size: 9px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  background: #cbf0c1;
+
+  border:
+    1px solid #cbdce5;
+
+  border-radius: 9px;
+}
+
+
+.result-feature-clear:hover {
+  border-color: #7bc9e6;
+}
+
+
+@media (max-width: 560px) {
+
+  .result-feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
 .antivibration-result-header {
   margin-bottom: 14px;
 }
@@ -3569,6 +3976,33 @@ Elegir mi antivibratorio | SMAV INAHER
       document.getElementById(
         "support-count"
       );
+
+    const categoryInputs =
+      document.querySelectorAll(
+        'input[name="antivibration_subcategory"]'
+      );
+
+    const categorySelectionLabel =
+      document.getElementById(
+        "antivibration-category-selection-label"
+      );
+
+    const categoryStatus =
+      document.getElementById(
+        "antivibration-category-status"
+      );
+
+    const categoryClear =
+      document.getElementById(
+        "antivibration-category-clear"
+      );
+
+    const antivibrationResultChip =
+      document.getElementById(
+        "antivibration-result-chip"
+      );
+
+    let currentAntivibrationFolio = "";  
 
     const calculateButton =
       document.getElementById(
@@ -4363,6 +4797,51 @@ function renderRecommended(
       );
     }
 
+    function getSelectedSubcategories() {
+
+      return Array.from(
+        categoryInputs
+      )
+        .filter(
+          function (input) {
+            return input.checked;
+          }
+        )
+        .map(
+          function (input) {
+            return input.value;
+          }
+        );
+    }
+
+    function getSelectedSubcategoryLabels() {
+
+      return Array.from(
+        categoryInputs
+      )
+        .filter(
+          function (input) {
+            return input.checked;
+          }
+        )
+        .map(
+          function (input) {
+            return input.dataset.label;
+          }
+        );
+    }
+
+    function updateCategorySelectionLabel() {
+
+      const labels =
+        getSelectedSubcategoryLabels();
+
+      categorySelectionLabel.textContent =
+        labels.length
+          ? labels.join(" · ")
+          : "Todas las categorías";
+    }
+
     function buildPayload() {
       return {
         weight:
@@ -4370,6 +4849,9 @@ function renderRecommended(
 
         support_count:
           Number(supportCount.value),
+
+        subcategories:
+          getSelectedSubcategories(),
       };
     }
 
@@ -4382,8 +4864,22 @@ function renderRecommended(
 
     selectorHeading.hidden = true;
 
-const folio =
-  generateAntivibrationFolio();
+    if (antivibrationResultChip) {
+      antivibrationResultChip.textContent =
+        "Soportes antivibratorios · "
+        + (
+          data.requested_subcategory_label
+          || "Todas las categorías"
+        );
+    }
+
+    const folio =
+      generateAntivibrationFolio();
+
+    antivibrationResultFolio.textContent =
+      "Folio "
+      + folio
+      + " · guárdalo";
 
 
 antivibrationResultFolio.textContent =
@@ -4555,6 +5051,51 @@ antivibrationResultSummary.textContent =
       originalText;
   }
 }
+
+categoryInputs.forEach(
+  function (input) {
+
+    input.addEventListener(
+      "change",
+      async function () {
+
+        updateCategorySelectionLabel();
+
+        categoryStatus.textContent =
+          "Actualizando recomendación...";
+
+        await requestRecommendation();
+
+        categoryStatus.textContent =
+          "Recomendación actualizada";
+      }
+    );
+
+  }
+);
+
+
+categoryClear.addEventListener(
+  "click",
+  async function () {
+
+    categoryInputs.forEach(
+      function (input) {
+        input.checked = false;
+      }
+    );
+
+    updateCategorySelectionLabel();
+
+    categoryStatus.textContent =
+      "Actualizando recomendación...";
+
+    await requestRecommendation();
+
+    categoryStatus.textContent =
+      "Recomendación actualizada";
+  }
+);
 
 
     [

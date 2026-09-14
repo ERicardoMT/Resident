@@ -83,6 +83,10 @@ def recommend_antivibrator(request):
             support_count=payload.get(
                 "support_count"
             ),
+            subcategories=payload.get(
+                "subcategories",
+                [],
+            ),
             base_diameter=payload.get(
                 "base_diameter",
                 "",

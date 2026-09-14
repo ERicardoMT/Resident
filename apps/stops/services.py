@@ -6,9 +6,37 @@ from typing import Any
 from apps.core.models import (
     AntivibrationTechnicalData,
     CatalogCategory,
+    CatalogSubcategory,
 )
 
 MAX_RECOMMENDATIONS = 8
+
+ANTIVIBRATION_SUBCATEGORIES = [
+    (
+        CatalogSubcategory.COLGANTES,
+        CatalogSubcategory.COLGANTES.label,
+    ),
+    (
+        CatalogSubcategory.NIVELADORES_MAQUINARIA,
+        CatalogSubcategory.NIVELADORES_MAQUINARIA.label,
+    ),
+    (
+        CatalogSubcategory.PIES,
+        CatalogSubcategory.PIES.label,
+    ),
+    (
+        CatalogSubcategory.SOPORTES_PISO,
+        CatalogSubcategory.SOPORTES_PISO.label,
+    ),
+    (
+        CatalogSubcategory.TACONES,
+        CatalogSubcategory.TACONES.label,
+    ),
+]
+
+ANTIVIBRATION_SUBCATEGORY_LABELS = dict(
+    ANTIVIBRATION_SUBCATEGORIES
+)
 
 def get_catalog_queryset():
     """
@@ -101,11 +129,21 @@ def serialize_product(
 
         "technical_sheet_url":
             product.product.catalog_technical_sheet_url,
+
+        "subcategory":
+            product.product.subcategory,
+
+        "subcategory_label":
+            (
+                product.product.get_subcategory_display()
+                if product.product.subcategory
+                else ""
+            ),    
     }
 
 
 def get_selector_options(
-) -> dict[str, list[str]]:
+) -> dict[str, Any]:
     """
     Construye las opciones del formulario
     directamente desde PostgreSQL.
@@ -138,6 +176,16 @@ def get_selector_options(
                 if clean_value(value)
             }
         )
+    
+    available_subcategories = set(
+        queryset
+        .exclude(product__subcategory="")
+        .values_list(
+            "product__subcategory",
+            flat=True,
+        )
+        .distinct()
+    )
 
     return {
         "base_diameters":
@@ -169,12 +217,23 @@ def get_selector_options(
             unique_values(
                 "screw_material"
             ),
+
+        "subcategories": [
+            {
+                "value": value,
+                "label": label,
+            }
+            for value, label
+            in ANTIVIBRATION_SUBCATEGORIES
+            if value in available_subcategories
+        ],    
     }
 
 
 def recommend_antivibrators(
     weight: float,
     support_count: int,
+    subcategories: list[str] | None = None,
     base_diameter: str = "",
     base_height: str = "",
     screw_diameter: str = "",
@@ -254,6 +313,46 @@ def recommend_antivibrators(
         )
     )
 
+    if subcategories is None:
+        subcategories = []
+
+    if not isinstance(
+        subcategories,
+        list,
+    ):
+        raise ValueError(
+            "Las categorías seleccionadas "
+            "no tienen un formato válido."
+        )
+
+    selected_subcategories = list(
+        dict.fromkeys(
+            clean_value(value)
+            for value in subcategories
+            if clean_value(value)
+        )
+    )
+
+    invalid_subcategories = [
+        value
+        for value in selected_subcategories
+        if value
+        not in ANTIVIBRATION_SUBCATEGORY_LABELS
+    ]
+
+    if invalid_subcategories:
+        raise ValueError(
+            "Una o más categorías de "
+            "antivibratorio no son válidas."
+        )
+
+    selected_subcategory_labels = [
+        ANTIVIBRATION_SUBCATEGORY_LABELS[
+            value
+        ]
+        for value in selected_subcategories
+    ]
+
     catalog_queryset = (
         get_catalog_queryset()
     )
@@ -262,8 +361,23 @@ def recommend_antivibrators(
         catalog_queryset.count()
     )
 
+    filtered_catalog = catalog_queryset
+
+    if selected_subcategories:
+        filtered_catalog = (
+            filtered_catalog.filter(
+                product__subcategory__in=(
+                    selected_subcategories
+                )
+            )
+        )
+
+    subcategory_count = (
+        filtered_catalog.count()    
+    )
+
     candidates = (
-        catalog_queryset
+        filtered_catalog
         .filter(
             capacity_kg__gt=(
                 required_load
@@ -326,7 +440,39 @@ def recommend_antivibrators(
                     screw_material
                 ),
         },
+
+        "requested_subcategories":
+            selected_subcategories,
+
+        "requested_subcategory_labels":
+            selected_subcategory_labels,
+
+        "requested_subcategory_label":
+            " · ".join(
+                selected_subcategory_labels
+            ),
+
+        "subcategory_count":
+            subcategory_count,
+      
     }
+
+    if (
+    selected_subcategories
+    and subcategory_count == 0
+    ):
+        return {
+            **common_result,
+            "status": "no_match",
+            "failed_filter": "subcategory",
+            "message": (
+                "No encontramos antivibratorios "
+                "disponibles en las categorías seleccionadas."
+            ),
+            "recommended": None,
+            "alternatives": [],
+            "matching_count": 0,
+        }
 
     if not candidates.exists():
         return {
