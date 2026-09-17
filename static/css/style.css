@@ -372,6 +372,15 @@ a {
   border-radius: 17px;
 }
 
+.menu-icon-image {
+  display: block;
+
+  width: 48px;
+  height: 48px;
+
+  object-fit: contain;
+}
+
 .icon-accent {
   stroke: var(--accent);
 }
@@ -2348,6 +2357,15 @@ a {
   border-radius: 13px;
 }
 
+.submenu-icon-image {
+  display: block;
+
+  width: 38px;
+  height: 38px;
+
+  object-fit: contain;
+}
+
 .submenu-icon svg {
   width: 25px;
   height: 25px;
@@ -3378,3 +3396,41 @@ button {
 
 }
 
+/* =======================================================
+   IMÁGENES PERSONALIZADAS DEL MENÚ PRINCIPAL
+   ======================================================= */
+
+.menu-icon:has(.menu-icon-image),
+.submenu-icon:has(.submenu-icon-image) {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+
+.menu-icon-image {
+  display: block;
+
+  width: 58px;
+  height: 58px;
+
+  object-fit: contain;
+
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+
+.submenu-icon-image {
+  display: block;
+
+  width: 46px;
+  height: 46px;
+
+  object-fit: contain;
+
+  border: none;
+  outline: none;
+  box-shadow: none;
+}

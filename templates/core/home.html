@@ -55,14 +55,15 @@ SMAV INAHER
     </p>
 
     <p class="hero-description">
-      Herramientas para medición, análisis y selección
-      de soluciones antivibratorias INAHER.
+      Herramientas para medir, elegir y visualizar
+      el soporte antivibratorio o pie de nivelación
+      que tu máquina necesita.
     </p>
 
     <div class="hero-badges">
-      <span>Medición</span>
-      <span>Análisis</span>
-      <span>Selección</span>
+      <span>Mide con tu teléfono</span>
+      <span>Elige tu modelo</span>
+      <span>Visualízalo en tu máquina</span>
     </div>
 
   </div>
@@ -80,7 +81,7 @@ SMAV INAHER
       </span>
 
       <h2>
-        Herramientas técnicas
+         Herramientas para máquinas y equipos industriales
       </h2>
     </div>
 
@@ -109,7 +110,19 @@ SMAV INAHER
             class="menu-icon"
             aria-hidden="true"
           >
-            {% include "core/partials/menu_icon.html" with icon=item.icon %}
+            {% if item.icon_image %}
+
+              <img
+                class="menu-icon-image"
+                src="{% static item.icon_image %}"
+                alt=""
+              >
+
+            {% else %}
+
+              {% include "core/partials/menu_icon.html" with icon=item.icon %}
+
+            {% endif %}
           </span>
 
 
@@ -163,7 +176,19 @@ SMAV INAHER
                 class="submenu-icon"
                 aria-hidden="true"
               >
-                {% include "core/partials/menu_icon.html" with icon=child.icon %}
+                {% if child.icon_image %}
+
+                  <img
+                    class="submenu-icon-image"
+                    src="{% static child.icon_image %}"
+                    alt=""
+                  >
+
+                {% else %}
+
+                  {% include "core/partials/menu_icon.html" with icon=child.icon %}
+
+                {% endif %}
               </span>
 
 
@@ -224,7 +249,19 @@ SMAV INAHER
           class="menu-icon"
           aria-hidden="true"
         >
-          {% include "core/partials/menu_icon.html" with icon=item.icon %}
+          {% if item.icon_image %}
+
+            <img
+              class="menu-icon-image"
+              src="{% static item.icon_image %}"
+              alt=""
+            >
+
+          {% else %}
+
+            {% include "core/partials/menu_icon.html" with icon=item.icon %}
+
+          {% endif %}
         </span>
 
 

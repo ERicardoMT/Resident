@@ -26,27 +26,32 @@ def home(request):
     menu = [
         {
             "icon": "stops",
+            "icon_image": "img/menu/soportes-antivibratorios.jpeg",
             "title": "Soportes antivibratorios",
             "subtitle": (
-                "Selecciona un soporte o mide "
-                "la vibración de tu maquinaria"
+                "Elige un soporte o mide "
+                "la vibración de tu equipo."
             ),
             "children": [
                 {
                     "icon": "stops",
+                    "icon_image": "img/menu/elegir-antivibratorio.jpeg",
                     "title": "Elegir mi antivibratorio",
                     "subtitle": (
-                        "Encuentra opciones según el peso "
-                        "y las características de tu equipo"
+                        "Contesta un cuestionario "
+                        "y te decimos tu modelo."
                     ),
                     "url_name": "stops",
                 },
                 {
                     "icon": "hz",
+                    "icon_image": "img/menu/medir-vibracion.jpeg",
                     "title": "Medir vibración",
                     "subtitle": (
-                        "Frecuencia, RPM, aceleración "
-                        "y espectro FFT"
+                        "Mide la vibración de tu máquina "
+                        "con tu teléfono; el dato queda "
+                        "en tu folio para recomendarte "
+                        "lo correcto."
                     ),
                     "url_name": "measure",
                 },
@@ -54,27 +59,30 @@ def home(request):
         },
         {
             "icon": "leveling-feet",
+            "icon_image": "img/menu/pies-nivelacion.jpeg",
             "title": "Pies de nivelación",
             "subtitle": (
-                "Selecciona un nivelador y comprueba "
-                "la nivelación del equipo"
+                "Elige tu nivelador y comprueba "
+                "la nivelación de tu equipo."
             ),
             "children": [
                 {
                     "icon": "leveling-feet",
+                    "icon_image": "img/menu/elegir-nivelador.jpeg",
                     "title": "Elegir mi nivelador",
                     "subtitle": (
-                        "Guía sencilla para encontrar "
-                        "la familia adecuada"
+                        "Contesta un cuestionario "
+                        "y te decimos modelo."
                     ),
                     "url_name": "select_leveler",
                 },
                 {
                     "icon": "leveler",
+                     "icon_image": "img/menu/nivelador.jpeg",
                     "title": "Verificar nivelación",
                     "subtitle": (
-                        "Usa el teléfono como nivel "
-                        "de burbuja en dos ejes"
+                        "Usa tu teléfono como nivel "
+                        "para revisar tu equipo"
                     ),
                     "url_name": "leveler",
                 },
@@ -91,10 +99,11 @@ def home(request):
         },
         {
             "icon": "catalog",
+            "icon_image": "img/menu/catalogo-productos.jpeg",
             "title": "Catálogo de productos",
             "subtitle": (
                 "Antivibratorios, niveladores "
-                "y componentes"
+                "y componentes · fichas y archivos 3D."
             ),
             "url_name": "catalogo",
             "available": True,
