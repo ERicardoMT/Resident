@@ -90,6 +90,7 @@ def home(request):
         },
         {
                 "icon": "ar",
+                "icon_image": "img/menu/ver-maquina.jpeg",
                 "title": "Ver en tu máquina",
                 "subtitle": (
                 "Realidad aumentada: apunta tu cámara "
