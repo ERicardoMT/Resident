@@ -96,6 +96,7 @@ def home(request):
             ),
             "url_name": "attenuation",
             "available": True,
+            "visible": False,
         },
         {
             "icon": "catalog",
@@ -108,6 +109,12 @@ def home(request):
             "url_name": "catalogo",
             "available": True,
         },
+    ]
+
+    menu = [
+    item
+    for item in menu
+    if item.get("visible", True)
     ]
 
     return render(
