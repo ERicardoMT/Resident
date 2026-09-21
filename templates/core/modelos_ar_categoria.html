@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}
+{{ categoria_nombre }} | Ver en tu máquina
+{% endblock %}
+
+
+{% block back %}
+
+<a
+    class="icon-btn"
+    href="{% url 'ver_en_tu_maquina' %}"
+    aria-label="Volver a categorías"
+>
+    <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    >
+        <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+</a>
+
+{% endblock %}
+
+
+{% block content %}
+
+<section class="ar-products-page">
+
+    <span class="section-kicker">
+        Modelos 3D y AR
+    </span>
+
+    <h1 class="page-title">
+        {{ categoria_nombre }}
+    </h1>
+
+    <p class="page-lead">
+        Selecciona un producto para explorarlo
+        en 3D o colocarlo sobre tu máquina
+        utilizando la cámara.
+    </p>
+
+
+    {% if productos %}
+
+    <div class="ar-product-grid">
+
+        {% for producto in productos %}
+
+        <a
+            class="ar-product-card"
+            href="{% url 'producto_detalle' producto.name %}"
+        >
+
+            <div class="ar-product-image">
+
+                {% if producto.catalog_image_url %}
+
+                <img
+                    src="{{ producto.catalog_image_url }}"
+                    alt="{{ producto.name }}"
+                    loading="lazy"
+                >
+
+                {% else %}
+
+                <img
+                    src="{% static 'img/inaher-logo.png' %}"
+                    alt="{{ producto.name }}"
+                    class="placeholder"
+                >
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="ar-product-info">
+
+                <h2>
+                    {{ producto.name }}
+                </h2>
+
+                <span class="ar-badge">
+                    3D · Realidad aumentada
+                </span>
+
+            </div>
+
+        </a>
+
+        {% endfor %}
+
+    </div>
+
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <strong>
+            No hay modelos disponibles.
+        </strong>
+
+        <p>
+            Esta categoría todavía no cuenta
+            con productos preparados para 3D o AR.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</section>
+
+
+<style>
+
+.ar-products-page {
+    padding: 28px;
+}
+
+.ar-product-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fill, minmax(190px, 1fr));
+    gap: 18px;
+    margin-top: 30px;
+}
+
+.ar-product-card {
+    overflow: hidden;
+    color: inherit;
+    text-decoration: none;
+    background: #ffffff;
+    border: 1px solid #dbe5ee;
+    border-radius: 16px;
+    box-shadow:
+        0 6px 18px rgba(20, 32, 78, 0.06);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.ar-product-card:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 12px 25px rgba(20, 32, 78, 0.12);
+}
+
+.ar-product-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 180px;
+    padding: 18px;
+    background: #ffffff;
+}
+
+.ar-product-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.ar-product-image .placeholder {
+    opacity: 0.15;
+}
+
+.ar-product-info {
+    padding: 16px;
+    border-top: 1px solid #edf2f7;
+}
+
+.ar-product-info h2 {
+    margin: 0 0 12px;
+    color: #17344f;
+    font-size: 0.84rem;
+    line-height: 1.4;
+}
+
+.ar-badge {
+    display: inline-flex;
+    padding: 5px 9px;
+    color: #0875ae;
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: #eaf7fd;
+    border-radius: 999px;
+}
+
+.empty-state {
+    padding: 30px;
+    margin-top: 25px;
+    text-align: center;
+    background: #f7fafc;
+    border-radius: 16px;
+}
+
+</style>
+
+{% endblock %}

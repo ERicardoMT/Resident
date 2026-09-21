@@ -92,4 +92,14 @@ urlpatterns = [
         views.producto_detalle_view,
         name="producto_detalle",
     ),
+    path(
+    "ver-en-tu-maquina/",
+    views.ver_en_tu_maquina_view,
+    name="ver_en_tu_maquina",
+    ),
+    path(
+    "ver-en-tu-maquina/<str:categoria>/",
+    views.modelos_ar_categoria_view,
+    name="modelos_ar_categoria",
+    ),
 ]

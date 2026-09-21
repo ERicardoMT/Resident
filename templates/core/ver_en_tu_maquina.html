@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}
+Ver en tu máquina | SMAV INAHER
+{% endblock %}
+
+
+{% block back %}
+
+<a
+    class="icon-btn"
+    href="{% url 'home' %}"
+    aria-label="Volver al inicio"
+>
+    <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    >
+        <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+</a>
+
+{% endblock %}
+
+
+{% block content %}
+
+<section class="page">
+
+    <span class="section-kicker">
+        Realidad aumentada
+    </span>
+
+    <h1 class="page-title">
+        Ver en tu máquina
+    </h1>
+
+    <p class="page-lead">
+        Selecciona una categoría para explorar
+        los productos disponibles en 3D y
+        visualizarlos directamente sobre tu equipo.
+    </p>
+
+
+    {% if categorias %}
+
+    <ul class="menu catalog-menu">
+
+        {% for categoria in categorias %}
+
+        <li>
+
+            <a
+                class="menu-item"
+                href="{% url 'modelos_ar_categoria' categoria.value %}"
+            >
+
+                <span
+                    class="menu-icon"
+                    aria-hidden="true"
+                >
+
+                    {% include "core/partials/menu_icon.html" with icon=categoria.icon %}
+
+                </span>
+
+
+                <span class="menu-text">
+
+                    <span class="title">
+                        {{ categoria.name }}
+                    </span>
+
+                    <span class="subtitle">
+                        {{ categoria.description }}
+                    </span>
+
+                </span>
+
+
+                <span
+                    class="menu-arrow"
+                    aria-hidden="true"
+                >
+
+                    <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <polyline
+                            points="9 18 15 12 9 6"
+                        ></polyline>
+                    </svg>
+
+                </span>
+
+            </a>
+
+        </li>
+
+        {% endfor %}
+
+    </ul>
+
+
+    {% else %}
+
+    <div class="empty-state">
+        <strong>
+            No hay modelos disponibles todavía.
+        </strong>
+
+        <p>
+            Los productos con modelos 3D aparecerán
+            aquí automáticamente.
+        </p>
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

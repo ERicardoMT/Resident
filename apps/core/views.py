@@ -89,6 +89,16 @@ def home(request):
             ],
         },
         {
+                "icon": "ar",
+                "title": "Ver en tu máquina",
+                "subtitle": (
+                "Realidad aumentada: apunta tu cámara "
+                "y mira el soporte instalado en tu equipo."
+            ),
+            "url_name": "ver_en_tu_maquina",
+            "available": True,
+        },
+        {
             "icon": "attenuation",
             "title": "Atenuación y aislamiento",
             "subtitle": (
@@ -456,6 +466,114 @@ def catalogo_view(request):
         request,
         "core/catalogo.html",
         {"categorias": categorias, "catalog_items": catalog_items},
+    )
+
+def ver_en_tu_maquina_view(request):
+    """
+    Muestra únicamente las categorías que tienen
+    productos disponibles con modelo 3D o AR.
+    """
+
+    productos = (
+        CatalogItem.objects
+        .filter(is_active=True)
+        .select_related(
+            "antivibration_data",
+            "leveler_data",
+        )
+        .order_by(
+            "category",
+            "sort_order",
+            "name",
+        )
+    )
+
+    # model_url ya considera:
+    # - model_3d
+    # - ar_model
+    # - modelos 3D remotos
+    productos_con_modelo = [
+        producto
+        for producto in productos
+        if producto.model_url
+    ]
+
+    configuracion = {
+        CatalogCategory.ANTIVIBRATORIOS: {
+            "description": (
+                "Soportes y elementos antivibratorios "
+                "disponibles en 3D y realidad aumentada."
+            ),
+            "icon": "stops",
+        },
+
+        CatalogCategory.PATAS_NIVELADORAS: {
+            "description": (
+                "Visualiza pies y niveladores "
+                "directamente sobre tu equipo."
+            ),
+            "icon": "leveling-feet",
+        },
+
+        CatalogCategory.ACCIONAMIENTO: {
+            "description": (
+                "Componentes de accionamiento "
+                "disponibles para visualización."
+            ),
+            "icon": "catalog",
+        },
+
+        CatalogCategory.MOBILIARIO: {
+            "description": (
+                "Niveladores para mobiliario "
+                "con visualización 3D."
+            ),
+            "icon": "leveling-feet",
+        },
+    }
+
+    categorias = []
+
+    for value, label in CatalogCategory.choices:
+
+        cantidad = sum(
+            1
+            for producto in productos_con_modelo
+            if producto.category == value
+        )
+
+        # Solo mostrar categorías que realmente
+        # tengan algún modelo disponible.
+        if cantidad == 0:
+            continue
+
+        datos = configuracion.get(
+            value,
+            {},
+        )
+
+        categorias.append(
+            {
+                "value": value,
+                "name": label,
+                "description": datos.get(
+                    "description",
+                    "Modelos disponibles en 3D y AR.",
+                ),
+                "icon": datos.get(
+                    "icon",
+                    "catalog",
+                ),
+                "count": cantidad,
+            }
+        )
+
+    return render(
+        request,
+        "core/ver_en_tu_maquina.html",
+        {
+            "categorias": categorias,
+        },
     )
 
 def antivibratorios_view(request):
@@ -967,5 +1085,57 @@ def editar_producto_view(request, product_id):
         {
             "producto": producto,
             "form": form,
+        },
+    )
+
+def modelos_ar_categoria_view(
+    request,
+    categoria,
+):
+    """
+    Muestra los productos de una categoría
+    que cuentan con modelo 3D/AR.
+    """
+
+    categorias_validas = dict(
+        CatalogCategory.choices
+    )
+
+    if categoria not in categorias_validas:
+        raise Http404(
+            "Categoría no encontrada."
+        )
+
+    productos_queryset = (
+        CatalogItem.objects
+        .filter(
+            category=categoria,
+            is_active=True,
+        )
+        .select_related(
+            "antivibration_data",
+            "leveler_data",
+        )
+        .order_by(
+            "sort_order",
+            "name",
+        )
+    )
+
+    productos = [
+        producto
+        for producto in productos_queryset
+        if producto.model_url
+    ]
+
+    return render(
+        request,
+        "core/modelos_ar_categoria.html",
+        {
+            "productos": productos,
+            "categoria": categoria,
+            "categoria_nombre": (
+                categorias_validas[categoria]
+            ),
         },
     )
