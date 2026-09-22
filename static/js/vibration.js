@@ -23,20 +23,8 @@ var COLORS = {
   var WINDOW_MS = 3000; // ventana de analisis
   var ANALYZE_EVERY_MS = 700; // frecuencia de envio a la API
   var MAX_SCOPE_POINTS = 300;
-    // -----------------------------------------
-  // Medición sencilla de 10 segundos
-  // -----------------------------------------
-
   var SIMPLE_MEASUREMENT_DURATION_MS =
     10000;
-
-  var SIMPLE_RING_RADIUS =
-    64;
-
-  var SIMPLE_RING_CIRCUMFERENCE =
-    2
-    * Math.PI
-    * SIMPLE_RING_RADIUS;
 
   var samples = []; // {t, x, y, z}
   // -----------------------------------------------------
@@ -48,19 +36,12 @@ var COLORS = {
   var measurementStartedAt = null;
   var scopeBuffer = []; // magnitud - 9.81 aprox, para el osciloscopio
   var running = false;
-  var demoMode = false;
-  var demoHz = 0;
-  var demoStart = 0;
   var analyzeTimer = null;
   var motionHandler = null;
   var lastAnalyzeInFlight = false;
   var measurementUnit = "acceleration";
   var latestAnalysis = null;
   var preparedShareFile = null;
-  var simpleUiAnimationFrame =null;
-  var SIMPLE_PROGRESS_INTERVAL_MS =100;
-  var simpleMeasurementStartedAt =null;
-  var simpleProgressAnimation =null;
 
   function startFullMeasurementCapture() {
     measurementSamples = [];
@@ -107,7 +88,6 @@ function cancelFullMeasurementCapture() {
 
   var els = {
     hz: document.getElementById("hz-value"),
-    caption: document.getElementById("hz-caption"),
     rpm: document.getElementById("stat-rpm"),
     fs: document.getElementById("stat-fs"),
     rms: document.getElementById("stat-rms"),
@@ -164,18 +144,6 @@ unitButtons: document.querySelectorAll(
       "measurement-simple-progressbar-fill"
     ),
 
-    simpleRingProgress: document.getElementById(
-      "measurement-simple-ring-progress"
-    ),
-
-    simpleStart: document.getElementById(
-      "measurement-simple-start"
-    ),
-
-    simpleStop: document.getElementById(
-      "measurement-simple-stop"
-    ),
-
     advancedPanel: document.getElementById(
       "measurement-advanced"
     ),
@@ -194,9 +162,6 @@ unitButtons: document.querySelectorAll(
   }
 
 
-var SMAV_SIMPLE_DURATION_MS =
-  SIMPLE_MEASUREMENT_DURATION_MS;
-
 var SMAV_SIMPLE_TICK_MS =
   100;
 
@@ -206,125 +171,51 @@ var smavSimpleTimer =
 var smavSimpleStartedAt =
   0;
 
-
-
-function smavSetSimpleIdle() {
-
-  var kicker =
-    document.getElementById(
-      "measurement-simple-kicker"
-    );
-
-  var help =
-    document.getElementById(
-      "measurement-simple-help"
-    );
-
-  var bar =
-    document.getElementById(
-      "measurement-simple-progressbar-fill"
-    );
-
-
-  if (kicker) {
-
-    kicker.textContent =
-      "LISTO PARA MEDIR";
-
-  }
-
-
-  if (help) {
-
-    help.textContent =
-      "Coloca el teléfono y pulsa iniciar";
-
-  }
-
-
-  if (bar) {
-
-    bar.style.width =
-      "0%";
-
-  }
-}
-
-
-
+  
 function smavSetSimpleMeasuring() {
 
-  var kicker =
-    document.getElementById(
-      "measurement-simple-kicker"
-    );
+  if (els.simpleKicker) {
 
-  var help =
-    document.getElementById(
-      "measurement-simple-help"
-    );
-
-
-  if (kicker) {
-
-    kicker.textContent =
+    els.simpleKicker.textContent =
       "MIDIENDO...";
 
   }
 
 
-  if (help) {
+  if (els.simpleHelp) {
 
-    help.textContent =
+    els.simpleHelp.textContent =
       "Mantén el teléfono quieto · 10 segundos";
 
   }
 }
 
 
-
 function smavSetSimpleFinished() {
 
-  var kicker =
-    document.getElementById(
-      "measurement-simple-kicker"
-    );
+  if (els.simpleKicker) {
 
-  var help =
-    document.getElementById(
-      "measurement-simple-help"
-    );
-
-  var bar =
-    document.getElementById(
-      "measurement-simple-progressbar-fill"
-    );
-
-
-  if (kicker) {
-
-    kicker.textContent =
+    els.simpleKicker.textContent =
       "MEDICIÓN COMPLETADA";
 
   }
 
 
-  if (help) {
+  if (els.simpleHelp) {
 
-    help.textContent =
+    els.simpleHelp.textContent =
       "Resultado obtenido en 10 segundos";
 
   }
 
 
-  if (bar) {
+  if (els.simpleProgressBarFill) {
 
-    bar.style.width =
+    els.simpleProgressBarFill.style.width =
       "100%";
 
   }
 }
-
 
 
 function smavStopSimpleMeasurementUi() {
@@ -342,8 +233,6 @@ function smavStopSimpleMeasurementUi() {
   }
 }
 
-
-
 function smavStartSimpleMeasurementUi() {
 
   smavStopSimpleMeasurementUi();
@@ -351,14 +240,10 @@ function smavStartSimpleMeasurementUi() {
 
 
   var bar =
-    document.getElementById(
-      "measurement-simple-progressbar-fill"
-    );
+    els.simpleProgressBarFill;
 
   var help =
-    document.getElementById(
-      "measurement-simple-help"
-    );
+    els.simpleHelp;
 
 
   smavSimpleStartedAt =
@@ -389,7 +274,7 @@ function smavStartSimpleMeasurementUi() {
         var progress =
           elapsed
           /
-          SMAV_SIMPLE_DURATION_MS;
+          SIMPLE_MEASUREMENT_DURATION_MS
 
 
         progress =
@@ -417,7 +302,7 @@ function smavStartSimpleMeasurementUi() {
         var remainingMilliseconds =
           Math.max(
             0,
-            SMAV_SIMPLE_DURATION_MS
+            SIMPLE_MEASUREMENT_DURATION_MS
             -
             elapsed
           );
@@ -471,479 +356,10 @@ if (progress >= 1) {
       SMAV_SIMPLE_TICK_MS
     );
 }
+
   // =====================================================
-// INTERFAZ DE MEDICIÓN DE 10 SEGUNDOS
-// =====================================================
-
-function setSimpleIdleState() {
-
-  var kicker =
-    document.getElementById(
-      "measurement-simple-kicker"
-    );
-
-  var help =
-    document.getElementById(
-      "measurement-simple-help"
-    );
-
-  var progress =
-    document.getElementById(
-      "measurement-simple-progressbar-fill"
-    );
-
-
-  if (kicker) {
-    kicker.textContent =
-      "LISTO PARA MEDIR";
-  }
-
-
-  if (help) {
-    help.textContent =
-      "Coloca el teléfono y pulsa iniciar";
-  }
-
-
-  if (progress) {
-
-  progress.style.transform =
-    "scaleX(0)";
-
-  progress.style.webkitTransform =
-    "scaleX(0)";
-
-}
-}
-
-
-
-
-
-
-
-function setSimpleFinishedState() {
-
-  var kicker =
-    document.getElementById(
-      "measurement-simple-kicker"
-    );
-
-  var help =
-    document.getElementById(
-      "measurement-simple-help"
-    );
-
-  var progress =
-    document.getElementById(
-      "measurement-simple-progressbar-fill"
-    );
-
-
-  if (kicker) {
-    kicker.textContent =
-      "MEDICIÓN COMPLETADA";
-  }
-
-
-  if (help) {
-    help.textContent =
-      "Resultado obtenido en 10 segundos";
-  }
-
-
- if (progress) {
-
-  progress.style.transform =
-    "scaleX(1)";
-
-  progress.style.webkitTransform =
-    "scaleX(1)";
-
-}
-}
-
-
-
-function stopSimpleProgress() {
-
-  if (
-    simpleProgressTimer
-    !== null
-  ) {
-
-    clearInterval(
-      simpleProgressTimer
-    );
-
-    simpleProgressTimer =
-      null;
-  }
-}
-
-
-
-function startSimpleProgress() {
-
-  var progress =
-    document.getElementById(
-      "measurement-simple-progressbar-fill"
-    );
-
-  var help =
-    document.getElementById(
-      "measurement-simple-help"
-    );
-
-
-  stopSimpleProgress();
-
-
-  simpleMeasurementStartedAt =
-    Date.now();
-
-
-  /*
-   * Estado inicial.
-   */
-  if (progress) {
-
-    progress.style.width =
-      "0%";
-
-  }
-
-
-  if (help) {
-
-    help.textContent =
-      "Mantén el teléfono quieto · 10 segundos";
-
-  }
-
-
-  /*
-   * Actualizamos cada 100 ms.
-   * Esto funciona de manera consistente
-   * en Safari, Chrome, Firefox y Edge.
-   */
-  simpleProgressTimer =
-    setInterval(
-      function () {
-
-        var currentTime =
-          Date.now();
-
-
-        var elapsed =
-          currentTime
-          -
-          simpleMeasurementStartedAt;
-
-
-        /*
-         * Porcentaje entre 0 y 100.
-         */
-        var percentage =
-          (
-            elapsed
-            /
-            SIMPLE_MEASUREMENT_DURATION_MS
-          )
-          * 100;
-
-
-        percentage =
-          Math.max(
-            0,
-            Math.min(
-              100,
-              percentage
-            )
-          );
-
-
-        /*
-         * Actualizamos directamente
-         * el ancho de la barra.
-         */
-        if (progress) {
-
-          progress.style.width =
-            percentage.toFixed(2)
-            +
-            "%";
-
-        }
-
-
-        /*
-         * Segundos restantes.
-         */
-        var remainingMs =
-          SIMPLE_MEASUREMENT_DURATION_MS
-          -
-          elapsed;
-
-
-        remainingMs =
-          Math.max(
-            0,
-            remainingMs
-          );
-
-
-        var remainingSeconds =
-          Math.ceil(
-            remainingMs
-            /
-            1000
-          );
-
-
-        if (
-          help
-          &&
-          elapsed
-          <
-          SIMPLE_MEASUREMENT_DURATION_MS
-        ) {
-
-          help.textContent =
-            "Mantén el teléfono quieto · "
-            +
-            remainingSeconds
-            +
-            (
-              remainingSeconds === 1
-                ? " segundo"
-                : " segundos"
-            );
-
-        }
-
-
-        /*
-         * Llegamos a los 10 segundos.
-         */
-        if (
-          elapsed
-          >=
-          SIMPLE_MEASUREMENT_DURATION_MS
-        ) {
-
-          if (progress) {
-
-            progress.style.width =
-              "100%";
-
-          }
-
-
-          stopSimpleProgress();
-
-        }
-
-      },
-      SIMPLE_PROGRESS_INTERVAL_MS
-    );
-}
-
-    // =====================================================
   // VISTA SENCILLA DE MEDICIÓN
   // =====================================================
-
-
-  function setSimpleRingProgress(percent) {
-
-    var safePercent =
-      Math.max(
-        0,
-        Math.min(
-          100,
-          percent
-        )
-      );
-
-
-    var offset =
-      SIMPLE_RING_CIRCUMFERENCE
-      -
-      (
-        SIMPLE_RING_CIRCUMFERENCE
-        * safePercent
-      )
-      / 100;
-
-
-    if (els.simpleRingProgress) {
-
-      els.simpleRingProgress.style
-        .strokeDasharray =
-          String(
-            SIMPLE_RING_CIRCUMFERENCE
-          );
-
-
-      els.simpleRingProgress.style
-        .strokeDashoffset =
-          String(
-            offset
-          );
-    }
-
-
-    if (els.simpleProgressBarFill) {
-
-      els.simpleProgressBarFill.style
-        .width =
-          safePercent + "%";
-    }
-  }
-
-function setSimpleIdleState() {
-
-  var kicker =
-    document.getElementById(
-      "measurement-simple-kicker"
-    );
-
-  var help =
-    document.getElementById(
-      "measurement-simple-help"
-    );
-
-  var progress =
-    document.getElementById(
-      "measurement-simple-progressbar-fill"
-    );
-
-
-  if (kicker) {
-
-    kicker.textContent =
-      "LISTO PARA MEDIR";
-
-  }
-
-
-  if (help) {
-
-    help.textContent =
-      "Coloca el teléfono y pulsa iniciar";
-
-  }
-
-
-  if (progress) {
-
-    progress.style.width =
-      "0%";
-
-  }
-}
-
-function setSimpleMeasuringState() {
-
-  if (els.simpleKicker) {
-    els.simpleKicker.textContent =
-      "MIDIENDO...";
-  }
-
-  if (els.simpleHelp) {
-    els.simpleHelp.textContent =
-      "Mantén el teléfono quieto · 10 segundos";
-  }
-
-   var simpleStartButton =
-    document.getElementById(
-      "measurement-simple-start"
-    );
-
-  var simpleStopButton =
-    document.getElementById(
-      "measurement-simple-stop"
-    );
-
-
-  if (els.simpleStart) {
-    els.simpleStart.hidden =
-      true;
-  }
-
-  if (els.simpleStop) {
-    els.simpleStop.hidden =
-      false;
-  }
-
-  if (els.advancedPanel) {
-    els.advancedPanel.open =
-      false;
-  }
-}
-
-
- function setSimpleFinishedState() {
-
-  var kicker =
-    document.getElementById(
-      "measurement-simple-kicker"
-    );
-
-  var help =
-    document.getElementById(
-      "measurement-simple-help"
-    );
-
-  var progress =
-    document.getElementById(
-      "measurement-simple-progressbar-fill"
-    );
-
-
-  if (kicker) {
-
-    kicker.textContent =
-      "MEDICIÓN COMPLETADA";
-
-  }
-
-
-  if (help) {
-
-    help.textContent =
-      "Resultado obtenido en 10 segundos";
-
-  }
-
-
-  if (progress) {
-
-    progress.style.width =
-      "100%";
-
-  }
-}
-
-
-
-  function stopSimpleUiAnimation() {
-
-    if (
-      simpleUiAnimationFrame
-      !== null
-    ) {
-
-      cancelAnimationFrame(
-        simpleUiAnimationFrame
-      );
-
-
-      simpleUiAnimationFrame =
-        null;
-    }
-  }
-
 
   function formatMeasurement(
   value,
@@ -1097,20 +513,6 @@ if (isMeasurementCapturing) {
     // Descartamos muestras fuera de la ventana.
     var cutoff = t - WINDOW_MS;
     while (samples.length && samples[0].t < cutoff) samples.shift();
-  }
-
-  // ---- Modo demostracion (senal sintetica) ----
-  function demoTick() {
-    if (!running || !demoMode) return;
-    var t = now();
-    // Senal: seno a demoHz + armonico + ruido, muestreado a ~60 Hz.
-    var elapsed = (t - demoStart) / 1000;
-    var base =
-      2.0 * Math.sin(2 * Math.PI * demoHz * elapsed) +
-      0.6 * Math.sin(2 * Math.PI * demoHz * 2 * elapsed) +
-      (Math.random() - 0.5) * 0.4;
-    pushSample(base, base * 0.3, 9.81 + base * 0.2);
-    requestAnimationFrame(demoTick);
   }
 
   // ---- Dibujo del osciloscopio ----
@@ -1536,26 +938,31 @@ function startCommon(label) {
 }
 
   function startReal() {
-    demoMode = false;
     motionHandler = onMotion;
     window.addEventListener("devicemotion", motionHandler, true);
     startCommon("Midiendo (sensor)...");
 
     // Si no llegan datos en 2.5s, avisamos.
-    setTimeout(function () {
-      if (running && !demoMode && samples.length === 0) {
-        setStatus("Sin datos del acelerómetro. Verifica los permisos del sensor.", false);
-      }
-    }, 2500);
-  }
+    setTimeout(
+      function () {
 
-  function startDemo() {
-    demoMode = true;
-    demoHz = 8 + Math.random() * 22; // 8-30 Hz
-    demoStart = now();
-    startCommon("Modo demostracion (" + demoHz.toFixed(1) + " Hz)...");
-    requestAnimationFrame(demoTick);
-    els.caption.textContent = "Senal simulada";
+        if (
+          running
+          &&
+          samples.length === 0
+        ) {
+
+          setStatus(
+            "Sin datos del acelerómetro. "
+            + "Verifica los permisos del sensor.",
+            false
+          );
+
+        }
+
+      },
+      2500
+    );
   }
 
 function getMeasurementSamplesForReport() {
@@ -1584,18 +991,24 @@ function getMeasurementSamplesForReport() {
 
 function requestMeasurementPdfFile() {
 
-var reportSamples =
-  getMeasurementSamplesForReport();
+  var reportSamples =
+    getMeasurementSamplesForReport();
+
 
   if (
     !latestAnalysis
-    || samples.length < 8
+    ||
+    !reportSamples
+    ||
+    reportSamples.length < 8
   ) {
+
     return Promise.reject(
       new Error(
         "Primero realiza una medición válida."
       )
     );
+
   }
 
 
@@ -1607,11 +1020,13 @@ var reportSamples =
 
 
   if (!csrfInput) {
+
     return Promise.reject(
       new Error(
         "No se encontró el token de seguridad."
       )
     );
+
   }
 
 
@@ -1621,23 +1036,36 @@ var reportSamples =
     );
 
 
+  if (!pdfUrl) {
+
+    return Promise.reject(
+      new Error(
+        "No se encontró la ruta para generar el PDF."
+      )
+    );
+
+  }
+
+
   var payload = {
 
     measurement_unit:
       measurementUnit,
 
-    samples: reportSamples.map(
-      function (sample) {
+    samples:
+      reportSamples.map(
+        function (sample) {
 
-        return {
-          t: sample.t,
-          x: sample.x,
-          y: sample.y,
-          z: sample.z,
-        };
+          return {
+            t: sample.t,
+            x: sample.x,
+            y: sample.y,
+            z: sample.z,
+          };
 
-      }
-    ),
+        }
+      ),
+
   };
 
 
@@ -1650,11 +1078,13 @@ var reportSamples =
         "same-origin",
 
       headers: {
+
         "Content-Type":
           "application/json",
 
         "X-CSRFToken":
           csrfInput.value,
+
       },
 
       body:
@@ -1664,90 +1094,105 @@ var reportSamples =
     }
   )
 
-    .then(function (response) {
+    .then(
+      function (response) {
 
-      if (!response.ok) {
+        if (!response.ok) {
 
-        return response
-          .json()
-          .catch(function () {
-            return {};
-          })
-          .then(function (data) {
+          return response
+            .json()
+            .catch(
+              function () {
+                return {};
+              }
+            )
+            .then(
+              function (data) {
 
-            throw new Error(
-              data.detail
-              || "No se pudo generar el PDF."
-            );
+                throw new Error(
+                  data.detail
+                  ||
+                  "No se pudo generar el PDF."
+                );
 
-          });
-      }
-
-
-      var disposition =
-        response.headers.get(
-          "Content-Disposition"
-        )
-        || "";
-
-
-      var filename =
-        "SMAV_INAHER_"
-        + "medicion_vibratoria.pdf";
-
-
-      var match =
-        disposition.match(
-          /filename="?([^"]+)"?/i
-        );
-
-
-      if (
-        match
-        && match[1]
-      ) {
-
-        filename =
-          match[1];
-
-      }
-
-
-      return response
-        .blob()
-        .then(
-          function (blob) {
-
-            return new File(
-              [blob],
-              filename,
-              {
-                type:
-                  "application/pdf",
               }
             );
 
-          }
-        );
+        }
 
-    });
+
+        var disposition =
+          response.headers.get(
+            "Content-Disposition"
+          )
+          || "";
+
+
+        var filename =
+          "SMAV_INAHER_"
+          + "medicion_vibratoria.pdf";
+
+
+        var match =
+          disposition.match(
+            /filename="?([^"]+)"?/i
+          );
+
+
+        if (
+          match
+          &&
+          match[1]
+        ) {
+
+          filename =
+            match[1];
+
+        }
+
+
+        return response
+          .blob()
+          .then(
+            function (blob) {
+
+              return new File(
+                [blob],
+                filename,
+                {
+                  type:
+                    "application/pdf",
+                }
+              );
+
+            }
+          );
+
+      }
+    );
 }
 
 function prepareMeasurementPdfForShare() {
 
-var reportSamples =
-  getMeasurementSamplesForReport();
+  preparedShareFile =
+    null;
 
 
-if (
-  !latestAnalysis
-  ||
-  reportSamples.length < 8
-) {
+  var reportSamples =
+    getMeasurementSamplesForReport();
+
+
+  if (
+    !latestAnalysis
+    ||
+    reportSamples.length < 8
+  ) {
 
     if (els.sharePdf) {
+
       els.sharePdf.disabled =
         true;
+
     }
 
     return;
@@ -1767,47 +1212,51 @@ if (
 
   requestMeasurementPdfFile()
 
-    .then(function (file) {
+    .then(
+      function (file) {
 
-      preparedShareFile =
-        file;
-
-
-      if (els.sharePdf) {
-
-        els.sharePdf.disabled =
-          false;
-
-        els.sharePdf.textContent =
-          "Enviar a INAHER";
-
-      }
-
-    })
-
-    .catch(function (error) {
-
-      console.error(
-        "[SMAV PDF]",
-        error
-      );
+        preparedShareFile =
+          file;
 
 
-      preparedShareFile =
-        null;
+        if (els.sharePdf) {
 
+          els.sharePdf.disabled =
+            false;
 
-      if (els.sharePdf) {
+          els.sharePdf.textContent =
+            "Enviar a INAHER";
 
-        els.sharePdf.disabled =
-          false;
-
-        els.sharePdf.textContent =
-          "Enviar a INAHER";
+        }
 
       }
+    )
 
-    });
+    .catch(
+      function (error) {
+
+        console.error(
+          "[SMAV PDF]",
+          error
+        );
+
+
+        preparedShareFile =
+          null;
+
+
+        if (els.sharePdf) {
+
+          els.sharePdf.disabled =
+            false;
+
+          els.sharePdf.textContent =
+            "Enviar a INAHER";
+
+        }
+
+      }
+    );
 }
 
 function downloadSharedPdfFile(
@@ -1891,21 +1340,22 @@ function openInaherMailDraft() {
 
 function shareMeasurementPdf() {
 
-var reportSamples =
-  getMeasurementSamplesForReport();
+  var reportSamples =
+    getMeasurementSamplesForReport();
 
 
-if (
-  !latestAnalysis
-  ||
-  reportSamples.length < 8
-) {
+  if (
+    !latestAnalysis
+    ||
+    reportSamples.length < 8
+  ) {
 
     window.alert(
       "Primero realiza una medición válida."
     );
 
     return;
+
   }
 
 
@@ -2083,8 +1533,6 @@ function downloadMeasurementPdf() {
   if (
     !latestAnalysis
     ||
-    !reportSamples
-    ||
     reportSamples.length < 8
   ) {
 
@@ -2093,39 +1541,7 @@ function downloadMeasurementPdf() {
     );
 
     return;
-  }
 
-
-  var csrfInput =
-    document.querySelector(
-      "#measurement-pdf-csrf "
-      + "input[name='csrfmiddlewaretoken']"
-    );
-
-
-  if (!csrfInput) {
-
-    window.alert(
-      "No se encontró el token de seguridad."
-    );
-
-    return;
-  }
-
-
-  var pdfUrl =
-    els.pdf.getAttribute(
-      "data-pdf-url"
-    );
-
-
-  if (!pdfUrl) {
-
-    window.alert(
-      "No se encontró la ruta para generar el PDF."
-    );
-
-    return;
   }
 
 
@@ -2133,176 +1549,20 @@ function downloadMeasurementPdf() {
     els.pdf.textContent;
 
 
-  els.pdf.disabled = true;
+  els.pdf.disabled =
+    true;
 
   els.pdf.textContent =
     "Generando...";
 
 
-  var payload = {
-
-    measurement_unit:
-      measurementUnit,
-
-    samples:
-      reportSamples.map(
-        function (sample) {
-
-          return {
-            t: sample.t,
-            x: sample.x,
-            y: sample.y,
-            z: sample.z,
-          };
-
-        }
-      ),
-  };
-
-
-  console.log(
-    "[SMAV PDF]",
-    "Enviando",
-    reportSamples.length,
-    "muestras"
-  );
-
-
-  fetch(
-    pdfUrl,
-    {
-      method: "POST",
-
-      credentials:
-        "same-origin",
-
-      headers: {
-        "Content-Type":
-          "application/json",
-
-        "X-CSRFToken":
-          csrfInput.value,
-      },
-
-      body:
-        JSON.stringify(
-          payload
-        ),
-    }
-  )
+  requestMeasurementPdfFile()
 
     .then(
-      function (response) {
+      function (file) {
 
-        if (!response.ok) {
-
-          return response
-            .json()
-            .catch(
-              function () {
-                return {};
-              }
-            )
-            .then(
-              function (data) {
-
-                throw new Error(
-                  data.detail
-                  ||
-                  "No se pudo generar el PDF."
-                );
-
-              }
-            );
-        }
-
-
-        var disposition =
-          response.headers.get(
-            "Content-Disposition"
-          )
-          || "";
-
-
-        var filename =
-          "SMAV_INAHER_"
-          + "medicion_vibratoria.pdf";
-
-
-        var match =
-          disposition.match(
-            /filename="?([^"]+)"?/i
-          );
-
-
-        if (
-          match
-          &&
-          match[1]
-        ) {
-
-          filename =
-            match[1];
-        }
-
-
-        return response
-          .blob()
-          .then(
-            function (blob) {
-
-              return {
-                blob: blob,
-                filename: filename,
-              };
-
-            }
-          );
-
-      }
-    )
-
-    .then(
-      function (result) {
-
-        var objectUrl =
-          URL.createObjectURL(
-            result.blob
-          );
-
-
-        var link =
-          document.createElement(
-            "a"
-          );
-
-
-        link.href =
-          objectUrl;
-
-        link.download =
-          result.filename;
-
-
-        document.body.appendChild(
-          link
-        );
-
-
-        link.click();
-
-        link.remove();
-
-
-        window.setTimeout(
-          function () {
-
-            URL.revokeObjectURL(
-              objectUrl
-            );
-
-          },
-          1000
+        downloadSharedPdfFile(
+          file
         );
 
       }
@@ -2354,9 +1614,6 @@ function stop() {
 }
 
   running = false;
-
-  demoMode = false;
-
 
   if (motionHandler) {
 
@@ -2494,13 +1751,11 @@ if (els.sharePdf) {
 
 }
 
-    els.stop.addEventListener(
+  els.stop.addEventListener(
     "click",
     function () {
 
-      stop(
-        false
-      );
+      stop();
 
     }
   );
