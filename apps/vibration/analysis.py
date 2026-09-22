@@ -177,23 +177,25 @@ def analyze_samples(samples: list[dict]) -> dict:
             )
         )
 
-    # Magnitud del vector de aceleracion (independiente de la orientacion).
-    magnitude = np.sqrt(x**2 + y**2 + z**2)
-
-    # Frecuencia de muestreo media a partir de las marcas de tiempo.
-    fs = (len(times_s) - 1) / duration
-    fs = float(np.clip(fs, 1.0, 400.0))
-
-    # Reinterpolamos la magnitud para mantener
-    # el análisis actual de aceleración y frecuencia.
-    _, mag_uniform = _uniform_resample(
-        times_s,
-        magnitude,
-        fs,
+    # Frecuencia de muestreo media obtenida
+    # a partir de las marcas de tiempo.
+    fs = (
+        (len(times_s) - 1)
+        / duration
     )
 
-    # Reinterpolamos cada eje por separado para
-    # calcular correctamente la velocidad vibratoria.
+    fs = float(
+        np.clip(
+            fs,
+            1.0,
+            400.0,
+        )
+    )
+
+    # -----------------------------------------------------
+    # Reinterpolación independiente de los tres ejes
+    # -----------------------------------------------------
+
     _, x_uniform = _uniform_resample(
         times_s,
         x,
@@ -212,12 +214,12 @@ def analyze_samples(samples: list[dict]) -> dict:
         fs,
     )
 
-    # Quitamos la componente continua:
-    # gravedad, inclinación y offsets del sensor.
-    signal = (
-        mag_uniform
-        - np.mean(mag_uniform)
-    )
+    # -----------------------------------------------------
+    # Eliminación de componente continua
+    #
+    # Esto elimina gravedad constante, inclinación
+    # estática y pequeños offsets del sensor.
+    # -----------------------------------------------------
 
     x_dynamic = (
         x_uniform
@@ -234,8 +236,37 @@ def analyze_samples(samples: list[dict]) -> dict:
         - np.mean(z_uniform)
     )
 
-    # Integramos aceleración para obtener
-    # velocidad en cada eje.
+    # -----------------------------------------------------
+    # Aceleración vibratoria resultante
+    #
+    # La magnitud se calcula DESPUÉS de retirar
+    # la componente continua de cada eje.
+    # -----------------------------------------------------
+
+    acceleration_magnitude = np.sqrt(
+        x_dynamic**2
+        + y_dynamic**2
+        + z_dynamic**2
+    )
+
+    rms = float(
+        np.sqrt(
+            np.mean(
+                acceleration_magnitude**2
+            )
+        )
+    )
+
+    peak_accel = float(
+        np.max(
+            acceleration_magnitude
+        )
+    )
+
+    # -----------------------------------------------------
+    # Velocidad vibratoria
+    # -----------------------------------------------------
+
     velocity_x = _acceleration_to_velocity(
         x_dynamic,
         fs,
@@ -257,7 +288,6 @@ def analyze_samples(samples: list[dict]) -> dict:
         + velocity_z**2
     )
 
-    # Convertimos de m/s a mm/s.
     velocity_rms_mms = (
         float(
             np.sqrt(
@@ -278,26 +308,74 @@ def analyze_samples(samples: list[dict]) -> dict:
         * 1000.0
     )
 
-    n = len(signal)
-    # Ventana de Hann para reducir la fuga espectral.
+    # -----------------------------------------------------
+    # FFT por eje
+    # -----------------------------------------------------
+
+    n = len(x_dynamic)
+
+    # Ventana Hann para reducir fuga espectral.
     window = np.hanning(n)
-    windowed = signal * window
 
-    # FFT real y eje de frecuencias.
-    spectrum = np.abs(np.fft.rfft(windowed))
-    freqs = np.fft.rfftfreq(n, d=1.0 / fs)
+    x_fft = np.fft.rfft(
+        x_dynamic * window
+    )
 
-    # Ignoramos el bin DC (0 Hz) al buscar el pico.
-    if len(spectrum) > 1:
-        search = spectrum.copy()
+    y_fft = np.fft.rfft(
+        y_dynamic * window
+    )
+
+    z_fft = np.fft.rfft(
+        z_dynamic * window
+    )
+
+    freqs = np.fft.rfftfreq(
+        n,
+        d=1.0 / fs,
+    )
+
+    # -----------------------------------------------------
+    # Energía espectral combinada
+    #
+    # No combinamos los ejes en el dominio temporal.
+    # Primero calculamos cada FFT y después sumamos
+    # su energía.
+    # -----------------------------------------------------
+
+    spectral_power = (
+        np.abs(x_fft) ** 2
+        + np.abs(y_fft) ** 2
+        + np.abs(z_fft) ** 2
+    )
+
+    # Magnitud combinada utilizada únicamente
+    # para representar el espectro.
+    spectrum = np.sqrt(
+        spectral_power
+    )
+
+    # -----------------------------------------------------
+    # Frecuencia dominante
+    # -----------------------------------------------------
+
+    if len(spectral_power) > 1:
+
+        search = spectral_power.copy()
+
+        # Ignoramos DC.
         search[0] = 0.0
-        peak_index = int(np.argmax(search))
-        dominant_hz = float(freqs[peak_index])
-    else:
-        dominant_hz = 0.0
 
-    rms = float(np.sqrt(np.mean(signal**2)))
-    peak_accel = float(np.max(np.abs(signal)))
+        peak_index = int(
+            np.argmax(search)
+        )
+
+        dominant_hz = float(
+            freqs[peak_index]
+        )
+
+    else:
+
+        dominant_hz = 0.0
 
     # Espectro simplificado para graficar en el cliente (hasta 64 puntos).
     max_points = 64
