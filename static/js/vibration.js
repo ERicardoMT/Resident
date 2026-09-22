@@ -39,6 +39,13 @@ var COLORS = {
     * SIMPLE_RING_RADIUS;
 
   var samples = []; // {t, x, y, z}
+  // -----------------------------------------------------
+// Medición completa de 10 segundos
+// -----------------------------------------------------
+  var measurementSamples = [];
+  var completedMeasurementSamples = [];
+  var isMeasurementCapturing = false;
+  var measurementStartedAt = null;
   var scopeBuffer = []; // magnitud - 9.81 aprox, para el osciloscopio
   var running = false;
   var demoMode = false;
@@ -51,10 +58,52 @@ var COLORS = {
   var latestAnalysis = null;
   var preparedShareFile = null;
   var simpleUiAnimationFrame =null;
-  var SIMPLE_MEASUREMENT_DURATION_MS =10000;
   var SIMPLE_PROGRESS_INTERVAL_MS =100;
   var simpleMeasurementStartedAt =null;
   var simpleProgressAnimation =null;
+
+  function startFullMeasurementCapture() {
+    measurementSamples = [];
+    completedMeasurementSamples = [];
+
+    measurementStartedAt = null;
+    isMeasurementCapturing = true;
+}
+
+
+function stopFullMeasurementCapture() {
+    isMeasurementCapturing = false;
+
+    if (!measurementSamples.length) {
+        completedMeasurementSamples = [];
+        measurementStartedAt = null;
+
+        return [];
+    }
+
+    var startTime = measurementSamples[0].t;
+
+    completedMeasurementSamples =
+        measurementSamples.filter(function (sample) {
+            return (
+                sample.t - startTime
+                <= SIMPLE_MEASUREMENT_DURATION_MS
+            );
+        });
+
+    measurementStartedAt = null;
+
+    return completedMeasurementSamples.slice();
+}
+
+
+function cancelFullMeasurementCapture() {
+    isMeasurementCapturing = false;
+
+    measurementStartedAt = null;
+    measurementSamples = [];
+    completedMeasurementSamples = [];
+}
 
   var els = {
     hz: document.getElementById("hz-value"),
@@ -143,14 +192,10 @@ unitButtons: document.querySelectorAll(
   function now() {
     return performance.now();
   }
-// ======================================================
-// SMAV - INTERFAZ SIMPLE DE MEDICIÓN
-// Esta lógica NO controla el acelerómetro.
-// Solo controla texto, barra y temporizador visual.
-// ======================================================
+
 
 var SMAV_SIMPLE_DURATION_MS =
-  10000;
+  SIMPLE_MEASUREMENT_DURATION_MS;
 
 var SMAV_SIMPLE_TICK_MS =
   100;
@@ -304,6 +349,7 @@ function smavStartSimpleMeasurementUi() {
   smavStopSimpleMeasurementUi();
 
 
+
   var bar =
     document.getElementById(
       "measurement-simple-progressbar-fill"
@@ -405,35 +451,21 @@ function smavStartSimpleMeasurementUi() {
         }
 
 
-        /*
-         * Llegamos a 10 segundos.
-         */
-        if (progress >= 1) {
+if (progress >= 1) {
 
-          smavStopSimpleMeasurementUi();
+  smavStopSimpleMeasurementUi();
 
 
-          if (bar) {
+  if (bar) {
 
-            bar.style.width =
-              "100%";
+    bar.style.width =
+      "100%";
 
-          }
+  }
 
+  finalizeFullMeasurement();
 
-          /*
-           * Detenemos la medición real.
-           */
-          if (running) {
-
-            stop();
-
-          }
-
-
-          smavSetSimpleFinished();
-
-        }
+}
 
       },
       SMAV_SIMPLE_TICK_MS
@@ -1039,7 +1071,26 @@ function setMeasurementUnit(unit) {
 
   function pushSample(x, y, z) {
     var t = now();
-    samples.push({ t: t, x: x, y: y, z: z });
+    var sample = { t: t, x: x, y: y, z: z };
+    samples.push(sample);
+    // Guardar también la muestra en la medición
+// completa de 10 segundos.
+if (isMeasurementCapturing) {
+
+    if (measurementStartedAt === null) {
+        measurementStartedAt = t;
+    }
+
+    var measurementElapsed =
+        t - measurementStartedAt;
+
+    if (
+        measurementElapsed
+        <= SIMPLE_MEASUREMENT_DURATION_MS
+    ) {
+        measurementSamples.push(sample);
+    }
+}
     var mag = Math.sqrt(x * x + y * y + z * z);
     scopeBuffer.push(mag);
     if (scopeBuffer.length > MAX_SCOPE_POINTS) scopeBuffer.shift();
@@ -1153,14 +1204,209 @@ function setMeasurementUnit(unit) {
         });
       })
       .then(function (res) {
-        lastAnalyzeInFlight = false;
-        if (!res.ok) return;
-        updateReadout(res.data);
-      })
+
+  lastAnalyzeInFlight = false;
+
+
+  if (!res.ok) {
+    return;
+  }
+  if (!running) {
+    return;
+  }
+  updateReadout(
+    res.data
+  );
+
+})
       .catch(function () {
         lastAnalyzeInFlight = false;
       });
   }
+
+function finalizeFullMeasurement() {
+
+  /*
+   * Congelamos únicamente las muestras
+   * comprendidas dentro de los 10 segundos.
+   */
+  var finalSamples =
+    stopFullMeasurementCapture();
+
+
+  /*
+   * Detenemos sensor, temporizadores
+   * y análisis periódico.
+   */
+  if (running) {
+
+    stop();
+
+  }
+
+
+  if (
+    finalSamples.length < 16
+  ) {
+
+    smavSetSimpleFinished();
+
+    setStatus(
+      "Medición insuficiente.",
+      false
+    );
+
+    return;
+
+  }
+
+
+  /*
+   * Análisis definitivo utilizando
+   * los 10 segundos completos.
+   */
+  analyzeSampleSet(
+    finalSamples
+  )
+
+    .then(
+      function (data) {
+
+        /*
+         * Este es ahora el resultado
+         * definitivo mostrado al usuario.
+         */
+        updateReadout(
+          data
+        );
+
+
+        smavSetSimpleFinished();
+
+
+        setStatus(
+          "Medición completada",
+          false
+        );
+
+
+        /*
+         * Ahora que el resultado final
+         * está listo, preparamos el PDF.
+         */
+        prepareMeasurementPdfForShare();
+
+      }
+    )
+
+    .catch(
+      function (error) {
+
+        console.error(
+          "[SMAV FINAL]",
+          error
+        );
+
+
+        smavSetSimpleFinished();
+
+
+        setStatus(
+          "No se pudo completar "
+          + "el análisis final.",
+          false
+        );
+
+      }
+    );
+
+}
+
+function analyzeSampleSet(
+  sampleSet
+) {
+
+  if (
+    !sampleSet
+    ||
+    sampleSet.length < 16
+  ) {
+
+    return Promise.reject(
+      new Error(
+        "No hay suficientes muestras "
+        + "para realizar el análisis final."
+      )
+    );
+
+  }
+
+
+  var payload = {
+
+    samples:
+      sampleSet.map(
+        function (sample) {
+
+          return {
+            t: sample.t,
+            x: sample.x,
+            y: sample.y,
+            z: sample.z,
+          };
+
+        }
+      ),
+
+  };
+
+
+  return fetch(
+    ANALYZE_URL,
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type":
+          "application/json",
+      },
+
+      body:
+        JSON.stringify(
+          payload
+        ),
+    }
+  )
+
+    .then(
+      function (response) {
+
+        return response
+          .json()
+          .then(
+            function (data) {
+
+              if (!response.ok) {
+
+                throw new Error(
+                  data.detail
+                  ||
+                  "No se pudo analizar "
+                  + "la medición final."
+                );
+
+              }
+
+
+              return data;
+
+            }
+          );
+
+      }
+    );
+
+}
 
 function updateReadout(d) {
 
@@ -1225,6 +1471,14 @@ function startCommon(label) {
 
   preparedShareFile =
     null;
+
+
+  /*
+   * Aquí comienza realmente
+   * la captura completa de 10 segundos.
+   */
+  startFullMeasurementCapture();
+
 
   renderMeasurementUnit();
 
@@ -1304,7 +1558,34 @@ function startCommon(label) {
     els.caption.textContent = "Senal simulada";
   }
 
+function getMeasurementSamplesForReport() {
+
+  /*
+   * Si existe una medición completa,
+   * usamos los 10 segundos.
+   */
+  if (
+    completedMeasurementSamples.length
+    >= 8
+  ) {
+
+    return completedMeasurementSamples;
+
+  }
+
+
+  /*
+   * Fallback para mantener
+   * compatibilidad con el flujo anterior.
+   */
+  return samples;
+
+}
+
 function requestMeasurementPdfFile() {
+
+var reportSamples =
+  getMeasurementSamplesForReport();
 
   if (
     !latestAnalysis
@@ -1345,7 +1626,7 @@ function requestMeasurementPdfFile() {
     measurement_unit:
       measurementUnit,
 
-    samples: samples.map(
+    samples: reportSamples.map(
       function (sample) {
 
         return {
@@ -1454,14 +1735,15 @@ function requestMeasurementPdfFile() {
 
 function prepareMeasurementPdfForShare() {
 
-  preparedShareFile =
-    null;
+var reportSamples =
+  getMeasurementSamplesForReport();
 
 
-  if (
-    !latestAnalysis
-    || samples.length < 8
-  ) {
+if (
+  !latestAnalysis
+  ||
+  reportSamples.length < 8
+) {
 
     if (els.sharePdf) {
       els.sharePdf.disabled =
@@ -1609,10 +1891,15 @@ function openInaherMailDraft() {
 
 function shareMeasurementPdf() {
 
-  if (
-    !latestAnalysis
-    || samples.length < 8
-  ) {
+var reportSamples =
+  getMeasurementSamplesForReport();
+
+
+if (
+  !latestAnalysis
+  ||
+  reportSamples.length < 8
+) {
 
     window.alert(
       "Primero realiza una medición válida."
@@ -1787,11 +2074,20 @@ function shareMeasurementPdf() {
   );
 }
 
-  function downloadMeasurementPdf() {
+function downloadMeasurementPdf() {
+
+  var reportSamples =
+    getMeasurementSamplesForReport();
+
+
   if (
     !latestAnalysis
-    || samples.length < 8
+    ||
+    !reportSamples
+    ||
+    reportSamples.length < 8
   ) {
+
     window.alert(
       "Primero realiza una medición válida."
     );
@@ -1799,13 +2095,16 @@ function shareMeasurementPdf() {
     return;
   }
 
+
   var csrfInput =
     document.querySelector(
       "#measurement-pdf-csrf "
       + "input[name='csrfmiddlewaretoken']"
     );
 
+
   if (!csrfInput) {
+
     window.alert(
       "No se encontró el token de seguridad."
     );
@@ -1813,33 +2112,61 @@ function shareMeasurementPdf() {
     return;
   }
 
+
   var pdfUrl =
     els.pdf.getAttribute(
       "data-pdf-url"
     );
 
+
+  if (!pdfUrl) {
+
+    window.alert(
+      "No se encontró la ruta para generar el PDF."
+    );
+
+    return;
+  }
+
+
   var originalText =
     els.pdf.textContent;
 
+
   els.pdf.disabled = true;
+
   els.pdf.textContent =
     "Generando...";
 
+
   var payload = {
+
     measurement_unit:
       measurementUnit,
 
-    samples: samples.map(
-      function (sample) {
-        return {
-          t: sample.t,
-          x: sample.x,
-          y: sample.y,
-          z: sample.z,
-        };
-      }
-    ),
+    samples:
+      reportSamples.map(
+        function (sample) {
+
+          return {
+            t: sample.t,
+            x: sample.x,
+            y: sample.y,
+            z: sample.z,
+          };
+
+        }
+      ),
   };
+
+
+  console.log(
+    "[SMAV PDF]",
+    "Enviando",
+    reportSamples.length,
+    "muestras"
+  );
+
 
   fetch(
     pdfUrl,
@@ -1857,117 +2184,174 @@ function shareMeasurementPdf() {
           csrfInput.value,
       },
 
-      body: JSON.stringify(
-        payload
-      ),
+      body:
+        JSON.stringify(
+          payload
+        ),
     }
   )
-    .then(function (response) {
-      if (!response.ok) {
-        return response
-          .json()
-          .catch(function () {
-            return {};
-          })
-          .then(function (data) {
-            throw new Error(
-              data.detail
-              || (
-                "No se pudo "
-                + "generar el PDF."
-              )
+
+    .then(
+      function (response) {
+
+        if (!response.ok) {
+
+          return response
+            .json()
+            .catch(
+              function () {
+                return {};
+              }
+            )
+            .then(
+              function (data) {
+
+                throw new Error(
+                  data.detail
+                  ||
+                  "No se pudo generar el PDF."
+                );
+
+              }
             );
-          });
-      }
+        }
 
-      var disposition =
-        response.headers.get(
-          "Content-Disposition"
-        )
-        || "";
 
-      var filename =
-        "SMAV_INAHER_"
-        + "medicion_vibratoria.pdf";
+        var disposition =
+          response.headers.get(
+            "Content-Disposition"
+          )
+          || "";
 
-      var match =
-        disposition.match(
-          /filename="?([^"]+)"?/i
-        );
 
-      if (
-        match
-        && match[1]
-      ) {
-        filename =
-          match[1];
-      }
+        var filename =
+          "SMAV_INAHER_"
+          + "medicion_vibratoria.pdf";
 
-      return response
-        .blob()
-        .then(
-          function (blob) {
-            return {
-              blob: blob,
-              filename: filename,
-            };
-          }
-        );
-    })
-    .then(function (result) {
-      var objectUrl =
-        URL.createObjectURL(
-          result.blob
-        );
 
-      var link =
-        document.createElement(
-          "a"
-        );
-
-      link.href =
-        objectUrl;
-
-      link.download =
-        result.filename;
-
-      document.body.appendChild(
-        link
-      );
-
-      link.click();
-
-      link.remove();
-
-      window.setTimeout(
-        function () {
-          URL.revokeObjectURL(
-            objectUrl
+        var match =
+          disposition.match(
+            /filename="?([^"]+)"?/i
           );
-        },
-        1000
-      );
-    })
-    .catch(function (error) {
-      window.alert(
-        error.message
-        || (
-          "No se pudo "
-          + "generar el PDF."
-        )
-      );
-    })
-    .finally(function () {
-      els.pdf.textContent =
-        originalText;
 
-      els.pdf.disabled =
-        !latestAnalysis
-        || samples.length < 8;
-    });
+
+        if (
+          match
+          &&
+          match[1]
+        ) {
+
+          filename =
+            match[1];
+        }
+
+
+        return response
+          .blob()
+          .then(
+            function (blob) {
+
+              return {
+                blob: blob,
+                filename: filename,
+              };
+
+            }
+          );
+
+      }
+    )
+
+    .then(
+      function (result) {
+
+        var objectUrl =
+          URL.createObjectURL(
+            result.blob
+          );
+
+
+        var link =
+          document.createElement(
+            "a"
+          );
+
+
+        link.href =
+          objectUrl;
+
+        link.download =
+          result.filename;
+
+
+        document.body.appendChild(
+          link
+        );
+
+
+        link.click();
+
+        link.remove();
+
+
+        window.setTimeout(
+          function () {
+
+            URL.revokeObjectURL(
+              objectUrl
+            );
+
+          },
+          1000
+        );
+
+      }
+    )
+
+    .catch(
+      function (error) {
+
+        console.error(
+          "[SMAV PDF]",
+          error
+        );
+
+
+        window.alert(
+          error.message
+          ||
+          "No se pudo generar el PDF."
+        );
+
+      }
+    )
+
+    .finally(
+      function () {
+
+        els.pdf.textContent =
+          originalText;
+
+
+        els.pdf.disabled =
+          (
+            !latestAnalysis
+            ||
+            getMeasurementSamplesForReport()
+              .length < 8
+          );
+
+      }
+    );
 }
 
 function stop() {
+
+  if (isMeasurementCapturing) {
+
+  cancelFullMeasurementCapture();
+
+}
 
   running = false;
 
@@ -1999,10 +2383,11 @@ function stop() {
   els.start.disabled = false;
 
 
-  els.pdf.disabled =
-    !latestAnalysis
-    ||
-    samples.length < 8;
+ els.pdf.disabled =
+  !latestAnalysis
+  ||
+  getMeasurementSamplesForReport()
+    .length < 8;
 
 
   els.stop.disabled =
@@ -2013,25 +2398,6 @@ function stop() {
     "Detenido",
     false
   );
-
-
-  /*
-  * Preparamos el reporte para compartir
-  * cuando termina una medición válida.
-   */
-  if (
-    els.sharePdf
-    &&
-    latestAnalysis
-    &&
-    samples.length >= 8
-  ) {
-
-    prepareMeasurementPdfForShare();
-
-  }
-
-
   /*
   * Detenemos solamente la interfaz.
   */

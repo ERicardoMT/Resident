@@ -4,19 +4,26 @@ El navegador (movil Android/iOS) captura muestras del acelerometro mediante la
 API DeviceMotion y las envia a la API REST. Aqui aplicamos una FFT con numpy
 para obtener la frecuencia dominante, la amplitud RMS y el pico de aceleracion.
 """
+
 from __future__ import annotations
 
 import numpy as np
 
+
 # Constante de gravedad para convertir m/s^2 a g.
 G = 9.80665
+
 # Límites defensivos para evitar consumos excesivos
 # de memoria y procesamiento.
 MIN_INPUT_SAMPLES = 8
 MAX_INPUT_SAMPLES = 5000
 MAX_DURATION_SECONDS = 10.0
 MAX_RESAMPLED_POINTS = 5000
+
+# Frecuencia mínima utilizada para integrar
+# aceleración y obtener velocidad vibratoria.
 VELOCITY_LOW_CUT_HZ = 1.0
+
 
 def _uniform_resample(
     times_s: np.ndarray,
@@ -31,10 +38,15 @@ def _uniform_resample(
     de ejecutar la FFT.
     """
 
-    t0, t1 = times_s[0], times_s[-1]
+    t0 = times_s[0]
+    t1 = times_s[-1]
 
     estimated_points = (
-        int(round((t1 - t0) * fs))
+        int(
+            round(
+                (t1 - t0) * fs
+            )
+        )
         + 1
     )
 
@@ -60,6 +72,7 @@ def _uniform_resample(
 
     return uniform_t, uniform_v
 
+
 def _acceleration_to_velocity(
     acceleration: np.ndarray,
     fs: float,
@@ -76,7 +89,9 @@ def _acceleration_to_velocity(
     que pequeños offsets generen una velocidad falsa.
     """
 
-    sample_count = len(acceleration)
+    sample_count = len(
+        acceleration
+    )
 
     acceleration_fft = np.fft.rfft(
         acceleration
@@ -96,13 +111,19 @@ def _acceleration_to_velocity(
         frequencies >= low_cut_hz
     )
 
-    velocity_fft[valid_frequencies] = (
-        acceleration_fft[valid_frequencies]
+    velocity_fft[
+        valid_frequencies
+    ] = (
+        acceleration_fft[
+            valid_frequencies
+        ]
         / (
             1j
             * 2.0
             * np.pi
-            * frequencies[valid_frequencies]
+            * frequencies[
+                valid_frequencies
+            ]
         )
     )
 
@@ -111,14 +132,28 @@ def _acceleration_to_velocity(
         n=sample_count,
     )
 
-def analyze_samples(samples: list[dict]) -> dict:
-    """Procesa una lista de muestras {t, x, y, z} y devuelve metricas.
 
-    - t: marca de tiempo en milisegundos
-    - x, y, z: aceleracion en m/s^2 en cada eje
-
-    Devuelve un diccionario con la frecuencia dominante y estadisticas asociadas.
+def analyze_samples(
+    samples: list[dict],
+) -> dict:
     """
+    Procesa una lista de muestras {t, x, y, z}.
+
+    t:
+        Marca de tiempo en milisegundos.
+
+    x, y, z:
+        Aceleración en m/s² en cada eje.
+
+    Devuelve frecuencia dominante, RPM,
+    aceleración RMS/pico, velocidad vibratoria
+    y espectro simplificado.
+    """
+
+    # -----------------------------------------------------
+    # Validación de cantidad de muestras
+    # -----------------------------------------------------
+
     if (
         not samples
         or len(samples) < MIN_INPUT_SAMPLES
@@ -139,13 +174,65 @@ def analyze_samples(samples: list[dict]) -> dict:
             )
         )
 
-    times = np.array([float(s["t"]) for s in samples], dtype=float)
-    x = np.array([float(s.get("x", 0.0)) for s in samples], dtype=float)
-    y = np.array([float(s.get("y", 0.0)) for s in samples], dtype=float)
-    z = np.array([float(s.get("z", 0.0)) for s in samples], dtype=float)
+    # -----------------------------------------------------
+    # Conversión a arrays NumPy
+    # -----------------------------------------------------
+
+    times = np.array(
+        [
+            float(sample["t"])
+            for sample in samples
+        ],
+        dtype=float,
+    )
+
+    x = np.array(
+        [
+            float(
+                sample.get(
+                    "x",
+                    0.0,
+                )
+            )
+            for sample in samples
+        ],
+        dtype=float,
+    )
+
+    y = np.array(
+        [
+            float(
+                sample.get(
+                    "y",
+                    0.0,
+                )
+            )
+            for sample in samples
+        ],
+        dtype=float,
+    )
+
+    z = np.array(
+        [
+            float(
+                sample.get(
+                    "z",
+                    0.0,
+                )
+            )
+            for sample in samples
+        ],
+        dtype=float,
+    )
+
+    # -----------------------------------------------------
+    # Validación de valores numéricos
+    # -----------------------------------------------------
 
     if not all(
-        np.all(np.isfinite(values))
+        np.all(
+            np.isfinite(values)
+        )
         for values in (
             times,
             x,
@@ -160,25 +247,75 @@ def analyze_samples(samples: list[dict]) -> dict:
             )
         )
 
-    # Ordenamos por tiempo por seguridad y pasamos a segundos relativos.
-    order = np.argsort(times)
-    times, x, y, z = times[order], x[order], y[order], z[order]
-    times_s = (times - times[0]) / 1000.0
+    # -----------------------------------------------------
+    # Orden temporal
+    # -----------------------------------------------------
 
-    duration = float(times_s[-1] - times_s[0])
+    order = np.argsort(
+        times
+    )
+
+    times = times[order]
+    x = x[order]
+    y = y[order]
+    z = z[order]
+
+    # Convertimos milisegundos a segundos relativos.
+    times_s = (
+        times - times[0]
+    ) / 1000.0
+
+    duration = float(
+        times_s[-1]
+        - times_s[0]
+    )
+
     if duration <= 0:
-        raise ValueError("La ventana de tiempo es invalida (duracion menor o igual a cero).")
+        raise ValueError(
+            (
+                "La ventana de tiempo es invalida "
+                "(duracion menor o igual a cero)."
+            )
+        )
 
     if duration > MAX_DURATION_SECONDS:
         raise ValueError(
             (
                 "La ventana de tiempo no puede "
-                f"superar {MAX_DURATION_SECONDS:g} segundos."
+                f"superar "
+                f"{MAX_DURATION_SECONDS:g} segundos."
             )
         )
 
-    # Frecuencia de muestreo media obtenida
-    # a partir de las marcas de tiempo.
+    # -----------------------------------------------------
+    # DEBUG TEMPORAL
+    #
+    # Durante la medición en vivo deberían aparecer
+    # ventanas cercanas a 3000 ms.
+    #
+    # Al finalizar deberían aparecer aproximadamente
+    # 9700 - 10000 ms.
+    #
+    # Cuando terminemos de comprobar los 10 segundos,
+    # este print se puede eliminar.
+    # -----------------------------------------------------
+
+    print(
+        "[SMAV DEBUG]",
+        "muestras:",
+        len(samples),
+        "duracion:",
+        round(
+            duration * 1000.0,
+            1,
+        ),
+        "ms",
+    )
+
+    # -----------------------------------------------------
+    # Frecuencia de muestreo
+    # -----------------------------------------------------
+
     fs = (
         (len(times_s) - 1)
         / duration
@@ -217,30 +354,40 @@ def analyze_samples(samples: list[dict]) -> dict:
     # -----------------------------------------------------
     # Eliminación de componente continua
     #
-    # Esto elimina gravedad constante, inclinación
-    # estática y pequeños offsets del sensor.
+    # Esto elimina offsets constantes y, cuando se usa
+    # accelerationIncludingGravity, elimina la componente
+    # estática principal de gravedad.
     # -----------------------------------------------------
 
     x_dynamic = (
         x_uniform
-        - np.mean(x_uniform)
+        - np.mean(
+            x_uniform
+        )
     )
 
     y_dynamic = (
         y_uniform
-        - np.mean(y_uniform)
+        - np.mean(
+            y_uniform
+        )
     )
 
     z_dynamic = (
         z_uniform
-        - np.mean(z_uniform)
+        - np.mean(
+            z_uniform
+        )
     )
 
     # -----------------------------------------------------
-    # Aceleración vibratoria resultante
+    # Magnitud dinámica de aceleración
     #
-    # La magnitud se calcula DESPUÉS de retirar
-    # la componente continua de cada eje.
+    # Esta magnitud se utiliza para RMS y pico.
+    #
+    # IMPORTANTE:
+    # NO se utiliza para calcular la frecuencia dominante.
+    # La FFT se realiza por eje más adelante.
     # -----------------------------------------------------
 
     acceleration_magnitude = np.sqrt(
@@ -267,19 +414,25 @@ def analyze_samples(samples: list[dict]) -> dict:
     # Velocidad vibratoria
     # -----------------------------------------------------
 
-    velocity_x = _acceleration_to_velocity(
-        x_dynamic,
-        fs,
+    velocity_x = (
+        _acceleration_to_velocity(
+            x_dynamic,
+            fs,
+        )
     )
 
-    velocity_y = _acceleration_to_velocity(
-        y_dynamic,
-        fs,
+    velocity_y = (
+        _acceleration_to_velocity(
+            y_dynamic,
+            fs,
+        )
     )
 
-    velocity_z = _acceleration_to_velocity(
-        z_dynamic,
-        fs,
+    velocity_z = (
+        _acceleration_to_velocity(
+            z_dynamic,
+            fs,
+        )
     )
 
     velocity_magnitude = np.sqrt(
@@ -309,24 +462,44 @@ def analyze_samples(samples: list[dict]) -> dict:
     )
 
     # -----------------------------------------------------
-    # FFT por eje
+    # FFT POR EJE
+    #
+    # Esta es la corrección importante.
+    #
+    # Antes se calculaba:
+    #
+    # sqrt(x² + y² + z²)
+    #
+    # antes de la FFT, lo que podía convertir una
+    # frecuencia f en aproximadamente 2f.
+    #
+    # Ahora calculamos primero la FFT de X, Y y Z
+    # de manera independiente.
     # -----------------------------------------------------
 
-    n = len(x_dynamic)
+    n = len(
+        x_dynamic
+    )
 
-    # Ventana Hann para reducir fuga espectral.
-    window = np.hanning(n)
+    # Ventana Hann para reducir
+    # fuga espectral.
+    window = np.hanning(
+        n
+    )
 
     x_fft = np.fft.rfft(
-        x_dynamic * window
+        x_dynamic
+        * window
     )
 
     y_fft = np.fft.rfft(
-        y_dynamic * window
+        y_dynamic
+        * window
     )
 
     z_fft = np.fft.rfft(
-        z_dynamic * window
+        z_dynamic
+        * window
     )
 
     freqs = np.fft.rfftfreq(
@@ -337,19 +510,24 @@ def analyze_samples(samples: list[dict]) -> dict:
     # -----------------------------------------------------
     # Energía espectral combinada
     #
-    # No combinamos los ejes en el dominio temporal.
-    # Primero calculamos cada FFT y después sumamos
-    # su energía.
+    # Combinamos los tres ejes DESPUÉS de ejecutar
+    # la FFT.
     # -----------------------------------------------------
 
     spectral_power = (
-        np.abs(x_fft) ** 2
-        + np.abs(y_fft) ** 2
-        + np.abs(z_fft) ** 2
+        np.abs(
+            x_fft
+        ) ** 2
+        + np.abs(
+            y_fft
+        ) ** 2
+        + np.abs(
+            z_fft
+        ) ** 2
     )
 
     # Magnitud combinada utilizada únicamente
-    # para representar el espectro.
+    # para dibujar el espectro.
     spectrum = np.sqrt(
         spectral_power
     )
@@ -358,57 +536,155 @@ def analyze_samples(samples: list[dict]) -> dict:
     # Frecuencia dominante
     # -----------------------------------------------------
 
-    if len(spectral_power) > 1:
+    if len(
+        spectral_power
+    ) > 1:
 
-        search = spectral_power.copy()
+        search = (
+            spectral_power.copy()
+        )
 
         # Ignoramos DC.
         search[0] = 0.0
 
         peak_index = int(
-            np.argmax(search)
+            np.argmax(
+                search
+            )
         )
 
         dominant_hz = float(
-            freqs[peak_index]
+            freqs[
+                peak_index
+            ]
         )
 
     else:
 
         dominant_hz = 0.0
 
-    # Espectro simplificado para graficar en el cliente (hasta 64 puntos).
+    # -----------------------------------------------------
+    # Espectro simplificado para el frontend
+    # -----------------------------------------------------
+
     max_points = 64
+
     if len(freqs) > max_points:
-        idx = np.linspace(0, len(freqs) - 1, max_points).astype(int)
-        spec_freqs = freqs[idx]
-        spec_mags = spectrum[idx]
+
+        idx = np.linspace(
+            0,
+            len(freqs) - 1,
+            max_points,
+        ).astype(
+            int
+        )
+
+        spec_freqs = (
+            freqs[idx]
+        )
+
+        spec_mags = (
+            spectrum[idx]
+        )
+
     else:
+
         spec_freqs = freqs
         spec_mags = spectrum
 
-    spec_max = float(np.max(spec_mags)) if np.max(spec_mags) > 0 else 1.0
+    max_spectrum_value = float(
+        np.max(
+            spec_mags
+        )
+    )
+
+    if max_spectrum_value > 0:
+        spec_max = (
+            max_spectrum_value
+        )
+    else:
+        spec_max = 1.0
+
+    # -----------------------------------------------------
+    # Resultado
+    # -----------------------------------------------------
 
     return {
-        "dominant_hz": round(dominant_hz, 2),
-        "rpm": round(dominant_hz * 60.0, 1),
-        "sample_rate_hz": round(fs, 1),
-        "sample_count": int(n),
-        "duration_s": round(duration, 2),
-        "rms_ms2": round(rms, 4),
-        "rms_g": round(rms / G, 5),
-        "peak_ms2": round(peak_accel, 4),
-        "peak_g": round(peak_accel / G, 5),
+        "dominant_hz": round(
+            dominant_hz,
+            2,
+        ),
+
+        "rpm": round(
+            dominant_hz
+            * 60.0,
+            1,
+        ),
+
+        "sample_rate_hz": round(
+            fs,
+            1,
+        ),
+
+        "sample_count": int(
+            n
+        ),
+
+        "duration_s": round(
+            duration,
+            2,
+        ),
+
+        "rms_ms2": round(
+            rms,
+            4,
+        ),
+
+        "rms_g": round(
+            rms / G,
+            5,
+        ),
+
+        "peak_ms2": round(
+            peak_accel,
+            4,
+        ),
+
+        "peak_g": round(
+            peak_accel / G,
+            5,
+        ),
+
         "velocity_rms_mms": round(
             velocity_rms_mms,
             4,
         ),
+
         "velocity_peak_mms": round(
             velocity_peak_mms,
             4,
         ),
+
         "spectrum": [
-            {"hz": round(float(f), 2), "amp": round(float(m) / spec_max, 4)}
-            for f, m in zip(spec_freqs, spec_mags)
+            {
+                "hz": round(
+                    float(
+                        frequency
+                    ),
+                    2,
+                ),
+                "amp": round(
+                    float(
+                        magnitude
+                    )
+                    / spec_max,
+                    4,
+                ),
+            }
+            for frequency, magnitude
+            in zip(
+                spec_freqs,
+                spec_mags,
+            )
         ],
     }
