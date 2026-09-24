@@ -190,6 +190,38 @@ function smavSetSimpleMeasuring() {
   }
 }
 
+function smavSetSimpleError(
+  message
+) {
+
+  if (els.simpleKicker) {
+
+    els.simpleKicker.textContent =
+      "MEDICIÓN NO VÁLIDA";
+
+  }
+
+
+  if (els.simpleHelp) {
+
+    els.simpleHelp.textContent =
+      message
+      ||
+      "No se pudo completar la medición.";
+
+  }
+
+
+  if (els.simpleProgressBarFill) {
+
+    els.simpleProgressBarFill.style.width =
+      "0%";
+
+  }
+}
+
+
+
 
 function smavSetSimpleFinished() {
 
@@ -651,15 +683,20 @@ function finalizeFullMeasurement() {
     finalSamples.length < 16
   ) {
 
-    smavSetSimpleFinished();
+    smavSetSimpleError(
+      "No se recibieron suficientes datos "
+      + "del acelerómetro. Intenta realizar "
+      + "la medición nuevamente."
+    );
+
 
     setStatus(
       "Medición insuficiente.",
       false
     );
 
-    return;
 
+    return;
   }
 
 
@@ -683,11 +720,15 @@ function finalizeFullMeasurement() {
         );
 
 
-        smavSetSimpleFinished();
+        smavSetSimpleError(
+            "No se pudo procesar la medición. "
+          + "Intenta realizarla nuevamente."
+        );
 
 
         setStatus(
-          "Medición completada",
+          "No se pudo completar "
+          + "el análisis final.",
           false
         );
 
@@ -937,33 +978,57 @@ function startCommon(label) {
   }
 }
 
-  function startReal() {
-    motionHandler = onMotion;
-    window.addEventListener("devicemotion", motionHandler, true);
-    startCommon("Midiendo (sensor)...");
+function startReal() {
 
-    // Si no llegan datos en 2.5s, avisamos.
-    setTimeout(
-      function () {
+  motionHandler =
+    onMotion;
 
-        if (
-          running
-          &&
-          samples.length === 0
-        ) {
 
-          setStatus(
-            "Sin datos del acelerómetro. "
-            + "Verifica los permisos del sensor.",
-            false
-          );
+  window.addEventListener(
+    "devicemotion",
+    motionHandler,
+    true
+  );
 
-        }
 
-      },
-      2500
-    );
-  }
+  startCommon(
+    "Midiendo (sensor)..."
+  );
+
+
+  /*
+   * Si después de 2.5 segundos
+   * no recibimos ninguna muestra,
+   * avisamos al usuario.
+   */
+  setTimeout(
+    function () {
+
+      if (
+        running
+        &&
+        samples.length === 0
+      ) {
+
+        setStatus(
+          "Sin datos del acelerómetro. "
+          + "Verifica los permisos del sensor.",
+          false
+        );
+
+
+        smavSetSimpleError(
+          "No estamos recibiendo datos del sensor. "
+          + "Revisa los permisos de movimiento "
+          + "del navegador."
+        );
+
+      }
+
+    },
+    2500
+  );
+}
 
 function getMeasurementSamplesForReport() {
 
@@ -1705,20 +1770,40 @@ function handleStartMeasurement() {
           false
         );
 
+        smavSetSimpleError(
+          "Debes permitir el acceso al movimiento "
+          + "del dispositivo para realizar la medición."
+        );
+
         return;
       }
 
       startReal();
 
     })
-    .catch(function () {
+    
+  .catch(
+    function (error) {
+
+      console.error(
+        "[SMAV SENSOR]",
+        error
+      );
+
 
       setStatus(
         "No se pudo acceder al acelerómetro.",
         false
       );
 
-    });
+
+      smavSetSimpleError(
+        "El navegador no pudo acceder "
+        + "al sensor de movimiento."
+      );
+
+    }
+  );
 }
 
 
