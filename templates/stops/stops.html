@@ -128,12 +128,12 @@ Elegir mi antivibratorio | SMAV INAHER
           ¿Cuántos antivibratorios vas a colocar?
         </label>
 
-        <select id="support-count">
-          <option value="2">2 apoyos</option>
-          <option value="4" selected>4 apoyos</option>
-          <option value="6">6 apoyos</option>
-          <option value="8">8 apoyos</option>
-        </select>
+<select id="support-count">
+  <option value="2">02</option>
+  <option value="4" selected>04</option>
+  <option value="6">06</option>
+  <option value="8">08</option>
+</select>
 
         <small>
           Normalmente corresponde al número de patas
@@ -698,26 +698,36 @@ Elegir mi antivibratorio | SMAV INAHER
 
       <!-- Sin resultados -->
       <div
-        id="result-none"
-        class="selector-no-result"
-        hidden
-      >
+  id="result-none"
+  class="selector-no-result"
+  hidden
+>
 
-        <span aria-hidden="true">
-          !
-        </span>
+  <span aria-hidden="true">
+    !
+  </span>
 
-        <h3>
-          No encontramos una coincidencia
-        </h3>
+  <h3>
+    No encontramos una coincidencia
+  </h3>
 
-        <p>
-          Revisa el peso y el número de apoyos.
-          Si los datos son correctos, consulta con
-          nuestro equipo para una selección especial.
-        </p>
+  <p id="result-none-message"></p>
 
-      </div>
+  <p>
+    Escríbenos y lo resolvemos contigo.
+  </p>
+
+  <a
+    id="result-none-whatsapp"
+    class="result-contact-btn result-contact-btn-whatsapp"
+    href="#"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Escríbenos por WhatsApp
+  </a>
+
+</div>
 
 
       <!-- =================================================
@@ -4064,6 +4074,16 @@ input:checked
         "result-none"
       );
 
+      const resultNoneMessage =
+  document.getElementById(
+    "result-none-message"
+  );
+
+const resultNoneWhatsapp =
+  document.getElementById(
+    "result-none-whatsapp"
+  );
+
     const requiredLoadOutput =
       document.getElementById(
         "result-required-load"
@@ -4873,14 +4893,13 @@ function renderRecommended(
         );
     }
 
-    const folio =
-      generateAntivibrationFolio();
+    if (!currentAntivibrationFolio) {
+  currentAntivibrationFolio =
+    generateAntivibrationFolio();
+}
 
-    antivibrationResultFolio.textContent =
-      "Folio "
-      + folio
-      + " · guárdalo";
-
+const folio =
+  currentAntivibrationFolio;
 
 antivibrationResultFolio.textContent =
   "Folio "
@@ -4895,8 +4914,7 @@ const guidanceWhatsappMessage =
     + folio
   );
 
-
-antivibrationGuidanceWhatsapp.href =
+const whatsappUrl =
   (
     "https://api.whatsapp.com/send"
     + "?phone=525588090939"
@@ -4904,7 +4922,13 @@ antivibrationGuidanceWhatsapp.href =
     + encodeURIComponent(
         guidanceWhatsappMessage
       )
-  );  
+  );
+
+antivibrationGuidanceWhatsapp.href =
+  whatsappUrl;
+
+resultNoneWhatsapp.href =
+  whatsappUrl; 
 
 antivibrationResultSummary.textContent =
   "Para "
@@ -4929,14 +4953,9 @@ antivibrationResultSummary.textContent =
     resultContent.hidden = true;
     resultNone.hidden = false;
 
-    const noResultMessage =
-      resultNone.querySelector("p");
-
-    if (noResultMessage) {
-      noResultMessage.textContent =
-        data.message
-        || "No encontramos una coincidencia.";
-    }
+    resultNoneMessage.textContent =
+  data.message
+  || "No encontramos una coincidencia.";
 
     return;
   }
