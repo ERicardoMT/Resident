@@ -762,32 +762,7 @@ function showMeasurementResult(
 
   }
 
-
-  /*
-   * Primero ocultamos
-   * todos los resultados.
-   */
-  for (
-    var index = 1;
-    index <= 4;
-    index += 1
-  ) {
-
-    var state =
-      document.getElementById(
-        "measurement-result-state-"
-        + index
-      );
-
-
-    if (state) {
-
-      state.hidden =
-        true;
-
-    }
-
-  }
+  hideMeasurementResult();
 
 
   /*
@@ -1249,7 +1224,7 @@ hideMeasurementResult();
       true;
 
     els.sharePdf.textContent =
-      "Enviar a INAHER";
+      "Enviar PDF a INAHER";
   }
 
   els.stop.disabled = false;
@@ -1367,6 +1342,19 @@ function getMeasurementSamplesForReport() {
 
 }
 
+function hasValidMeasurementForReport(
+  reportSamples
+) {
+
+  return (
+    !!latestAnalysis
+    &&
+    !!reportSamples
+    &&
+    reportSamples.length >= 8
+  );
+}
+
 function requestMeasurementPdfFile() {
 
   var reportSamples =
@@ -1374,11 +1362,9 @@ function requestMeasurementPdfFile() {
 
 
   if (
-    !latestAnalysis
-    ||
-    !reportSamples
-    ||
-    reportSamples.length < 8
+    !hasValidMeasurementForReport(
+      reportSamples
+    )
   ) {
 
     return Promise.reject(
@@ -1561,9 +1547,9 @@ function prepareMeasurementPdfForShare() {
 
 
   if (
-    !latestAnalysis
-    ||
-    reportSamples.length < 8
+    !hasValidMeasurementForReport(
+      reportSamples
+    )
   ) {
 
     if (els.sharePdf) {
@@ -1723,9 +1709,9 @@ function shareMeasurementPdf() {
 
 
   if (
-    !latestAnalysis
-    ||
-    reportSamples.length < 8
+    !hasValidMeasurementForReport(
+      reportSamples
+    )
   ) {
 
     window.alert(
@@ -1733,7 +1719,6 @@ function shareMeasurementPdf() {
     );
 
     return;
-
   }
 
 
@@ -1909,9 +1894,9 @@ function downloadMeasurementPdf() {
 
 
   if (
-    !latestAnalysis
-    ||
-    reportSamples.length < 8
+    !hasValidMeasurementForReport(
+      reportSamples
+  )
   ) {
 
     window.alert(
@@ -1919,8 +1904,7 @@ function downloadMeasurementPdf() {
     );
 
     return;
-
-  }
+}
 
 
   var originalText =
