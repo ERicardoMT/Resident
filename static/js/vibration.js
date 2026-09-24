@@ -658,19 +658,276 @@ if (isMeasurementCapturing) {
       });
   }
 
+// =====================================================
+// RESULTADOS VISUALES DE LA MEDICIÓN
+// =====================================================
+
+var currentMeasurementFolio = "";
+
+
+function createMeasurementFolio() {
+
+  var now =
+    new Date();
+
+
+  function pad(value) {
+
+    return String(value)
+      .padStart(
+        2,
+        "0"
+      );
+
+  }
+
+
+  return (
+    "SMAV-"
+    + now.getFullYear()
+    + pad(
+        now.getMonth() + 1
+      )
+    + pad(
+        now.getDate()
+      )
+    + "-"
+    + pad(
+        now.getHours()
+      )
+    + pad(
+        now.getMinutes()
+      )
+    + pad(
+        now.getSeconds()
+      )
+  );
+}
+
+
+function hideMeasurementResult() {
+
+  var result =
+    document.getElementById(
+      "measurement-result"
+    );
+
+
+  if (result) {
+
+    result.hidden =
+      true;
+
+  }
+
+
+  for (
+    var index = 1;
+    index <= 4;
+    index += 1
+  ) {
+
+    var state =
+      document.getElementById(
+        "measurement-result-state-"
+        + index
+      );
+
+
+    if (state) {
+
+      state.hidden =
+        true;
+
+    }
+
+  }
+}
+
+
+function showMeasurementResult(
+  stateNumber,
+  data
+) {
+
+  var result =
+    document.getElementById(
+      "measurement-result"
+    );
+
+
+  if (!result) {
+
+    return;
+
+  }
+
+
+  /*
+   * Primero ocultamos
+   * todos los resultados.
+   */
+  for (
+    var index = 1;
+    index <= 4;
+    index += 1
+  ) {
+
+    var state =
+      document.getElementById(
+        "measurement-result-state-"
+        + index
+      );
+
+
+    if (state) {
+
+      state.hidden =
+        true;
+
+    }
+
+  }
+
+
+  /*
+   * Generamos un folio nuevo
+   * para esta medición.
+   */
+  if (!currentMeasurementFolio) {
+
+    currentMeasurementFolio =
+      createMeasurementFolio();
+
+  }
+
+
+  var folio =
+    document.getElementById(
+      "measurement-result-folio"
+    );
+
+
+  if (folio) {
+
+    folio.textContent =
+      "Folio "
+      + currentMeasurementFolio;
+
+  }
+
+
+  var inlineFolio =
+    document.getElementById(
+      "measurement-result-folio-inline-3"
+    );
+
+
+  if (inlineFolio) {
+
+    inlineFolio.textContent =
+      currentMeasurementFolio;
+
+  }
+
+
+  /*
+   * Frecuencia para
+   * resultados 3 y 4.
+   */
+  if (
+    data
+    &&
+    typeof data.dominant_hz
+      === "number"
+  ) {
+
+    var frequencyText =
+      data.dominant_hz.toFixed(1)
+      + " Hz";
+
+
+    var frequency3 =
+      document.getElementById(
+        "measurement-result-frequency-3"
+      );
+
+
+    var frequency4 =
+      document.getElementById(
+        "measurement-result-frequency-4"
+      );
+
+
+    if (frequency3) {
+
+      frequency3.textContent =
+        frequencyText;
+
+    }
+
+
+    if (frequency4) {
+
+      frequency4.textContent =
+        frequencyText;
+
+    }
+
+  }
+
+
+  var selectedState =
+    document.getElementById(
+      "measurement-result-state-"
+      + stateNumber
+    );
+
+
+  if (!selectedState) {
+
+    return;
+
+  }
+
+
+  result.hidden =
+    false;
+
+  selectedState.hidden =
+    false;
+
+
+  /*
+   * Llevamos al usuario
+   * al resultado.
+   */
+  window.setTimeout(
+    function () {
+
+      result.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+
+    },
+    150
+  );
+}
+
 function finalizeFullMeasurement() {
 
   /*
-   * Congelamos únicamente las muestras
-   * comprendidas dentro de los 10 segundos.
+   * Cerramos la captura completa.
+   * Aquí obtenemos los 10 segundos.
    */
   var finalSamples =
     stopFullMeasurementCapture();
 
 
   /*
-   * Detenemos sensor, temporizadores
-   * y análisis periódico.
+   * Detenemos sensor,
+   * análisis en vivo y temporizadores.
    */
   if (running) {
 
@@ -679,14 +936,21 @@ function finalizeFullMeasurement() {
   }
 
 
+  /*
+   * No hubo suficientes datos.
+   *
+   * RESULTADO 1:
+   * "No se obtuvo una lectura clara."
+   */
   if (
+    !finalSamples
+    ||
     finalSamples.length < 16
   ) {
 
     smavSetSimpleError(
       "No se recibieron suficientes datos "
-      + "del acelerómetro. Intenta realizar "
-      + "la medición nuevamente."
+      + "del acelerómetro."
     );
 
 
@@ -696,13 +960,18 @@ function finalizeFullMeasurement() {
     );
 
 
+    showMeasurementResult(
+      1
+    );
+
+
     return;
   }
 
 
   /*
-   * Análisis definitivo utilizando
-   * los 10 segundos completos.
+   * Analizamos los 10 segundos
+   * completos.
    */
   analyzeSampleSet(
     finalSamples
@@ -712,30 +981,57 @@ function finalizeFullMeasurement() {
       function (data) {
 
         /*
-         * Este es ahora el resultado
-         * definitivo mostrado al usuario.
+         * Resultado definitivo.
          */
         updateReadout(
           data
         );
 
 
-        smavSetSimpleError(
-            "No se pudo procesar la medición. "
-          + "Intenta realizarla nuevamente."
-        );
+        smavSetSimpleFinished();
 
 
         setStatus(
-          "No se pudo completar "
-          + "el análisis final.",
+          "Medición completada",
           false
         );
 
 
         /*
-         * Ahora que el resultado final
-         * está listo, preparamos el PDF.
+         * RESULTADO 3
+         *
+         * Frecuencia menor a 25 Hz.
+         */
+        if (
+          data.dominant_hz < 25
+        ) {
+
+          showMeasurementResult(
+            3,
+            data
+          );
+
+        }
+
+        /*
+         * RESULTADO 4
+         *
+         * Frecuencia igual o mayor
+         * a 25 Hz.
+         */
+        else {
+
+          showMeasurementResult(
+            4,
+            data
+          );
+
+        }
+
+
+        /*
+         * El PDF continúa funcionando
+         * exactamente como antes.
          */
         prepareMeasurementPdfForShare();
 
@@ -751,7 +1047,10 @@ function finalizeFullMeasurement() {
         );
 
 
-        smavSetSimpleFinished();
+        smavSetSimpleError(
+          "No se pudo procesar la medición. "
+          + "Intenta realizarla nuevamente."
+        );
 
 
         setStatus(
@@ -760,9 +1059,18 @@ function finalizeFullMeasurement() {
           false
         );
 
+
+        /*
+         * Si el análisis no pudo
+         * producir una lectura válida,
+         * mostramos RESULTADO 1.
+         */
+        showMeasurementResult(
+          1
+        );
+
       }
     );
-
 }
 
 function analyzeSampleSet(
@@ -914,6 +1222,11 @@ function startCommon(label) {
 
   preparedShareFile =
     null;
+  
+  currentMeasurementFolio =
+  "";
+
+hideMeasurementResult();  
 
 
   /*
