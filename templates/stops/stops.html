@@ -128,12 +128,17 @@ Elegir mi antivibratorio | SMAV INAHER
           ¿Cuántos antivibratorios vas a colocar?
         </label>
 
-<select id="support-count">
-  <option value="2">02</option>
-  <option value="4" selected>04</option>
-  <option value="6">06</option>
-  <option value="8">08</option>
-</select>
+        <input
+          type="text"
+          id="support-count"
+          name="support_count"
+          inputmode="numeric"
+          maxlength="2"
+          pattern="[1-9][0-9]?"
+          autocomplete="off"
+          value="4"
+          required
+        >
 
         <small>
           Normalmente corresponde al número de patas
@@ -382,16 +387,9 @@ Elegir mi antivibratorio | SMAV INAHER
 
 </section>
 
-
-
-
-
- 
-
-
-      <!-- =================================================
-           DATOS TÉCNICOS OPCIONALES
-           ================================================= -->
+<!-- =================================================
+DATOS TÉCNICOS OPCIONALES
+================================================= -->
       <div
         id="selector-error"
         class="selector-error"
@@ -4135,10 +4133,6 @@ const resultNoneWhatsapp =
           /\D/g,
           ""
         );
-
-        /*
-        * Máximo 5 dígitos.
-        */
         value = value.slice(
           0,
           5
@@ -4152,6 +4146,48 @@ const resultNoneWhatsapp =
     weightInput.addEventListener(
       "beforeinput",
       function (event) {
+
+      if (
+        event.data
+        && /\D/.test(event.data)
+      ) {
+        event.preventDefault();
+      }
+
+      }
+    );
+
+    supportCount.addEventListener(
+      "input",
+      function () {
+
+        let value =
+          supportCount.value;
+
+        value = value.replace(
+          /\D/g,
+          ""
+        );
+
+        value = value.replace(
+          /^0+/,
+          ""
+        );
+
+        value = value.slice(
+          0,
+          2
+        );
+
+        supportCount.value =
+          value;
+      }
+    );
+
+
+  supportCount.addEventListener(
+    "beforeinput",
+    function (event) {
 
       if (
         event.data
