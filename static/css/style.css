@@ -4757,3 +4757,347 @@ button {
   }
 
 }
+
+
+/* =========================================================
+   PRODUCTO DETALLE SIMPLE V1
+   ========================================================= */
+
+.product-page .product-card {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 680px);
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+
+/* ---------------------------------------------------------
+   Título
+   --------------------------------------------------------- */
+
+.product-simple-header {
+  order: 1;
+  margin: 0 0 18px;
+  padding: 0 6px;
+}
+
+.product-simple-heading-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.product-simple-title {
+  margin: 0;
+  color: var(--accent);
+  font-size: clamp(1.65rem, 4vw, 2.15rem);
+  font-weight: 850;
+  line-height: 1.1;
+}
+
+.product-simple-capacity {
+  color: var(--primary);
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-weight: 750;
+}
+
+
+/* ---------------------------------------------------------
+   Panel / visor
+   --------------------------------------------------------- */
+
+.product-page .experience-panel {
+  position: relative;
+  order: 2;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  border: 1px solid #dce8ef;
+  border-radius: 24px;
+  box-shadow:
+    0 12px 32px rgba(6, 59, 104, 0.08);
+}
+
+
+/*
+ * En el diseño sencillo ya no necesitamos
+ * las pestañas Modelo 3D / Realidad aumentada.
+ *
+ * La realidad aumentada continúa abriéndose
+ * desde el botón principal.
+ */
+
+.product-page .experience-tabs,
+.product-page .mode-instructions {
+  display: none !important;
+}
+
+
+.product-page #product-model-viewer {
+  display: block;
+  width: 100%;
+  height: 440px;
+  margin: 0;
+  background: #ffffff;
+  border: 0;
+  border-radius: 0;
+}
+
+
+/* ---------------------------------------------------------
+   Tamaño real
+   --------------------------------------------------------- */
+
+.product-simple-size-badge {
+  position: absolute;
+  z-index: 5;
+  top: 18px;
+  right: 18px;
+
+  padding: 8px 15px;
+
+  color: #376f30;
+  background: #eaf7e7;
+
+  border-radius: 14px;
+
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+
+  pointer-events: none;
+}
+
+
+/* ---------------------------------------------------------
+   Datos flotantes
+   --------------------------------------------------------- */
+
+.product-simple-specs {
+  position: absolute;
+  z-index: 5;
+
+  left: 18px;
+  right: 18px;
+  top: 58%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  pointer-events: none;
+}
+
+.product-simple-spec {
+  display: inline-flex;
+  align-items: center;
+
+  max-width: 46%;
+
+  padding: 7px 11px;
+
+  color: #176e9d;
+  background: #edf8fd;
+
+  border-radius: 12px;
+
+  font-size: 0.85rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.product-simple-spec-height {
+  margin-left: auto;
+  text-align: right;
+}
+
+
+/* ---------------------------------------------------------
+   Ayuda del visor
+   --------------------------------------------------------- */
+
+.product-simple-viewer-hint {
+  margin: 0;
+  padding: 13px 16px 16px;
+
+  color: #7b8793;
+
+  background: #ffffff;
+
+  font-size: 0.9rem;
+  font-weight: 650;
+
+  text-align: center;
+}
+
+
+/*
+ * Los controles originales siguen existiendo
+ * para que el JavaScript no pierda elementos,
+ * pero la interfaz sencilla usa directamente
+ * los gestos del model-viewer.
+ */
+
+.product-page #controls-3d {
+  display: none !important;
+}
+
+
+/* ---------------------------------------------------------
+   Botones inferiores
+   --------------------------------------------------------- */
+
+.product-page .product-simple-actions {
+  order: 3;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 11px;
+
+  width: 100%;
+  margin: 16px 0 0;
+}
+
+
+.product-simple-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  width: 100%;
+  min-height: 56px;
+
+  padding: 12px 18px;
+
+  box-sizing: border-box;
+
+  border-radius: 16px;
+
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+
+  text-align: center;
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+
+.product-simple-action-primary {
+  color: #ffffff !important;
+
+  background: #17689c;
+
+  border: 2px solid #17689c;
+
+  box-shadow:
+    0 7px 16px rgba(23, 104, 156, 0.18);
+}
+
+
+.product-simple-action-primary:hover,
+.product-simple-action-primary:focus-visible {
+  background: #115984;
+  border-color: #115984;
+
+  transform: translateY(-1px);
+}
+
+
+.product-simple-action-secondary {
+  color: #17689c;
+
+  background: #ffffff;
+
+  border: 2px solid #6ab5dd;
+}
+
+
+.product-simple-action-secondary:hover,
+.product-simple-action-secondary:focus-visible {
+  background: #f3faff;
+}
+
+
+.product-simple-action-disabled {
+  color: #8b99a5;
+
+  background: #f5f7f8;
+
+  border: 2px solid #d5dde2;
+
+  cursor: default;
+}
+
+
+.product-simple-action-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 1.05rem;
+}
+
+
+/* ---------------------------------------------------------
+   Móvil
+   --------------------------------------------------------- */
+
+@media (max-width: 640px) {
+
+  .product-page .product-card {
+    width: 100%;
+  }
+
+  .product-simple-header {
+    padding: 0 2px;
+  }
+
+  .product-page #product-model-viewer {
+    height: 390px;
+  }
+
+  .product-simple-size-badge {
+    top: 13px;
+    right: 13px;
+
+    padding: 7px 11px;
+
+    font-size: 0.68rem;
+  }
+
+  .product-simple-specs {
+    left: 12px;
+    right: 12px;
+  }
+
+  .product-simple-spec {
+    padding: 6px 9px;
+
+    font-size: 0.74rem;
+  }
+
+  .product-simple-action {
+    min-height: 54px;
+
+    border-radius: 14px;
+
+    font-size: 0.95rem;
+  }
+
+}
