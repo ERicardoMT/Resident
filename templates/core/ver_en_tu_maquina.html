@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
 Ver en tu máquina | SMAV INAHER
@@ -42,10 +43,129 @@ Ver en tu máquina | SMAV INAHER
     </h1>
 
     <p class="page-lead">
-        Selecciona una categoría para explorar
-        los productos disponibles en 3D y
-        visualizarlos directamente sobre tu equipo.
+        Elige una categoría, escoge tu modelo y míralo en 3D o instalado en
+        tu máquina con la cámara de tu teléfono.
     </p>
+
+    <!-- =====================================================
+     BUSCADOR DE MODELOS 3D / REALIDAD AUMENTADA
+     ===================================================== -->
+<section
+    class="ar-model-search"
+    aria-labelledby="ar-model-search-title"
+>
+
+    <h2
+        id="ar-model-search-title"
+        class="ar-model-search-title"
+    >
+        Busca tu modelo
+    </h2>
+
+    <div class="ar-model-search-field">
+
+        <span
+            class="ar-model-search-icon"
+            aria-hidden="true"
+        >
+            <svg
+                width="21"
+                height="21"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <circle
+                    cx="11"
+                    cy="11"
+                    r="8"
+                ></circle>
+
+                <line
+                    x1="21"
+                    y1="21"
+                    x2="16.65"
+                    y2="16.65"
+                ></line>
+            </svg>
+        </span>
+
+        <input
+            type="search"
+            id="ar-model-search-input"
+            class="ar-model-search-input"
+            placeholder="Busca tu modelo (ej. IVH-4, MHD-2, ETH-1)"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Buscar modelo"
+        >
+
+    </div>
+
+
+    <div
+        id="ar-model-search-results"
+        class="ar-model-search-results"
+        hidden
+    >
+
+        {% for producto in productos_busqueda %}
+
+        <a
+            href="{% url 'producto_detalle' producto.name %}"
+            class="ar-model-search-result"
+            data-ar-search-item
+            data-search-text="{{ producto.name }} {{ producto.get_category_display }}"
+            hidden
+        >
+
+            <span class="ar-model-search-result-text">
+
+                <strong>
+                    {{ producto.name }}
+                </strong>
+
+                <small>
+                    {{ producto.get_category_display }}
+                </small>
+
+            </span>
+
+
+            <span
+                class="ar-model-search-result-arrow"
+                aria-hidden="true"
+            >
+                ›
+            </span>
+
+        </a>
+
+        {% endfor %}
+
+
+        <div
+            id="ar-model-search-empty"
+            class="ar-model-search-empty"
+            hidden
+        >
+            No encontramos un modelo disponible en 3D
+            con ese nombre.
+        </div>
+
+    </div>
+
+</section>
+
+
+<p class="ar-model-search-divider">
+    <span>
+        O explora por categoría
+    </span>
+</p>
 
 
     {% if categorias %}
@@ -131,5 +251,10 @@ Ver en tu máquina | SMAV INAHER
     {% endif %}
 
 </section>
+
+<script
+    src="{% static 'js/ver_en_tu_maquina.js' %}"
+    defer
+></script>
 
 {% endblock %}

@@ -93,8 +93,8 @@ def home(request):
                 "icon_image": "img/menu/ver-maquina.jpeg",
                 "title": "Ver en tu máquina",
                 "subtitle": (
-                "Realidad aumentada: apunta tu cámara "
-                "y mira el soporte instalado en tu equipo."
+                "Elige una categoría, escoge tu modelo y míralo en 3D o instalado en "
+                "tu máquina con la cámara de tu teléfono."
             ),
             "url_name": "ver_en_tu_maquina",
             "available": True,
@@ -574,6 +574,8 @@ def ver_en_tu_maquina_view(request):
         "core/ver_en_tu_maquina.html",
         {
             "categorias": categorias,
+            "productos_busqueda": productos_con_modelo,
+
         },
     )
 
