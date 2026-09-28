@@ -115,7 +115,7 @@ Ver en tu máquina | SMAV INAHER
         {% for producto in productos_busqueda %}
 
         <a
-            href="{% url 'producto_detalle' producto.name %}"
+            href="{% url 'producto_ar_detalle' producto.name %}"
             class="ar-model-search-result"
             data-ar-search-item
             data-search-text="{{ producto.name }} {{ producto.get_category_display }}"

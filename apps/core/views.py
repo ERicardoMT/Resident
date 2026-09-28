@@ -1001,7 +1001,36 @@ def producto_detalle_view(request, nombre_producto):
         },
     )
 
+def producto_ar_detalle_view(
+    request,
+    nombre_producto,
+):
+    """
+    Muestra el diseño simplificado exclusivamente
+    para la sección Ver en tu máquina.
+    """
 
+    producto = get_object_or_404(
+        CatalogItem.objects.select_related(
+            "antivibration_data",
+            "leveler_data",
+        ),
+        name=nombre_producto,
+        is_active=True,
+    )
+
+    if not producto.model_url:
+        raise Http404(
+            "Este producto no tiene modelo 3D/AR disponible."
+        )
+
+    return render(
+        request,
+        "core/producto_ar_detalle.html",
+        {
+            "producto": producto,
+        },
+    )
 
 @login_required
 @permission_required(

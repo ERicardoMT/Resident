@@ -30,89 +30,133 @@
 
 
 {% block content %}
-<section class="product-page">
+<section class="product-page product-ar-simple-page">
 
     <article class="product-card">
 
-        <!-- Imagen del producto -->
-        <div class="product-image-box">
-            {% if producto.catalog_image_url %}
-                <img
-                    src="{{ producto.catalog_image_url }}"
-                    alt="{{ producto.name }}"
-                    class="product-image"
-                >
-            {% else %}
-                <img
-                    src="{% static 'img/inaher-logo.png' %}"
-                    alt="{{ producto.name }}"
-                    class="product-image-placeholder"
-                >
-            {% endif %}
-        </div>
+        <!-- =====================================================
+             PRODUCTO - DISEÑO SIMPLE
+             ===================================================== -->
+
+        <header class="product-simple-header">
+
+            <div class="product-simple-heading-line">
+
+                <h1 class="product-simple-title">
+                    {{ producto.name }}
+                </h1>
 
 
-        <!-- Información del producto -->
-        <header class="product-header">
-            <h1 class="product-title">
-                {{ producto.name }}
-            </h1>
+                {% if producto.antivibration_data.capacity_kg %}
+
+                    <span class="product-simple-capacity">
+                        ·
+                        {{ producto.antivibration_data.capacity_kg|floatformat:"-2" }}
+                        kg por apoyo
+                    </span>
+
+                {% elif producto.leveler_data.capacity_kg %}
+
+                    <span class="product-simple-capacity">
+                        ·
+                        {{ producto.leveler_data.capacity_kg|floatformat:"-2" }}
+                        kg por apoyo
+                    </span>
+
+                {% endif %}
+
+            </div>
+
         </header>
-
-
-        <!-- Descripción -->
-        <div class="product-description">
-            {% if producto.description %}
-                {{ producto.description|safe }}
-            {% else %}
-                <p class="product-empty-text">
-                    Ficha técnica en proceso de actualización.
-                </p>
-            {% endif %}
-        </div>
 
 
         {% if producto.model_url %}
 
-            <!-- Opciones principales -->
-            <div class="experience-buttons">
+
+            <!-- Acciones principales -->
+            <div
+                class="
+                    experience-buttons
+                    product-simple-actions
+                "
+            >
+
+                <!-- Se conserva porque el JavaScript actual lo utiliza -->
+                <button
+                    type="button"
+                    id="open-3d"
+                    hidden
+                    aria-hidden="true"
+                    tabindex="-1"
+                >
+                    Explorar producto
+                </button>
+
 
                 <button
                     type="button"
-                    class="experience-button experience-button-ar"
                     id="open-ar"
+                    class="
+                        experience-button
+                        experience-button-ar
+                        product-simple-action
+                        product-simple-action-primary
+                    "
                 >
+
                     <span
-                        class="experience-button-icon"
+                        class="product-simple-action-icon"
                         aria-hidden="true"
                     >
                         📱
                     </span>
 
-                    <span class="experience-button-text">
-                        <strong>Ver en mi espacio</strong>
-                        <small>Realidad aumentada</small>
+                    <span>
+                        Ver en tu máquina (cámara)
                     </span>
+
                 </button>
 
 
-                <button
-                    type="button"
-                    class="experience-button experience-button-3d"
-                    id="open-3d"
-                >
-                    <span
-                        class="experience-button-icon"
-                        aria-hidden="true"
+                {% if producto.catalog_technical_sheet_url %}
+
+                    <a
+                        class="
+                            product-simple-action
+                            product-simple-action-secondary
+                        "
+                        href="{{ producto.catalog_technical_sheet_url }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
                     >
-                        ◫
+                        Ver ficha
+                    </a>
+
+                {% else %}
+
+                    <span
+                        class="
+                            product-simple-action
+                            product-simple-action-disabled
+                        "
+                    >
+                        Ficha no disponible
                     </span>
 
-                    <span class="experience-button-text">
-                        <strong>Explorar producto</strong>
-                        <small>Modelo 3D interactivo</small>
-                    </span>
-                </button>
+                {% endif %}
+
+
+                <a
+                    class="
+                        product-simple-action
+                        product-simple-action-secondary
+                    "
+                    href="https://api.whatsapp.com/send?phone=525588090939&text=Hola%2C%20quiero%20información%20del%20modelo%20{{ producto.name|urlencode }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Escríbenos por WhatsApp
+                </a>
 
             </div>
 
@@ -121,7 +165,6 @@
             <section
                 id="experience-panel"
                 class="experience-panel"
-                hidden
             >
 
                 <!-- Selector Modelo 3D / RA -->
@@ -164,6 +207,51 @@
                         Arrastra para girar y usa la rueda o dos
                         dedos para acercar.
                     </span>
+                </div>
+
+
+                <!-- Información visual del producto -->
+
+                <span class="product-simple-size-badge">
+                    TAMAÑO REAL
+                </span>
+
+
+                <div class="product-simple-specs">
+
+                    {% if producto.antivibration_data.base_diameter %}
+
+                        <span class="product-simple-spec product-simple-spec-base">
+                            Base
+                            {{ producto.antivibration_data.base_diameter }}
+                        </span>
+
+                    {% elif producto.leveler_data.base_diameter %}
+
+                        <span class="product-simple-spec product-simple-spec-base">
+                            Base
+                            {{ producto.leveler_data.base_diameter }}
+                        </span>
+
+                    {% endif %}
+
+
+                    {% if producto.antivibration_data.base_height %}
+
+                        <span class="product-simple-spec product-simple-spec-height">
+                            Altura
+                            {{ producto.antivibration_data.base_height }}
+                        </span>
+
+                    {% elif producto.leveler_data.screw_height %}
+
+                        <span class="product-simple-spec product-simple-spec-height">
+                            Altura
+                            {{ producto.leveler_data.screw_height }}
+                        </span>
+
+                    {% endif %}
+
                 </div>
 
 
@@ -294,6 +382,11 @@
                     </div>
 
                 </model-viewer>
+
+
+                <p class="product-simple-viewer-hint">
+                    Gira · Acerca · Centrar
+                </p>
 
 
                 <!-- Controles del Modelo 3D -->

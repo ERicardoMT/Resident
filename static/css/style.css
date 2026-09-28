@@ -4763,7 +4763,7 @@ button {
    PRODUCTO DETALLE SIMPLE V1
    ========================================================= */
 
-.product-page .product-card {
+.product-ar-simple-page .product-card {
   display: flex;
   flex-direction: column;
   width: min(100%, 680px);
@@ -4812,7 +4812,7 @@ button {
    Panel / visor
    --------------------------------------------------------- */
 
-.product-page .experience-panel {
+.product-ar-simple-page .experience-panel {
   position: relative;
   order: 2;
   overflow: hidden;
@@ -4834,13 +4834,13 @@ button {
  * desde el botón principal.
  */
 
-.product-page .experience-tabs,
-.product-page .mode-instructions {
+.product-ar-simple-page .experience-tabs,
+.product-ar-simple-page .mode-instructions {
   display: none !important;
 }
 
 
-.product-page #product-model-viewer {
+.product-ar-simple-page #product-model-viewer {
   display: block;
   width: 100%;
   height: 440px;
@@ -4946,7 +4946,7 @@ button {
  * los gestos del model-viewer.
  */
 
-.product-page #controls-3d {
+.product-ar-simple-page #controls-3d {
   display: none !important;
 }
 
@@ -4955,7 +4955,7 @@ button {
    Botones inferiores
    --------------------------------------------------------- */
 
-.product-page .product-simple-actions {
+.product-ar-simple-page .product-simple-actions {
   order: 3;
 
   display: grid;
@@ -5060,7 +5060,7 @@ button {
 
 @media (max-width: 640px) {
 
-  .product-page .product-card {
+  .product-ar-simple-page .product-card {
     width: 100%;
   }
 
@@ -5068,7 +5068,7 @@ button {
     padding: 0 2px;
   }
 
-  .product-page #product-model-viewer {
+  .product-ar-simple-page #product-model-viewer {
     height: 390px;
   }
 
