@@ -499,75 +499,52 @@ def ver_en_tu_maquina_view(request):
         if producto.model_url
     ]
 
-    configuracion = {
-        CatalogCategory.ANTIVIBRATORIOS: {
+    categorias = [
+        {
+            "value": "antivibratorios",
+            "name": "Antivibratorios",
             "description": (
                 "Soportes y elementos antivibratorios "
                 "disponibles en 3D y realidad aumentada."
             ),
             "icon": "stops",
+            "has_types": True,
         },
 
-        CatalogCategory.PATAS_NIVELADORAS: {
+        {
+            "value": "niveladores",
+            "name": "Patas niveladoras",
             "description": (
-                "Visualiza pies y niveladores "
-                "directamente sobre tu equipo."
+                "Patas y soportes de nivelación."
             ),
             "icon": "leveling-feet",
+            "has_types": True,
         },
 
-        CatalogCategory.ACCIONAMIENTO: {
+        {
+            "value": "mobiliario",
+            "name": "Niveladores para mobiliario",
             "description": (
-                "Componentes de accionamiento "
-                "disponibles para visualización."
+                "Niveladores para mobiliario."
+            ),
+            "icon": "leveling-feet",
+            "has_types": False,
+        },
+
+        {
+            "value": "accionamiento",
+            "name": (
+                "Elementos de accionamiento "
+                "y maniobra"
+            ),
+            "description": (
+                "Elementos de accionamiento "
+                "y maniobra."
             ),
             "icon": "catalog",
+            "has_types": False,
         },
-
-        CatalogCategory.MOBILIARIO: {
-            "description": (
-                "Niveladores para mobiliario "
-                "con visualización 3D."
-            ),
-            "icon": "leveling-feet",
-        },
-    }
-
-    categorias = []
-
-    for value, label in CatalogCategory.choices:
-
-        cantidad = sum(
-            1
-            for producto in productos_con_modelo
-            if producto.category == value
-        )
-
-        # Solo mostrar categorías que realmente
-        # tengan algún modelo disponible.
-        if cantidad == 0:
-            continue
-
-        datos = configuracion.get(
-            value,
-            {},
-        )
-
-        categorias.append(
-            {
-                "value": value,
-                "name": label,
-                "description": datos.get(
-                    "description",
-                    "Modelos disponibles en 3D y AR.",
-                ),
-                "icon": datos.get(
-                    "icon",
-                    "catalog",
-                ),
-                "count": cantidad,
-            }
-        )
+    ]
 
     return render(
         request,
@@ -578,6 +555,119 @@ def ver_en_tu_maquina_view(request):
 
         },
     )
+
+def tipos_ar_view(
+    request,
+    familia,
+):
+    """
+    Pantalla intermedia de selección de tipo
+    para la experiencia 3D / realidad aumentada.
+    """
+
+    tipos_por_familia = {
+        "antivibratorios": {
+            "categoria": CatalogCategory.ANTIVIBRATORIOS,
+
+            "kicker": "Soportes antivibratorios",
+
+            "titulo": "Elige el tipo",
+
+            "descripcion": (
+                "Selecciona el tipo de antivibratorio "
+                "que quieres visualizar."
+            ),
+
+            "tipos": [
+                {
+                    "value": "colgantes",
+                    "nombre": "Colgantes antivibración",
+                },
+
+                {
+                    "value": "niveladores_maq",
+                    "nombre": (
+                        "Niveladores antivibración "
+                        "para maquinaria"
+                    ),
+                },
+
+                {
+                    "value": "pies",
+                    "nombre": "Pies antivibración",
+                },
+
+                {
+                    "value": "soportes_piso",
+                    "nombre": (
+                        "Soportes antivibración "
+                        "con anclaje al piso"
+                    ),
+                },
+
+                {
+                    "value": "tacones",
+                    "nombre": "Tacones antivibración",
+                },
+            ],
+        },
+
+        "niveladores": {
+            "categoria": CatalogCategory.PATAS_NIVELADORAS,
+            "kicker": "Pies de nivelación",
+            "titulo": "Elige el tipo",
+            "descripcion": (
+                "Selecciona la característica del "
+                "nivelador que quieres visualizar."
+            ),
+            "tipos": [
+                {
+                    "value": "alta-resistencia",
+                    "nombre": "Alta resistencia",
+                },
+                {
+                    "value": "anclaje-piso",
+                    "nombre": "Anclaje al piso",
+                },
+                {
+                    "value": "antiderrapante",
+                    "nombre": "Antiderrapante",
+                },
+                {
+                    "value": "antivibracion",
+                    "nombre": "Antivibración",
+                },
+                {
+                    "value": "rotula",
+                    "nombre": "Con rótula",
+                },
+                {
+                    "value": "uso-rudo",
+                    "nombre": "Uso rudo",
+                },
+            ],
+        },
+    }
+
+    familia_data = tipos_por_familia.get(
+        familia
+    )
+
+    if not familia_data:
+        raise Http404(
+            "Familia de productos no encontrada."
+        )
+
+    return render(
+        request,
+        "core/tipos_ar.html",
+        {
+            "familia": familia,
+            "familia_data": familia_data,
+            "tipos": familia_data["tipos"],
+        },
+    )    
+
 
 def antivibratorios_view(request):
     productos = (
@@ -1125,8 +1215,10 @@ def modelos_ar_categoria_view(
     categoria,
 ):
     """
-    Muestra los productos de una categoría
-    que cuentan con modelo 3D/AR.
+    Muestra los productos activos de una categoría.
+
+    Si recibe una subcategoría, muestra únicamente
+    los productos pertenecientes a ella.
     """
 
     categorias_validas = dict(
@@ -1154,20 +1246,41 @@ def modelos_ar_categoria_view(
         )
     )
 
-    productos = [
-        producto
-        for producto in productos_queryset
-        if producto.model_url
-    ]
+    subcategoria = (
+        request.GET.get(
+            "subcategoria",
+            ""
+        )
+        .strip()
+    )
+
+    if subcategoria:
+        productos_queryset = (
+            productos_queryset
+            .filter(
+                subcategory=subcategoria
+            )
+        )
+
+    productos = list(
+        productos_queryset
+    )
 
     return render(
         request,
         "core/modelos_ar_categoria.html",
         {
             "productos": productos,
+
             "categoria": categoria,
+
             "categoria_nombre": (
-                categorias_validas[categoria]
+                categorias_validas[
+                    categoria
+                ]
             ),
+
+            "subcategoria":
+                subcategoria,
         },
     )

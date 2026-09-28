@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}
+{{ familia_data.titulo }} | Ver en tu máquina
+{% endblock %}
+
+
+{% block back %}
+
+<a
+    class="icon-btn"
+    href="{% url 'ver_en_tu_maquina' %}"
+    aria-label="Volver a categorías"
+>
+    <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+    >
+        <polyline
+            points="15 18 9 12 15 6"
+        ></polyline>
+    </svg>
+</a>
+
+{% endblock %}
+
+
+{% block content %}
+
+<section class="page ar-type-page">
+
+    <span class="section-kicker">
+        {{ familia_data.kicker }}
+    </span>
+
+    <h1 class="page-title">
+        {{ familia_data.titulo }}
+    </h1>
+
+    <p class="page-lead">
+        {{ familia_data.descripcion }}
+    </p>
+
+
+    <!-- Buscador -->
+    <div class="ar-type-search">
+
+        <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+        >
+            <circle
+                cx="11"
+                cy="11"
+                r="8"
+            ></circle>
+
+            <line
+                x1="21"
+                y1="21"
+                x2="16.65"
+                y2="16.65"
+            ></line>
+        </svg>
+
+        <input
+            type="search"
+            id="ar-type-search-input"
+            placeholder="Busca el tipo que necesitas"
+            autocomplete="off"
+        >
+
+    </div>
+
+
+    <div class="ar-type-divider">
+        <span>
+            O explora por tipo
+        </span>
+    </div>
+
+
+    <!-- Tipos -->
+    <div
+        id="ar-type-list"
+        class="ar-type-list"
+    >
+
+        {% for tipo in tipos %}
+
+        <a
+            class="ar-type-card"
+            href="{% url 'modelos_ar_categoria' familia %}?subcategoria={{ tipo.value }}"
+            data-name="{{ tipo.nombre|lower }}"
+            data-type="{{ tipo.value }}"
+        >
+
+            <div class="ar-type-card-copy">
+
+                <strong>
+                    {{ tipo.nombre }}
+                </strong>
+
+                <small>
+                    Ver modelos disponibles
+                </small>
+
+            </div>
+
+
+            <span
+                class="ar-type-card-arrow"
+                aria-hidden="true"
+            >
+                ›
+            </span>
+
+        </a>
+
+        {% endfor %}
+
+    </div>
+
+
+    <p
+        id="ar-type-empty"
+        class="ar-type-empty"
+        hidden
+    >
+        No encontramos un tipo con ese nombre.
+    </p>
+
+</section>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+(function () {
+
+    const input =
+        document.getElementById(
+            "ar-type-search-input"
+        );
+
+    const cards =
+        document.querySelectorAll(
+            ".ar-type-card"
+        );
+
+    const empty =
+        document.getElementById(
+            "ar-type-empty"
+        );
+
+
+    if (!input) {
+        return;
+    }
+
+
+    input.addEventListener(
+        "input",
+        function () {
+
+            const query =
+                input.value
+                    .trim()
+                    .toLowerCase();
+
+            let visible = 0;
+
+
+            cards.forEach(
+                function (card) {
+
+                    const name =
+                        card.dataset.name || "";
+
+                    const matches =
+                        !query
+                        || name.includes(query);
+
+                    card.hidden =
+                        !matches;
+
+                    if (matches) {
+                        visible += 1;
+                    }
+
+                }
+            );
+
+
+            empty.hidden =
+                visible !== 0;
+
+        }
+    );
+
+})();
+</script>
+
+{% endblock %}

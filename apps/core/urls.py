@@ -107,4 +107,9 @@ urlpatterns = [
         views.modelos_ar_categoria_view,
         name="modelos_ar_categoria",
     ),
+    path(
+        "ver-en-tu-maquina/tipos/<slug:familia>/",
+        views.tipos_ar_view,
+        name="tipos_ar",
+    ),
 ]
