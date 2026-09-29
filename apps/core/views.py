@@ -413,19 +413,19 @@ def catalogo_view(request):
 
     categorias = [
         {
-            "name": "Antivibratorios",
+            "name": "Soportes antivibratorios ",
             "description": (
-                "Elementos para aislamiento "
-                "y control de vibraciones."
+                "Para reducir vibración y ruido"
+                "en tu maquinaria."
             ),
             "icon": "vibration",
             "url_name": "antivibratorios",
         },
         {
-            "name": "Patas niveladoras",
+            "name": "Pies de nivelación ",
             "description": (
-                "Soluciones de apoyo, ajuste "
-                "y nivelación industrial."
+                "Para nivelar y ajustar la altura de  "
+                "máquinas y equipos."
             ),
             "icon": "leveling",
             "url_name": "patas_niveladoras",
@@ -433,20 +433,19 @@ def catalogo_view(request):
         {
             "name": (
                 "Elementos de accionamiento "
-                "y maniobra"
             ),
             "description": (
-                "Componentes para control "
-                "y operación de maquinaria."
+                "Asas, manivelas y perillas "
+                "para operar tu equipo."
             ),
             "icon": "control",
             "url_name": "accionamiento",
         },
         {
-            "name": "Niveladores para mobiliario",
+            "name": "Niveladores para mobiliario ",
             "description": (
-                "Elementos de regulación "
-                "para muebles y estructuras."
+                "Para nivelar muebles,  "
+                "vitrinas y estanterías."
             ),
             "icon": "furniture",
             "url_name": "mobiliario",
@@ -502,10 +501,10 @@ def ver_en_tu_maquina_view(request):
     categorias = [
         {
             "value": "antivibratorios",
-            "name": "Antivibratorios",
+            "name": "Soportes antivibratorios ",
             "description": (
-                "Soportes y elementos antivibratorios "
-                "disponibles en 3D y realidad aumentada."
+                "Para reducir vibración y ruido "
+                "en tu maquinaria."
             ),
             "icon": "stops",
             "has_types": True,
@@ -513,9 +512,10 @@ def ver_en_tu_maquina_view(request):
 
         {
             "value": "niveladores",
-            "name": "Patas niveladoras",
+            "name": "Pies de nivelación ",
             "description": (
-                "Patas y soportes de nivelación."
+                "Para nivelar y ajustar la altura de "
+                "máquinas y equipos."
             ),
             "icon": "leveling-feet",
             "has_types": True,
@@ -523,9 +523,10 @@ def ver_en_tu_maquina_view(request):
 
         {
             "value": "mobiliario",
-            "name": "Niveladores para mobiliario",
+            "name": "Niveladores para mobiliario ",
             "description": (
-                "Niveladores para mobiliario."
+                "Para nivelar muebles, "
+                "vitrinas y estanterías."
             ),
             "icon": "leveling-feet",
             "has_types": False,
@@ -535,11 +536,10 @@ def ver_en_tu_maquina_view(request):
             "value": "accionamiento",
             "name": (
                 "Elementos de accionamiento "
-                "y maniobra"
             ),
             "description": (
-                "Elementos de accionamiento "
-                "y maniobra."
+                "Asas, manivelas y perillas "
+                "para operar tu equipo."
             ),
             "icon": "catalog",
             "has_types": False,
