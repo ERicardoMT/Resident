@@ -384,9 +384,47 @@
                 </model-viewer>
 
 
-                <p class="product-simple-viewer-hint">
-                    Gira · Acerca · Centrar
-                </p>
+                <div
+                    class="product-simple-viewer-controls"
+                    aria-label="Controles del modelo 3D"
+                >
+
+                    <button
+                        type="button"
+                        class="product-simple-viewer-button"
+                        data-simple-rotate
+                        disabled
+                    >
+                        <span aria-hidden="true">↻</span>
+                        Girar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="product-simple-viewer-button"
+                        data-simple-zoom
+                        disabled
+                    >
+                        <span aria-hidden="true">＋</span>
+                        Acercar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="product-simple-viewer-button"
+                        data-simple-reset
+                        disabled
+                    >
+                        <span aria-hidden="true">⌂</span>
+                        Centrar
+                    </button>
+
+                </div>
+
+                <script
+                    src="{% static 'js/producto_ar_detalle.js' %}"
+                    defer
+                ></script>
 
 
                 <!-- Controles del Modelo 3D -->
