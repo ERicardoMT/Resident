@@ -90,9 +90,19 @@
                     {{ producto.name }}
                 </h2>
 
-                <span class="ar-badge">
-                    3D · Realidad aumentada
-                </span>
+                {% if producto.model_url %}
+
+                    <span class="ar-badge">
+                        3D · Realidad aumentada
+                    </span>
+
+                {% else %}
+
+                    <span class="ar-badge">
+                        Modelo 3D no disponible
+                    </span>
+
+                {% endif %}
 
             </div>
 
@@ -108,12 +118,11 @@
     <div class="empty-state">
 
         <strong>
-            No hay modelos disponibles.
+            {{ empty_title|default:"No hay modelos disponibles." }}
         </strong>
 
         <p>
-            Esta categoría todavía no cuenta
-            con productos preparados para 3D o AR.
+            {{ empty_text|default:"Esta categoría todavía no cuenta con productos preparados para 3D o AR." }}
         </p>
 
     </div>

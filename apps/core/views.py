@@ -658,6 +658,33 @@ def tipos_ar_view(
             "Familia de productos no encontrada."
         )
 
+    for tipo in familia_data["tipos"]:
+
+        tipo["key"] = (
+            tipo.get("value")
+            or tipo.get("slug")
+            or ""
+        )
+
+        tipo["count"] = 0    
+
+    if familia == "antivibratorios":
+
+        for tipo in familia_data["tipos"]:
+
+            tipo["count"] = (
+                CatalogItem.objects
+                .filter(
+                    category=(
+                        CatalogCategory
+                        .ANTIVIBRATORIOS
+                    ),
+                    subcategory=tipo["value"],
+                    is_active=True,
+                )
+                .count()
+            )
+
     return render(
         request,
         "core/tipos_ar.html",
@@ -1095,10 +1122,6 @@ def producto_ar_detalle_view(
     request,
     nombre_producto,
 ):
-    """
-    Muestra el diseño simplificado exclusivamente
-    para la sección Ver en tu máquina.
-    """
 
     producto = get_object_or_404(
         CatalogItem.objects.select_related(
@@ -1110,9 +1133,34 @@ def producto_ar_detalle_view(
     )
 
     if not producto.model_url:
-        raise Http404(
-            "Este producto no tiene modelo 3D/AR disponible."
+
+        return render(
+            request,
+            "core/modelos_ar_categoria.html",
+            {
+                "productos": [],
+
+                "categoria":
+                    producto.category,
+
+                "categoria_nombre":
+                    producto.get_category_display(),
+
+                "subcategoria":
+                    producto.subcategory or "",
+
+                "empty_title": (
+                    "No hay modelo 3D disponible "
+                    "para el producto seleccionado"
+                ),
+
+                "empty_text": (
+                    "Este producto todavía no cuenta "
+                    "con un modelo 3D o AR disponible."
+                ),
+            },
         )
+
 
     return render(
         request,

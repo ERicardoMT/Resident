@@ -80,9 +80,57 @@
         <input
             type="search"
             id="ar-type-search-input"
+            maxlength="50"
             placeholder="Busca el tipo que necesitas"
             autocomplete="off"
+            spellcheck="false"
+            aria-label="Buscar tipo"
         >
+
+    </div>
+
+
+    <div
+        id="ar-type-suggestions"
+        class="ar-model-search-results"
+        hidden
+    >
+
+        {% for tipo in tipos %}
+
+            <a
+                class="ar-model-search-result ar-type-suggestion"
+                href="{% url 'modelos_ar_categoria' familia_data.categoria %}?subcategoria={{ tipo.value|urlencode }}"
+                data-suggestion-name="{{ tipo.nombre }}"
+            >
+
+                <span class="ar-model-search-result-text">
+
+                    <strong>
+                        {{ tipo.nombre }}
+                    </strong>
+
+                    <small>
+                        {{ tipo.count|default:0 }}
+                        {% if tipo.count == 1 %}
+                            modelo
+                        {% else %}
+                            modelos
+                        {% endif %}
+                    </small>
+
+                </span>
+
+                <span
+                    class="ar-model-search-result-arrow"
+                    aria-hidden="true"
+                >
+                    ›
+                </span>
+
+            </a>
+
+        {% endfor %}
 
     </div>
 
@@ -104,8 +152,9 @@
 
         <a
             class="ar-type-card"
-            href="{% url 'modelos_ar_categoria' familia %}?subcategoria={{ tipo.value }}"
-            data-name="{{ tipo.nombre|lower }}"
+            data-type-card
+            href="{% url 'modelos_ar_categoria' familia_data.categoria %}?subcategoria={{ tipo.value|urlencode }}"
+            data-name="{{ tipo.nombre}}"
             data-type="{{ tipo.value }}"
         >
 
@@ -116,7 +165,12 @@
                 </strong>
 
                 <small>
-                    Ver modelos disponibles
+                    {{ tipo.count|default:0 }}
+                    {% if tipo.count == 1 %}
+                        modelo
+                    {% else %}
+                        modelos
+                    {% endif %}
                 </small>
 
             </div>
@@ -160,8 +214,22 @@
         );
 
     const cards =
-        document.querySelectorAll(
-            ".ar-type-card"
+        Array.from(
+            document.querySelectorAll(
+                "[data-type-card]"
+            )
+        );
+
+    const suggestionsPanel =
+        document.getElementById(
+            "ar-type-suggestions"
+        );
+
+    const suggestions =
+        Array.from(
+            document.querySelectorAll(
+                ".ar-type-suggestion"
+            )
         );
 
     const empty =
@@ -175,44 +243,217 @@
     }
 
 
-    input.addEventListener(
-        "input",
-        function () {
+    function normalizeText(value) {
 
-            const query =
+        return String(value || "")
+            .normalize("NFD")
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            )
+            .trim()
+            .toLowerCase();
+
+    }
+
+
+    function matchesQuery(
+        text,
+        query
+    ) {
+
+        const normalized =
+            normalizeText(text);
+
+
+        return (
+            normalized.startsWith(query)
+            ||
+            normalized.includes(query)
+        );
+
+    }
+
+
+    function updateSearch() {
+
+        const query =
+            normalizeText(
                 input.value
-                    .trim()
-                    .toLowerCase();
-
-            let visible = 0;
-
-
-            cards.forEach(
-                function (card) {
-
-                    const name =
-                        card.dataset.name || "";
-
-                    const matches =
-                        !query
-                        || name.includes(query);
-
-                    card.hidden =
-                        !matches;
-
-                    if (matches) {
-                        visible += 1;
-                    }
-
-                }
             );
 
 
+        let visibleCards = 0;
+        let visibleSuggestions = 0;
+
+        cards.forEach(
+            function (card) {
+
+                const matches =
+                    !query
+                    ||
+                    matchesQuery(
+                        card.dataset.name,
+                        query
+                    );
+
+
+                card.hidden =
+                    !matches;
+
+
+                if (matches) {
+                    visibleCards += 1;
+                }
+
+            }
+        );
+
+        suggestions.forEach(
+            function (suggestion) {
+
+                const matches =
+                    query
+                    &&
+                    matchesQuery(
+                        suggestion.dataset
+                            .suggestionName,
+                        query
+                    );
+
+
+                suggestion.hidden =
+                    !matches;
+
+
+                if (matches) {
+                    visibleSuggestions += 1;
+                }
+
+            }
+        );
+
+
+        /*
+         * Solo mostrar el menú de sugerencias
+         * cuando el usuario haya escrito algo.
+         */
+        if (suggestionsPanel) {
+
+            suggestionsPanel.hidden =
+                (
+                    !query
+                    ||
+                    visibleSuggestions === 0
+                );
+
+        }
+
+
+        /*
+         * Mensaje de búsqueda vacía.
+         */
+        if (empty) {
+
             empty.hidden =
-                visible !== 0;
+                (
+                    !query
+                    ||
+                    visibleCards > 0
+                );
+
+        }
+
+    }
+
+
+    /*
+     * Buscar conforme escribe.
+     */
+    input.addEventListener(
+        "input",
+        updateSearch
+    );
+
+
+    /*
+     * Enter abre la primera sugerencia.
+     */
+    input.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Escape") {
+
+                if (suggestionsPanel) {
+                    suggestionsPanel.hidden = true;
+                }
+
+                return;
+            }
+
+
+            if (event.key !== "Enter") {
+                return;
+            }
+
+
+            event.preventDefault();
+
+
+            const firstSuggestion =
+                suggestions.find(
+                    function (suggestion) {
+
+                        return (
+                            !suggestion.hidden
+                        );
+
+                    }
+                );
+
+
+            if (firstSuggestion) {
+
+                window.location.href =
+                    firstSuggestion.href;
+
+            }
 
         }
     );
+
+
+    /*
+     * Si el usuario hace clic fuera
+     * del buscador, ocultar sugerencias.
+     */
+    document.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target === input
+                ||
+                (
+                    suggestionsPanel
+                    &&
+                    suggestionsPanel.contains(
+                        event.target
+                    )
+                )
+            ) {
+                return;
+            }
+
+
+            if (suggestionsPanel) {
+                suggestionsPanel.hidden = true;
+            }
+
+        }
+    );
+
 
 })();
 </script>
