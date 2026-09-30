@@ -810,7 +810,7 @@ def recommend_levelers_v2(
     capacity_queryset = (
         application_queryset
         .filter(
-            capacity_kg__gt=(
+            capacity_kg__gte=(
                 load_per_point
             )
         )
@@ -1015,14 +1015,92 @@ def recommend_levelers_v2(
                     0,
             }
 
+        candidates = (
+            sort_products(
+                candidates
+            )
+        )
+
+
     candidates = (
         sort_products(
             candidates
         )
     )
 
+
+    # =====================================================
+    # RECOMENDACIONES VARIADAS POR CAPACIDAD
+    # =====================================================
+
+    selected_products = []
+
+    seen_capacities = set()
+
+
+    # Primero tomamos un modelo
+    # de cada capacidad disponible.
+    for product in candidates:
+
+        capacity = (
+            product.capacity_kg
+        )
+
+        if (
+            capacity
+            in seen_capacities
+        ):
+            continue
+
+        seen_capacities.add(
+            capacity
+        )
+
+        selected_products.append(
+            product
+        )
+
+        if (
+            len(selected_products)
+            >= MAX_RECOMMENDATIONS
+        ):
+            break
+
+
+    # Si faltan lugares, completamos
+    # con otros modelos compatibles.
+    if (
+        len(selected_products)
+        < MAX_RECOMMENDATIONS
+    ):
+
+        selected_ids = {
+            product.pk
+            for product
+            in selected_products
+        }
+
+        for product in candidates:
+
+            if (
+                product.pk
+                in selected_ids
+            ):
+                continue
+
+            selected_products.append(
+                product
+            )
+
+            if (
+                len(selected_products)
+                >= MAX_RECOMMENDATIONS
+            ):
+                break
+
+
     recommended = (
-        candidates[0]
+        selected_products[0]
     )
 
     alternatives = [
@@ -1030,8 +1108,11 @@ def recommend_levelers_v2(
             product
         )
         for product
-        in candidates[1:MAX_RECOMMENDATIONS]
+        in selected_products[
+            1:MAX_RECOMMENDATIONS
+        ]
     ]
+
 
     return {
         **common_result,

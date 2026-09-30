@@ -379,7 +379,7 @@ def recommend_antivibrators(
     candidates = (
         filtered_catalog
         .filter(
-            capacity_kg__gt=(
+            capacity_kg__gte=(
                 required_load
             )
         )
@@ -614,11 +614,71 @@ def recommend_antivibrators(
         candidates.count()
     )
 
-    products = list(
-        candidates[
-            :MAX_RECOMMENDATIONS
-        ]
+    all_products = list(
+        candidates
     )
+
+    products = []
+
+    seen_capacities = set()
+
+# Primero tomamos un modelo
+# de cada capacidad disponible.
+    for product in all_products:
+
+        capacity = (
+            product.capacity_kg
+        )
+
+        if capacity in seen_capacities:
+            continue
+
+        seen_capacities.add(
+            capacity
+        )
+
+        products.append(
+            product
+        )
+
+        if (
+            len(products)
+            >= MAX_RECOMMENDATIONS
+        ):
+            break
+
+
+# Si todavía faltan espacios,
+# completamos con otros modelos
+# compatibles sin repetir producto.
+    if (
+        len(products)
+        < MAX_RECOMMENDATIONS
+    ):
+
+        selected_ids = {
+            product.pk
+            for product in products
+        }
+
+        for product in all_products:
+
+            if (
+                product.pk
+                in selected_ids
+            ):
+             continue
+
+            products.append(
+                product
+         )
+
+            if (
+                len(products)
+                >= MAX_RECOMMENDATIONS
+            ):
+             break
+
 
     recommended = (
         products[0]
