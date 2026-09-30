@@ -419,6 +419,7 @@ def catalogo_view(request):
                 "en tu maquinaria."
             ),
             "icon": "vibration",
+            "icon_image": "img/menu/soportes-antivibratorios.jpeg",   
             "url_name": "antivibratorios",
         },
         {
@@ -428,6 +429,7 @@ def catalogo_view(request):
                 "máquinas y equipos."
             ),
             "icon": "leveling",
+            "icon_image": "img/menu/pies-nivelacion.jpeg",
             "url_name": "patas_niveladoras",
         },
         {
@@ -439,6 +441,7 @@ def catalogo_view(request):
                 "para operar tu equipo."
             ),
             "icon": "control",
+            "icon_image": "img/menu/accionamiento.jpeg",
             "url_name": "accionamiento",
         },
         {
@@ -448,6 +451,7 @@ def catalogo_view(request):
                 "vitrinas y estanterías."
             ),
             "icon": "furniture",
+            "icon_image": "img/menu/niveladores.jpeg",
             "url_name": "mobiliario",
         },
     ]
@@ -507,6 +511,7 @@ def ver_en_tu_maquina_view(request):
                 "en tu maquinaria."
             ),
             "icon": "stops",
+            "icon_image": "img/menu/soportes-antivibratorios.jpeg",
             "has_types": True,
         },
 
@@ -518,18 +523,8 @@ def ver_en_tu_maquina_view(request):
                 "máquinas y equipos."
             ),
             "icon": "leveling-feet",
+            "icon_image": "img/menu/pies-nivelacion.jpeg",
             "has_types": True,
-        },
-
-        {
-            "value": "mobiliario",
-            "name": "Niveladores para mobiliario ",
-            "description": (
-                "Para nivelar muebles, "
-                "vitrinas y estanterías."
-            ),
-            "icon": "leveling-feet",
-            "has_types": False,
         },
 
         {
@@ -542,7 +537,20 @@ def ver_en_tu_maquina_view(request):
                 "para operar tu equipo."
             ),
             "icon": "catalog",
+            "icon_image": "img/menu/accionamiento.jpeg",
             "has_types": False,
+        },
+
+        {
+            "value": "mobiliario",
+            "name": "Niveladores para mobiliario ",
+                "description": (
+                    "Para nivelar muebles, "
+                    "vitrinas y estanterías."
+                ),
+                "icon": "leveling-feet",
+                "icon_image": "img/menu/niveladores.jpeg",
+                "has_types": False,
         },
     ]
 

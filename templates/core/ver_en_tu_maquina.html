@@ -191,7 +191,19 @@ Ver en tu máquina | SMAV INAHER
                     aria-hidden="true"
                 >
 
-                    {% include "core/partials/menu_icon.html" with icon=categoria.icon %}
+                    {% if categoria.icon_image %}
+
+                        <img
+                            class="menu-icon-image"
+                            src="{% static categoria.icon_image %}"
+                            alt=""
+                        >
+
+                    {% else %}
+
+                        {% include "core/partials/menu_icon.html" with icon=categoria.icon %}
+
+                    {% endif %}
 
                 </span>
 
