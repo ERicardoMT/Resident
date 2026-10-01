@@ -20,6 +20,7 @@ from openpyxl import load_workbook
 
 from apps.core.models import (
     AntivibrationTechnicalData,
+    LevelerTechnicalData,
 )
 
 
@@ -287,6 +288,24 @@ class Command(BaseCommand):
         )
 
 
+        expected_count = sum(
+            1
+
+            for row_number in range(
+                2,
+                worksheet.max_row + 1,
+            )
+
+            if str(
+                worksheet.cell(
+                    row_number,
+                    model_column,
+                ).value
+                or ""
+            ).strip()
+        )
+
+
         technical_records = {
             exact_key(
                 item.model_code
@@ -299,6 +318,32 @@ class Command(BaseCommand):
                     "product"
                 )
             )
+        }
+
+
+        technical_records.update(
+            {
+                exact_key(
+                    item.model_code
+                ): item
+
+                for item in (
+                    LevelerTechnicalData
+                    .objects
+                    .select_related(
+                        "product"
+                    )
+                )
+            }
+        )
+
+
+        model_aliases = {
+            exact_key(
+                "MT-3 ANTIDERRAPANTE"
+            ): exact_key(
+                "MT-3 CON PAD"
+            ),
         }
 
 
@@ -332,9 +377,21 @@ class Command(BaseCommand):
             )
 
 
+            lookup_key = (
+                exact_key(model)
+            )
+
+            lookup_key = (
+                model_aliases.get(
+                    lookup_key,
+                    lookup_key,
+                )
+            )
+
+
             item = (
                 technical_records.get(
-                    exact_key(model)
+                    lookup_key
                 )
             )
 
@@ -432,11 +489,12 @@ class Command(BaseCommand):
             )
 
 
-        if len(prepared) != 97:
+        if len(prepared) != expected_count:
 
             raise CommandError(
                 "Se esperaban exactamente "
-                "97 modelos válidos."
+                f"{expected_count} modelos válidos, "
+                f"pero se validaron {len(prepared)}."
             )
 
 
@@ -481,7 +539,7 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                "97 URL 3D guardadas "
+                f"{len(prepared)} URL 3D guardadas "
                 "correctamente en PostgreSQL."
             )
         )
