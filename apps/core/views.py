@@ -9,6 +9,7 @@ from django.http import Http404, HttpResponse, StreamingHttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_GET, require_POST
 from django.urls import reverse
+from .utils import normalize_kg_text
 
 from .forms import (
     CatalogItemForm,
@@ -17,6 +18,7 @@ from .forms import (
 from .models import (
     CatalogCategory,
     CatalogItem,
+    CatalogSubcategory,
 )
 
 
@@ -464,14 +466,6 @@ def catalogo_view(request):
         },
     )
 
-    catalog_items = CatalogItem.objects.filter(is_active=True).order_by('-id')
-
-    return render(
-        request,
-        "core/catalogo.html",
-        {"categorias": categorias, "catalog_items": catalog_items},
-    )
-
 def ver_en_tu_maquina_view(request):
     """
     Muestra únicamente las categorías que tienen
@@ -630,28 +624,70 @@ def tipos_ar_view(
             ),
             "tipos": [
                 {
-                    "value": "alta-resistencia",
-                    "nombre": "Alta resistencia",
+                    "value": (
+                        CatalogSubcategory
+                        .ALTA_RESISTENCIA
+                    ),
+                    "nombre": (
+                        CatalogSubcategory
+                        .ALTA_RESISTENCIA
+                        .label
+                    ),
                 },
                 {
-                    "value": "anclaje-piso",
-                    "nombre": "Anclaje al piso",
+                    "value": (
+                        CatalogSubcategory
+                        .ANCLAJE_PISO
+                    ),
+                    "nombre": (
+                        CatalogSubcategory
+                        .ANCLAJE_PISO
+                        .label
+                    ),
                 },
                 {
-                    "value": "antiderrapante",
-                    "nombre": "Antiderrapante",
+                    "value": (
+                        CatalogSubcategory
+                        .ANTIDERRAPANTE
+                    ),
+                    "nombre": (
+                        CatalogSubcategory
+                        .ANTIDERRAPANTE
+                        .label
+                    ),
                 },
                 {
-                    "value": "antivibracion",
-                    "nombre": "Antivibración",
+                    "value": (
+                        CatalogSubcategory
+                        .ANTIVIBRACION
+                    ),
+                    "nombre": (
+                        CatalogSubcategory
+                        .ANTIVIBRACION
+                        .label
+                    ),
                 },
                 {
-                    "value": "rotula",
-                    "nombre": "Con rótula",
+                    "value": (
+                        CatalogSubcategory
+                        .CON_ROTULA
+                    ),
+                    "nombre": (
+                        CatalogSubcategory
+                        .CON_ROTULA
+                        .label
+                    ),
                 },
                 {
-                    "value": "uso-rudo",
-                    "nombre": "Uso rudo",
+                    "value": (
+                        CatalogSubcategory
+                        .USO_RUDO
+                    ),
+                    "nombre": (
+                        CatalogSubcategory
+                        .USO_RUDO
+                        .label
+                    ),
                 },
             ],
         },
@@ -668,30 +704,19 @@ def tipos_ar_view(
 
     for tipo in familia_data["tipos"]:
 
-        tipo["key"] = (
-            tipo.get("value")
-            or tipo.get("slug")
-            or ""
-        )
-
-        tipo["count"] = 0    
-
-    if familia == "antivibratorios":
-
-        for tipo in familia_data["tipos"]:
-
-            tipo["count"] = (
-                CatalogItem.objects
-                .filter(
-                    category=(
-                        CatalogCategory
-                        .ANTIVIBRATORIOS
-                    ),
-                    subcategory=tipo["value"],
-                    is_active=True,
-                )
-                .count()
+        tipo["count"] = (
+            CatalogItem.objects
+            .filter(
+                category=(
+                    familia_data["categoria"]
+                ),
+                subcategory=(
+                    tipo["value"]
+                ),
+                is_active=True,
             )
+            .count()
+        )
 
     return render(
         request,
@@ -1118,6 +1143,14 @@ def producto_detalle_view(request, nombre_producto):
                 producto_encontrado.model_url = ""
                 break
 
+    if producto_encontrado:
+
+        producto_encontrado.description = (
+            normalize_kg_text(
+                producto_encontrado.description
+            )
+        )
+
     return render(
         request,
         "core/producto_detalle.html",
@@ -1311,12 +1344,14 @@ def modelos_ar_categoria_view(
     )
 
     if subcategoria:
+
         productos_queryset = (
             productos_queryset
             .filter(
                 subcategory=subcategoria
             )
         )
+
 
     productos = list(
         productos_queryset

@@ -4,6 +4,7 @@ import re
 import unicodedata
 from decimal import Decimal, InvalidOperation
 from typing import Any
+from apps.core.utils import normalize_kg_text
 
 from apps.core.models import (
     CatalogCategory,
@@ -371,7 +372,9 @@ def serialize_product(
             ),
 
         "capacity_label":
-            product.capacity_label,
+            normalize_kg_text(
+                product.capacity_label
+            ),
 
         "type":
             product.type_label,
