@@ -33,21 +33,18 @@
 
 {% block content %}
 
-<section class="ar-products-page">
+<span class="section-kicker">
+    Soportes antivibratorios · Niveladores antivibratorios
+</span>
 
-    <span class="section-kicker">
-        Modelos 3D y AR
-    </span>
+<h1 class="page-title">
+    Elige el modelo
+</h1>
 
-    <h1 class="page-title">
-        {{ categoria_nombre }}
-    </h1>
-
-    <p class="page-lead">
-        Selecciona un producto para explorarlo
-        en 3D o colocarlo sobre tu máquina
-        utilizando la cámara.
-    </p>
+<p class="page-lead">
+    Nivelan y absorben vibración a la vez.
+    Elige por la carga de tu máquina.
+</p>
 
 
     {% if productos %}
@@ -87,22 +84,42 @@
             <div class="ar-product-info">
 
                 <h2>
-                    {{ producto.name }}
-                </h2>
+    {{ producto.name }}
+</h2>
 
-                {% if producto.model_url %}
+{% if producto.antivibration_data %}
 
-                    <span class="ar-badge">
-                        3D · Realidad aumentada
-                    </span>
+    {% if producto.antivibration_data.capacity_label %}
 
-                {% else %}
+        <span class="ar-product-capacity">
+            {{ producto.antivibration_data.capacity_label }}
+        </span>
 
-                    <span class="ar-badge">
-                        Modelo 3D no disponible
-                    </span>
+    {% elif producto.antivibration_data.capacity_kg %}
 
-                {% endif %}
+        <span class="ar-product-capacity">
+            {{ producto.antivibration_data.capacity_kg|floatformat:"0" }} kg
+        </span>
+
+    {% endif %}
+
+{% elif producto.leveler_data %}
+
+    {% if producto.leveler_data.capacity_label %}
+
+        <span class="ar-product-capacity">
+            {{ producto.leveler_data.capacity_label }}
+        </span>
+
+    {% elif producto.leveler_data.capacity_kg %}
+
+        <span class="ar-product-capacity">
+            {{ producto.leveler_data.capacity_kg|floatformat:"0" }} kg
+        </span>
+
+    {% endif %}
+
+{% endif %}
 
             </div>
 
@@ -135,14 +152,18 @@
 <style>
 
 .ar-products-page {
+    width: calc(100% - 80px);
+    max-width: 1100px;
+    margin: 0 auto;
     padding: 28px;
+    box-sizing: border-box;
 }
 
 .ar-product-grid {
     display: grid;
     grid-template-columns:
-        repeat(auto-fill, minmax(190px, 1fr));
-    gap: 18px;
+        repeat(3, minmax(0, 1fr));
+    gap: 20px;
     margin-top: 30px;
 }
 
@@ -197,6 +218,14 @@
     line-height: 1.4;
 }
 
+.ar-product-capacity {
+    display: block;
+    color: #64748b;
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
 .ar-badge {
     display: inline-flex;
     padding: 5px 9px;
@@ -213,6 +242,54 @@
     text-align: center;
     background: #f7fafc;
     border-radius: 16px;
+}
+
+@media (max-width: 900px) {
+
+    .ar-products-page {
+        width: calc(100% - 40px);
+        padding: 24px;
+    }
+
+    .ar-product-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .ar-products-page {
+        width: calc(100% - 20px);
+        padding: 18px 12px;
+    }
+
+    .ar-product-grid {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 8px;
+    }
+
+    .ar-product-image {
+        height: 100px;
+        padding: 8px;
+    }
+
+    .ar-product-info {
+        padding: 10px 6px;
+    }
+
+    .ar-product-info h2 {
+        font-size: 0.76rem;
+    }
+
+    .ar-product-capacity {
+        font-size: 0.68rem;
+    }
+
 }
 
 </style>
