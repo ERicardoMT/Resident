@@ -72,6 +72,26 @@
         </div>
 
 
+        {% if producto.category == "accionamiento" %}
+        <script>
+        /* SMAV_FILAS_ACCIONAMIENTO: solo presentacion del catalogo */
+        (() => {
+            const detail = document.querySelector(".product-description");
+            if (!detail) return;
+            const ocultar = new Set(["3d", "revisar", "precio web", "precio web (mas iva)"]);
+            const normalizar = (texto) => (texto || "").toLowerCase()
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                .replace(/\s+/g, " ").trim().replace(/:$/, "");
+            detail.querySelectorAll("table tr").forEach((fila) => {
+                if (fila.cells.length !== 2) return;
+                if (ocultar.has(normalizar(fila.cells[0].textContent))) {
+                    fila.remove();
+                }
+            });
+        })();
+        </script>
+        {% endif %}
+
         {% if producto.model_url %}
 
             <!-- Opciones principales -->

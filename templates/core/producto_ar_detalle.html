@@ -217,45 +217,7 @@
                 </span>
 
 
-                <div
-                    id="product-simple-specs"
-                    class="product-simple-specs"
-                >
 
-                    {% if producto.antivibration_data.base_diameter %}
-
-                        <span class="product-simple-spec product-simple-spec-base">
-                            Base
-                            {{ producto.antivibration_data.base_diameter }}
-                        </span>
-
-                    {% elif producto.leveler_data.base_diameter %}
-
-                        <span class="product-simple-spec product-simple-spec-base">
-                            Base
-                            {{ producto.leveler_data.base_diameter }}
-                        </span>
-
-                    {% endif %}
-
-
-                    {% if producto.antivibration_data.base_height %}
-
-                        <span class="product-simple-spec product-simple-spec-height">
-                            Altura
-                            {{ producto.antivibration_data.base_height }}
-                        </span>
-
-                    {% elif producto.leveler_data.screw_height %}
-
-                        <span class="product-simple-spec product-simple-spec-height">
-                            Altura
-                            {{ producto.leveler_data.screw_height }}
-                        </span>
-
-                    {% endif %}
-
-                </div>
 
 
                 <!-- Visor -->
@@ -385,6 +347,88 @@
                     </div>
 
                 </model-viewer>
+                <div
+                    id="product-simple-specs"
+                    class="product-simple-specs"
+                >
+
+                    {% if producto.antivibration_data.base_diameter %}
+
+                        <span class="product-simple-spec product-simple-spec-base">
+                            Base
+                            {{ producto.antivibration_data.base_diameter }}
+                        </span>
+
+                    {% elif producto.leveler_data.base_diameter %}
+
+                        <span class="product-simple-spec product-simple-spec-base">
+                            Base
+                            {{ producto.leveler_data.base_diameter }}
+                        </span>
+
+                    {% elif producto.category == "accionamiento" %}
+                        <span class="product-simple-spec product-simple-spec-base" data-smav-medida="base">Base: No especificada</span>
+                    {% endif %}
+
+
+                    {% if producto.antivibration_data.base_height %}
+
+                        <span class="product-simple-spec product-simple-spec-height">
+                            Altura
+                            {{ producto.antivibration_data.base_height }}
+                        </span>
+
+                    {% elif producto.leveler_data.screw_height %}
+
+                        <span class="product-simple-spec product-simple-spec-height">
+                            Altura
+                            {{ producto.leveler_data.screw_height }}
+                        </span>
+
+                    {% elif producto.category == "accionamiento" %}
+                        <span class="product-simple-spec product-simple-spec-height" data-smav-medida="altura">Altura: No especificada</span>
+                    {% endif %}
+
+                </div>
+
+                {% if producto.category == "accionamiento" %}
+                {{ producto.description|json_script:"smav-ficha-accionamiento" }}
+                <script>
+                (() => {
+                    const source = document.getElementById("smav-ficha-accionamiento");
+                    if (!source) return;
+                    let html;
+                    try { html = JSON.parse(source.textContent); }
+                    catch (error) { return; }
+                    const doc = new DOMParser().parseFromString(html || "", "text/html");
+                    const normalize = (value) => (value || "").toLowerCase()
+                        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                        .replace(/\s+/g, " ").trim().replace(/:$/, "");
+                    const names = {
+                        base: ["base", "diametro de base", "ancho de base", "ancho de caja"],
+                        altura: ["altura", "altura total", "altura de base", "alto"]
+                    };
+                    const values = {};
+                    doc.querySelectorAll("table tr").forEach((row) => {
+                        const cells = row.cells;
+                        if (cells.length !== 2) return;
+                        const name = normalize(cells[0].textContent)
+                            .replace(/\s*\([^)]*\)$/, "");
+                        for (const [kind, aliases] of Object.entries(names)) {
+                            if (values[kind] || !aliases.includes(name)) continue;
+                            const value = cells[1].textContent.trim();
+                            if (value && value !== "-") values[kind] = value;
+                        }
+                    });
+                    for (const kind of ["base", "altura"]) {
+                        const label = document.querySelector(`[data-smav-medida="${kind}"]`);
+                        if (label) label.textContent =
+                            `${kind === "base" ? "Base" : "Altura"}: ${values[kind] || "No especificada"}`;
+                    }
+                })();
+                </script>
+                {% endif %}
+
 
                 <!-- Controles del Modelo 3D -->
                 <div
@@ -518,9 +562,6 @@
         background: #f8fafc;
     }
 
-    .product-simple-specs {
-        transform: translateY(-60px);
-    }
 
     .product-card {
         width: 100%;
@@ -1312,10 +1353,6 @@
     const controlsAR = document.getElementById(
         "controls-ar"
     );
-    
-    const productSpecs = document.getElementById(
-        "product-simple-specs"
-    );
 
     const instructions = document.getElementById(
         "mode-instructions"
@@ -1967,11 +2004,6 @@
 
         controlsAR.hidden =
             is3DMode;
-
-        if (productSpecs) {
-            productSpecs.hidden =
-                !is3DMode;
-        }    
 
         document
             .querySelectorAll("[data-mode]")

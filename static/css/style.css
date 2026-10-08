@@ -4882,12 +4882,12 @@ button {
    --------------------------------------------------------- */
 
 .product-simple-specs {
-  position: absolute;
+  position: relative;
   z-index: 5;
 
-  left: 18px;
-  right: 18px;
-  top: 58%;
+  width: 100%;
+  padding: 0 18px;
+  margin: 12px 0 18px;
 
   display: flex;
   align-items: center;
@@ -5083,8 +5083,7 @@ button {
   }
 
   .product-simple-specs {
-    left: 12px;
-    right: 12px;
+    padding: 0 12px;
   }
 
   .product-simple-spec {
