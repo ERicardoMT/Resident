@@ -1,8 +1,8 @@
-"""Analisis de senales de acelerometro para extraer frecuencia dominante (Hz).
+"""Analisis de señales de acelerómetro para extraer frecuencia dominante (Hz).
 
-El navegador (movil Android/iOS) captura muestras del acelerometro mediante la
+El navegador (móvil Android/iOS) captura muestras del acelerómetro mediante la
 API DeviceMotion y las envia a la API REST. Aqui aplicamos una FFT con numpy
-para obtener la frecuencia dominante, la amplitud RMS y el pico de aceleracion.
+para obtener la frecuencia dominante, la amplitud RMS y el pico de aceleración.
 """
 
 from __future__ import annotations
@@ -274,7 +274,7 @@ def analyze_samples(
         raise ValueError(
             (
                 "La ventana de tiempo es invalida "
-                "(duracion menor o igual a cero)."
+                "(duración menor o igual a cero)."
             )
         )
 

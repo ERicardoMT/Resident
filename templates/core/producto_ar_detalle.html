@@ -217,7 +217,10 @@
                 </span>
 
 
-                <div class="product-simple-specs">
+                <div
+                    id="product-simple-specs"
+                    class="product-simple-specs"
+                >
 
                     {% if producto.antivibration_data.base_diameter %}
 
@@ -383,43 +386,6 @@
 
                 </model-viewer>
 
-
-<div
-    class="simple-controls"
-    aria-label="Controles del modelo 3D"
->
-
-    <button
-        type="button"
-        data-view-rotate="-15"
-        disabled
-    >
-        <span aria-hidden="true">↶</span>
-        Girar
-    </button>
-
-
-    <button
-        type="button"
-        data-view-reset
-        class="control-reset"
-        disabled
-    >
-        <span aria-hidden="true">⌂</span>
-        Centrar
-    </button>
-
-
-    <button
-        type="button"
-        data-view-rotate="15"
-        disabled
-    >
-        Girar
-        <span aria-hidden="true">↷</span>
-    </button>
-
-</div>
                 <!-- Controles del Modelo 3D -->
                 <div
                     id="controls-3d"
@@ -550,6 +516,10 @@
         min-height: calc(100vh - 60px);
         padding: 24px 14px 40px;
         background: #f8fafc;
+    }
+
+    .product-simple-specs {
+        transform: translateY(-60px);
     }
 
     .product-card {
@@ -1342,6 +1312,10 @@
     const controlsAR = document.getElementById(
         "controls-ar"
     );
+    
+    const productSpecs = document.getElementById(
+        "product-simple-specs"
+    );
 
     const instructions = document.getElementById(
         "mode-instructions"
@@ -1993,6 +1967,11 @@
 
         controlsAR.hidden =
             is3DMode;
+
+        if (productSpecs) {
+            productSpecs.hidden =
+                !is3DMode;
+        }    
 
         document
             .querySelectorAll("[data-mode]")

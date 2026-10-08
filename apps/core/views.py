@@ -74,7 +74,7 @@ def home(request):
                     "title": "Elegir mi nivelador",
                     "subtitle": (
                         "Contesta un cuestionario "
-                        "y te decimos modelo."
+                        "y te decimos tu modelo."
                     ),
                     "url_name": "select_leveler",
                 },
@@ -417,7 +417,7 @@ def catalogo_view(request):
         {
             "name": "Soportes antivibratorios ",
             "description": (
-                "Para reducir vibración y ruido"
+                "Para reducir vibración y ruido "
                 "en tu maquinaria."
             ),
             "icon": "vibration",
@@ -1117,7 +1117,7 @@ def producto_detalle_view(request, nombre_producto):
             {
                 "nombre": (
                     "COLGANTE ANTIVIBRACIÓN DE CAUCHO "
-                    "LÍNEA CDC-2 PARA 100 KG"
+                    "LÍNEA CDC-2 PARA 100 kg"
                 ),
                 "precio": "Cotizar",
                 "categoria": "colgantes",
