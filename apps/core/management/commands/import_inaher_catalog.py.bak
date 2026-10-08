@@ -541,7 +541,7 @@ class Command(BaseCommand):
     ):
         parser.add_argument(
             "--antivibrators",
-            required=False,
+            required=True,
             help=(
                 "Ruta del Excel de "
                 "antivibratorios."
@@ -550,28 +550,10 @@ class Command(BaseCommand):
 
         parser.add_argument(
             "--levelers",
-            required=False,
+            required=True,
             help=(
                 "Ruta del Excel de "
                 "niveladores."
-            ),
-        )
-
-        parser.add_argument(
-            "--action-elements",
-            required=False,
-            help=(
-                "Ruta del Excel de elementos "
-                "de accionamiento."
-            ),
-        )
-
-        parser.add_argument(
-            "--dry-run",
-            action="store_true",
-            help=(
-                "Procesa los Excel pero revierte "
-                "todos los cambios al finalizar."
             ),
         )
 
@@ -580,188 +562,59 @@ class Command(BaseCommand):
         *args,
         **options,
     ):
-        antivibration_value = (
-            options.get(
-                "antivibrators"
-            )
-        )
+        antivibration_path = Path(
+            options["antivibrators"]
+        ).expanduser().resolve()
 
-        leveler_value = (
-            options.get(
-                "levelers"
-            )
-        )
+        leveler_path = Path(
+            options["levelers"]
+        ).expanduser().resolve()
 
-        action_value = (
-            options.get(
-                "action_elements"
-            )
-        )
-
-        dry_run = bool(
-            options.get(
-                "dry_run"
-            )
-        )
-
-
-        if not any(
-            (
-                antivibration_value,
-                leveler_value,
-                action_value,
-            )
-        ):
-            raise CommandError(
-                "Debes indicar al menos un Excel: "
-                "--antivibrators, "
-                "--levelers o "
-                "--action-elements."
-            )
-
-
-        antivibration_path = (
-            Path(
-                antivibration_value
-            )
-            .expanduser()
-            .resolve()
-            if antivibration_value
-            else None
-        )
-
-
-        leveler_path = (
-            Path(
-                leveler_value
-            )
-            .expanduser()
-            .resolve()
-            if leveler_value
-            else None
-        )
-
-
-        action_path = (
-            Path(
-                action_value
-            )
-            .expanduser()
-            .resolve()
-            if action_value
-            else None
-        )
-
-
-        if (
-            antivibration_path
-            and not antivibration_path.exists()
-        ):
+        if not antivibration_path.exists():
             raise CommandError(
                 "No existe el Excel de "
                 "antivibratorios: "
                 f"{antivibration_path}"
             )
 
-
-        if (
-            leveler_path
-            and not leveler_path.exists()
-        ):
+        if not leveler_path.exists():
             raise CommandError(
                 "No existe el Excel de "
                 "niveladores: "
                 f"{leveler_path}"
             )
 
-
-        if (
-            action_path
-            and not action_path.exists()
-        ):
-            raise CommandError(
-                "No existe el Excel de "
-                "elementos de accionamiento: "
-                f"{action_path}"
-            )
-
-
-        antivibration_count = 0
-        leveler_count = 0
-        action_count = 0
-
-
         with transaction.atomic():
 
-            if antivibration_path:
-                antivibration_count = (
-                    self.import_antivibrators(
-                        antivibration_path
-                    )
+            antivibration_count = (
+                self.import_antivibrators(
+                    antivibration_path
                 )
+            )
 
-
-            if leveler_path:
-                leveler_count = (
-                    self.import_levelers(
-                        leveler_path
-                    )
+            leveler_count = (
+                self.import_levelers(
+                    leveler_path
                 )
-
-
-            if action_path:
-                action_count = (
-                    self.import_action_elements(
-                        action_path
-                    )
-                )
-
-
-            if dry_run:
-                transaction.set_rollback(
-                    True
-                )
-
+            )
 
         self.stdout.write("")
 
-
-        if dry_run:
-            self.stdout.write(
-                self.style.WARNING(
-                    "DRY-RUN terminado: "
-                    "PostgreSQL NO fue modificado."
-                )
+        self.stdout.write(
+            self.style.SUCCESS(
+                "Importación terminada."
             )
-        else:
-            self.stdout.write(
-                self.style.SUCCESS(
-                    "Importación terminada."
-                )
-            )
+        )
 
+        self.stdout.write(
+            f"Antivibratorios procesados: "
+            f"{antivibration_count}"
+        )
 
-        if antivibration_path:
-            self.stdout.write(
-                f"Antivibratorios procesados: "
-                f"{antivibration_count}"
-            )
-
-
-        if leveler_path:
-            self.stdout.write(
-                f"Niveladores procesados: "
-                f"{leveler_count}"
-            )
-
-
-        if action_path:
-            self.stdout.write(
-                f"Elementos de accionamiento "
-                f"procesados: "
-                f"{action_count}"
-            )
-
+        self.stdout.write(
+            f"Niveladores procesados: "
+            f"{leveler_count}"
+        )
 
         self.stdout.write(
             f"Productos en catálogo: "
@@ -1569,9 +1422,7 @@ class Command(BaseCommand):
             # Evitamos que la columna F contaminada entre
             # en la descripción.
             product.description = (
-                    build_description(
-                    clean_raw_data
-                )
+                commercial_name
             )
 
 

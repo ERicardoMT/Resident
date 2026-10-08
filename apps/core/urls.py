@@ -88,7 +88,7 @@ urlpatterns = [
         name="catalog_model_3d",
     ),
     path(
-        "catalogo/producto/<str:nombre_producto>/",
+        "catalogo/producto/<path:nombre_producto>/",
         views.producto_detalle_view,
         name="producto_detalle",
     ),
@@ -98,7 +98,7 @@ urlpatterns = [
         name="ver_en_tu_maquina",
     ),
     path(
-        "ver-en-tu-maquina/producto/<str:nombre_producto>/",
+        "ver-en-tu-maquina/producto/<path:nombre_producto>/",
         views.producto_ar_detalle_view,
         name="producto_ar_detalle",
     ),
