@@ -355,6 +355,7 @@ def build_measurement_pdf(
     analysis: dict[str, Any],
     *,
     selected_unit: str = "acceleration",
+    folio: str = "",
 ) -> BytesIO:
     """
     Genera el reporte PDF de una medición vibratoria.
@@ -447,6 +448,18 @@ def build_measurement_pdf(
             "%d/%m/%Y  %H:%M:%S"
         ),
     )
+
+    if folio:
+        pdf.setFont(
+            "Helvetica-Bold",
+            8,
+        )
+
+        pdf.drawString(
+            185,
+            page_height - 96,
+            f"Folio: {folio}",
+        )
 
     # =====================================================
     # Información de medición

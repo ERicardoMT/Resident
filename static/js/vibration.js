@@ -664,43 +664,41 @@ if (isMeasurementCapturing) {
 
 var currentMeasurementFolio = "";
 
+var currentMeasurementToken = "";
 
-function createMeasurementFolio() {
+function createMeasurementToken() {
 
-  var now =
-    new Date();
+  if (
+    window.crypto
+    &&
+    typeof window.crypto.randomUUID
+      === "function"
+  ) {
 
-
-  function pad(value) {
-
-    return String(value)
-      .padStart(
-        2,
-        "0"
-      );
+    return window.crypto.randomUUID();
 
   }
 
 
   return (
-    "SMAV-"
-    + now.getFullYear()
-    + pad(
-        now.getMonth() + 1
-      )
-    + pad(
-        now.getDate()
-      )
-    + "-"
-    + pad(
-        now.getHours()
-      )
-    + pad(
-        now.getMinutes()
-      )
-    + pad(
-        now.getSeconds()
-      )
+    "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+  ).replace(
+    /[xy]/g,
+    function (character) {
+
+      var random =
+        Math.random() * 16 | 0;
+
+      var value =
+        character === "x"
+          ? random
+          : (
+              random & 0x3
+            ) | 0x8;
+
+      return value.toString(16);
+
+    }
   );
 }
 
@@ -745,6 +743,48 @@ function hideMeasurementResult() {
 }
 
 
+function updateMeasurementFolioDisplay() {
+
+  var folio =
+    document.getElementById(
+      "measurement-result-folio"
+    );
+
+
+  if (folio) {
+
+    if (currentMeasurementFolio) {
+
+      folio.textContent =
+        "Folio "
+        + currentMeasurementFolio;
+
+    } else {
+
+      folio.textContent =
+        "Genera el PDF para obtener tu folio";
+
+    }
+
+  }
+
+
+  var inlineFolio =
+    document.getElementById(
+      "measurement-result-folio-inline-3"
+    );
+
+
+  if (inlineFolio) {
+
+    inlineFolio.textContent =
+      currentMeasurementFolio
+      || "pendiente";
+
+  }
+
+}
+
 function showMeasurementResult(
   stateNumber,
   data
@@ -765,46 +805,7 @@ function showMeasurementResult(
   hideMeasurementResult();
 
 
-  /*
-   * Generamos un folio nuevo
-   * para esta medición.
-   */
-  if (!currentMeasurementFolio) {
-
-    currentMeasurementFolio =
-      createMeasurementFolio();
-
-  }
-
-
-  var folio =
-    document.getElementById(
-      "measurement-result-folio"
-    );
-
-
-  if (folio) {
-
-    folio.textContent =
-      "Folio "
-      + currentMeasurementFolio;
-
-  }
-
-
-  var inlineFolio =
-    document.getElementById(
-      "measurement-result-folio-inline-3"
-    );
-
-
-  if (inlineFolio) {
-
-    inlineFolio.textContent =
-      currentMeasurementFolio;
-
-  }
-
+updateMeasurementFolioDisplay();
 
   /*
    * Frecuencia para
@@ -1008,8 +1009,6 @@ function finalizeFullMeasurement() {
          * El PDF continúa funcionando
          * exactamente como antes.
          */
-        prepareMeasurementPdfForShare();
-
       }
     )
 
@@ -1200,6 +1199,11 @@ function startCommon(label) {
   
   currentMeasurementFolio =
   "";
+
+    currentMeasurementToken =
+      createMeasurementToken();
+
+  updateMeasurementFolioDisplay();
 
 hideMeasurementResult();  
 
@@ -1413,22 +1417,25 @@ function requestMeasurementPdfFile() {
 
   var payload = {
 
-    measurement_unit:
-      measurementUnit,
+  measurement_token:
+    currentMeasurementToken,
 
-    samples:
-      reportSamples.map(
-        function (sample) {
+  measurement_unit:
+    measurementUnit,
 
-          return {
-            t: sample.t,
-            x: sample.x,
-            y: sample.y,
-            z: sample.z,
-          };
+  samples:
+    reportSamples.map(
+      function (sample) {
 
-        }
-      ),
+        return {
+          t: sample.t,
+          x: sample.x,
+          y: sample.y,
+          z: sample.z,
+        };
+
+      }
+    ),
 
   };
 
@@ -1485,6 +1492,12 @@ function requestMeasurementPdfFile() {
         }
 
 
+        var folio =
+          response.headers.get(
+            "X-SMAV-Folio"
+          )
+          || "";
+        
         var disposition =
           response.headers.get(
             "Content-Disposition"
@@ -1520,14 +1533,20 @@ function requestMeasurementPdfFile() {
           .then(
             function (blob) {
 
-              return new File(
-                [blob],
-                filename,
-                {
-                  type:
-                    "application/pdf",
-                }
-              );
+              return {
+  file:
+    new File(
+      [blob],
+      filename,
+      {
+        type:
+          "application/pdf",
+      }
+    ),
+
+              folio:
+              folio,
+            };
 
             }
           );
@@ -1918,17 +1937,27 @@ function downloadMeasurementPdf() {
     "Generando...";
 
 
-  requestMeasurementPdfFile()
+requestMeasurementPdfFile()
 
-    .then(
-      function (file) {
+  .then(
+    function (result) {
 
-        downloadSharedPdfFile(
-          file
-        );
+      if (result.folio) {
+
+        currentMeasurementFolio =
+          result.folio;
+
+        updateMeasurementFolioDisplay();
 
       }
-    )
+
+
+      downloadSharedPdfFile(
+        result.file
+      );
+
+    }
+  )
 
     .catch(
       function (error) {
@@ -2148,8 +2177,4 @@ drawScope();
 drawSpectrum([], 0);
 
   
- 
-
-
- 
 })();
