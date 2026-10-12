@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}
+Mediciones vibratorias | SMAV INAHER
+{% endblock %}
+
+{% block back %}
+<a
+  class="icon-btn"
+  href="{% url 'dashboard' %}"
+  aria-label="Volver al panel administrativo"
+>
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+</a>
+{% endblock %}
+
+
+{% block content %}
+
+<section class="page management-page">
+
+  <div class="card surface management-header">
+
+    <span class="section-kicker">
+      Administración
+    </span>
+
+    <h1 class="page-title">
+      Mediciones vibratorias
+    </h1>
+
+    <p class="page-lead">
+      Consulta los folios y reportes PDF
+      generados desde el módulo de medición
+      vibratoria de SMAV INAHER.
+    </p>
+
+  </div>
+
+
+  <div class="card management-card">
+
+    <div class="management-title-row">
+
+      <div>
+
+        <span class="section-kicker">
+          Base de datos
+        </span>
+
+        <h2>
+          {{ measurements|length }}
+          mediciones
+        </h2>
+
+      </div>
+
+    </div>
+
+
+    {% if measurements %}
+
+    <div class="management-list">
+
+      {% for measurement in measurements %}
+
+      <article class="management-item">
+
+        <div class="management-avatar">
+          Hz
+        </div>
+
+
+        <div class="management-copy">
+
+          <strong>
+            {{ measurement.folio }}
+          </strong>
+
+          <span>
+            {{ measurement.created_at|date:"d/m/Y H:i:s" }}
+          </span>
+
+
+          <div class="management-badges">
+
+            <small class="management-badge active">
+              {{ measurement.dominant_hz|floatformat:2 }} Hz
+            </small>
+
+            <small class="management-badge">
+              {{ measurement.rpm|floatformat:0 }} RPM
+            </small>
+
+            <small class="management-badge">
+              {{ measurement.get_measurement_unit_display }}
+            </small>
+
+            <small class="management-badge">
+              {{ measurement.sample_count }} muestras
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <div class="management-controls">
+
+          <a
+            href="{% url 'stored_measurement_pdf' measurement.pk %}"
+            class="management-action management-edit-button"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M12 3v12"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <path d="M5 21h14"></path>
+            </svg>
+
+            <span>
+              Descargar PDF
+            </span>
+          </a>
+
+        </div>
+
+      </article>
+
+      {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="management-empty">
+      Todavía no hay mediciones vibratorias
+      registradas.
+    </div>
+
+    {% endif %}
+
+  </div>
+
+</section>
+
+{% endblock %}

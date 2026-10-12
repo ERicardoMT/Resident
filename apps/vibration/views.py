@@ -8,7 +8,14 @@ from django.http import (
     FileResponse,
     JsonResponse,
 )
-from django.shortcuts import render
+from django.contrib.auth.decorators import (
+    login_required,
+    permission_required,
+)
+from django.shortcuts import (
+    get_object_or_404,
+    render,
+)
 from django.utils import timezone
 from django.views.decorators.http import (
     require_POST,
@@ -421,5 +428,72 @@ def measurement_pdf(request):
     ] = (
         measurement.folio
     )   
+
+    return response
+
+@login_required
+@permission_required(
+    "vibration.view_vibrationmeasurement",
+    raise_exception=True,
+)
+def measurements_dashboard(request):
+    """
+    Muestra las mediciones vibratorias
+    almacenadas en PostgreSQL.
+    """
+
+    measurements = (
+        VibrationMeasurement.objects
+        .all()
+        .order_by(
+            "-created_at",
+            "-id",
+        )
+    )
+
+    return render(
+        request,
+        "vibration/manage_measurements.html",
+        {
+            "measurements": measurements,
+        },
+    )
+
+
+@login_required
+@permission_required(
+    "vibration.view_vibrationmeasurement",
+    raise_exception=True,
+)
+def stored_measurement_pdf(
+    request,
+    measurement_id,
+):
+    """
+    Descarga desde PostgreSQL el PDF
+    perteneciente a una medición.
+    """
+
+    measurement = get_object_or_404(
+        VibrationMeasurement,
+        pk=measurement_id,
+    )
+
+    response = FileResponse(
+        BytesIO(
+            bytes(
+                measurement.pdf_data
+            )
+        ),
+        as_attachment=True,
+        filename=(
+            measurement.pdf_filename
+        ),
+        content_type="application/pdf",
+    )
+
+    response[
+        "X-SMAV-Folio"
+    ] = measurement.folio
 
     return response

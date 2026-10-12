@@ -1,6 +1,7 @@
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
+from django.apps import apps
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -145,6 +146,13 @@ def dashboard(request):
 
     user_model = get_user_model()
 
+    measurement_model = (
+        apps.get_model(
+            "vibration",
+            "VibrationMeasurement",
+        )
+    )
+
     can_view_users = request.user.has_perm(
         "auth.view_user"
     )
@@ -156,6 +164,16 @@ def dashboard(request):
     catalog_count = CatalogItem.objects.filter(
         is_active=True
     ).count()
+
+    measurement_count = (
+        measurement_model.objects.count()
+    )
+
+    can_view_measurements = (
+        request.user.has_perm(
+            "vibration.view_vibrationmeasurement"
+        )
+    )
 
     stats = [
         {
@@ -175,6 +193,18 @@ def dashboard(request):
             "url": (
                 reverse("productos_dashboard")
                 if can_view_catalog
+                else ""
+            ),
+        },
+                {
+            "label": "Mediciones",
+            "num": measurement_count,
+            "hint": "Reportes vibratorios",
+            "url": (
+                reverse(
+                    "measurements_dashboard"
+                )
+                if can_view_measurements
                 else ""
             ),
         },
