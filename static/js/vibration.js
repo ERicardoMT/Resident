@@ -2149,33 +2149,7 @@ drawSpectrum([], 0);
 
   
  
-  if (
-    els.advancedPanel
-    &&
-    els.simpleCard
-  ) {
 
-    els.advancedPanel.addEventListener(
-      "toggle",
-      function () {
-
-        if (els.advancedPanel.open) {
-
-
-          els.simpleCard.hidden =
-            true;
-
-        } else {
-
-
-          els.simpleCard.hidden =
-            false;
-
-        }
-
-      }
-    );
-  } 
 
  
 })();
