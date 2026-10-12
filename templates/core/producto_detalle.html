@@ -71,6 +71,54 @@
             {% endif %}
         </div>
 
+        {% if producto.category == "accionamiento" %}
+        <script>
+        (() => {
+
+            const detail =
+                document.querySelector(
+                    ".product-description"
+                );
+
+            if (!detail) {
+                return;
+            }
+
+
+            detail
+                .querySelectorAll(
+                    "table tr"
+                )
+                .forEach((row) => {
+
+                    if (!row.cells.length) {
+                        return;
+                    }
+
+
+                    const label =
+                        row.cells[0]
+                            .textContent
+                            .trim()
+                            .toLowerCase();
+
+
+                    if (
+                        label ===
+                        "nombre comercial (web)"
+                    ) {
+
+                        row.cells[0].textContent =
+                            "Nombre comercial";
+
+                    }
+
+                });
+
+        })();
+        </script>
+        {% endif %}
+
 
         {% if producto.category == "accionamiento" %}
         <script>
