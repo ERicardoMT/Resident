@@ -1,0 +1,770 @@
+.product-page {
+        display: flex;
+        justify-content: center;
+        min-height: calc(100vh - 60px);
+        padding: 24px 14px 40px;
+        background: #f8fafc;
+    }
+
+    .product-card {
+        width: 100%;
+        max-width: 520px;
+        padding: 22px 16px;
+        background: #ffffff;
+        border-radius: 18px;
+        box-shadow:
+            0 10px 30px rgba(20, 32, 78, 0.09);
+    }
+
+
+    /* Imagen */
+
+    .product-image-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 220px;
+        padding: 18px;
+        background: #ffffff;
+        border-radius: 14px;
+    }
+
+    .product-image {
+        width: 100%;
+        max-height: 280px;
+        object-fit: contain;
+        filter:
+            drop-shadow(
+                0 10px 16px rgba(0, 0, 0, 0.1)
+            );
+    }
+
+    .product-image-placeholder {
+        width: 80%;
+        max-height: 180px;
+        object-fit: contain;
+        opacity: 0.18;
+    }
+
+
+    /* Encabezado */
+
+    .product-header {
+        margin: 18px 0 22px;
+        text-align: center;
+    }
+
+    .product-category {
+        display: inline-block;
+        padding: 6px 14px;
+        color: #475569;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: #e8eef5;
+        border-radius: 999px;
+    }
+
+    .product-title {
+        margin: 14px 0 0;
+        color: #14204e;
+        font-size: 1.35rem;
+        line-height: 1.35;
+        text-transform: uppercase;
+    }
+
+
+    /* Descripción */
+
+    .product-description {
+        padding-top: 20px;
+        color: #475569;
+        font-size: 0.94rem;
+        line-height: 1.65;
+        border-top: 1px solid #e6edf5;
+    }
+
+    .product-empty-text {
+        color: #94a3b8;
+        font-style: italic;
+        text-align: center;
+    }
+
+    .product-description table {
+        width: 100% !important;
+        margin: 14px 0;
+        border-collapse: collapse;
+    }
+
+    .product-description th,
+    .product-description td {
+        padding: 9px;
+        text-align: center;
+        border: 1px solid #cbd5e1;
+    }
+
+    .product-description th {
+        color: #14204e;
+        background: #f1f5f9;
+    }
+
+    .product-description ul {
+        padding-left: 22px;
+    }
+
+
+    /* Botones principales */
+
+    .experience-buttons {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 26px;
+        padding-top: 22px;
+        border-top: 1px solid #e6edf5;
+    }
+
+    .experience-button {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 68px;
+        padding: 12px;
+        font-family: inherit;
+        text-align: left;
+        border-radius: 12px;
+        cursor: pointer;
+        transition:
+            transform 0.2s,
+            box-shadow 0.2s,
+            background-color 0.2s;
+    }
+
+    .experience-button:hover {
+        transform: translateY(-1px);
+    }
+
+    .experience-button:active {
+        transform: scale(0.98);
+    }
+
+    .experience-button-text {
+        display: grid;
+        gap: 2px;
+    }
+
+    .experience-button strong {
+        font-size: 0.84rem;
+    }
+
+    .experience-button small {
+        font-size: 0.69rem;
+        font-weight: 500;
+        opacity: 0.8;
+    }
+
+    .experience-button-icon {
+        display: grid;
+        flex: 0 0 auto;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        font-size: 1.16rem;
+        border-radius: 10px;
+    }
+
+    .experience-button-ar {
+        color: white;
+        background: #0a5290;
+        border: 2px solid #0a5290;
+        box-shadow:
+            0 5px 13px rgba(10, 82, 144, 0.2);
+    }
+
+    .experience-button-ar:hover {
+        background: #074575;
+    }
+
+    .experience-button-ar
+    .experience-button-icon {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .experience-button-3d {
+        color: #14204e;
+        background: white;
+        border: 2px solid #14204e;
+    }
+
+    .experience-button-3d:hover {
+        background: #f4f7fb;
+    }
+
+    .experience-button-3d
+    .experience-button-icon {
+        background: #e9eff6;
+    }
+
+
+    /* Panel principal */
+
+    .experience-panel {
+        padding: 12px;
+        margin-top: 16px;
+        background: #f8fafc;
+        border: 1px solid #dce6f0;
+        border-radius: 15px;
+    }
+
+    .experience-panel[hidden] {
+        display: none;
+    }
+
+    .experience-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+        padding: 4px;
+        background: #e5edf5;
+        border-radius: 10px;
+    }
+
+    .experience-tab {
+        min-height: 40px;
+        padding: 8px;
+        color: #64748b;
+        font-family: inherit;
+        font-size: 0.76rem;
+        font-weight: 700;
+        background: transparent;
+        border: none;
+        border-radius: 7px;
+        cursor: pointer;
+        transition:
+            color 0.2s,
+            background-color 0.2s;
+    }
+
+    .experience-tab.is-active {
+        color: white;
+        background: #14204e;
+        box-shadow:
+            0 3px 8px rgba(20, 32, 78, 0.18);
+    }
+
+    .mode-instructions {
+        display: grid;
+        gap: 3px;
+        padding: 12px 5px;
+        text-align: center;
+    }
+
+    .mode-instructions strong {
+        color: #14204e;
+        font-size: 0.86rem;
+    }
+
+    .mode-instructions span {
+        color: #64748b;
+        font-size: 0.73rem;
+        line-height: 1.4;
+    }
+
+
+    /* Visor */
+
+    #product-model-viewer {
+        display: block;
+        width: 100%;
+        height: 330px;
+        overflow: hidden;
+        background:
+            radial-gradient(
+                circle at center,
+                #ffffff 0%,
+                #edf3f8 100%
+            );
+        border: 1px solid #dce5ee;
+        border-radius: 13px;
+        --poster-color: transparent;
+    }
+
+
+    /* Controles de Modelo 3D */
+
+    .controls-3d {
+        margin-top: 12px;
+    }
+
+    .controls-3d[hidden] {
+        display: none;
+    }
+
+    .simple-controls {
+        display: grid;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+        gap: 7px;
+    }
+
+    .simple-controls button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        min-height: 44px;
+        padding: 8px;
+        color: #14204e;
+        font-family: inherit;
+        font-size: 0.76rem;
+        font-weight: 700;
+        background: white;
+        border: 1px solid #b8c5d3;
+        border-radius: 9px;
+        cursor: pointer;
+        transition:
+            color 0.15s,
+            background-color 0.15s,
+            transform 0.15s;
+    }
+
+    .simple-controls button:hover:not(:disabled) {
+        color: white;
+        background: #14204e;
+    }
+
+    .simple-controls button:active:not(:disabled) {
+        transform: scale(0.97);
+    }
+
+    .simple-controls button:disabled {
+        color: #94a3b8;
+        background: #f1f5f9;
+        cursor: wait;
+    }
+
+    .simple-controls .control-reset {
+        color: white;
+        background: #14204e;
+        border-color: #14204e;
+    }
+
+    .simple-controls .control-reset:disabled {
+        color: #94a3b8;
+        background: #dce3eb;
+        border-color: #dce3eb;
+    }
+
+    .gesture-help {
+        min-height: 20px;
+        margin: 10px 4px 0;
+        color: #64748b;
+        font-size: 0.7rem;
+        line-height: 1.45;
+        text-align: center;
+    }
+
+
+    /* Panel previo a RA */
+
+    .controls-ar {
+        display: grid;
+        gap: 12px;
+        margin-top: 12px;
+    }
+
+    .controls-ar[hidden] {
+        display: none;
+    }
+
+    .device-ar-help {
+        display: grid;
+        gap: 12px;
+        padding: 15px;
+        color: #475569;
+        background: #ffffff;
+        border: 1px solid #d9e4ee;
+        border-radius: 12px;
+    }
+
+    .device-help-heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .device-help-icon {
+        display: grid;
+        flex: 0 0 auto;
+        place-items: center;
+        width: 43px;
+        height: 43px;
+        font-size: 1.25rem;
+        background: #e8f4fb;
+        border-radius: 11px;
+    }
+
+    .device-help-heading div {
+        display: grid;
+        gap: 2px;
+    }
+
+    .device-help-heading strong {
+        color: #14204e;
+        font-size: 0.86rem;
+    }
+
+    .device-help-heading span {
+        color: #64748b;
+        font-size: 0.7rem;
+    }
+
+    .device-help-steps {
+        display: grid;
+        gap: 9px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        counter-reset: ar-step;
+    }
+
+    .device-help-steps li {
+        position: relative;
+        min-height: 30px;
+        padding-left: 38px;
+        color: #475569;
+        font-size: 0.74rem;
+        line-height: 1.45;
+        counter-increment: ar-step;
+    }
+
+    .device-help-steps li::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: grid;
+        place-items: center;
+        width: 27px;
+        height: 27px;
+        color: white;
+        font-size: 0.7rem;
+        font-weight: 800;
+        content: counter(ar-step);
+        background: #0a5290;
+        border-radius: 50%;
+    }
+
+    .device-help-note {
+        padding: 10px;
+        margin: 0;
+        color: #475569;
+        font-size: 0.69rem;
+        line-height: 1.45;
+        text-align: center;
+        background: #f1f5f9;
+        border-radius: 9px;
+    }
+
+    .device-help-warning {
+        color: #92400e;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+    }
+
+
+    /* Aviso de transferencia de vista */
+
+    .copied-view-message {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 10px 12px;
+        color: #166534;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 10px;
+    }
+
+    .copied-view-message > span {
+        display: grid;
+        flex: 0 0 auto;
+        place-items: center;
+        width: 25px;
+        height: 25px;
+        color: white;
+        font-weight: 800;
+        background: #16a34a;
+        border-radius: 50%;
+    }
+
+    .copied-view-message p {
+        margin: 0;
+        font-size: 0.7rem;
+        line-height: 1.4;
+    }
+
+
+    .launch-ar-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 50px;
+        padding: 12px 18px;
+        color: white;
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 800;
+        background: #0a5290;
+        border: none;
+        border-radius: 11px;
+        cursor: pointer;
+        box-shadow:
+            0 5px 12px rgba(10, 82, 144, 0.25);
+        transition:
+            background-color 0.2s,
+            transform 0.2s;
+    }
+
+    .launch-ar-button:hover:not(:disabled) {
+        background: #063b68;
+    }
+
+    .launch-ar-button:active:not(:disabled) {
+        transform: scale(0.98);
+    }
+
+    .launch-ar-button:disabled {
+        color: #64748b;
+        background: #cbd5e1;
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+
+    .ar-message {
+        min-height: 20px;
+        color: #b42318;
+        font-size: 0.72rem;
+        line-height: 1.4;
+        text-align: center;
+    }
+
+    .ar-message.is-information {
+        color: #0a5290;
+    }
+
+    .ar-message.is-success {
+        color: #15803d;
+    }
+
+
+    /* Controles dentro de WebXR */
+
+    .ar-placement-guide,
+    .ar-camera-controls {
+        display: none;
+    }
+
+    model-viewer[ar-status="session-started"]
+    .ar-placement-guide {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        display: grid;
+        place-items: start center;
+        padding-top: 80px;
+        pointer-events: none;
+    }
+
+    model-viewer[ar-status="object-placed"]
+    .ar-placement-guide {
+        display: none;
+    }
+
+    .ar-guide-card {
+        display: grid;
+        justify-items: center;
+        gap: 5px;
+        width: min(88vw, 330px);
+        padding: 13px 18px;
+        color: #14204e;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 16px;
+        box-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    .ar-guide-icon {
+        font-size: 1.4rem;
+    }
+
+    .ar-guide-card strong {
+        font-size: 0.88rem;
+    }
+
+    .ar-guide-card span:last-child {
+        color: #64748b;
+        font-size: 0.72rem;
+        line-height: 1.4;
+    }
+
+    model-viewer[ar-status="session-started"]
+    .ar-camera-controls,
+    model-viewer[ar-status="object-placed"]
+    .ar-camera-controls {
+        position: fixed;
+        right: 12px;
+        bottom: 18px;
+        left: 12px;
+        z-index: 30;
+        display: grid;
+        gap: 8px;
+    }
+
+    .ar-camera-help {
+        display: grid;
+        gap: 1px;
+        justify-self: center;
+        padding: 8px 15px;
+        color: #14204e;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.93);
+        border-radius: 999px;
+        box-shadow:
+            0 4px 14px rgba(0, 0, 0, 0.16);
+        pointer-events: none;
+    }
+
+    .ar-camera-help strong {
+        font-size: 0.75rem;
+    }
+
+    .ar-camera-help span {
+        color: #64748b;
+        font-size: 0.64rem;
+    }
+
+    .ar-control-dock {
+        display: grid;
+        grid-template-columns:
+            repeat(5, minmax(0, 1fr));
+        gap: 6px;
+        padding: 7px;
+        background: rgba(20, 32, 78, 0.92);
+        border-radius: 18px;
+        box-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.24);
+    }
+
+    .ar-control-button {
+        display: grid;
+        justify-items: center;
+        gap: 2px;
+        min-height: 54px;
+        padding: 6px 2px;
+        color: white;
+        font-family: inherit;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+    }
+
+    .ar-control-button:active {
+        transform: scale(0.95);
+    }
+
+    .ar-control-button span {
+        font-size: 1.18rem;
+        font-weight: 800;
+    }
+
+    .ar-control-button small {
+        font-size: 0.55rem;
+        font-weight: 700;
+    }
+
+    .ar-reset-button {
+        color: #14204e;
+        background: white;
+    }
+
+    .ar-exit-button {
+        position: fixed;
+        top: 18px;
+        left: 16px;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        min-height: 42px;
+        padding: 9px 15px;
+        color: #14204e;
+        font-family: inherit;
+        font-weight: 800;
+        background: rgba(255, 255, 255, 0.94);
+        border: none;
+        border-radius: 999px;
+        box-shadow:
+            0 4px 14px rgba(0, 0, 0, 0.18);
+    }
+
+
+    /* Sin modelo */
+
+    .unavailable-message {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 15px;
+        margin-top: 24px;
+        color: #475569;
+        background: #f1f5f9;
+        border-radius: 12px;
+    }
+
+    .unavailable-message > span {
+        font-size: 1.4rem;
+    }
+
+    .unavailable-message strong {
+        color: #14204e;
+    }
+
+    .unavailable-message p {
+        margin: 4px 0 0;
+        font-size: 0.75rem;
+        line-height: 1.45;
+    }
+
+
+    @media (max-width: 420px) {
+        .product-page {
+            padding: 18px 10px 34px;
+        }
+
+        .product-card {
+            padding: 18px 12px;
+        }
+
+        #product-model-viewer {
+            height: 300px;
+        }
+
+        .experience-buttons {
+            grid-template-columns: 1fr;
+        }
+
+        .ar-control-dock {
+            gap: 4px;
+            padding: 6px;
+        }
+
+        .ar-control-button {
+            min-height: 52px;
+        }
+    }
