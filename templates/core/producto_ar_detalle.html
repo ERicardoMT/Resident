@@ -398,40 +398,10 @@
 
                 {% if producto.category == "accionamiento" %}
                 {{ producto.description|json_script:"smav-ficha-accionamiento" }}
-                <script>
-                (() => {
-                    const source = document.getElementById("smav-ficha-accionamiento");
-                    if (!source) return;
-                    let html;
-                    try { html = JSON.parse(source.textContent); }
-                    catch (error) { return; }
-                    const doc = new DOMParser().parseFromString(html || "", "text/html");
-                    const normalize = (value) => (value || "").toLowerCase()
-                        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-                        .replace(/\s+/g, " ").trim().replace(/:$/, "");
-                    const names = {
-                        base: ["base", "diametro de base", "ancho de base", "ancho de caja"],
-                        altura: ["altura", "altura total", "altura de base", "alto"]
-                    };
-                    const values = {};
-                    doc.querySelectorAll("table tr").forEach((row) => {
-                        const cells = row.cells;
-                        if (cells.length !== 2) return;
-                        const name = normalize(cells[0].textContent)
-                            .replace(/\s*\([^)]*\)$/, "");
-                        for (const [kind, aliases] of Object.entries(names)) {
-                            if (values[kind] || !aliases.includes(name)) continue;
-                            const value = cells[1].textContent.trim();
-                            if (value && value !== "-") values[kind] = value;
-                        }
-                    });
-                    for (const kind of ["base", "altura"]) {
-                        const label = document.querySelector(`[data-smav-medida="${kind}"]`);
-                        if (label) label.textContent =
-                            `${kind === "base" ? "Base" : "Altura"}: ${values[kind] || "No especificada"}`;
-                    }
-                })();
-                </script>
+                        <script
+                        src="{% static 'js/accionamiento_product.js' %}"
+                    defer
+                    ></script>
                 {% endif %}
 
 
