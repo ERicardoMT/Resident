@@ -10,8 +10,10 @@ from django.http import Http404, HttpResponse, StreamingHttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_GET, require_POST
 from django.urls import reverse
-from .utils import normalize_kg_text
-
+from .utils import (
+    normalize_kg_text,
+    sanitize_catalog_html,
+)
 from .forms import (
     CatalogItemForm,
     SMAVUserCreationForm,
@@ -1219,9 +1221,11 @@ def producto_detalle_view(request, nombre_producto):
 
         producto_encontrado.description = (
             normalize_kg_text(
-                producto_encontrado.description
+                sanitize_catalog_html(
+                    producto_encontrado.description
             )
         )
+    )
 
     return render(
         request,
@@ -1243,6 +1247,12 @@ def producto_ar_detalle_view(
         ),
         name=nombre_producto,
         is_active=True,
+    )
+
+    producto.description = (
+        sanitize_catalog_html(
+            producto.description
+        )
     )
 
     if not producto.model_url:

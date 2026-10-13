@@ -13,6 +13,7 @@ from .models import (
     SUBCATEGORIES_BY_CATEGORY,
 )
 
+from .utils import sanitize_catalog_html
 
 UserModel = get_user_model()
 
@@ -396,13 +397,17 @@ class CatalogItemForm(forms.ModelForm):
 
         return cleaned_data
 
-    def clean_description(self):
-        return (
-            self.cleaned_data.get(
-                "description"
-            )
-            or ""
-        ).strip()
+        def clean_description(self):
+            description = (
+        self.cleaned_data.get(
+            "description"
+        )
+        or ""
+    ).strip()
+
+        return sanitize_catalog_html(
+        description
+    )
 
     def clean_price_label(self):
         return (
