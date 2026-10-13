@@ -404,6 +404,9 @@ def serialize_product(
         "product_url":
             product.product_url,
 
+        "technical_sheet_url":
+            product.product.catalog_technical_sheet_url,
+
         "image_url":
             get_image_url(
                 product
@@ -675,7 +678,7 @@ def recommend_levelers_v2(
             "ser mayores que cero."
         )
 
-    if normalized_weight > Decimal("9999"):
+    if normalized_weight > Decimal("99999"):
         raise ValueError(
             "El peso máximo permitido "
             "no debe superar 5 dígitos."

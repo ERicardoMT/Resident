@@ -29,6 +29,7 @@ Elegir mi nivelador | SMAV INAHER
 {% endblock %}
 
 {% block content %}
+<!-- SMAV_PATCH_NIVELADORES_20261013 -->
 <section class="page leveler-selector-page">
 
   <!-- ===================================================== -->
@@ -72,9 +73,8 @@ Elegir mi nivelador | SMAV INAHER
             </strong>
 
             <small>
-              Máquinas, gabinetes, bandas transportadoras
-              (conveyors), bastidores — incluso equipos pequeños
-              de uso industrial.
+              Máquinas, gabinetes, bandas transportadoras,
+              estructuras metálicas y cualquier equipo de uso industrial.
             </small>
           </span>
         </label>  
@@ -92,7 +92,7 @@ Elegir mi nivelador | SMAV INAHER
 
       <small>
         Muebles, vitrinas, exhibidores de tienda,
-        racks ligeros y estanterías.
+        racks ligeros, estanterías y mobiliario en general.
       </small>
     </span>
   </label>
@@ -134,14 +134,14 @@ Elegir mi nivelador | SMAV INAHER
       {% csrf_token %}
       <div class="selector-field">
         <label for="selector-weight">
-          ¿Cuánto pesa tu equipo? (kg)
+          ¿Cuánto pesa tu equipo en total? (kg)
         </label>
         <input
           id="selector-weight"
           name="weight"
           type="text"
           inputmode="decimal"
-          maxlength="7"
+          maxlength="8"
           autocomplete="off"
           value="600"
           required
@@ -174,7 +174,7 @@ Elegir mi nivelador | SMAV INAHER
       </div>
 
     <p class="selector-weight-hint">
-      ¿No sabes el peso exacto? Usa un aproximado
+      Si no sabes el peso exacto, pon uno aproximado hacia arriba.
     </p>
 
       <button
@@ -204,10 +204,6 @@ Elegir mi nivelador | SMAV INAHER
       <h1 id="selector-result-title" class="page-title result-page-title">
         Recomendación
       </h1>
-
-      <span id="result-folio" class="result-folio">
-        Folio NV-0000 · guárdalo
-      </span>
     </div>
 
     <div
@@ -220,8 +216,6 @@ Elegir mi nivelador | SMAV INAHER
     </div>
 
     <p id="result-summary" class="result-summary"></p>
-
-    <div id="result-filter-block" class="result-filter-block"></div>
 
     <div
       id="result-feature-selector"
@@ -244,7 +238,7 @@ Elegir mi nivelador | SMAV INAHER
               </strong>
 
               <small id="result-feature-selection-label">
-                Sin características especiales
+                 Todas las opciones por capacidad
               </small>
             </div>
 
@@ -261,10 +255,6 @@ Elegir mi nivelador | SMAV INAHER
             class="result-feature-menu"
           >
 
-            <p class="result-feature-help">
-              Selecciona una o varias características y
-              actualizaremos la recomendación automáticamente.
-            </p>
 
 
             <div class="result-feature-grid">
@@ -293,7 +283,12 @@ Elegir mi nivelador | SMAV INAHER
 
             </div>
 
-            <div class="result-feature-footer">
+            <p class="result-feature-help">
+              Marca solo las que necesites; cada una reduce las opciones.
+              Si no marcas ninguna, elegimos por carga entre todos los modelos.
+            </p>
+
+<div class="result-feature-footer">
 
               <span
                 id="result-feature-status"
@@ -322,11 +317,36 @@ Elegir mi nivelador | SMAV INAHER
 
     <div id="result-extra-message" class="result-extra-message"></div>
 
-    <div class="result-disclaimer">
-      Resultado orientativo con los datos que capturaste.
-      No sustituye asesoría de ingeniería ni constituye garantía.
-      Valídalo con nuestro equipo antes de comprar.
+    <div class="selector-result-warning">
+      <strong>Importante</strong>
+      <p>
+        La recomendación prioriza la capacidad necesaria según el peso
+        y el número de apoyos. Revisa las dimensiones, roscas y materiales
+        del modelo antes de comprar o instalar.
+      </p>
     </div>
+
+    <div class="antivibration-guidance-note">
+      <strong>Un nivelador ajusta la altura y carga el peso en el eje vertical.</strong>
+      <p>
+        No está hecho para empujes laterales ni para arrastrar
+        la máquina apoyada en él. ¿Dudas con tu aplicación?
+        <a
+          href="https://api.whatsapp.com/send?phone=525588090939"
+          target="_blank"
+          rel="noopener noreferrer"
+        >Escríbenos antes de comprar</a>.
+      </p>
+    </div>
+
+    <p class="antivibration-responsibility-note">
+      La instalación, uso y aplicación del producto son responsabilidad
+      del cliente. INAHER no se hace responsable por daños derivados
+      de una instalación incorrecta, sobrecarga, mal uso o una aplicación
+      distinta a la especificada en la ficha técnica. Resultado orientativo
+      con los datos que capturaste; no constituye garantía.
+      Valida tu selección con nuestro equipo antes de instalar: es gratis.
+    </p>
 
   </section>
 </section>
@@ -568,12 +588,6 @@ Elegir mi nivelador | SMAV INAHER
     margin-bottom: 0;
   }
 
-  .result-folio {
-    color: var(--muted);
-    font-size: 11px;
-    font-weight: 700;
-  }
-
   .result-blue-banner {
     padding: 12px;
     margin-bottom: 12px;
@@ -595,23 +609,6 @@ Elegir mi nivelador | SMAV INAHER
     line-height: 1.45;
   }
 
-  .result-filter-block {
-    margin-bottom: 12px;
-  }
-
-  .result-filter-chip {
-    display: inline-block;
-    width: 100%;
-    padding: 12px 14px;
-    color: var(--text);
-    font-size: 13px;
-    font-weight: 700;
-    background: #ffffff;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    box-sizing: border-box;
-  }
-
   .result-warning {
     padding: 12px 14px;
     margin-bottom: 14px;
@@ -622,6 +619,70 @@ Elegir mi nivelador | SMAV INAHER
     border: 1px solid #f3d778;
     border-radius: 12px;
     line-height: 1.45;
+  }
+
+  /* Guía compartida visualmente con Elegir mi antivibratorio. */
+  .leveler-selector-page .selector-result-warning {
+    padding: 11px 12px;
+    margin-top: 15px;
+    color: #92400e;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+  }
+
+  .leveler-selector-page .selector-result-warning strong {
+    font-size: 12px;
+    font-weight: 900;
+  }
+
+  .leveler-selector-page .selector-result-warning p {
+    margin: 4px 0 0;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.55;
+  }
+
+  .leveler-selector-page .antivibration-guidance-note {
+    padding: 14px 16px;
+    margin-top: 12px;
+    color: #38556c;
+    background: #eaf6fc;
+    border-left: 5px solid var(--accent-hover);
+    border-radius: 0 11px 11px 0;
+  }
+
+  .leveler-selector-page .antivibration-guidance-note strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #1f5f8c;
+    font-size: 14px;
+    font-weight: 900;
+    line-height: 1.4;
+  }
+
+  .leveler-selector-page .antivibration-guidance-note p {
+    margin: 0;
+    color: #526b7d;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.55;
+  }
+
+  .leveler-selector-page .antivibration-guidance-note a {
+    color: #1f5f8c;
+    font-weight: 900;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .leveler-selector-page .antivibration-responsibility-note {
+    max-width: 900px;
+    margin: 13px 4px 0;
+    color: #7a8d9c;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.6;
   }
 
   .result-list {
@@ -692,6 +753,13 @@ Elegir mi nivelador | SMAV INAHER
     box-sizing: border-box;
   }
 
+  .result-card-action-unavailable {
+    cursor: not-allowed;
+    color: #64748b;
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+  }
+
   .result-extra-message {
     margin-top: 16px;
     color: var(--primary);
@@ -704,14 +772,6 @@ Elegir mi nivelador | SMAV INAHER
     display: block;
     margin-bottom: 4px;
     font-size: 15px;
-  }
-
-  .result-disclaimer {
-    margin-top: 16px;
-    color: var(--muted);
-    font-size: 11px;
-    font-weight: 600;
-    line-height: 1.55;
   }
 
   .result-contact-actions {
@@ -904,20 +964,6 @@ Elegir mi nivelador | SMAV INAHER
      RESULTADOS NIVELADOR V2
      ======================================================= */
 
-  .result-filter-chip {
-    padding: 12px 15px;
-    color: #38556b;
-    font-size: 11px;
-    font-weight: 800;
-    background:
-      linear-gradient(
-        135deg,
-        #ffffff,
-        #f1f8fc
-      );
-    border: 1px solid #d2e3ed;
-  }
-
   /* =======================================================
    FILTRO DE CARACTERÍSTICAS EN RESULTADO
    ======================================================= */
@@ -1082,7 +1128,7 @@ Elegir mi nivelador | SMAV INAHER
 
 
   .result-feature-help {
-    margin: 0 0 12px;
+    margin: 22px 0 0;
 
     color: var(--muted);
 
@@ -1396,15 +1442,39 @@ Elegir mi nivelador | SMAV INAHER
 
 
   .result-spec-title {
-    padding: 11px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #f8fbfd;
+    border-top: 1px solid #dce8ef;
+    border-bottom: 1px solid #dce8ef;
+  }
+
+  .result-spec-title div {
+    display: grid;
+    gap: 2px;
+  }
+
+  .result-spec-title small {
     color: var(--accent-hover);
     font-size: 9px;
     font-weight: 900;
     letter-spacing: 0.7px;
     text-transform: uppercase;
-    background: #f8fbfd;
-    border-top: 1px solid #e0eaf0;
-    border-bottom: 1px solid #e0eaf0;
+  }
+
+  .result-spec-title strong {
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  .result-spec-title > span {
+    color: var(--accent-hover);
+    font-size: 10px;
+    font-weight: 800;
   }
 
 
@@ -2224,9 +2294,6 @@ Elegir mi nivelador | SMAV INAHER
     const recommendationUrl =
       "{% url 'recommend_leveler' %}";
 
-    const catalogUrl =
-      "{% url 'catalogo' %}";
-
     const screen1 = document.getElementById(
       "selector-screen-1"
     );
@@ -2304,19 +2371,9 @@ Elegir mi nivelador | SMAV INAHER
         "selector-load-per-point"
       );
 
-    const resultFolio =
-      document.getElementById(
-        "result-folio"
-      );
-
     const resultSummary =
       document.getElementById(
         "result-summary"
-      );
-
-    const resultFilterBlock =
-      document.getElementById(
-        "result-filter-block"
       );
 
     const resultWarning =
@@ -2340,17 +2397,6 @@ Elegir mi nivelador | SMAV INAHER
       );
 
     let currentScreen = 1;
-
-
-    function generateFolio() {
-      const random = Math.floor(
-        1000
-        + Math.random() * 9000
-      );
-
-      return "NV-" + random;
-    }
-
 
     function getSelectedApplication() {
       const selected =
@@ -2377,7 +2423,7 @@ Elegir mi nivelador | SMAV INAHER
         !Number.isFinite(weight)
         || !Number.isInteger(supports)
         || weight <= 0
-        || weight > 9999
+        || weight > 99999
         || supports <= 0
         || supports > 99
       ) {
@@ -2532,31 +2578,23 @@ Elegir mi nivelador | SMAV INAHER
     }
 
 
-    function getProductLinkMarkup(
-      product
-    ) {
-      if (product.product_url) {
-        return `
-          <a
-            class="result-card-action"
-            href="${product.product_url}"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Ver ficha del producto
-          </a>
-        `;
+    function getProductLinkMarkup(product) {
+      const url = product.technical_sheet_url || "";
+      if (!/^https?:\/\//i.test(url)) {
+        return `<span class="result-card-action result-card-action-unavailable">
+          Ficha técnica no disponible
+        </span>`;
       }
-
-
-      return `
-        <a
-          class="result-card-action"
-          href="${catalogUrl}"
-        >
-          Ver catálogo
-        </a>
-      `;
+      const safeUrl = url
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      return `<a class="result-card-action"
+        href="${safeUrl}"
+        target="_blank" rel="noopener noreferrer">
+        Ver ficha técnica (PDF)
+      </a>`;
     }
 
 
@@ -2727,7 +2765,7 @@ Elegir mi nivelador | SMAV INAHER
             >
 
               <small>
-                Capacidad por punto
+                Capacidad de carga
               </small>
 
               <strong>
@@ -2828,7 +2866,7 @@ Elegir mi nivelador | SMAV INAHER
               "
             >
               <small>
-                Capacidad
+                Capacidad de carga
               </small>
 
               <b>
@@ -3006,25 +3044,6 @@ Elegir mi nivelador | SMAV INAHER
           );
     }
 
-    function setFilterChip(text) {
-      clearElement(
-        resultFilterBlock
-      );
-
-      const chip =
-        document.createElement("div");
-
-      chip.className =
-        "result-filter-chip";
-
-      chip.textContent = text;
-
-      resultFilterBlock.appendChild(
-        chip
-      );
-    }
-
-
     function setExtraMessage(
       title,
       message
@@ -3070,11 +3089,6 @@ Elegir mi nivelador | SMAV INAHER
     function renderResult(data) {
       clearElement(resultList);
 
-      resultFolio.textContent =
-        "Folio "
-        + generateFolio()
-        + " · guárdalo";
-
       resultSummary.textContent =
         "Para "
         + formatNumber(
@@ -3089,28 +3103,6 @@ Elegir mi nivelador | SMAV INAHER
           data.support_points
         )
         + " apoyos):";
-
-      const requestedFeatures =
-        Array.isArray(
-          data.requested_features
-        )
-        && data.requested_features.length
-          ? data.requested_features.join(", ")
-          : "Sin características especiales";
-
-
-      const applicationLabel =
-        data.application === "furniture"
-          ? "Mobiliario"
-          : "Maquinaria y equipos industriales";
-
-
-      setFilterChip(
-        "Aplicación: "
-        + applicationLabel
-        + " · Características: "
-        + requestedFeatures
-      );
 
 
       resultBlueBanner.hidden = true;
@@ -3184,7 +3176,7 @@ Elegir mi nivelador | SMAV INAHER
           " Los modelos mostrados sí cumplen "
           + "la carga, aplicación, tipo y "
           + "materiales. Consulta una fabricación "
-          + "especial con tu folio."
+          + "especial con nuestro equipo."
         );
 
         return;
@@ -3201,7 +3193,7 @@ Elegir mi nivelador | SMAV INAHER
 
       setExtraMessage(
         "Requiere revisión de INAHER.",
-        " Guarda el folio y comparte el peso, "
+        " Comparte el peso, "
         + "los apoyos, la rosca y el ambiente "
         + "de trabajo."
       );
@@ -3213,16 +3205,9 @@ Elegir mi nivelador | SMAV INAHER
     ) {
       clearElement(resultList);
 
-      resultFolio.textContent =
-        "No se generó folio";
-
       resultSummary.textContent =
         "No fue posible calcular "
         + "la recomendación.";
-
-      setFilterChip(
-        "Error al procesar los datos"
-      );
 
       resultBlueBanner.hidden = true;
 
@@ -3285,7 +3270,7 @@ Elegir mi nivelador | SMAV INAHER
 
       if (!selectedFeatures.length) {
         resultFeatureSelectionLabel.textContent =
-          "Sin características especiales";
+          "Todas las opciones por capacidad";
 
         return;
       }
@@ -3439,12 +3424,12 @@ Elegir mi nivelador | SMAV INAHER
         value.split(".");
 
       /*
-      * Máximo 4 dígitos enteros.
+      * Máximo 5 dígitos enteros.
       */
       parts[0] =
         parts[0].slice(
           0,
-          4
+          5
         );
 
       /*
@@ -3529,10 +3514,10 @@ Elegir mi nivelador | SMAV INAHER
         if (
           !Number.isFinite(weight)
           || weight <= 0
-          || weight > 9999
+          || weight > 99999
         ) {
           weightInput.setCustomValidity(
-            "Ingresa un peso válido entre 0.01 y 9999 kg."
+            "Ingresa un peso válido entre 0.01 y 99999 kg."
           );
 
           weightInput.reportValidity();

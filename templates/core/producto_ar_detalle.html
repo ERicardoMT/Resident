@@ -56,16 +56,14 @@
 
                     <span class="product-simple-capacity">
                         ·
-                        {{ producto.antivibration_data.capacity_kg|floatformat:"-2" }}
-                        kg por apoyo
+                        Capacidad de carga {{ producto.antivibration_data.capacity_kg|floatformat:"-2" }} kg
                     </span>
 
                 {% elif producto.leveler_data.capacity_kg %}
 
                     <span class="product-simple-capacity">
                         ·
-                        {{ producto.leveler_data.capacity_kg|floatformat:"-2" }}
-                        kg por apoyo
+                        Capacidad de carga {{ producto.leveler_data.capacity_kg|floatformat:"-2" }} kg
                     </span>
 
                 {% endif %}
@@ -134,7 +132,7 @@
                         target="_blank"
                         rel="noopener noreferrer"
                     >
-                        Ver ficha
+                        Ver ficha técnica (PDF)
                     </a>
 
                 {% else %}
