@@ -41,8 +41,9 @@ def home(request):
                     "icon_image": "img/menu/elegir-antivibratorio.jpeg",
                     "title": "Elegir mi antivibratorio",
                     "subtitle": (
-                        "Contesta un cuestionario "
-                        "y te decimos tu modelo."
+                        "Contesta unas preguntas "
+                        "y te mostramos los "
+                        "antivibratorios compatibles."
                     ),
                     "url_name": "stops",
                 },
@@ -74,8 +75,9 @@ def home(request):
                     "icon_image": "img/menu/elegir-nivelador.jpeg",
                     "title": "Elegir mi nivelador",
                     "subtitle": (
-                        "Contesta un cuestionario "
-                        "y te decimos tu modelo."
+                        "Contesta unas preguntas "
+                        "y te mostramos los "
+                        "niveladores compatibles."
                     ),
                     "url_name": "select_leveler",
                 },
@@ -85,7 +87,7 @@ def home(request):
                     "title": "Verificar nivelación",
                     "subtitle": (
                         "Usa tu teléfono como nivel "
-                        "para revisar tu equipo"
+                        "para revisar tu equipo."
                     ),
                     "url_name": "leveler",
                 },
@@ -610,6 +612,12 @@ def tipos_ar_view(
                 "que quieres visualizar."
             ),
 
+            "search_placeholder": (
+                "Ej. IVH-6, SBS-80, RDM-600"
+            ),
+
+            "all_label": "Todos los soportes",
+
             "tipos": [
                 {
                     "value": "colgantes",
@@ -646,12 +654,22 @@ def tipos_ar_view(
 
         "niveladores": {
             "categoria": CatalogCategory.PATAS_NIVELADORAS,
+
             "kicker": "Pies de nivelación",
+
             "titulo": "Elige el tipo",
+
             "descripcion": (
                 "Selecciona la característica del "
                 "nivelador que quieres visualizar."
             ),
+
+            "search_placeholder": (
+                "Ej. A3N50, MLK-3, ETH-5"
+            ),
+
+            "all_label": "Todos los niveladores",
+
             "tipos": [
                 {
                     "value": (
@@ -732,21 +750,44 @@ def tipos_ar_view(
             "Familia de productos no encontrada."
         )
 
+    productos_familia = list(
+        CatalogItem.objects
+        .filter(
+            category=(
+                familia_data["categoria"]
+            ),
+            is_active=True,
+        )
+        .values(
+            "name",
+            "subcategory",
+        )
+    )
+
+
     for tipo in familia_data["tipos"]:
 
-        tipo["count"] = (
-            CatalogItem.objects
-            .filter(
-                category=(
-                    familia_data["categoria"]
-                ),
-                subcategory=(
-                    tipo["value"]
-                ),
-                is_active=True,
+        nombres_tipo = [
+            producto["name"]
+            for producto in productos_familia
+            if (
+                producto["subcategory"]
+                == tipo["value"]
             )
-            .count()
+        ]
+
+        tipo["count"] = len(
+            nombres_tipo
         )
+
+        tipo["search_terms"] = " ".join(
+            nombres_tipo
+        )
+
+
+    total_count = len(
+        productos_familia
+    )
 
     return render(
         request,
@@ -755,6 +796,7 @@ def tipos_ar_view(
             "familia": familia,
             "familia_data": familia_data,
             "tipos": familia_data["tipos"],
+            "total_count": total_count,
         },
     )    
 

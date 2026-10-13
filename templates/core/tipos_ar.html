@@ -81,7 +81,7 @@
             type="search"
             id="ar-type-search-input"
             maxlength="50"
-            placeholder="Busca el tipo que necesitas"
+            placeholder="{{ familia_data.search_placeholder }}"
             autocomplete="off"
             spellcheck="false"
             aria-label="Buscar tipo"
@@ -101,7 +101,7 @@
             <a
                 class="ar-model-search-result ar-type-suggestion"
                 href="{% url 'modelos_ar_categoria' familia_data.categoria %}?subcategoria={{ tipo.value|urlencode }}"
-                data-suggestion-name="{{ tipo.nombre }}"
+                data-suggestion-name="{{ tipo.nombre }} {{ tipo.search_terms }}"
             >
 
                 <span class="ar-model-search-result-text">
@@ -148,13 +148,49 @@
         class="ar-type-list"
     >
 
+    <a
+        class="ar-type-card"
+        data-type-card
+        data-name="{{ familia_data.all_label }}"
+        data-type="todos"
+        href="{% url 'modelos_ar_categoria' familia_data.categoria %}"
+    >
+
+        <div class="ar-type-card-copy">
+
+            <strong>
+                {{ familia_data.all_label }}
+            </strong>
+
+            <small>
+                {{ total_count }}
+
+                {% if total_count == 1 %}
+                    modelo
+                {% else %}
+                    modelos
+                {% endif %}
+            </small>
+
+        </div>
+
+
+        <span
+            class="ar-type-card-arrow"
+            aria-hidden="true"
+        >
+            ›
+        </span>
+
+    </a>
+
         {% for tipo in tipos %}
 
         <a
             class="ar-type-card"
             data-type-card
             href="{% url 'modelos_ar_categoria' familia_data.categoria %}?subcategoria={{ tipo.value|urlencode }}"
-            data-name="{{ tipo.nombre}}"
+            data-name="{{ tipo.nombre }} {{ tipo.search_terms }}"
             data-type="{{ tipo.value }}"
         >
 

@@ -47,7 +47,7 @@ Elegir mi antivibratorio | SMAV INAHER
 
     <p class="page-lead selector-intro">
       Cuéntanos algunos datos de tu equipo y te mostraremos
-      opciones compatibles de la base de antivibratorios INAHER.
+      opciones compatibles del catálogo de antivibratorios INAHER.
     </p>
 
   </header>
@@ -299,7 +299,13 @@ Elegir mi antivibratorio | SMAV INAHER
         <p>
           ¿El piso está desnivelado?
           Tu máquina cargará dispareja.
-          Mídelo con el nivel de esta app.
+
+          <a
+            class="installation-review-link"
+            href="{% url 'leveler' %}"
+          >
+            Mídelo con el nivel de esta app.
+          </a>
         </p>
 
       </div>
@@ -372,7 +378,6 @@ Elegir mi antivibratorio | SMAV INAHER
       <div class="installation-review-content">
 
         <p>
-          Este selector elige tu soporte según tu máquina.
           Si el piso también vibra por otra causa — una máquina
           vecina o el paso de vehículos pesados — ese caso se
           dimensiona diferente. Escríbenos y lo revisamos.
@@ -482,13 +487,6 @@ DATOS TÉCNICOS OPCIONALES
   ></p>
 
   <div
-    id="antivibration-result-chip"
-    class="result-filter-chip antivibration-result-chip"
-  >
-    Soportes antivibratorios · Selección por capacidad
-  </div>
-
-  <div
     id="antivibration-category-selector"
     class="result-feature-selector"
   >
@@ -505,7 +503,7 @@ DATOS TÉCNICOS OPCIONALES
           </span>
 
           <strong>
-            Categoría de antivibratorio
+            Filtrar por categoría
           </strong>
 
           <small id="antivibration-category-selection-label">
@@ -556,11 +554,20 @@ DATOS TÉCNICOS OPCIONALES
 
         <div class="result-feature-footer">
 
-          <span
-            id="antivibration-category-status"
-            class="result-feature-status"
-            aria-live="polite"
-          ></span>
+          <div class="result-feature-footer-copy">
+
+            <p class="result-feature-footer-help">
+              Marca solo las que necesites; cada una reduce las opciones.
+              Si no marcas ninguna, elegimos por carga entre todos los modelos.
+            </p>
+
+            <span
+              id="antivibration-category-status"
+              class="result-feature-status"
+              aria-live="polite"
+            ></span>
+
+          </div>
 
           <button
             id="antivibration-category-clear"
@@ -675,8 +682,6 @@ DATOS TÉCNICOS OPCIONALES
             >
               Escríbenos antes de comprar
             </a>
-
-            — abre WhatsApp con tu folio.
           </p>
 
         </div>
@@ -687,8 +692,7 @@ DATOS TÉCNICOS OPCIONALES
           sobrecarga, mal uso o una aplicación distinta a la
           especificada en la ficha técnica. Resultado orientativo
           con los datos que capturaste; no constituye garantía.
-          Valida tu selección con nuestro equipo antes de instalar:
-          es gratis.
+          Valida tu selección con nuestro equipo antes comprar.
         </p>
 
       </div>
@@ -2765,7 +2769,7 @@ DATOS TÉCNICOS OPCIONALES
 
   .alternative-summary-capacity {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 6px;
 
     margin-top: 4px;
@@ -2862,14 +2866,9 @@ DATOS TÉCNICOS OPCIONALES
 
   .alternative-expanded
   .recommended-actions {
+    grid-template-columns: 1fr;
     border-top: 1px solid #e2ebf1;
   }
-
-
-  /*
-   * En teléfono se parece más al resultado
-   * de Elegir mi nivelador.
-   */
 
   @media (max-width: 520px) {
 
@@ -3238,6 +3237,22 @@ input:checked
   margin-top: 13px;
 }
 
+.result-feature-footer-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+
+.result-feature-footer-help {
+  margin: 0;
+
+  color: var(--muted);
+
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.5;
+}
 
 .result-feature-status {
   color: var(--accent-hover);
@@ -3315,23 +3330,6 @@ input:checked
   font-size: 12px;
   font-weight: 800;
 }
-
-
-.antivibration-result-chip {
-  padding: 13px 15px;
-  margin-bottom: 13px;
-
-  color: #38556c;
-
-  font-size: 10px;
-  font-weight: 800;
-
-  background: #f4f9fc;
-
-  border: 1px solid #cfe1eb;
-  border-radius: 12px;
-}
-
 
 /* Resumen antiguo ya no necesitamos
    que domine visualmente el resultado. */
@@ -3499,7 +3497,10 @@ input:checked
 .result-product-capacity {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+
+  gap: 6px;
 
   width: 100%;
 
@@ -3898,6 +3899,13 @@ input:checked
   line-height: 1.5;
 }
 
+.installation-review-link {
+  color: var(--accent-hover);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 
 /* =======================================================
    MÓVIL
@@ -4003,11 +4011,6 @@ input:checked
     const categoryClear =
       document.getElementById(
         "antivibration-category-clear"
-      );
-
-    const antivibrationResultChip =
-      document.getElementById(
-        "antivibration-result-chip"
       );
 
     let currentAntivibrationFolio = "";  
@@ -4458,7 +4461,7 @@ function renderRecommended(
           target="_blank"
           rel="noopener noreferrer"
         >
-          Ver ficha del producto
+          Ver ficha técnica
         </a>
       `
       : `
@@ -4510,7 +4513,7 @@ function renderRecommended(
         <div class="result-product-capacity">
 
           <small>
-            Capacidad por apoyo
+            Capacidad de carga:
           </small>
 
           <strong>
@@ -4630,7 +4633,7 @@ function renderRecommended(
               product.technical_sheet_url
                 ? `
                   <a
-                    class="recommended-link"
+                    class="recommended-link primary"
                     href="${escapeHtml(
                       product.technical_sheet_url
                     )}"
@@ -4707,7 +4710,7 @@ function renderRecommended(
                       "
                     >
                       <small>
-                        Capacidad
+                        Capacidad de carga:
                       </small>
 
                       <b>
@@ -4789,20 +4792,7 @@ function renderRecommended(
                       alternative-actions
                     "
                   >
-
                     ${sheet}
-
-
-                    <a
-                      class="
-                        recommended-link
-                        primary
-                      "
-                      href="${CATALOG_URL}"
-                    >
-                      Ver catálogo
-                    </a>
-
                   </div>
 
                 </div>
@@ -4919,15 +4909,6 @@ function renderRecommended(
     resultEmpty.hidden = true;
 
     selectorHeading.hidden = true;
-
-    if (antivibrationResultChip) {
-      antivibrationResultChip.textContent =
-        "Soportes antivibratorios · "
-        + (
-          data.requested_subcategory_label
-          || "Todas las categorías"
-        );
-    }
 
     if (!currentAntivibrationFolio) {
   currentAntivibrationFolio =
@@ -5116,19 +5097,26 @@ categoryInputs.forEach(
 
         updateCategorySelectionLabel();
 
+        const hasSelection =
+          getSelectedSubcategories()
+            .length > 0;
+
         categoryStatus.textContent =
-          "Actualizando recomendación...";
+          hasSelection
+            ? "Actualizando recomendación..."
+            : "";
 
         await requestRecommendation();
 
         categoryStatus.textContent =
-          "Recomendación actualizada";
+          hasSelection
+            ? "Recomendación actualizada"
+            : "";
       }
     );
 
   }
 );
-
 
 categoryClear.addEventListener(
   "click",
@@ -5142,16 +5130,13 @@ categoryClear.addEventListener(
 
     updateCategorySelectionLabel();
 
-    categoryStatus.textContent =
-      "Actualizando recomendación...";
+    categoryStatus.textContent = "";
 
     await requestRecommendation();
 
-    categoryStatus.textContent =
-      "Recomendación actualizada";
+    categoryStatus.textContent = "";
   }
 );
-
 
     [
       weightInput,
