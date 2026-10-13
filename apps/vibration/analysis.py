@@ -288,31 +288,6 @@ def analyze_samples(
         )
 
     # -----------------------------------------------------
-    # DEBUG TEMPORAL
-    #
-    # Durante la medición en vivo deberían aparecer
-    # ventanas cercanas a 3000 ms.
-    #
-    # Al finalizar deberían aparecer aproximadamente
-    # 9700 - 10000 ms.
-    #
-    # Cuando terminemos de comprobar los 10 segundos,
-    # este print se puede eliminar.
-    # -----------------------------------------------------
-
-    print(
-        "[SMAV DEBUG]",
-        "muestras:",
-        len(samples),
-        "duracion:",
-        round(
-            duration * 1000.0,
-            1,
-        ),
-        "ms",
-    )
-
-    # -----------------------------------------------------
     # Frecuencia de muestreo
     # -----------------------------------------------------
 
