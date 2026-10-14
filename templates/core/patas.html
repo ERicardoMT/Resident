@@ -14,17 +14,7 @@
 
 {% block content %}
 <style>
-    /* Estilos del menú de filtros */
-    .filter-menu {
-        text-align: center; color: #777; font-size: 0.85rem; margin-bottom: 30px; line-height: 1.8;
-    }
-    .filter-btn {
-        background: none; border: none; color: #777; cursor: pointer; padding: 0 5px; font-family: inherit; font-size: 0.85rem; transition: color 0.2s;
-    }
-    .filter-btn:hover { color: #14204e; }
-    .filter-btn.active { color: #14204e; font-weight: bold; }
     
-    /* Animación personalizada: Fade & Slide Up */
     @keyframes fadeSlideUp {
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
@@ -33,7 +23,6 @@
         animation: fadeSlideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     }
     
-    /* Estilo para las etiquetas (Badges) */
     .badge {
         position: absolute; top: -10px; right: -10px; background: #e3000f; color: white; font-size: 0.6rem; font-weight: bold; padding: 3px 6px; border-radius: 12px; z-index: 10;
     }
@@ -42,62 +31,69 @@
 
 <section style="padding: 20px 15px; background-color: #ffffff; min-height: 100vh;">
     
-    <!-- Título principal que cambiará dinámicamente -->
     <h1 id="category-title" style="text-align: center; font-weight: 300; font-size: 1.8rem; color: #333; margin-bottom: 10px; letter-spacing: 1px; text-transform: uppercase;">
         Productos disponibles
     </h1>
 
-    <!-- Menú de filtros (Adaptado para Patas Niveladoras) -->
     <div class="filter-menu">
-    <button
-        class="filter-btn active"
-        data-filter="todo"
-    >
-        Todo
-    </button>
-    /
-    <button
-        class="filter-btn"
-        data-filter="alta_resistencia"
-    >
-        Alta resistencia
-    </button>
-    /
-    <button
-        class="filter-btn"
-        data-filter="anclaje_piso"
-    >
-        Anclaje al piso
-    </button>
-    /
-    <button
-        class="filter-btn"
-        data-filter="antiderrapante"
-    >
-        Antiderrapante
-    </button>
-    /
-    <button
-        class="filter-btn"
-        data-filter="antivibracion"
-    >
+
+        <button
+            type="button"
+            class="filter-btn active"
+            data-filter="todo"
+        >
+            Todo
+        </button>
+
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="alta_resistencia"
+        >
+            Alta resistencia
+        </button>
+
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="anclaje_piso"
+        >
+            Anclaje al piso
+        </button>
+
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="antiderrapante"
+        >
+            Antiderrapante
+        </button>
+
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="antivibracion"
+        >
         Antivibración
-    </button>
-    /
-    <button
-        class="filter-btn"
-        data-filter="con_rotula"
-    >
-        Con rótula
-    </button>
-    /
-    <button
-        class="filter-btn"
-        data-filter="uso_rudo"
-    >
-        Uso rudo
-    </button>
-</div>
+        </button>
+
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="con_rotula"
+        >
+            Con rótula
+        </button>
+
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="uso_rudo"
+        >
+            Uso rudo
+        </button>
+
+    </div>
 
     <!-- Grid de productos -->
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px;" id="product-grid">

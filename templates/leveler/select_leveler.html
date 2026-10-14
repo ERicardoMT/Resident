@@ -345,7 +345,7 @@ Elegir mi nivelador | SMAV INAHER
       de una instalación incorrecta, sobrecarga, mal uso o una aplicación
       distinta a la especificada en la ficha técnica. Resultado orientativo
       con los datos que capturaste; no constituye garantía.
-      Valida tu selección con nuestro equipo antes de instalar: es gratis.
+      Valida tu selección con nuestro equipo antes de comprar.
     </p>
 
   </section>
@@ -3566,13 +3566,26 @@ Elegir mi nivelador | SMAV INAHER
 
             updateFeatureSelectionLabel();
 
+            const hasSelection =
+              Array.from(
+                featureInputs
+              ).some(
+                function (featureInput) {
+                  return featureInput.checked;
+                }
+              );
+
             resultFeatureStatus.textContent =
-              "Actualizando recomendación...";
+              hasSelection
+                ? "Actualizando recomendación..."
+                : "";
 
             await requestRecommendation();
 
             resultFeatureStatus.textContent =
-              "Recomendación actualizada";
+              hasSelection
+                ? "Recomendación actualizada"
+                : "";
             }
         );
 
@@ -3591,13 +3604,11 @@ Elegir mi nivelador | SMAV INAHER
 
         updateFeatureSelectionLabel();
 
-        resultFeatureStatus.textContent =
-          "Actualizando recomendación...";
+        resultFeatureStatus.textContent = "";
 
         await requestRecommendation();
 
-        resultFeatureStatus.textContent =
-          "Recomendación actualizada";
+        resultFeatureStatus.textContent = "";
       }
     );
 
