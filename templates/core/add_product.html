@@ -245,6 +245,36 @@
         {% endfor %}
     </div>
 
+
+    <!-- Estado del producto -->
+    <div class="product-status-editor">
+
+        <label class="product-status-toggle">
+
+            {{ form.is_active }}
+
+            <span class="product-status-toggle-copy">
+                <strong>
+                    Producto activo
+                </strong>
+
+                <small>
+                    Déjalo activo para mostrar el producto
+                    normalmente en el catálogo.
+                </small>
+            </span>
+
+        </label>
+
+        {% for error in form.is_active.errors %}
+        <small class="product-status-error">
+            {{ error }}
+        </small>
+        {% endfor %}
+
+    </div>
+
+
     <!-- Archivos -->
     <div
         style="

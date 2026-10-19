@@ -252,6 +252,7 @@ class CatalogItemForm(forms.ModelForm):
             "description",
             "price_label",
             "badge",
+            "is_active",
             "image",
             "model_3d",
             "ar_model",
@@ -288,6 +289,11 @@ class CatalogItemForm(forms.ModelForm):
                 attrs={
                     "class": "form-control",
                     "placeholder": "Ejemplo: Nuevo",
+                }
+            ),
+            "is_active": forms.CheckboxInput(
+                attrs={
+                    "class": "product-active-checkbox",
                 }
             ),
             "image": forms.ClearableFileInput(

@@ -79,6 +79,34 @@
             <input type="text" name="badge" value="{{ producto.badge }}" placeholder="Ej. Nuevo 2024, Top 10" maxlength="40" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">
         </div>
 
+        <div class="product-status-editor">
+
+    <label class="product-status-toggle">
+
+        {{ form.is_active }}
+
+        <span class="product-status-toggle-copy">
+            <strong>
+                Producto activo
+            </strong>
+
+            <small>
+                Si lo desactivas, el producto seguirá
+                guardado en la base de datos, pero dejará
+                de mostrarse en el catálogo público.
+            </small>
+        </span>
+
+    </label>
+
+    {% for error in form.is_active.errors %}
+    <small class="product-status-error">
+        {{ error }}
+    </small>
+    {% endfor %}
+
+</div>
+
         <!-- ZONA DE SUBIDA DE ARCHIVOS -->
         <div style="background: #f4f6f9; padding: 15px; border-radius: 8px; border: 1px dashed #b0b8c1;">
 
