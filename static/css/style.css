@@ -1993,6 +1993,327 @@ a {
   font-size: 20px;
 }
 
+.management-search {
+  display: flex;
+  align-items: stretch;
+  gap: 9px;
+
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+
+.management-search-field {
+  position: relative;
+
+  display: flex;
+  flex: 1;
+  align-items: center;
+
+  min-width: 0;
+
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+
+.management-search-field:focus-within {
+  border-color: var(--accent);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(24, 166, 217, 0.12);
+}
+
+
+.management-search-field > svg {
+  flex: 0 0 auto;
+
+  margin-left: 13px;
+
+  color: var(--muted);
+}
+
+
+.management-search-field input {
+  width: 100%;
+  min-width: 0;
+
+  padding: 11px 38px 11px 10px;
+
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  background: transparent;
+  border: 0;
+  outline: 0;
+}
+
+
+.management-search-field input::placeholder {
+  color: #8da0af;
+  font-weight: 500;
+}
+
+
+.management-search-clear {
+  position: absolute;
+  top: 50%;
+  right: 11px;
+
+  display: grid;
+  place-items: center;
+
+  width: 24px;
+  height: 24px;
+
+  color: var(--muted);
+  font-size: 20px;
+  line-height: 1;
+  text-decoration: none;
+
+  border-radius: 50%;
+
+  transform: translateY(-50%);
+}
+
+
+.management-search-clear:hover {
+  color: var(--primary);
+  background: var(--surface-alt);
+}
+
+
+.management-search-button {
+  flex: 0 0 auto;
+
+  min-width: 88px;
+  padding: 0 17px;
+
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--primary),
+      var(--primary-500)
+    );
+
+  border: 0;
+  border-radius: 11px;
+
+  cursor: pointer;
+}
+
+
+.management-search-button:hover {
+  filter: brightness(1.06);
+}
+
+
+@media (max-width: 520px) {
+
+  .management-search {
+    flex-direction: column;
+  }
+
+
+  .management-search-button {
+    min-height: 42px;
+  }
+
+}
+
+.management-search {
+  flex-direction: column;
+}
+
+
+.management-search-main {
+  display: flex;
+  align-items: stretch;
+  gap: 9px;
+
+  width: 100%;
+}
+
+
+.management-filter-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr)
+    auto;
+
+  align-items: end;
+
+  gap: 10px;
+
+  width: 100%;
+}
+
+
+.management-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  min-width: 0;
+}
+
+
+.management-filter-field label {
+  color: var(--muted);
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+
+.management-filter-field select {
+  width: 100%;
+  min-width: 0;
+  height: 40px;
+
+  padding:
+    0
+    32px
+    0
+    11px;
+
+  color: var(--text);
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+
+  background-color: #ffffff;
+
+  border:
+    1px solid
+    var(--line);
+
+  border-radius: 10px;
+
+  outline: none;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+
+.management-filter-field select:focus {
+  border-color:
+    var(--accent);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(24, 166, 217, 0.12);
+}
+
+
+.management-filter-clear {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 40px;
+
+  padding:
+    8px
+    13px;
+
+  color:
+    var(--primary);
+
+  font-size: 10px;
+  font-weight: 800;
+
+  text-align: center;
+  text-decoration: none;
+
+  background:
+    var(--surface-alt);
+
+  border:
+    1px solid
+    var(--line);
+
+  border-radius: 10px;
+
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+
+.management-filter-clear:hover {
+  background:
+    var(--accent-soft);
+
+  border-color:
+    rgba(24, 166, 217, 0.35);
+}
+
+
+@media (max-width: 600px) {
+
+  .management-filter-row {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1fr);
+  }
+
+
+  .management-filter-clear {
+    grid-column:
+      1 / -1;
+  }
+
+}
+
+
+@media (max-width: 420px) {
+
+  .management-search-main {
+    flex-direction: column;
+  }
+
+
+  .management-search-button {
+    min-height: 42px;
+  }
+
+
+  .management-filter-row {
+    grid-template-columns: 1fr;
+  }
+
+
+  .management-filter-clear {
+    grid-column: auto;
+  }
+
+}
+
 .management-list {
   display: grid;
   gap: 11px;

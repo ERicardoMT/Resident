@@ -6,6 +6,7 @@ from django.apps import apps
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
+from django.db.models import Q
 from django.http import Http404, HttpResponse, StreamingHttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_GET, require_POST
@@ -336,33 +337,192 @@ def eliminar_usuario_view(request, user_id):
 )
 def productos_dashboard_view(request):
     """
-    Muestra los productos registrados
-    en la base de datos.
+    Muestra, busca y filtra los productos
+    registrados en la base de datos.
     """
 
-    productos = CatalogItem.objects.all().order_by(
-        "-created_at",
-        "-id",
+    search_query = (
+        request.GET.get(
+            "q",
+            "",
+        )
+        .strip()[:100]
     )
+
+    selected_category = (
+        request.GET.get(
+            "category",
+            "",
+        )
+        .strip()
+    )
+
+    selected_status = (
+        request.GET.get(
+            "status",
+            "",
+        )
+        .strip()
+    )
+
+
+    valid_categories = {
+        value
+        for value, _
+        in CatalogCategory.choices
+    }
+
+
+    if (
+        selected_category
+        not in valid_categories
+    ):
+        selected_category = ""
+
+
+    if selected_status not in {
+        "active",
+        "inactive",
+    }:
+        selected_status = ""
+
+
+    productos_queryset = (
+        CatalogItem.objects.all()
+    )
+
+
+    total_productos = (
+        productos_queryset.count()
+    )
+
+
+    # =====================================================
+    # BÚSQUEDA
+    # =====================================================
+
+    if search_query:
+
+        productos_queryset = (
+            productos_queryset
+            .filter(
+                Q(
+                    name__icontains=search_query
+                )
+                |
+                Q(
+                    category__icontains=search_query
+                )
+                |
+                Q(
+                    subcategory__icontains=search_query
+                )
+                |
+                Q(
+                    price_label__icontains=search_query
+                )
+                |
+                Q(
+                    badge__icontains=search_query
+                )
+            )
+        )
+
+
+    # =====================================================
+    # FILTRO POR CATEGORÍA
+    # =====================================================
+
+    if selected_category:
+
+        productos_queryset = (
+            productos_queryset
+            .filter(
+                category=selected_category
+            )
+        )
+
+
+    # =====================================================
+    # FILTRO POR ESTADO
+    # =====================================================
+
+    if selected_status == "active":
+
+        productos_queryset = (
+            productos_queryset
+            .filter(
+                is_active=True
+            )
+        )
+
+
+    elif selected_status == "inactive":
+
+        productos_queryset = (
+            productos_queryset
+            .filter(
+                is_active=False
+            )
+        )
+
+
+    productos = (
+        productos_queryset
+        .order_by(
+            "-created_at",
+            "-id",
+        )
+    )
+
+
+    filters_active = bool(
+        search_query
+        or selected_category
+        or selected_status
+    )
+
 
     return render(
         request,
         "core/manage_products.html",
         {
             "productos": productos,
-            "can_add_catalog": request.user.has_perm(
-                "core.add_catalogitem"
-            ),
-            "can_change_catalog": request.user.has_perm(
-                "core.change_catalogitem"
-            ),
-            "can_delete_catalog": request.user.has_perm(
-                "core.delete_catalogitem"
-            ),
+
+            "search_query":
+                search_query,
+
+            "selected_category":
+                selected_category,
+
+            "selected_status":
+                selected_status,
+
+            "category_choices":
+                CatalogCategory.choices,
+
+            "total_productos":
+                total_productos,
+
+            "filters_active":
+                filters_active,
+
+            "can_add_catalog":
+                request.user.has_perm(
+                    "core.add_catalogitem"
+                ),
+
+            "can_change_catalog":
+                request.user.has_perm(
+                    "core.change_catalogitem"
+                ),
+
+            "can_delete_catalog":
+                request.user.has_perm(
+                    "core.delete_catalogitem"
+                ),
         },
     )
-
-
 
 @login_required
 @permission_required(

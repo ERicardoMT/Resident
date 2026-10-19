@@ -55,16 +55,227 @@ Administrar productos | SMAV INAHER
 
   <div class="card management-card">
     <div class="management-title-row">
-      <div>
-        <span class="section-kicker">
-          Base de datos
-        </span>
+  <div>
+    <span class="section-kicker">
+      Base de datos
+    </span>
 
-        <h2>
-          {{ productos|length }} productos
-        </h2>
-      </div>
+    <h2>
+      {% if filters_active %}
+
+  {{ productos|length }}
+  de
+  {{ total_productos }}
+  productos
+
+{% else %}
+
+  {{ total_productos }}
+  productos
+
+{% endif %}
+    </h2>
+  </div>
+</div>
+
+
+<form
+  method="get"
+  action="{% url 'productos_dashboard' %}"
+  class="management-search"
+  role="search"
+>
+
+  <div class="management-search-main">
+
+    <div class="management-search-field">
+
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle
+          cx="11"
+          cy="11"
+          r="8"
+        ></circle>
+
+        <line
+          x1="21"
+          y1="21"
+          x2="16.65"
+          y2="16.65"
+        ></line>
+      </svg>
+
+
+      <input
+        type="search"
+        name="q"
+        value="{{ search_query }}"
+        placeholder="Buscar por modelo o producto..."
+        maxlength="100"
+        autocomplete="off"
+        aria-label="Buscar productos"
+      >
+
     </div>
+
+
+    <button
+      type="submit"
+      class="management-search-button"
+    >
+      Buscar
+    </button>
+
+  </div>
+
+
+  <div class="management-filter-row">
+
+    <div class="management-filter-field">
+
+      <label for="product-category-filter">
+        Categoría
+      </label>
+
+      <select
+        id="product-category-filter"
+        name="category"
+      >
+
+        <option value="">
+          Todas las categorías
+        </option>
+
+        {% for value, label in category_choices %}
+
+        <option
+          value="{{ value }}"
+          {% if selected_category == value %}
+          selected
+          {% endif %}
+        >
+          {{ label }}
+        </option>
+
+        {% endfor %}
+
+      </select>
+
+    </div>
+
+
+    <div class="management-filter-field">
+
+      <label for="product-status-filter">
+        Estado
+      </label>
+
+      <select
+        id="product-status-filter"
+        name="status"
+      >
+
+        <option value="">
+          Todos
+        </option>
+
+        <option
+          value="active"
+          {% if selected_status == "active" %}
+          selected
+          {% endif %}
+        >
+          Activos
+        </option>
+
+        <option
+          value="inactive"
+          {% if selected_status == "inactive" %}
+          selected
+          {% endif %}
+        >
+          Inactivos
+        </option>
+
+      </select>
+
+    </div>
+
+
+    {% if filters_active %}
+
+    <a
+      href="{% url 'productos_dashboard' %}"
+      class="management-filter-clear"
+    >
+      Limpiar filtros
+    </a>
+
+    {% endif %}
+
+  </div>
+
+</form>
+
+  <div class="management-search-field">
+
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+
+    <input
+      type="search"
+      name="q"
+      value="{{ search_query }}"
+      placeholder="Buscar por modelo, categoría o producto..."
+      maxlength="100"
+      autocomplete="off"
+      aria-label="Buscar productos"
+    >
+
+    {% if search_query %}
+    <a
+      href="{% url 'productos_dashboard' %}"
+      class="management-search-clear"
+      aria-label="Limpiar búsqueda"
+      title="Limpiar búsqueda"
+    >
+      ×
+    </a>
+    {% endif %}
+
+  </div>
+
+
+  <button
+    type="submit"
+    class="management-search-button"
+  >
+    Buscar
+  </button>
+
+</form>
 
     {% if productos %}
     <div class="management-list">
@@ -185,11 +396,30 @@ Administrar productos | SMAV INAHER
       {% endfor %}
 
     </div>
-    {% else %}
-    <div class="management-empty">
-      No hay productos registrados.
-    </div>
-    {% endif %}
+ {% else %}
+
+<div class="management-empty">
+
+  {% if filters_active %}
+
+    No encontramos productos
+    con los criterios seleccionados.
+
+    <br><br>
+
+    <a href="{% url 'productos_dashboard' %}">
+      Mostrar todos los productos
+    </a>
+
+  {% else %}
+
+    No hay productos registrados.
+
+  {% endif %}
+
+</div>
+
+{% endif %}
   </div>
 
 </section>
