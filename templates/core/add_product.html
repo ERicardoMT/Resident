@@ -101,6 +101,7 @@
         </label>
 
         {{ form.category }}
+        {% include "core/_new_category_field.html" %}
 
         {% for error in form.category.errors %}
         <small style="color: #b42318;">

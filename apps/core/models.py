@@ -101,18 +101,127 @@ SUBCATEGORIES_BY_CATEGORY = {
     CatalogCategory.MOBILIARIO: set(),
 }
 
-class CatalogItem(models.Model):
-    name = models.CharField(max_length=160)
+class CustomCatalogCategory(models.Model):
+    """
+    Categorías adicionales creadas desde
+    el panel administrativo.
+
+    Las categorías internas de SMAV continúan
+    definidas en CatalogCategory.
+    """
+
+    name = models.CharField(
+        max_length=80,
+        unique=True,
+        verbose_name="Nombre",
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="Activa",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Fecha de creación",
+    )
+
+    class Meta:
+        ordering = (
+            "name",
+        )
+
+        verbose_name = (
+            "Categoría personalizada"
+        )
+
+        verbose_name_plural = (
+            "Categorías personalizadas"
+        )
+
+    def __str__(self):
+        return self.name
+
+
+class CustomCatalogSubcategory(models.Model):
+    """
+    Subcategorías adicionales creadas desde
+    el panel administrativo.
+
+    category almacena el valor de la categoría
+    padre, ya sea una categoría interna de SMAV
+    o una categoría personalizada.
+    """
+
     category = models.CharField(
-    max_length=80,
-    choices=CatalogCategory.choices,
+        max_length=80,
+        db_index=True,
+        verbose_name="Categoría",
     )
+
+    name = models.CharField(
+        max_length=80,
+        verbose_name="Nombre",
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="Activa",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Fecha de creación",
+    )
+
+    class Meta:
+        ordering = (
+            "category",
+            "name",
+        )
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=(
+                    "category",
+                    "name",
+                ),
+                name=(
+                    "unique_custom_catalog_"
+                    "subcategory"
+                ),
+            ),
+        ]
+
+        verbose_name = (
+            "Subcategoría personalizada"
+        )
+
+        verbose_name_plural = (
+            "Subcategorías personalizadas"
+        )
+
+    def __str__(self):
+        return (
+            f"{self.category} · "
+            f"{self.name}"
+        )
+
+class CatalogItem(models.Model):
+    name = models.CharField(
+        max_length=160,
+    )
+
+    category = models.CharField(
+        max_length=80,
+    )
+
     subcategory = models.CharField(
-    max_length=80,
-    choices=CatalogSubcategory.choices,
-    blank=True,
-    null=True,
+        max_length=80,
+        blank=True,
+        null=True,
     )
+
     description = models.TextField(blank=True)
     price_label = models.CharField(
         max_length=40,
@@ -150,6 +259,38 @@ class CatalogItem(models.Model):
     is_active = models.BooleanField(default=True)
     sort_order = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def get_category_display(self):
+        """
+        Devuelve la etiqueta conocida de una categoría
+        interna o el nombre de una categoría personalizada.
+        """
+
+        return dict(
+            CatalogCategory.choices
+        ).get(
+            self.category,
+            self.category,
+        )
+
+
+    def get_subcategory_display(self):
+        """
+        Devuelve la etiqueta conocida de una subcategoría
+        interna o el nombre de una personalizada.
+        """
+
+        if not self.subcategory:
+            return ""
+
+        return dict(
+            CatalogSubcategory.choices
+        ).get(
+            self.subcategory,
+            self.subcategory,
+        )
+
+
 
     @property
     def external_model_3d_url(self):

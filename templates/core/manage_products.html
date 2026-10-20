@@ -1,426 +1,666 @@
 ﻿{% extends "base.html" %}
 
+
 {% block title %}
+
 Administrar productos | SMAV INAHER
+
 {% endblock %}
+
 
 {% block back %}
+
 <a
+
   class="icon-btn"
+
   href="{% url 'dashboard' %}"
+
   aria-label="Volver al panel administrativo"
+
 >
+
   <svg
+
     width="22"
+
     height="22"
+
     viewBox="0 0 24 24"
+
     fill="none"
+
     stroke="currentColor"
+
     stroke-width="2.4"
+
     stroke-linecap="round"
+
     stroke-linejoin="round"
+
     aria-hidden="true"
+
   >
+
     <polyline points="15 18 9 12 15 6"></polyline>
+
   </svg>
+
 </a>
+
 {% endblock %}
 
+
 {% block content %}
+
 <section class="page management-page">
 
+
   <div class="card surface management-header">
+
     <span class="section-kicker">
+
       Administración
+
     </span>
+
 
     <h1 class="page-title">
+
       Productos
+
     </h1>
 
+
     <p class="page-lead">
+
       Consulta y elimina productos registrados
+
       en el catálogo de SMAV INAHER.
+
     </p>
 
+
     {% if can_add_catalog %}
+
     <a
+
       class="btn btn-primary"
+
       href="{% url 'agregar_producto' %}"
+
     >
+
       Agregar producto
+
     </a>
+
     {% endif %}
+
   </div>
 
+
   <div class="card management-card">
+
     <div class="management-title-row">
+
   <div>
+
     <span class="section-kicker">
+
       Base de datos
+
     </span>
 
+
     <h2>
+
       {% if filters_active %}
 
+
   {{ productos|length }}
+
   de
+
   {{ total_productos }}
+
   productos
+
 
 {% else %}
 
+
   {{ total_productos }}
+
   productos
 
+
 {% endif %}
+
     </h2>
+
   </div>
+
 </div>
 
 
 <form
+
   method="get"
+
   action="{% url 'productos_dashboard' %}"
+
   class="management-search"
+
   role="search"
+
 >
+
 
   <div class="management-search-main">
 
+
     <div class="management-search-field">
 
+
       <svg
+
         width="18"
+
         height="18"
+
         viewBox="0 0 24 24"
+
         fill="none"
+
         stroke="currentColor"
+
         stroke-width="2"
+
         stroke-linecap="round"
+
         stroke-linejoin="round"
+
         aria-hidden="true"
+
       >
+
         <circle
+
           cx="11"
+
           cy="11"
+
           r="8"
+
         ></circle>
 
+
         <line
+
           x1="21"
+
           y1="21"
+
           x2="16.65"
+
           y2="16.65"
+
         ></line>
+
       </svg>
 
 
       <input
+
         type="search"
+
         name="q"
+
         value="{{ search_query }}"
+
         placeholder="Buscar por modelo o producto..."
+
         maxlength="100"
+
         autocomplete="off"
+
         aria-label="Buscar productos"
+
       >
+
 
     </div>
 
 
     <button
+
       type="submit"
+
       class="management-search-button"
+
     >
+
       Buscar
+
     </button>
+
 
   </div>
 
 
   <div class="management-filter-row">
 
+
     <div class="management-filter-field">
 
+
       <label for="product-category-filter">
+
         Categoría
+
       </label>
 
+
       <select
+
         id="product-category-filter"
+
         name="category"
+
       >
 
+
         <option value="">
+
           Todas las categorías
+
         </option>
+
 
         {% for value, label in category_choices %}
 
+
         <option
+
           value="{{ value }}"
+
           {% if selected_category == value %}
+
           selected
+
           {% endif %}
+
         >
+
           {{ label }}
+
         </option>
+
 
         {% endfor %}
 
+
       </select>
+
 
     </div>
 
 
     <div class="management-filter-field">
 
+
       <label for="product-status-filter">
+
         Estado
+
       </label>
 
+
       <select
+
         id="product-status-filter"
+
         name="status"
+
       >
 
+
         <option value="">
+
           Todos
+
         </option>
 
+
         <option
+
           value="active"
+
           {% if selected_status == "active" %}
+
           selected
+
           {% endif %}
+
         >
+
           Activos
+
         </option>
 
+
         <option
+
           value="inactive"
+
           {% if selected_status == "inactive" %}
+
           selected
+
           {% endif %}
+
         >
+
           Inactivos
+
         </option>
+
 
       </select>
+
 
     </div>
 
 
     {% if filters_active %}
 
+
     <a
+
       href="{% url 'productos_dashboard' %}"
+
       class="management-filter-clear"
+
     >
+
       Limpiar filtros
+
     </a>
+
 
     {% endif %}
 
-  </div>
-
-</form>
-
-  <div class="management-search-field">
-
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="11" cy="11" r="8"></circle>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-    </svg>
-
-    <input
-      type="search"
-      name="q"
-      value="{{ search_query }}"
-      placeholder="Buscar por modelo, categoría o producto..."
-      maxlength="100"
-      autocomplete="off"
-      aria-label="Buscar productos"
-    >
-
-    {% if search_query %}
-    <a
-      href="{% url 'productos_dashboard' %}"
-      class="management-search-clear"
-      aria-label="Limpiar búsqueda"
-      title="Limpiar búsqueda"
-    >
-      ×
-    </a>
-    {% endif %}
 
   </div>
 
 
-  <button
-    type="submit"
-    class="management-search-button"
-  >
-    Buscar
-  </button>
-
 </form>
+
 
     {% if productos %}
+
     <div class="management-list">
 
+
       {% for producto in productos %}
+
       <article class="management-item">
 
+
         <div class="management-product-image">
+
           {% if producto.image %}
+
           <img
+
             src="{{ producto.image.url }}"
+
             alt="{{ producto.name }}"
+
           >
+
           {% else %}
+
           <span aria-hidden="true">
+
             📦
+
           </span>
+
           {% endif %}
+
         </div>
+
 
         <div class="management-copy">
+
           <strong>
+
             {{ producto.name }}
+
           </strong>
 
+
           <span>
+
             {{ producto.get_category_display|default:"Sin categoría" }}
 
+
             {% if producto.subcategory %}
+
                 · {{ producto.get_subcategory_display }}
+
             {% endif %}
+
           </span>
 
+
           <div class="management-badges">
+
             <small class="management-badge">
+
               {{ producto.price_label|default:"Cotizar" }}
+
             </small>
+
 
             {% if producto.is_active %}
+
             <small class="management-badge active">
+
               Activo
+
             </small>
+
             {% else %}
+
             <small class="management-badge inactive">
+
               Inactivo
+
             </small>
+
             {% endif %}
+
           </div>
+
         </div>
 
+
         {% if can_delete_catalog %}
+
 <div class="management-controls">
 
+
   {% if can_change_catalog %}
+
   <a
+
     href="{% url 'editar_producto' producto.pk %}"
+
     class="management-action management-edit-button"
+
     aria-label="Editar {{ producto.name }}"
+
   >
+
     <svg
+
       width="16"
+
       height="16"
+
       viewBox="0 0 24 24"
+
       fill="none"
+
       stroke="currentColor"
+
       stroke-width="2"
+
       stroke-linecap="round"
+
       stroke-linejoin="round"
+
       aria-hidden="true"
+
     >
+
       <path d="M12 20h9"></path>
+
       <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+
     </svg>
 
+
     <span>Editar</span>
+
   </a>
+
   {% endif %}
+
 
   {% if can_delete_catalog %}
+
   <form
+
     method="post"
+
     action="{% url 'eliminar_producto' producto.pk %}"
+
     onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');"
+
   >
+
     {% csrf_token %}
 
+
     <button
+
       type="submit"
+
       class="management-action management-delete-button"
+
       aria-label="Eliminar {{ producto.name }}"
+
     >
+
       <svg
+
         width="16"
+
         height="16"
+
         viewBox="0 0 24 24"
+
         fill="none"
+
         stroke="currentColor"
+
         stroke-width="2"
+
         stroke-linecap="round"
+
         stroke-linejoin="round"
+
         aria-hidden="true"
+
       >
+
         <polyline points="3 6 5 6 21 6"></polyline>
+
         <path d="M19 6l-1 14H6L5 6m3 0V4h8v2"></path>
+
         <line x1="10" y1="11" x2="10" y2="17"></line>
+
         <line x1="14" y1="11" x2="14" y2="17"></line>
+
       </svg>
 
+
       <span>Eliminar</span>
+
     </button>
+
   </form>
+
   {% endif %}
 
+
 </div>
+
 {% endif %}
 
+
       </article>
+
       {% endfor %}
 
+
     </div>
+
  {% else %}
+
 
 <div class="management-empty">
 
+
   {% if filters_active %}
 
+
     No encontramos productos
+
     con los criterios seleccionados.
+
 
     <br><br>
 
+
     <a href="{% url 'productos_dashboard' %}">
+
       Mostrar todos los productos
+
     </a>
+
 
   {% else %}
 
+
     No hay productos registrados.
+
 
   {% endif %}
 
+
 </div>
 
+
 {% endif %}
+
   </div>
 
+
 </section>
+
 {% endblock %}

@@ -20,27 +20,19 @@
     return;
   }
 
-  const subcategoriesByCategory = {
-    antivibratorios: [
-      "colgantes",
-      "niveladores_maq",
-      "pies",
-      "soportes_piso",
-      "tacones",
-    ],
+    let subcategoriesByCategory = {};
 
-    patas_niveladoras: [
-      "alta_resistencia",
-      "anclaje_piso",
-      "antiderrapante",
-      "antivibracion",
-      "con_rotula",
-      "uso_rudo",
-    ],
-
-    accionamiento: [],
-    mobiliario: [],
-  };
+  try {
+    subcategoriesByCategory = JSON.parse(
+      subcategorySelect.dataset
+        .subcategoriesByCategory || "{}"
+    );
+  } catch (error) {
+    console.error(
+      "Error al cargar las subcategorías:",
+      error
+    );
+  }
 
   const labels = {};
 
@@ -127,4 +119,28 @@
   );
 
   updateSubcategories(true);
+
+    const newCategoryContainer =
+    document.getElementById("new_category_container");
+
+  const newCategoryInput =
+    document.getElementById("id_new_category");
+
+  if (newCategoryContainer && newCategoryInput) {
+    function updateNewCategory() {
+      const isNew =
+        categorySelect.value === "__new_category__";
+
+      newCategoryContainer.hidden = !isNew;
+      newCategoryInput.required = isNew;
+      newCategoryInput.disabled = !isNew;
+    }
+
+    categorySelect.addEventListener(
+      "change",
+      updateNewCategory
+    );
+
+    updateNewCategory();
+  }
 })();

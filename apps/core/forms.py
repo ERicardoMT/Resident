@@ -1,15 +1,20 @@
 from pathlib import Path
+import json
+
 
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import UploadedFile
+from django.db import transaction
 
 from .models import (
     CatalogCategory,
     CatalogItem,
     CatalogSubcategory,
+    CustomCatalogCategory,
+    CustomCatalogSubcategory,
     SUBCATEGORIES_BY_CATEGORY,
 )
 
@@ -239,6 +244,18 @@ class CatalogItemForm(forms.ModelForm):
         ),
     )
 
+    new_category = forms.CharField(
+        label="Nueva categoría",
+        max_length=80,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Ej. Rodajas industriales",
+            }
+        ),
+    )
+
     MAX_IMAGE_SIZE = 5 * 1024 * 1024
     MAX_MODEL_SIZE = 20 * 1024 * 1024
 
@@ -322,6 +339,135 @@ class CatalogItemForm(forms.ModelForm):
             ),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        choices = list(CatalogCategory.choices)
+
+        known_values = {
+            value for value, _ in choices
+        }
+
+        custom_categories = (
+            CustomCatalogCategory.objects
+            .filter(is_active=True)
+            .order_by("name")
+            .values_list("name", flat=True)
+        )
+
+        for name in custom_categories:
+            if name not in known_values:
+                choices.append((name, name))
+                known_values.add(name)
+
+        # Conservar la categoría actual al editar,
+        # incluso si fue desactivada.
+        if (
+            self.instance.pk
+            and self.instance.category
+            and self.instance.category not in known_values
+        ):
+            current_category = self.instance.category
+            choices.append(
+                (current_category, current_category)
+            )
+
+        choices.append(
+            (
+                "__new_category__",
+                "+ Agregar nueva categoría",
+            )
+        )
+
+        self.fields["category"].choices = choices
+
+        subcategory_choices = [
+            ("", "Selecciona una subcategoría"),
+            *CatalogSubcategory.choices,
+        ]
+
+        known_subcategories = {
+            value for value, _ in subcategory_choices
+        }
+
+        custom_subcategories = (
+            CustomCatalogSubcategory.objects
+            .filter(
+                is_active=True,
+                category__in=known_values,
+            )
+            .order_by("name")
+            .values_list("name", flat=True)
+        )
+
+        for name in custom_subcategories:
+            if name not in known_subcategories:
+                subcategory_choices.append(
+                    (name, name)
+                )
+                known_subcategories.add(name)
+
+        # Conservar la subcategoría existente al editar.
+        if (
+            self.instance.pk
+            and self.instance.subcategory
+            and self.instance.subcategory not in known_subcategories
+        ):
+            current_subcategory = self.instance.subcategory
+            subcategory_choices.append(
+                (current_subcategory, current_subcategory)
+            )
+
+        self.fields["subcategory"].choices = (
+            subcategory_choices
+        )
+
+                # Relación dinámica entre categorías
+        # y subcategorías para el frontend.
+        subcategories_by_category = {
+            str(category): sorted(subcategories)
+            for category, subcategories
+            in SUBCATEGORIES_BY_CATEGORY.items()
+        }
+
+        custom_relations = (
+            CustomCatalogSubcategory.objects
+            .filter(
+                is_active=True,
+                category__in=known_values,
+            )
+            .values_list("category", "name")
+        )
+
+        for category, name in custom_relations:
+            allowed = (
+                subcategories_by_category
+                .setdefault(category, [])
+            )
+
+            if name not in allowed:
+                allowed.append(name)
+
+        # Mantener la selección existente al editar.
+        if (
+            self.instance.pk
+            and self.instance.category
+            and self.instance.subcategory
+        ):
+            allowed = subcategories_by_category.setdefault(
+                self.instance.category, []
+            )
+
+            if self.instance.subcategory not in allowed:
+                allowed.append(self.instance.subcategory)
+
+        self.fields["subcategory"].widget.attrs[
+            "data-subcategories-by-category"
+        ] = json.dumps(
+            subcategories_by_category,
+            ensure_ascii=False,
+        )
+
     def clean_name(self):
         name = (
             self.cleaned_data.get("name") or ""
@@ -345,6 +491,7 @@ class CatalogItemForm(forms.ModelForm):
             )
 
         return category
+        
 
     def clean_subcategory(self):
         return (
@@ -357,63 +504,131 @@ class CatalogItemForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        category = cleaned_data.get(
-            "category"
-        )
-
+        category = cleaned_data.get("category")
         subcategory = (
-            cleaned_data.get(
-                "subcategory"
-            )
-            or ""
+            cleaned_data.get("subcategory") or ""
         )
 
         if not category:
             return cleaned_data
+        
+        if category == "__new_category__":
+            name = (
+                cleaned_data.get("new_category") or ""
+            ).strip()
 
-        allowed_subcategories = (
+            if not name:
+                self.add_error(
+                    "new_category",
+                    "Escribe el nombre de la nueva categoría.",
+                )
+                return cleaned_data
+
+            internal_names = {
+                text.casefold()
+                for value, label in CatalogCategory.choices
+                for text in (value, label)
+            }
+
+            already_exists = (
+                CustomCatalogCategory.objects
+                .filter(name__iexact=name)
+                .exists()
+            )
+
+            if (
+                name.casefold() in internal_names
+                or already_exists
+                or name == "__new_category__"
+            ):
+                self.add_error(
+                    "new_category",
+                    "Ya existe una categoría con ese nombre "
+                    "o el nombre está reservado.",
+                )
+                return cleaned_data
+
+            cleaned_data["category"] = name
+            category = name
+
+        # Subcategorías internas de SMAV.
+        internal_allowed = (
             SUBCATEGORIES_BY_CATEGORY.get(
                 category,
                 set(),
             )
         )
 
-        if allowed_subcategories:
-            if not subcategory:
-                self.add_error(
-                    "subcategory",
-                    (
-                        "Selecciona una subcategoría "
-                        "para esta categoría."
-                    ),
-                )
-            elif (
-                subcategory
-                not in allowed_subcategories
-            ):
-                self.add_error(
-                    "subcategory",
-                    (
-                        "La subcategoría seleccionada "
-                        "no pertenece a esta categoría."
-                    ),
-                )
-        elif subcategory:
-            cleaned_data["subcategory"] = ""
+        # Subcategorías personalizadas activas.
+        custom_allowed = set(
+            CustomCatalogSubcategory.objects
+            .filter(
+                category=category,
+                is_active=True,
+            )
+            .values_list("name", flat=True)
+        )
+
+        allowed_subcategories = (
+            set(internal_allowed) | custom_allowed
+        )
+
+        # Conservar la subcategoría existente
+        # al editar, aunque esté desactivada.
+        if (
+            self.instance.pk
+            and self.instance.category == category
+            and self.instance.subcategory
+        ):
+            allowed_subcategories.add(
+                self.instance.subcategory
+            )
+
+        if allowed_subcategories and not subcategory:
+            self.add_error(
+                "subcategory",
+                "Selecciona una subcategoría "
+                "para esta categoría.",
+            )
+
+        elif (
+            subcategory
+            and subcategory not in allowed_subcategories
+        ):
+            self.add_error(
+                "subcategory",
+                "La subcategoría seleccionada "
+                "no pertenece a esta categoría.",
+            )
 
         return cleaned_data
+    
+    def save(self, commit=True):
+        if not commit:
+            return super().save(commit=False)
 
-        def clean_description(self):
-            description = (
-        self.cleaned_data.get(
-            "description"
-        )
-        or ""
-    ).strip()
+        with transaction.atomic():
+            if (
+                self.data.get("category")
+                == "__new_category__"
+            ):
+                CustomCatalogCategory.objects.get_or_create(
+                    name=self.cleaned_data["category"]
+                )
+
+            return super().save(commit=True)
+
+    def clean_description(self):
+        description = (
+            self.cleaned_data.get(
+                "description"
+            )
+            or ""
+        ).strip()
 
         return sanitize_catalog_html(
-        description
-    )
+            description
+        )
 
     def clean_price_label(self):
         return (
