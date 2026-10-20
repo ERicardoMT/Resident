@@ -28,6 +28,11 @@ MAX_DURATION_S = 15.0
 RMS_LEVEL_LOW_MAX = 0.5
 RMS_LEVEL_MEDIUM_MAX = 2.0
 
+# 7.3: para confirmar la placa el pico debe tener al menos esta fracción de la
+# potencia del pico dominante (-10 dB). Descarta lóbulos laterales de la ventana
+# Hann, que en señales limpias pasan el criterio de 4x la mediana.
+PLACA_MIN_REL_POWER = 0.10
+
 
 def _parabolic_interpolation(
     freqs: np.ndarray,
@@ -121,8 +126,17 @@ def process_vibration_samples(
         x_filt = scipy.signal.filtfilt(b, a, x_d)
         y_filt = scipy.signal.filtfilt(b, a, y_d)
         z_filt = scipy.signal.filtfilt(b, a, z_d)
+
+        # Amplitud: solo pasa-altos de 2 Hz. El tope de 0.45*fs es para el
+        # espectro; aplicado aquí borraría la vibración entre 27 y 30 Hz
+        # (taladro a 1,720 rpm) y el semáforo diría "Baja" (decisión 4).
+        b_hp, a_hp = scipy.signal.butter(4, f_low, btype="highpass", fs=fs)
+        x_amp = scipy.signal.filtfilt(b_hp, a_hp, x_d)
+        y_amp = scipy.signal.filtfilt(b_hp, a_hp, y_d)
+        z_amp = scipy.signal.filtfilt(b_hp, a_hp, z_d)
     else:
         x_filt, y_filt, z_filt = x_d, y_d, z_d
+        x_amp, y_amp, z_amp = x_d, y_d, z_d
 
     # Margen para descartar transitorios de inicio/fin del filtro IIR (0.5 s)
     transient_margin = min(int(round(0.5 * fs)), len(x_filt) // 4)
@@ -131,9 +145,9 @@ def process_vibration_samples(
     else:
         valid_slice = slice(None)
 
-    # 7.2.5: RMS y pico sobre la señal filtrada en 3D
-    mag_filt = np.sqrt(x_filt**2 + y_filt**2 + z_filt**2)
-    mag_eval = mag_filt[valid_slice]
+    # 7.2.5: RMS y pico sobre la señal filtrada (pasa-altos 2 Hz) en 3D
+    mag_amp = np.sqrt(x_amp**2 + y_amp**2 + z_amp**2)
+    mag_eval = mag_amp[valid_slice]
 
     rms_ms2 = float(np.sqrt(np.mean(mag_eval**2)))
     peak_ms2 = float(np.max(mag_eval)) if len(mag_eval) > 0 else 0.0
@@ -235,9 +249,16 @@ def process_vibration_samples(
         matched_candidate: float | None = None
         matched_peak_hz: float | None = None
 
-        # Si tenemos picos detectados, buscar coincidencia con candidatos dentro de ±5%
+        # Solo cuentan picos que pasaron el criterio de prominencia (7.2.7).
+        # Buscar el máximo local en ±5 % sin ese criterio confirma la placa
+        # con fuga espectral aunque la máquina gire a otra velocidad.
+        max_peak_power = max((psd[p] for p in detected_peaks), default=0.0)
+        strong_peaks = [
+            p for p in detected_peaks
+            if psd[p] >= PLACA_MIN_REL_POWER * max_peak_power
+        ]
         for c in valid_candidates:
-            for p in detected_peaks:
+            for p in strong_peaks:
                 peak_f = _parabolic_interpolation(freqs, psd, p)
                 if abs(peak_f - c) / c <= 0.05:
                     matched_candidate = c
@@ -245,19 +266,6 @@ def process_vibration_samples(
                     break
             if matched_candidate is not None:
                 break
-
-        # Si no coincidió con picos prominentes, buscar en el espectro general si hay un pico relativo
-        if matched_candidate is None:
-            for c in valid_candidates:
-                c_mask = (freqs >= c * 0.95) & (freqs <= c * 1.05)
-                if np.any(c_mask):
-                    peak_sub_idx = np.where(c_mask)[0][np.argmax(psd[c_mask])]
-                    sub_f = _parabolic_interpolation(freqs, psd, peak_sub_idx)
-                    # Exigir que sea al menos 2.5x la mediana
-                    if psd[peak_sub_idx] >= 2.5 * np.median(psd[band_mask]):
-                        matched_candidate = c
-                        matched_peak_hz = sub_f
-                        break
 
         if matched_candidate is not None and matched_peak_hz is not None:
             # Caso 1: Coincide con candidato plegado (alias)
@@ -275,6 +283,9 @@ def process_vibration_samples(
                 frequency_status = "confirmed"
                 frequency_message = "Coincide con la placa."
         else:
+            # La frecuencia no se confirma: no se pasa al selector (decisión 2)
+            dominant_hz = None
+            frequency_note = None
             frequency_status = "not_found"
             frequency_message = (
                 "No se detectó la frecuencia de placa. "

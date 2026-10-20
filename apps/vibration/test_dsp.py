@@ -8,6 +8,8 @@ Valida:
 5. Seno 1 Hz de 1 m/s² -> RMS filtrado < 0.05 (la banda lo elimina).
 6. Cerca del límite (0.40*fs < f <= 0.45*fs) -> 'near_limit'.
 7. Coincidencia directa con placa en rango -> 'confirmed'.
+8. Placa que no coincide con el espectro -> 'not_found', dominant None.
+9. Seno 28.7 Hz (arriba de 0.45*fs) -> la amplitud sí se mide.
 """
 
 import unittest
@@ -143,6 +145,29 @@ class DspMinimumAutomatedTests(unittest.TestCase):
 
         self.assertEqual(res["frequency_status"], "confirmed")
         self.assertAlmostEqual(res["dominant_hz"], 14.4, delta=0.1)
+
+    def test_8_placa_does_not_match(self):
+        """Seno 14.4 Hz con rpm_placa = 2500 (esperado 18.3 reflejado) -> not_found, dominant null."""
+        z = 1.0 * np.sin(2.0 * np.pi * 14.4 * self.times)
+        samples = generate_samples(self.times, z=z, x=np.zeros_like(z))
+
+        res = process_vibration_samples(samples, rpm_placa=2500)
+
+        self.assertEqual(res["frequency_status"], "not_found")
+        self.assertIsNone(res["dominant_hz"])
+        self.assertIsNone(res["dominant_rpm"])
+
+    def test_9_amplitude_above_band_is_measured(self):
+        """Seno 28.7 Hz (taladro 1,720 rpm) a 60 Hz -> la frecuencia no se reporta, la vibración sí (RMS 0.707 +- 5%)."""
+        z = 1.0 * np.sin(2.0 * np.pi * 28.7 * self.times)
+        samples = generate_samples(self.times, z=z, x=np.zeros_like(z))
+
+        res = process_vibration_samples(samples)
+
+        expected_rms = 1.0 / np.sqrt(2.0)
+        self.assertAlmostEqual(res["rms_ms2"], expected_rms, delta=expected_rms * 0.05)
+        self.assertEqual(res["level"], "medium")
+        self.assertNotIn(res["frequency_status"], ("clear", "confirmed"))
 
 
 if __name__ == "__main__":

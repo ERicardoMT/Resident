@@ -213,7 +213,20 @@ def measurement_pdf(request):
                 "samples": payload.get(
                     "samples",
                     [],
-                )
+                ),
+                # Mismos datos que /api/analyze/ para que
+                # pantalla y PDF den el mismo número (decisión 10)
+                "rpm_placa": payload.get(
+                    "rpm_placa"
+                ),
+                "gravity_included": payload.get(
+                    "gravity_included",
+                    False,
+                ),
+                "user_agent": payload.get(
+                    "user_agent",
+                    "",
+                ),
             }
         )
     )
@@ -242,9 +255,20 @@ def measurement_pdf(request):
     try:
 
         analysis = analyze_samples(
-            serializer.validated_data[
+            samples=serializer.validated_data[
                 "samples"
-            ]
+            ],
+            rpm_placa=serializer.validated_data.get(
+                "rpm_placa"
+            ),
+            gravity_included=serializer.validated_data.get(
+                "gravity_included",
+                False,
+            ),
+            user_agent=serializer.validated_data.get(
+                "user_agent",
+                "",
+            ),
         )
 
     except ValueError as exc:
@@ -322,11 +346,13 @@ def measurement_pdf(request):
                 selected_unit
             ),
 
+            # Sin frecuencia clara se guarda 0.0
+            # (el campo no admite nulos)
             dominant_hz=(
                 analysis.get(
-                    "dominant_hz",
-                    0.0,
+                    "dominant_hz"
                 )
+                or 0.0
             ),
 
             rpm=(

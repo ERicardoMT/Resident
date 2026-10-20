@@ -1,6 +1,7 @@
 // Medicion de vibraciones en el navegador (Android / iOS).
-// Captura muestras del acelerometro con la API DeviceMotion y las envia a la
-// API REST de Django (POST /api/analyze/) para el analisis FFT en el servidor.
+// Captura muestras del acelerometro con la API DeviceMotion.
+// La señal se envía en UN SOLO POST al terminar los 10 s (Sección 7.1 del Libro Maestro).
+// No se envían peticiones intermedias al servidor durante la captura.
 
 (function () {
   "use strict";
@@ -20,11 +21,15 @@ var COLORS = {
 };
 
   var ANALYZE_URL = "/api/analyze/";
-  var WINDOW_MS = 3000; // ventana de analisis
-  var ANALYZE_EVERY_MS = 700; // frecuencia de envio a la API
+  // Sección 7.1: Sin POSTs intermedios. El análisis se realiza en un único
+  // POST al finalizar la captura completa de 10 s.
+  var WINDOW_MS = 3000; // ventana del osciloscopio en vivo (sin servidor)
   var MAX_SCOPE_POINTS = 300;
-  var SIMPLE_MEASUREMENT_DURATION_MS =
-    10000;
+  var SIMPLE_MEASUREMENT_DURATION_MS = 10000;
+  // Mínimo de muestras requeridas antes de enviar al servidor (Sección 7.1)
+  var MIN_SAMPLES_TO_SEND = 400;
+  // Feedback visual en vivo local (cálculo de RMS sin servidor), cada 500 ms
+  var LIVE_RMS_TICK_MS = 500;
 
   var samples = []; // {t, x, y, z}
   // -----------------------------------------------------
@@ -36,11 +41,102 @@ var COLORS = {
   var measurementStartedAt = null;
   var scopeBuffer = []; // magnitud - 9.81 aprox, para el osciloscopio
   var running = false;
-  var analyzeTimer = null;
   var motionHandler = null;
-  var lastAnalyzeInFlight = false;
   var measurementUnit = "acceleration";
   var latestAnalysis = null;
+
+  // wakeLock: evita que la pantalla se apague durante la captura (Sección 7.1)
+  var wakeLockSentinel = null;
+
+  // Timer de feedback local en vivo (RMS calculado en JS, sin peticiones al servidor)
+  var liveRmsTimer = null;
+
+  // Bandera: indica si el sensor incluye gravedad estática (fallback en iOS)
+  var gravityIncluded = false;
+
+  // RPM de placa opcionales ingresadas por el usuario
+  function getRpmPlaca() {
+    var input = document.getElementById("rpm-placa-input");
+    if (!input) return null;
+    var val = parseFloat(input.value);
+    return (isFinite(val) && val > 0) ? val : null;
+  }
+
+  // Adquiere o libera el wakeLock de pantalla
+  function acquireWakeLock() {
+    if (!("wakeLock" in navigator)) return;
+    navigator.wakeLock.request("screen").then(function (lock) {
+      wakeLockSentinel = lock;
+    }).catch(function () {
+      // El wakeLock es opcional; si falla, la medición continúa igual
+    });
+  }
+
+  function releaseWakeLock() {
+    if (wakeLockSentinel) {
+      wakeLockSentinel.release().catch(function () {});
+      wakeLockSentinel = null;
+    }
+  }
+
+  // RMS en vivo calculado en el cliente con los últimos 2 s (Sección 7.1).
+  // Solo es guía visual; el resultado final lo calcula el servidor.
+  var LIVE_RMS_WINDOW_MS = 2000;
+
+  function computeLiveRms(sampleSet) {
+    var lastT = sampleSet[sampleSet.length - 1].t;
+    var win = sampleSet.filter(function (s) {
+      return lastT - s.t <= LIVE_RMS_WINDOW_MS;
+    });
+    if (win.length < 8) return null;
+
+    // Quitar la media de cada eje (gravedad y offset)
+    var mx = 0, my = 0, mz = 0;
+    win.forEach(function (s) { mx += s.x; my += s.y; mz += s.z; });
+    mx /= win.length; my /= win.length; mz /= win.length;
+
+    var sum = 0;
+    win.forEach(function (s) {
+      var dx = s.x - mx, dy = s.y - my, dz = s.z - mz;
+      sum += dx * dx + dy * dy + dz * dz;
+    });
+    return Math.sqrt(sum / win.length);
+  }
+
+  function updateLiveReadout() {
+    var live = document.getElementById("measurement-live");
+    if (!live) return;
+
+    var count = measurementSamples.length;
+    if (count < 2) {
+      live.textContent = "Muestras recibidas 0";
+      return;
+    }
+
+    var elapsedS = (measurementSamples[count - 1].t - measurementSamples[0].t) / 1000;
+    var rateHz = elapsedS > 0 ? Math.round((count - 1) / elapsedS) : 0;
+    var rms = computeLiveRms(measurementSamples);
+
+    live.textContent =
+      "Vibración (RMS) " + (rms === null ? "—" : rms.toFixed(2)) + " m/s²"
+      + " · Muestras recibidas " + count
+      + " · " + rateHz + " Hz";
+  }
+
+  function startLiveRms() {
+    stopLiveRms();
+    var live = document.getElementById("measurement-live");
+    if (live) live.hidden = false;
+    updateLiveReadout();
+    liveRmsTimer = setInterval(updateLiveReadout, LIVE_RMS_TICK_MS);
+  }
+
+  function stopLiveRms() {
+    if (liveRmsTimer !== null) {
+      clearInterval(liveRmsTimer);
+      liveRmsTimer = null;
+    }
+  }
 
   function startFullMeasurementCapture() {
     measurementSamples = [];
@@ -508,11 +604,18 @@ function setMeasurementUnit(unit) {
     var incGravity = event.accelerationIncludingGravity;
     var src = a && a.x !== null ? a : incGravity;
     if (!src) return;
-    pushSample(src.x || 0, src.y || 0, src.z || 0);
+    // Detectar si estamos usando la señal con gravedad incluida (fallback en iOS)
+    if (src === incGravity && (!a || a.x === null)) {
+      gravityIncluded = true;
+    }
+    // Tiempo real del evento del sensor (Sección 7.1); el servidor remuestrea
+    var t = (typeof event.timeStamp === "number" && event.timeStamp > 0)
+      ? event.timeStamp
+      : now();
+    pushSample(src.x || 0, src.y || 0, src.z || 0, t);
   }
 
-  function pushSample(x, y, z) {
-    var t = now();
+  function pushSample(x, y, z, t) {
     var sample = { t: t, x: x, y: y, z: z };
     samples.push(sample);
     // Guardar también la muestra en la medición
@@ -602,54 +705,14 @@ if (isMeasurementCapturing) {
     }
     c.globalAlpha = 1;
 
+    // Sin frecuencia clara no hay etiqueta de pico.
+    if (typeof dominantHz !== "number") return;
+
     // Etiqueta del pico.
     c.fillStyle = COLORS.muted;
     c.font = "12px Montserrat, sans-serif";
     c.textAlign = "center";
     c.fillText(dominantHz.toFixed(1) + " Hz", w / 2, h - 4);
-  }
-
-  // ---- Envio a la API para analisis FFT ----
-  function analyze() {
-    if (!running || lastAnalyzeInFlight) return;
-    if (samples.length < 16) return;
-    lastAnalyzeInFlight = true;
-
-    var payload = {
-      samples: samples.map(function (s) {
-        return { t: s.t, x: s.x, y: s.y, z: s.z };
-      }),
-    };
-
-    fetch(ANALYZE_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    })
-      .then(function (r) {
-        return r.json().then(function (data) {
-          return { ok: r.ok, data: data };
-        });
-      })
-      .then(function (res) {
-
-  lastAnalyzeInFlight = false;
-
-
-  if (!res.ok) {
-    return;
-  }
-  if (!running) {
-    return;
-  }
-  updateReadout(
-    res.data
-  );
-
-})
-      .catch(function () {
-        lastAnalyzeInFlight = false;
-      });
   }
 
 // =====================================================
@@ -911,18 +974,25 @@ function finalizeFullMeasurement() {
    *
    * RESULTADO 1:
    * "No se obtuvo una lectura clara."
+   *
+   * Sección 7.1: mínimo MIN_SAMPLES_TO_SEND (400) muestras en 10 s.
+   * Con 60 Hz el celular genera ~600 muestras; si solo llegaron <400
+   * hay un problema de sensor o apoyo.
    */
   if (
     !finalSamples
     ||
-    finalSamples.length < 16
+    finalSamples.length < MIN_SAMPLES_TO_SEND
   ) {
 
     smavSetSimpleError(
-      "No se recibieron suficientes datos "
-      + "del acelerómetro."
+      finalSamples && finalSamples.length < MIN_SAMPLES_TO_SEND && finalSamples.length >= 16
+        ? "Se recibieron pocas muestras del sensor ("
+          + finalSamples.length + "). "
+          + "Apoya mejor el teléfono sobre la máquina e intenta de nuevo."
+        : "No se recibieron suficientes datos "
+          + "del acelerómetro."
     );
-
 
     setStatus(
       "Medición insuficiente.",
@@ -968,34 +1038,38 @@ function finalizeFullMeasurement() {
 
 
         /*
-         * RESULTADO 3
+         * Selección del estado visual usando frequency_status
+         * del nuevo motor DSP (Sección 7.6 del Libro Maestro).
          *
-         * Frecuencia menor a 25 Hz.
+         * RESULTADO 1: señal no clara / sin frecuencia detectada
+         * RESULTADO 2: frecuencia cerca del límite físico del sensor
+         * RESULTADO 3: frecuencia confiable y clara
+         * RESULTADO 4: frecuencia confirmada con datos de placa
          */
+        var status = data.frequency_status;
+
         if (
-          data.dominant_hz < 25
+          status === "unclear"
+          || data.dominant_hz === null
+          || data.dominant_hz === undefined
         ) {
+          // Sin frecuencia clara
+          showMeasurementResult(1, data);
 
-          showMeasurementResult(
-            3,
-            data
-          );
+        } else if (status === "near_limit") {
+          // Cerca del límite físico (0.40*fs – 0.45*fs)
+          showMeasurementResult(2, data);
 
-        }
+        } else if (
+          status === "aliased_confirmed"
+          || status === "confirmed"
+        ) {
+          // Frecuencia resuelta con RPM de placa
+          showMeasurementResult(4, data);
 
-        /*
-         * RESULTADO 4
-         *
-         * Frecuencia igual o mayor
-         * a 25 Hz.
-         */
-        else {
-
-          showMeasurementResult(
-            4,
-            data
-          );
-
+        } else {
+          // "clear" o cualquier otro: frecuencia confiable
+          showMeasurementResult(3, data);
         }
 
 
@@ -1079,6 +1153,13 @@ function analyzeSampleSet(
 
   };
 
+  // Agregar campos opcionales conforme a la Sección 7.1 del Libro Maestro
+  var rpmPlaca = getRpmPlaca();
+  if (rpmPlaca !== null) {
+    payload.rpm_placa = rpmPlaca;
+  }
+  payload.gravity_included = gravityIncluded;
+  payload.user_agent = navigator.userAgent || "";
 
   return fetch(
     ANALYZE_URL,
@@ -1135,10 +1216,13 @@ function updateReadout(d) {
   // Valor antiguo.
   // Aunque ahora queda oculto en Medición avanzada,
   // lo mantenemos para no romper la lógica existente.
+  // dominant_hz es null cuando la frecuencia no es clara (Sección 7.2)
   if (els.hz) {
 
     els.hz.textContent =
-      d.dominant_hz.toFixed(1);
+      typeof d.dominant_hz === "number"
+        ? d.dominant_hz.toFixed(1)
+        : "—";
 
   }
 
@@ -1223,11 +1307,13 @@ hideMeasurementResult();
   );
 
 
-  analyzeTimer =
-    setInterval(
-      analyze,
-      ANALYZE_EVERY_MS
-    );
+  // Sección 7.1: sin POSTs durante la captura; pantalla encendida
+  // y RMS local cada 500 ms como guía visual.
+  gravityIncluded = false;
+
+  acquireWakeLock();
+
+  startLiveRms();
 
 
   requestAnimationFrame(
@@ -1420,6 +1506,18 @@ function requestMeasurementPdfFile() {
 
       }
     ),
+
+  // Los mismos datos que se mandaron a /api/analyze/ (decisión 10)
+  rpm_placa:
+    latestAnalysis
+      ? latestAnalysis.rpm_placa
+      : null,
+
+  gravity_included:
+    gravityIncluded,
+
+  user_agent:
+    navigator.userAgent || "",
 
   };
 
@@ -1700,14 +1798,9 @@ function stop() {
   }
 
 
-  if (analyzeTimer) {
+  stopLiveRms();
 
-    clearInterval(
-      analyzeTimer
-    );
-
-    analyzeTimer = null;
-  }
+  releaseWakeLock();
 
 
   els.start.disabled = false;

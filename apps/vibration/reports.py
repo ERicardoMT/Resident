@@ -204,24 +204,32 @@ def _draw_spectrum(
         - chart_bottom
     )
 
-    dominant_hz = float(
-        analysis.get(
-            "dominant_hz",
-            0,
-        )
+    # dominant_hz es None cuando la frecuencia no es clara (Sección 7.2)
+    raw_dominant_hz = analysis.get(
+        "dominant_hz"
     )
 
-    closest_index = min(
-        range(len(spectrum)),
-        key=lambda index: abs(
-            float(
-                spectrum[index].get(
-                    "hz",
-                    0,
+    dominant_hz = (
+        float(raw_dominant_hz)
+        if raw_dominant_hz is not None
+        else None
+    )
+
+    closest_index = (
+        min(
+            range(len(spectrum)),
+            key=lambda index: abs(
+                float(
+                    spectrum[index].get(
+                        "hz",
+                        0,
+                    )
                 )
-            )
-            - dominant_hz
-        ),
+                - dominant_hz
+            ),
+        )
+        if dominant_hz is not None
+        else -1
     )
 
     gap = 1.5
@@ -347,6 +355,8 @@ def _draw_spectrum(
         (
             "Dominante: "
             f"{dominant_hz:.2f} Hz"
+            if dominant_hz is not None
+            else "Dominante: no clara"
         ),
     )
 
