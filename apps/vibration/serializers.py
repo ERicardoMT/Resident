@@ -36,6 +36,27 @@ class AnalyzeRequestSerializer(serializers.Serializer):
         max_length=5000,
     )
 
+    rpm_placa = serializers.FloatField(
+        required=False,
+        allow_null=True,
+        default=None,
+        min_value=0.0,
+        help_text="RPM nominal del motor indicada en la placa",
+    )
+
+    gravity_included = serializers.BooleanField(
+        required=False,
+        default=False,
+        help_text="Indica si el sensor incluye gravedad estática",
+    )
+
+    user_agent = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        default="",
+        help_text="Identificador del navegador o dispositivo móvil",
+    )
+
     def validate_samples(self, value):
         """
         Valida cantidad, valores numéricos y duración

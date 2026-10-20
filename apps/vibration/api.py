@@ -31,17 +31,24 @@ def api_root(request):
                         ]
                     },
                     "returns": [
-                                "dominant_hz",
-                                "rpm",
-                                "sample_rate_hz",
-                                "rms_ms2",
-                                "rms_g",
-                                "peak_ms2",
-                                "peak_g",
-                                "velocity_rms_mms",
-                                "velocity_peak_mms",
-                                "spectrum",
-                            ],
+                        "sample_rate_hz",
+                        "sample_count",
+                        "duration_s",
+                        "rms_ms2",
+                        "peak_ms2",
+                        "crest",
+                        "impacts",
+                        "level",
+                        "dominant_hz",
+                        "dominant_rpm",
+                        "frequency_status",
+                        "frequency_message",
+                        "frequency_note",
+                        "f_min_hz",
+                        "f_max_hz",
+                        "rpm_placa",
+                        "spectrum",
+                    ],
                 }
             },
         }
@@ -50,12 +57,17 @@ def api_root(request):
 
 @api_view(["POST"])
 def analyze(request):
-    """Recibe muestras del acelerometro y devuelve la frecuencia dominante."""
+    """Recibe muestras del acelerómetro y devuelve métricas vibratorias y espectrales."""
     serializer = AnalyzeRequestSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
     try:
-        result = analyze_samples(serializer.validated_data["samples"])
+        result = analyze_samples(
+            samples=serializer.validated_data["samples"],
+            rpm_placa=serializer.validated_data.get("rpm_placa"),
+            gravity_included=serializer.validated_data.get("gravity_included", False),
+            user_agent=serializer.validated_data.get("user_agent", ""),
+        )
     except ValueError as exc:
         return Response(
             {"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST
