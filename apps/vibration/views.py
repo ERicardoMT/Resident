@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import json
+import os
 import uuid
 from io import BytesIO
 
+from django.contrib.staticfiles import finders
 from django.http import (
     FileResponse,
     JsonResponse,
@@ -34,9 +36,26 @@ def measure(request):
     Pantalla de medición vibratoria en tiempo real.
     """
 
+    # Versión del JS por fecha de modificación: obliga a cualquier
+    # navegador (Safari incluido) a bajar la versión nueva y no la de caché.
+    js_path = finders.find(
+        "js/vibration.js"
+    )
+
+    vibration_js_version = (
+        int(os.path.getmtime(js_path))
+        if js_path
+        else 0
+    )
+
     return render(
         request,
         "vibration/measure.html",
+        {
+            "vibration_js_version": (
+                vibration_js_version
+            ),
+        },
     )
 
 

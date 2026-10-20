@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}
+Catálogo en Excel | SMAV INAHER
+{% endblock %}
+
+{% block back %}
+<a
+  class="icon-btn"
+  href="{% url 'dashboard' %}"
+  aria-label="Volver al panel"
+>
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+</a>
+{% endblock %}
+
+{% block content %}
+<section class="page management-page">
+
+  <div class="card surface management-header">
+    <span class="section-kicker">
+      Administración
+    </span>
+
+    <h1 class="page-title">
+      Catálogo en Excel
+    </h1>
+
+    <p class="page-lead">
+      Descarga los {{ product_count }} productos con sus datos técnicos,
+      edítalos en Excel y súbelos de nuevo.
+    </p>
+  </div>
+
+
+  <!-- Bajar -->
+  <div class="card management-card excel-card">
+    <span class="section-kicker">
+      Bajar
+    </span>
+
+    <h2 class="excel-card-title">
+      Descargar el catálogo
+    </h2>
+
+    <p class="excel-card-text">
+      Incluye todos los productos, sus datos técnicos y las mediciones
+      de vibración. La hoja Instrucciones explica cómo llenarlo.
+    </p>
+
+    <div class="btn-row">
+      <a
+        class="btn btn-primary"
+        href="{% url 'exportar_excel' %}"
+      >
+        Descargar Excel
+      </a>
+
+      <a
+        class="btn btn-ghost"
+        href="{% url 'exportar_excel' %}?plantilla=1"
+      >
+        Plantilla vacía
+      </a>
+    </div>
+  </div>
+
+
+  {% if can_import_excel %}
+  <!-- Subir -->
+  <div class="card management-card excel-card">
+    <span class="section-kicker">
+      Subir
+    </span>
+
+    <h2 class="excel-card-title">
+      Guardar cambios desde Excel
+    </h2>
+
+    <p class="excel-card-text">
+      Usa el mismo formato que descargas. Si algún renglón tiene un
+      error no se guarda nada y te decimos qué renglón corregir.
+    </p>
+
+    <form
+      method="post"
+      action="{% url 'importar_excel' %}"
+      enctype="multipart/form-data"
+      class="excel-form"
+    >
+      {% csrf_token %}
+
+      <label
+        class="excel-label"
+        for="excel-archivo"
+      >
+        Archivo .xlsx
+      </label>
+
+      <input
+        type="file"
+        id="excel-archivo"
+        name="archivo"
+        accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        required
+        class="excel-input"
+      >
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+      >
+        Subir y guardar
+      </button>
+    </form>
+  </div>
+  {% endif %}
+
+</section>
+
+<style>
+  .excel-card {
+    margin-top: 14px;
+  }
+
+  .excel-card-title {
+    margin: 4px 0 8px;
+    font-size: 19px;
+    color: var(--text);
+  }
+
+  .excel-card-text {
+    margin: 0 0 14px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .excel-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .excel-label {
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .excel-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+    background: var(--surface-alt);
+    font: inherit;
+  }
+</style>
+{% endblock %}

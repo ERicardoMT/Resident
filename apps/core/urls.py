@@ -55,6 +55,23 @@ urlpatterns = [
         name="eliminar_producto",
     ),
 
+    # Excel del catálogo
+    path(
+        "dashboard/excel/",
+        views.excel_dashboard_view,
+        name="excel_dashboard",
+    ),
+    path(
+        "dashboard/excel/exportar/",
+        views.exportar_excel_view,
+        name="exportar_excel",
+    ),
+    path(
+        "dashboard/excel/importar/",
+        views.importar_excel_view,
+        name="importar_excel",
+    ),
+
     
     # Catálogo público
     path(

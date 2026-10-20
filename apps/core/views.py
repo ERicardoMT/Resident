@@ -11,6 +11,12 @@ from django.http import Http404, HttpResponse, StreamingHttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_GET, require_POST
 from django.urls import reverse
+from django.utils import timezone
+from .excel import (
+    MAX_ERRORS_SHOWN,
+    build_catalog_workbook,
+    import_catalog_workbook,
+)
 from .utils import (
     normalize_kg_text,
     sanitize_catalog_html,
@@ -215,6 +221,16 @@ def dashboard(request):
             ),
         },
         {
+            "label": "Excel",
+            "num": CatalogItem.objects.count(),
+            "hint": "Subir y bajar productos",
+            "url": (
+                reverse("excel_dashboard")
+                if can_view_catalog
+                else ""
+            ),
+        },
+        {
             "label": "Sesión",
             "num": "Activa",
             "hint": (
@@ -238,6 +254,128 @@ def dashboard(request):
             ),
         },
     )
+
+
+# =====================================================
+# Excel del catálogo (Sección 10, punto 9)
+# =====================================================
+
+EXCEL_CONTENT_TYPE = (
+    "application/vnd.openxmlformats-officedocument."
+    "spreadsheetml.sheet"
+)
+
+MAX_EXCEL_UPLOAD_BYTES = 10 * 1024 * 1024
+
+
+@login_required
+@permission_required(
+    "core.view_catalogitem",
+    raise_exception=True,
+)
+def excel_dashboard_view(request):
+    """Página para descargar y subir el catálogo en Excel."""
+
+    return render(
+        request,
+        "core/excel_dashboard.html",
+        {
+            "product_count": CatalogItem.objects.count(),
+            "can_import_excel": (
+                request.user.has_perm("core.add_catalogitem")
+                and request.user.has_perm("core.change_catalogitem")
+            ),
+        },
+    )
+
+
+@login_required
+@permission_required(
+    "core.view_catalogitem",
+    raise_exception=True,
+)
+@require_GET
+def exportar_excel_view(request):
+    """Descarga el catálogo completo (y las mediciones) en Excel."""
+
+    template = request.GET.get("plantilla") == "1"
+
+    buffer = build_catalog_workbook(
+        include_measurements=request.user.has_perm(
+            "vibration.view_vibrationmeasurement"
+        ),
+        template=template,
+    )
+
+    filename = (
+        "SMAV_plantilla_productos.xlsx"
+        if template
+        else f"SMAV_catalogo_{timezone.localdate():%Y-%m-%d}.xlsx"
+    )
+
+    response = HttpResponse(
+        buffer.getvalue(),
+        content_type=EXCEL_CONTENT_TYPE,
+    )
+    response["Content-Disposition"] = (
+        f'attachment; filename="{filename}"'
+    )
+    return response
+
+
+@login_required
+@permission_required(
+    ["core.add_catalogitem", "core.change_catalogitem"],
+    raise_exception=True,
+)
+@require_POST
+def importar_excel_view(request):
+    """Crea y actualiza productos desde el Excel del panel."""
+
+    uploaded = request.FILES.get("archivo")
+
+    if not uploaded:
+        messages.error(
+            request,
+            "Elige un archivo de Excel para subir.",
+        )
+        return redirect("excel_dashboard")
+
+    if not uploaded.name.lower().endswith(".xlsx"):
+        messages.error(
+            request,
+            "El archivo debe ser .xlsx (Excel).",
+        )
+        return redirect("excel_dashboard")
+
+    if uploaded.size > MAX_EXCEL_UPLOAD_BYTES:
+        messages.error(
+            request,
+            "El archivo pesa más de 10 MB.",
+        )
+        return redirect("excel_dashboard")
+
+    result = import_catalog_workbook(uploaded)
+
+    if not result.ok:
+        shown = result.errors[:MAX_ERRORS_SHOWN]
+        extra = len(result.errors) - len(shown)
+
+        messages.error(
+            request,
+            "No se guardó ningún cambio. Corrige el Excel y súbelo de nuevo: "
+            + " ".join(shown)
+            + (f" Y {extra} errores más." if extra > 0 else ""),
+        )
+        return redirect("excel_dashboard")
+
+    messages.success(
+        request,
+        f"Excel importado: {result.created} productos nuevos, "
+        f"{result.updated} actualizados y "
+        f"{result.unchanged} sin cambios.",
+    )
+    return redirect("excel_dashboard")
 
 
 @login_required

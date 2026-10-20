@@ -28,8 +28,8 @@ var COLORS = {
   var SIMPLE_MEASUREMENT_DURATION_MS = 10000;
   // Mínimo de muestras requeridas antes de enviar al servidor (Sección 7.1)
   var MIN_SAMPLES_TO_SEND = 400;
-  // Feedback visual en vivo local (cálculo de RMS sin servidor), cada 500 ms
-  var LIVE_RMS_TICK_MS = 500;
+  // Frecuencia en vivo calculada en el celular (sin servidor), cada 500 ms
+  var LIVE_TICK_MS = 500;
 
   var samples = []; // {t, x, y, z}
   // -----------------------------------------------------
@@ -48,8 +48,8 @@ var COLORS = {
   // wakeLock: evita que la pantalla se apague durante la captura (Sección 7.1)
   var wakeLockSentinel = null;
 
-  // Timer de feedback local en vivo (RMS calculado en JS, sin peticiones al servidor)
-  var liveRmsTimer = null;
+  // Timer del contador en vivo (calculado en JS, sin peticiones al servidor)
+  var liveReadoutTimer = null;
 
   // Bandera: indica si el sensor incluye gravedad estática (fallback en iOS)
   var gravityIncluded = false;
@@ -79,62 +79,74 @@ var COLORS = {
     }
   }
 
-  // RMS en vivo calculado en el cliente con los últimos 2 s (Sección 7.1).
-  // Solo es guía visual; el resultado final lo calcula el servidor.
-  var LIVE_RMS_WINDOW_MS = 2000;
+  // Frecuencia en vivo calculada en el celular con los últimos 3 s.
+  // Solo anima el contador; el resultado final lo calcula el servidor
+  // con las muestras completas (sin POSTs durante la captura, decisión 11).
+  var LIVE_MIN_HZ = 2;
+  var LIVE_STEP_HZ = 0.25;
 
-  function computeLiveRms(sampleSet) {
-    var lastT = sampleSet[sampleSet.length - 1].t;
-    var win = sampleSet.filter(function (s) {
-      return lastT - s.t <= LIVE_RMS_WINDOW_MS;
+  function computeLiveFrequency(sampleSet) {
+    var n = sampleSet.length;
+    if (n < 30) return null;
+
+    var spanS = (sampleSet[n - 1].t - sampleSet[0].t) / 1000;
+    if (spanS <= 0) return null;
+    var maxHz = 0.45 * ((n - 1) / spanS);
+
+    // Eje de mayor varianza, sin la media (gravedad y offset)
+    var axes = ["x", "y", "z"];
+    var best = null;
+    var bestVar = -1;
+    axes.forEach(function (axis) {
+      var mean = 0;
+      sampleSet.forEach(function (s) { mean += s[axis]; });
+      mean /= n;
+      var v = 0;
+      sampleSet.forEach(function (s) { v += (s[axis] - mean) * (s[axis] - mean); });
+      if (v > bestVar) {
+        bestVar = v;
+        best = sampleSet.map(function (s) { return s[axis] - mean; });
+      }
     });
-    if (win.length < 8) return null;
+    if (bestVar <= 0) return null;
 
-    // Quitar la media de cada eje (gravedad y offset)
-    var mx = 0, my = 0, mz = 0;
-    win.forEach(function (s) { mx += s.x; my += s.y; mz += s.z; });
-    mx /= win.length; my /= win.length; mz /= win.length;
-
-    var sum = 0;
-    win.forEach(function (s) {
-      var dx = s.x - mx, dy = s.y - my, dz = s.z - mz;
-      sum += dx * dx + dy * dy + dz * dz;
-    });
-    return Math.sqrt(sum / win.length);
+    // DFT directa con los tiempos reales de cada muestra
+    var t0 = sampleSet[0].t;
+    var peakHz = null;
+    var peakPower = 0;
+    for (var f = LIVE_MIN_HZ; f <= maxHz; f += LIVE_STEP_HZ) {
+      var re = 0;
+      var im = 0;
+      for (var i = 0; i < n; i++) {
+        var phase = 2 * Math.PI * f * (sampleSet[i].t - t0) / 1000;
+        re += best[i] * Math.cos(phase);
+        im -= best[i] * Math.sin(phase);
+      }
+      var power = re * re + im * im;
+      if (power > peakPower) {
+        peakPower = power;
+        peakHz = f;
+      }
+    }
+    return peakHz;
   }
 
   function updateLiveReadout() {
-    var live = document.getElementById("measurement-live");
-    if (!live) return;
-
-    var count = measurementSamples.length;
-    if (count < 2) {
-      live.textContent = "Muestras recibidas 0";
-      return;
-    }
-
-    var elapsedS = (measurementSamples[count - 1].t - measurementSamples[0].t) / 1000;
-    var rateHz = elapsedS > 0 ? Math.round((count - 1) / elapsedS) : 0;
-    var rms = computeLiveRms(measurementSamples);
-
-    live.textContent =
-      "Vibración (RMS) " + (rms === null ? "—" : rms.toFixed(2)) + " m/s²"
-      + " · Muestras recibidas " + count
-      + " · " + rateHz + " Hz";
+    if (!els.hz) return;
+    var hz = computeLiveFrequency(samples);
+    els.hz.textContent = hz === null ? "0.0" : hz.toFixed(1);
   }
 
-  function startLiveRms() {
-    stopLiveRms();
-    var live = document.getElementById("measurement-live");
-    if (live) live.hidden = false;
-    updateLiveReadout();
-    liveRmsTimer = setInterval(updateLiveReadout, LIVE_RMS_TICK_MS);
+  function startLiveReadout() {
+    stopLiveReadout();
+    if (els.hz) els.hz.textContent = "0.0";
+    liveReadoutTimer = setInterval(updateLiveReadout, LIVE_TICK_MS);
   }
 
-  function stopLiveRms() {
-    if (liveRmsTimer !== null) {
-      clearInterval(liveRmsTimer);
-      liveRmsTimer = null;
+  function stopLiveReadout() {
+    if (liveReadoutTimer !== null) {
+      clearInterval(liveReadoutTimer);
+      liveReadoutTimer = null;
     }
   }
 
@@ -308,6 +320,8 @@ function smavSetSimpleError(
       "0%";
 
   }
+
+  setRingProgress(0);
 }
 
 
@@ -337,6 +351,28 @@ function smavSetSimpleFinished() {
       "100%";
 
   }
+
+  setRingProgress(1);
+}
+
+
+// Anillo de progreso de los 10 s (circunferencia 2·π·64 ≈ 402)
+var RING_LENGTH = 402;
+
+function setRingProgress(fraction) {
+
+  var ring =
+    document.getElementById(
+      "measurement-simple-ring-progress"
+    );
+
+  if (!ring) {
+    return;
+  }
+
+  // Con unidad "px": Safari ignora números sin unidad en el estilo
+  ring.style.strokeDashoffset =
+    (RING_LENGTH * (1 - Math.max(0, Math.min(1, fraction)))) + "px";
 }
 
 
@@ -379,6 +415,8 @@ function smavStartSimpleMeasurementUi() {
 
   }
 
+  setRingProgress(0);
+
 
   smavSetSimpleMeasuring();
 
@@ -419,6 +457,8 @@ function smavStartSimpleMeasurementUi() {
             percentage + "%";
 
         }
+
+        setRingProgress(progress);
 
 
         var remainingMilliseconds =
@@ -608,10 +648,15 @@ function setMeasurementUnit(unit) {
     if (src === incGravity && (!a || a.x === null)) {
       gravityIncluded = true;
     }
-    // Tiempo real del evento del sensor (Sección 7.1); el servidor remuestrea
-    var t = (typeof event.timeStamp === "number" && event.timeStamp > 0)
-      ? event.timeStamp
-      : now();
+    // Tiempo real del evento del sensor (Sección 7.1); el servidor remuestrea.
+    // Solo se usa si está en la misma base que performance.now(): algunos
+    // navegadores (Safari antiguo) lo dan en otra base o en cero, y mezclar
+    // relojes vacía la ventana de muestras y congela el contador.
+    var t = now();
+    var ts = event.timeStamp;
+    if (typeof ts === "number" && ts > 0 && Math.abs(t - ts) < 1000) {
+      t = ts;
+    }
     pushSample(src.x || 0, src.y || 0, src.z || 0, t);
   }
 
@@ -1308,12 +1353,12 @@ hideMeasurementResult();
 
 
   // Sección 7.1: sin POSTs durante la captura; pantalla encendida
-  // y RMS local cada 500 ms como guía visual.
+  // y frecuencia local cada 500 ms en el contador.
   gravityIncluded = false;
 
   acquireWakeLock();
 
-  startLiveRms();
+  startLiveReadout();
 
 
   requestAnimationFrame(
@@ -1798,7 +1843,7 @@ function stop() {
   }
 
 
-  stopLiveRms();
+  stopLiveReadout();
 
   releaseWakeLock();
 

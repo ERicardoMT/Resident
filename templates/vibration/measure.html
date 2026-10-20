@@ -211,38 +211,6 @@
   </p>
 
 
-  <!-- RMS en vivo calculado en el celular (Sección 7.1) -->
-  <p
-    class="measurement-simple-live"
-    id="measurement-live"
-    hidden
-  ></p>
-
-
-  <!-- RPM de placa (Sección 7.3); se envía con la medición -->
-  <div class="measurement-simple-rpm">
-
-    <label for="rpm-placa-input">
-      RPM de placa del motor (opcional)
-    </label>
-
-    <input
-      type="number"
-      id="rpm-placa-input"
-      inputmode="numeric"
-      min="1"
-      max="100000"
-      step="1"
-      placeholder="Ej. 1750"
-    >
-
-    <small>
-      Sirve para comparar con lo que detecta el celular.
-    </small>
-
-  </div>
-
-
   <!-- Barra de progreso -->
   <div class="measurement-simple-progressbar">
 
@@ -824,40 +792,6 @@
   font-weight: 600;
 }
 
-.measurement-simple-live {
-  margin: 0 0 12px;
-  text-align: center;
-  color: #6d7e91;
-  font-size: 13px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-
-.measurement-simple-rpm {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin: 0 0 14px;
-}
-
-.measurement-simple-rpm label {
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.measurement-simple-rpm input {
-  width: 100%;
-  min-height: 44px;
-  padding: 8px 12px;
-  border: 1px solid #d8e3eb;
-  border-radius: 10px;
-  font-size: 16px;
-}
-
-.measurement-simple-rpm small {
-  color: #6d7e91;
-  font-size: 13px;
-}
-
 .measurement-simple-progressbar {
   width: 100%;
   height: 10px;
@@ -1389,5 +1323,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/vibration.js' %}"></script>
+<script src="{% static 'js/vibration.js' %}?v={{ vibration_js_version }}"></script>
 {% endblock %}

@@ -109,7 +109,7 @@
   {% endfor %}
 </div>
 
-  
+
 
   <a
     href="{% url 'catalogo' %}"
@@ -118,4 +118,11 @@
     Ver catálogo completo
   </a>
 </section>
+
+<style>
+  /* Con 5 cuadros, el último ocupa todo el ancho */
+  .dashboard-stats > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+</style>
 {% endblock %}
