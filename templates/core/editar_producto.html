@@ -57,6 +57,7 @@
             </label>
 
             {{ form.subcategory }}
+    {% include "core/_new_subcategory_field.html" %}
 
             {% for error in form.subcategory.errors %}
             <small style="color: #b42318;">

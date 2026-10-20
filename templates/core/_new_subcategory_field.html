@@ -1,0 +1,13 @@
+<div id="new_subcategory_container" hidden>
+    <label for="{{ form.new_subcategory.id_for_label }}">
+        Nueva subcategoría:
+    </label>
+
+    {{ form.new_subcategory }}
+
+    {% for error in form.new_subcategory.errors %}
+        <small style="color: #b42318;">
+            {{ error }}
+        </small>
+    {% endfor %}
+</div>

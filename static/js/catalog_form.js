@@ -88,24 +88,29 @@
       );
     });
 
+    addOption(
+      "__new_subcategory__",
+      "+ Agregar nueva subcategoría"
+    );
+
     const hasSubcategories =
       allowed.length > 0;
+    const hasCategory = Boolean(category);
 
-    subcategoryContainer.hidden =
-      !hasSubcategories;
-
-    subcategorySelect.disabled =
-      !hasSubcategories;
-
-    subcategorySelect.required =
-      hasSubcategories;
+    // Incluso si una familia no tenía subcategorías,
+    // permitir agregar una sin obligar a elegirla.
+    subcategoryContainer.hidden = !hasCategory;
+    subcategorySelect.disabled = !hasCategory;
+    subcategorySelect.required = hasSubcategories;
 
     if (
-      hasSubcategories &&
-      allowed.includes(previousValue)
+      hasCategory &&
+      (
+        allowed.includes(previousValue) ||
+        previousValue === "__new_subcategory__"
+      )
     ) {
-      subcategorySelect.value =
-        previousValue;
+      subcategorySelect.value = previousValue;
     } else {
       subcategorySelect.value = "";
     }
@@ -118,7 +123,27 @@
     }
   );
 
+  const newSubcategoryContainer =
+    document.getElementById("new_subcategory_container");
+  const newSubcategoryInput =
+    document.getElementById("id_new_subcategory");
+
+  function updateNewSubcategory() {
+    if (!newSubcategoryContainer || !newSubcategoryInput) {
+      return;
+    }
+    const isNew =
+      subcategorySelect.value === "__new_subcategory__";
+    newSubcategoryContainer.hidden = !isNew;
+    newSubcategoryInput.disabled = !isNew;
+    newSubcategoryInput.required = isNew;
+  }
+
+  subcategorySelect.addEventListener("change", updateNewSubcategory);
+  categorySelect.addEventListener("change", updateNewSubcategory);
+
   updateSubcategories(true);
+  updateNewSubcategory();
 
     const newCategoryContainer =
     document.getElementById("new_category_container");

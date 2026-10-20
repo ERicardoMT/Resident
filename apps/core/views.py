@@ -23,6 +23,7 @@ from .models import (
     CatalogCategory,
     CatalogItem,
     CatalogSubcategory,
+    CustomCatalogCategory,
 )
 
 
@@ -366,11 +367,27 @@ def productos_dashboard_view(request):
     )
 
 
-    valid_categories = {
-        value
-        for value, _
-        in CatalogCategory.choices
-    }
+    # Categorías internas + personalizadas. También incluir
+    # valores históricos con productos para poder filtrarlos.
+    category_choices = list(CatalogCategory.choices)
+    valid_categories = {value for value, _ in category_choices}
+
+    custom_names = (
+        CustomCatalogCategory.objects
+        .order_by("name")
+        .values_list("name", flat=True)
+    )
+    saved_names = (
+        CatalogItem.objects
+        .order_by()
+        .values_list("category", flat=True)
+        .distinct()
+    )
+
+    for name in list(custom_names) + list(saved_names):
+        if name and name not in valid_categories:
+            category_choices.append((name, name))
+            valid_categories.add(name)
 
 
     if (
@@ -499,7 +516,7 @@ def productos_dashboard_view(request):
                 selected_status,
 
             "category_choices":
-                CatalogCategory.choices,
+                category_choices,
 
             "total_productos":
                 total_productos,

@@ -256,6 +256,18 @@ class CatalogItemForm(forms.ModelForm):
         ),
     )
 
+    new_subcategory = forms.CharField(
+        label="Nueva subcategoría",
+        max_length=80,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Ej. Rodajas con freno",
+            }
+        ),
+    )
+
     MAX_IMAGE_SIZE = 5 * 1024 * 1024
     MAX_MODEL_SIZE = 20 * 1024 * 1024
 
@@ -418,6 +430,10 @@ class CatalogItemForm(forms.ModelForm):
                 (current_subcategory, current_subcategory)
             )
 
+        subcategory_choices.append(
+            ("__new_subcategory__", "+ Agregar nueva subcategoría")
+        )
+
         self.fields["subcategory"].choices = (
             subcategory_choices
         )
@@ -573,6 +589,45 @@ class CatalogItemForm(forms.ModelForm):
             set(internal_allowed) | custom_allowed
         )
 
+        # Si se eligió "+ Agregar nueva subcategoría",
+        # validar el nombre, sin guardar nada todavía.
+        if subcategory == "__new_subcategory__":
+            name = (
+                cleaned_data.get("new_subcategory") or ""
+            ).strip()
+
+            if not name:
+                self.add_error(
+                    "new_subcategory",
+                    "Escribe el nombre de la nueva subcategoría.",
+                )
+                return cleaned_data
+
+            internal_names = {
+                str(text).casefold()
+                for value, label in CatalogSubcategory.choices
+                for text in (value, label)
+            }
+            exists = CustomCatalogSubcategory.objects.filter(
+                category=category,
+                name__iexact=name,
+            ).exists()
+
+            if (
+                name.casefold() in internal_names
+                or name == "__new_subcategory__"
+                or exists
+            ):
+                self.add_error(
+                    "new_subcategory",
+                    "Esa subcategoría ya existe o el nombre está reservado.",
+                )
+                return cleaned_data
+
+            cleaned_data["subcategory"] = name
+            subcategory = name
+            allowed_subcategories.add(name)
+
         # Conservar la subcategoría existente
         # al editar, aunque esté desactivada.
         if (
@@ -614,6 +669,12 @@ class CatalogItemForm(forms.ModelForm):
             ):
                 CustomCatalogCategory.objects.get_or_create(
                     name=self.cleaned_data["category"]
+                )
+
+            if self.data.get("subcategory") == "__new_subcategory__":
+                CustomCatalogSubcategory.objects.get_or_create(
+                    category=self.cleaned_data["category"],
+                    name=self.cleaned_data["subcategory"],
                 )
 
             return super().save(commit=True)
