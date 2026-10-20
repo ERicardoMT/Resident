@@ -32,7 +32,7 @@
 
 
         <div>
-            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Nombre del producto:</label>
+            <label style="color: #333; font-weight: bold; font-size: 1.07rem;">Nombre del producto:</label>
             <input type="text" name="name" value="{{ producto.name }}" required maxlength="160" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">
         </div>
 
@@ -67,17 +67,17 @@
         </div>
 
         <div>
-            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Descripción completa:</label>
+            <label style="color: #333; font-weight: bold; font-size: 1.07rem;">Descripción completa:</label>
             <textarea name="description" id="descripcion_editor" rows="10" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">{{ form.description.value|default_if_none:'' }}</textarea>
         </div>
 
         <div>
-            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Precio o Etiqueta (Ej. Cotizar):</label>
+            <label style="color: #333; font-weight: bold; font-size: 1.07rem;">Precio o Etiqueta (Ej. Cotizar):</label>
             <input type="text" name="price_label" value="{{ producto.price_label }}" required maxlength="40" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">
         </div>
 
         <div>
-            <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Insignia / Badge (Opcional):</label>
+            <label style="color: #333; font-weight: bold; font-size: 1.07rem;">Insignia / Badge (Opcional):</label>
             <input type="text" name="badge" value="{{ producto.badge }}" placeholder="Ej. Nuevo 2024, Top 10" maxlength="40" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">
         </div>
 
@@ -113,25 +113,25 @@
         <div style="background: #f4f6f9; padding: 15px; border-radius: 8px; border: 1px dashed #b0b8c1;">
 
             <div style="margin-bottom: 15px;">
-                <label style="color: #333; font-weight: bold; font-size: 0.9rem;">Cambiar imagen (Opcional):</label>
+                <label style="color: #333; font-weight: bold; font-size: 1.07rem;">Cambiar imagen (Opcional):</label>
                 {% if producto.image and producto.image.name %}
-                    <p style="font-size: 0.75rem; color: #666; margin-top: 5px; margin-bottom: 5px;">Imagen actual guardada: {{ producto.image.name }}</p>
+                    <p style="font-size: 0.9rem; color: #666; margin-top: 5px; margin-bottom: 5px;">Imagen actual guardada: {{ producto.image.name }}</p>
                 {% endif %}
                 <input type="file" name="image" id="product_image" accept=".jpg, .jpeg, .png" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; background: white;">
                 <small style="color: #666; display: block; margin-top: 5px; font-weight: 500;">* Subir imagen no mayor a 5MB (Formatos aceptados: .jpg, .png)</small>
             </div>
 
             <div>
-                <label for="product_model" style="color: #333; font-weight: bold; font-size: 0.9rem;">Archivo GLB para Modelo 3D y Realidad Aumentada (Opcional):</label>
+                <label for="product_model" style="color: #333; font-weight: bold; font-size: 1.07rem;">Archivo GLB para Modelo 3D y Realidad Aumentada (Opcional):</label>
                 {% if producto.model_3d and producto.model_3d.name %}
-                    <p style="font-size: 0.75rem; color: #666; margin-top: 5px; margin-bottom: 5px;">Modelo actual guardado: {{ producto.model_3d.name }}</p>
+                    <p style="font-size: 0.9rem; color: #666; margin-top: 5px; margin-bottom: 5px;">Modelo actual guardado: {{ producto.model_3d.name }}</p>
                 {% endif %}
                 <input type="file" name="model_3d" id="product_model" accept=".glb,model/gltf-binary" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; background: white;">
                 <small style="color: #666; display: block; margin-top: 5px;">El mismo archivo GLB se utilizará para el visor 3D y para la experiencia de realidad aumentada. Tamaño máximo: 20 MB.</small>
             </div>
         </div>
 
-        <button type="submit" style="background: #14204e; color: white; padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; margin-top: 15px; cursor: pointer;">Guardar Cambios</button>
+        <button type="submit" style="background: #14204e; color: white; padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 1.19rem; margin-top: 15px; cursor: pointer;">Guardar Cambios</button>
     </form>
   </div>
 </section>

@@ -46,7 +46,7 @@
   <!-- Tarjeta Blanca del Formulario -->
   <div class="auth-form-card">
     {% if form.non_field_errors %}
-    <div style="background-color: #fee2e2; color: #b91c1c; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; text-align: center; border: 1px solid #f87171;">
+    <div style="background-color: #fee2e2; color: #b91c1c; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 1.07rem; text-align: center; border: 1px solid #f87171;">
       {{ form.non_field_errors }}
     </div>
     {% endif %}
@@ -55,20 +55,20 @@
       {% csrf_token %}
 
       <div>
-        <label for="id_username" style="color: #14204e; font-weight: 700; font-size: 0.9rem;">Usuario:</label>
-        <input type="text" name="username" id="id_username" autocomplete="off" maxlength="150" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; font-family: inherit; font-size: 1rem; color: #333;">
+        <label for="id_username" style="color: #14204e; font-weight: 700; font-size: 1.07rem;">Usuario:</label>
+        <input type="text" name="username" id="id_username" autocomplete="off" maxlength="150" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; font-family: inherit; font-size: 1.19rem; color: #333;">
         {{ form.username.errors }}
       </div>
 
       <div>
-        <label for="id_password" style="color: #14204e; font-weight: 700; font-size: 0.9rem;">Contraseña:</label>
-        <input type="password" name="password" id="id_password" autocomplete="new-password" maxlength="128" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; font-family: inherit; font-size: 1rem; color: #333;">
+        <label for="id_password" style="color: #14204e; font-weight: 700; font-size: 1.07rem;">Contraseña:</label>
+        <input type="password" name="password" id="id_password" autocomplete="new-password" maxlength="128" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; font-family: inherit; font-size: 1.19rem; color: #333;">
         {{ form.password.errors }}
       </div>
 
       <input type="hidden" name="next" value="{{ next }}" />
 
-      <button type="submit" style="background: #0a5290; color: white; padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 10px rgba(10, 82, 144, 0.3); transition: background 0.3s;">
+      <button type="submit" style="background: #0a5290; color: white; padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 1.19rem; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 10px rgba(10, 82, 144, 0.3); transition: background 0.3s;">
         Entrar
       </button>
     </form>
