@@ -57,6 +57,26 @@ class AnalyzeRequestSerializer(serializers.Serializer):
         help_text="Identificador del navegador o dispositivo móvil",
     )
 
+    # Sección 7.5: hasta 6 s de audio PCM 16 bits en base64 (~1 MB a 48 kHz)
+    audio_pcm16 = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        default=None,
+        max_length=1_500_000,
+        trim_whitespace=False,
+        help_text="Audio del micrófono, PCM 16 bits little-endian en base64",
+    )
+
+    audio_sample_rate = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+        default=None,
+        min_value=8000,
+        max_value=96000,
+        help_text="Frecuencia de muestreo del audio (Hz)",
+    )
+
     def validate_samples(self, value):
         """
         Valida cantidad, valores numéricos y duración

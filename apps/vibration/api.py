@@ -67,6 +67,8 @@ def analyze(request):
             rpm_placa=serializer.validated_data.get("rpm_placa"),
             gravity_included=serializer.validated_data.get("gravity_included", False),
             user_agent=serializer.validated_data.get("user_agent", ""),
+            audio_pcm16=serializer.validated_data.get("audio_pcm16"),
+            audio_sample_rate=serializer.validated_data.get("audio_sample_rate"),
         )
     except ValueError as exc:
         return Response(

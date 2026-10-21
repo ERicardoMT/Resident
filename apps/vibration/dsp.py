@@ -7,6 +7,7 @@ Implementa la especificación técnica de la Sección 7 del Libro Maestro:
 - 7.2 Detección de picos dominantes con find_peaks (prominencia >= 4x mediana).
 - 7.3 Resolución de alias con RPM de placa de motor.
 - 7.4 Semáforo por aceleración RMS y detección de impactos (factor de cresta > 4).
+- 7.5 Cruce con la frecuencia por micrófono (apps.vibration.acoustic).
 - 7.6 Respuesta estandarizada del endpoint /api/analyze/.
 """
 
@@ -17,6 +18,8 @@ from typing import Any, Sequence
 
 import numpy as np
 import scipy.signal
+
+from .acoustic import analyze_audio, match_accelerometer
 
 # Límites defensivos
 MIN_SAMPLES = 8
@@ -57,6 +60,8 @@ def process_vibration_samples(
     rpm_placa: float | int | None = None,
     gravity_included: bool = False,
     user_agent: str = "",
+    audio_pcm16: str | None = None,
+    audio_sample_rate: int | None = None,
 ) -> dict[str, Any]:
     """Procesa una serie temporal de muestras del acelerómetro y devuelve métricas completas."""
     if not samples or len(samples) < MIN_SAMPLES:
@@ -234,6 +239,56 @@ def process_vibration_samples(
                     "captura las rpm de placa para confirmar."
                 )
 
+    # Picos fuertes del acelerómetro (descarta lóbulos de la ventana Hann)
+    max_peak_power = max((psd[p] for p in detected_peaks), default=0.0)
+    strong_peaks = [
+        p for p in detected_peaks
+        if psd[p] >= PLACA_MIN_REL_POWER * max_peak_power
+    ]
+
+    # 7.5: Frecuencia por micrófono y cruce con el acelerómetro.
+    # El micrófono solo aporta frecuencia; la amplitud no cambia.
+    acoustic_hz: float | None = None
+    acoustic_confidence: str | None = None
+    acoustic_harmonics = 0
+    if audio_pcm16 and audio_sample_rate:
+        acoustic = analyze_audio(audio_pcm16, int(audio_sample_rate))
+        f0 = acoustic["acoustic_hz"]
+        acoustic_harmonics = acoustic["acoustic_harmonics"]
+
+        if f0 is not None:
+            acoustic_hz = round(f0, 1)
+            accel_peaks_hz = [
+                _parabolic_interpolation(freqs, psd, p) for p in strong_peaks
+            ]
+            matched_hz = match_accelerometer(f0, accel_peaks_hz, fs)
+
+            if matched_hz is not None:
+                acoustic_confidence = "high"
+                dominant_hz = round(f0, 1)
+                frequency_note = None
+                if f0 > 0.45 * fs:
+                    frequency_status = "aliased_confirmed"
+                    frequency_message = (
+                        f"{f0:.1f} Hz ≈ {int(round(f0 * 60))} rpm. "
+                        f"El celular lo ve reflejado en {matched_hz:.1f} Hz "
+                        "por su límite de muestreo; el sonido de la máquina lo confirma."
+                    )
+                else:
+                    frequency_status = "confirmed"
+                    frequency_message = "Coincide con el sonido de la máquina."
+            else:
+                acoustic_confidence = "low"
+                movement_text = (
+                    f"el movimiento {dominant_hz:.1f} Hz"
+                    if dominant_hz is not None
+                    else "el movimiento no muestra una frecuencia clara"
+                )
+                frequency_note = (
+                    f"Dos lecturas distintas: el sonido marca {f0:.1f} Hz "
+                    f"y {movement_text}."
+                )
+
     # 7.3: Verificación y resolución de alias con RPM de placa
     if rpm_placa and float(rpm_placa) > 0:
         rpm_val = float(rpm_placa)
@@ -252,11 +307,6 @@ def process_vibration_samples(
         # Solo cuentan picos que pasaron el criterio de prominencia (7.2.7).
         # Buscar el máximo local en ±5 % sin ese criterio confirma la placa
         # con fuga espectral aunque la máquina gire a otra velocidad.
-        max_peak_power = max((psd[p] for p in detected_peaks), default=0.0)
-        strong_peaks = [
-            p for p in detected_peaks
-            if psd[p] >= PLACA_MIN_REL_POWER * max_peak_power
-        ]
         for c in valid_candidates:
             for p in strong_peaks:
                 peak_f = _parabolic_interpolation(freqs, psd, p)
@@ -355,8 +405,15 @@ def process_vibration_samples(
         "f_max_hz": round(f_high, 1),
         "rpm_placa": float(rpm_placa) if rpm_placa else None,
         "gravity_included": gravity_included,
-        "acoustic_hz": None,
-        "acoustic_confidence": None,
+        "acoustic_hz": acoustic_hz,
+        "acoustic_rpm": (
+            int(round(acoustic_hz * 60.0))
+            if acoustic_hz is not None
+            else None
+        ),
+        "acoustic_confidence": acoustic_confidence,
+        "acoustic_harmonics": acoustic_harmonics,
+        "acoustic_used": bool(audio_pcm16 and audio_sample_rate),
         "velocity_rms_mms": 0.0,
         "velocity_peak_mms": 0.0,
         "spectrum": spectrum_points,

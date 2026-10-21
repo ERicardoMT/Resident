@@ -286,6 +286,44 @@
 
 
   <!-- ======================================================
+       VIBRACIÓN MEDIDA (se muestra en todos los resultados)
+       ====================================================== -->
+
+  <div
+    class="measurement-result-vibration"
+    id="measurement-result-vibration"
+    hidden
+  >
+
+    <span
+      class="measurement-result-level"
+      id="measurement-result-level"
+    ></span>
+
+    <div class="measurement-result-metrics">
+
+      <div>
+        <small>Vibración (RMS)</small>
+        <strong id="measurement-result-rms">—</strong>
+      </div>
+
+      <div>
+        <small>Pico</small>
+        <strong id="measurement-result-peak">—</strong>
+      </div>
+
+    </div>
+
+    <p
+      class="measurement-result-impacts"
+      id="measurement-result-impacts"
+      hidden
+    ></p>
+
+  </div>
+
+
+  <!-- ======================================================
        RESULTADO 1
        ====================================================== -->
 
@@ -300,11 +338,14 @@
              measurement-result-alert-danger"
     >
 
-      <div class="measurement-result-alert-title">
+      <div
+        class="measurement-result-alert-title"
+        id="measurement-result-title-1"
+      >
         No se obtuvo una lectura clara.
       </div>
 
-      <p>
+      <p id="measurement-result-text-1">
         Intenta de nuevo apoyando mejor el teléfono.
         Si sigue igual, continúa con la selección de tu
         soporte con el peso de tu máquina o equipo.
@@ -327,25 +368,31 @@
 
     <div
       class="measurement-result-alert
-             measurement-result-alert-danger"
+             measurement-result-alert-warning"
     >
 
       <div class="measurement-result-alert-title">
-        ⚠ La vibración superó lo que el teléfono puede medir.
+        ⚠ Frecuencia cerca del límite del celular
       </div>
 
-      <p>
-        Escríbenos con tu folio y lo revisamos contigo.
+      <p id="measurement-result-text-2">
+        Tómala con reserva y, si puedes, repite la medición.
       </p>
 
     </div>
+
+
+    <div
+      class="measurement-result-frequency"
+      id="measurement-result-frequency-2"
+    ></div>
 
   </div>
 
 
   <!-- ======================================================
        RESULTADO 3
-       FRECUENCIA MENOR A 25 Hz
+       FRECUENCIA CLARA
        ====================================================== -->
 
   <div
@@ -354,8 +401,11 @@
     hidden
   >
 
-    <div class="measurement-result-quality">
-      ✓ Medición confiable · señal estable y clara
+    <div
+      class="measurement-result-quality"
+      id="measurement-result-quality-3"
+    >
+      ✓ Señal estable y clara
     </div>
 
 
@@ -365,14 +415,17 @@
     ></div>
 
 
+    <p
+      class="measurement-result-note"
+      id="measurement-result-note-3"
+      hidden
+    ></p>
+
+
     <p class="measurement-result-message">
 
       Genera tu PDF para guardar esta medición y obtener
-      el folio
-
-      <strong id="measurement-result-folio-inline-3">
-      pendiente
-      </strong>.
+      tu folio.
 
       Escríbenos y con ese dato te recomendamos justo
       lo que tu equipo necesita — sin comprar de más
@@ -384,6 +437,7 @@
     <p
       class="measurement-result-low-frequency"
       id="measurement-result-low-frequency"
+      hidden
     >
 
       Tu equipo vibra en frecuencia baja.
@@ -398,7 +452,7 @@
 
   <!-- ======================================================
        RESULTADO 4
-       FRECUENCIA IGUAL O MAYOR A 25 Hz
+       FRECUENCIA CONFIRMADA (POR SONIDO O PLACA)
        ====================================================== -->
 
   <div
@@ -407,8 +461,11 @@
     hidden
   >
 
-    <div class="measurement-result-quality">
-      ✓ Medición confiable · señal estable y clara
+    <div
+      class="measurement-result-quality"
+      id="measurement-result-quality-4"
+    >
+      ✓ Frecuencia confirmada
     </div>
 
 
@@ -416,6 +473,13 @@
       class="measurement-result-frequency"
       id="measurement-result-frequency-4"
     ></div>
+
+
+    <p
+      class="measurement-result-note"
+      id="measurement-result-note-4"
+      hidden
+    ></p>
 
 
     <p class="measurement-result-message">
@@ -428,6 +492,14 @@
     </p>
 
   </div>
+
+
+  <!-- Frecuencia por micrófono (Sección 7.5) -->
+  <p
+    class="measurement-result-acoustic"
+    id="measurement-result-acoustic"
+    hidden
+  ></p>
 
 
   <!-- ======================================================
@@ -501,15 +573,6 @@
               m/s²
             </button>
 
-
-            <button
-              type="button"
-              class="measurement-unit-button"
-              data-vibration-unit="velocity"
-              aria-pressed="false"
-            >
-              mm/s
-            </button>
 
           </div>
 
@@ -1222,6 +1285,102 @@
   font-weight: 600;
 }
 
+.measurement-result-vibration {
+  margin: 0 0 16px;
+  padding: 16px 17px;
+  border: 1px solid #d9e5ee;
+  border-radius: 15px;
+  background: #f7fafc;
+  text-align: center;
+}
+
+.measurement-result-vibration[hidden],
+.measurement-result-impacts[hidden],
+.measurement-result-note[hidden],
+.measurement-result-low-frequency[hidden] {
+  display: none !important;
+}
+
+.measurement-result-level {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+}
+
+.measurement-result-level.is-low {
+  border: 1px solid #b8dfc7;
+  background: #f1fbf4;
+  color: #277445;
+}
+
+.measurement-result-level.is-medium {
+  border: 1px solid #f1d29b;
+  background: #fff8eb;
+  color: #855c1a;
+}
+
+.measurement-result-level.is-high {
+  border: 1px solid #f0b8c0;
+  background: #fff1f3;
+  color: #7e2431;
+}
+
+.measurement-result-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.measurement-result-metrics small {
+  display: block;
+  color: #6d7e91;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.measurement-result-metrics strong {
+  display: block;
+  margin-top: 2px;
+  color: #17457d;
+  font-size: 26px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.measurement-result-impacts {
+  margin: 12px 0 0;
+  color: #7e2431;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.measurement-result-alert-warning {
+  border-color: #f1d29b;
+  background: #fff8eb;
+  color: #855c1a;
+}
+
+.measurement-result-quality.is-warning {
+  border-color: #f1d29b;
+  background: #fff8eb;
+  color: #855c1a;
+}
+
+.measurement-result-note {
+  margin: 8px auto 0;
+  max-width: 650px;
+  color: #526b82;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 700;
+  text-align: center;
+}
+
 .measurement-result-quality {
   padding: 10px 14px;
   border: 1px solid #b8dfc7;
@@ -1240,6 +1399,20 @@
   line-height: 1;
   font-weight: 900;
   text-align: center;
+}
+
+.measurement-result-acoustic {
+  margin: 12px auto 0;
+  max-width: 650px;
+  color: #17457d;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.measurement-result-acoustic[hidden] {
+  display: none;
 }
 
 .measurement-result-message {

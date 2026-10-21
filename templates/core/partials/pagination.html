@@ -1,0 +1,52 @@
+{% comment %}
+Paginación compartida de los paneles.
+Recibe page_obj y extra_query (filtros activos sin "page", p. ej. "q=cdc&status=active").
+{% endcomment %}
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="pagination" aria-label="Páginas">
+
+  {% if page_obj.has_previous %}
+  <a
+    class="btn btn-ghost pagination-link"
+    href="?{% if extra_query %}{{ extra_query }}&amp;{% endif %}page={{ page_obj.previous_page_number }}"
+  >
+    ← Anterior
+  </a>
+  {% endif %}
+
+  <span class="pagination-status">
+    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+    · {{ page_obj.paginator.count }} en total
+  </span>
+
+  {% if page_obj.has_next %}
+  <a
+    class="btn btn-ghost pagination-link"
+    href="?{% if extra_query %}{{ extra_query }}&amp;{% endif %}page={{ page_obj.next_page_number }}"
+  >
+    Siguiente →
+  </a>
+  {% endif %}
+
+</nav>
+
+<style>
+  .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .pagination-status {
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .pagination-link {
+    min-width: 130px;
+  }
+</style>
+{% endif %}

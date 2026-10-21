@@ -61,7 +61,7 @@ Mediciones vibratorias | SMAV INAHER
         </span>
 
         <h2>
-          {{ measurements|length }}
+          {{ page_obj.paginator.count }}
           mediciones
         </h2>
 
@@ -151,6 +151,8 @@ Mediciones vibratorias | SMAV INAHER
       {% endfor %}
 
     </div>
+
+    {% include "core/partials/pagination.html" %}
 
     {% else %}
 

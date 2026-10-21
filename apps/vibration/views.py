@@ -6,6 +6,8 @@ import uuid
 from io import BytesIO
 
 from django.contrib.staticfiles import finders
+from django.core.paginator import Paginator
+from django.db import IntegrityError, transaction
 from django.http import (
     FileResponse,
     JsonResponse,
@@ -23,12 +25,23 @@ from django.views.decorators.http import (
     require_POST,
 )
 
+from apps.core.ratelimit import client_ip, hit, is_limited
+
 from .analysis import analyze_samples
 from .reports import build_measurement_pdf
 from .models import VibrationMeasurement
 from .serializers import (
     AnalyzeRequestSerializer,
 )
+
+
+# Mediciones por página en el panel
+MEASUREMENTS_PAGE_SIZE = 25
+
+# Límite de PDF por IP: 30 cada 10 minutos
+PDF_RATE_SCOPE = "measurement-pdf"
+PDF_RATE_LIMIT = 30
+PDF_RATE_WINDOW_S = 10 * 60
 
 
 def measure(request):
@@ -70,6 +83,23 @@ def measurement_pdf(request):
     - guarda el PDF completo en PostgreSQL;
     - evita duplicar una misma medición.
     """
+
+    # Cada PDF se guarda en la base: se limita para que un script
+    # no pueda llenarla (un cliente real genera unos cuantos)
+    ip = client_ip(request)
+
+    if is_limited(PDF_RATE_SCOPE, ip, PDF_RATE_LIMIT):
+        return JsonResponse(
+            {
+                "detail": (
+                    "Generaste muchos PDF seguidos. "
+                    "Espera unos minutos e intenta de nuevo."
+                )
+            },
+            status=429,
+        )
+
+    hit(PDF_RATE_SCOPE, ip, PDF_RATE_WINDOW_S)
 
     try:
         payload = json.loads(
@@ -246,6 +276,12 @@ def measurement_pdf(request):
                     "user_agent",
                     "",
                 ),
+                "audio_pcm16": payload.get(
+                    "audio_pcm16"
+                ),
+                "audio_sample_rate": payload.get(
+                    "audio_sample_rate"
+                ),
             }
         )
     )
@@ -287,6 +323,12 @@ def measurement_pdf(request):
             user_agent=serializer.validated_data.get(
                 "user_agent",
                 "",
+            ),
+            audio_pcm16=serializer.validated_data.get(
+                "audio_pcm16"
+            ),
+            audio_sample_rate=serializer.validated_data.get(
+                "audio_sample_rate"
             ),
         )
 
@@ -353,104 +395,146 @@ def measurement_pdf(request):
     # Guardar medición completa en PostgreSQL
     # =====================================================
 
-    measurement = (
-        VibrationMeasurement.objects.create(
-            measurement_token=(
-                measurement_token
-            ),
+    # Dos envíos casi simultáneos con el mismo identificador (doble toque):
+    # el segundo choca con el índice único y recibe el PDF ya guardado
+    try:
+        with transaction.atomic():
+            measurement = (
+                VibrationMeasurement.objects.create(
+                    measurement_token=(
+                        measurement_token
+                    ),
 
-            folio=folio,
+                    folio=folio,
 
-            measurement_unit=(
-                selected_unit
-            ),
+                    measurement_unit=(
+                        selected_unit
+                    ),
 
-            # Sin frecuencia clara se guarda 0.0
-            # (el campo no admite nulos)
-            dominant_hz=(
-                analysis.get(
-                    "dominant_hz"
+                    # Sin frecuencia clara se guarda 0.0
+                    # (el campo no admite nulos)
+                    dominant_hz=(
+                        analysis.get(
+                            "dominant_hz"
+                        )
+                        or 0.0
+                    ),
+
+                    rpm=(
+                        analysis.get(
+                            "rpm",
+                            0.0,
+                        )
+                    ),
+
+                    sample_rate_hz=(
+                        analysis.get(
+                            "sample_rate_hz",
+                            0.0,
+                        )
+                    ),
+
+                    sample_count=(
+                        analysis.get(
+                            "sample_count",
+                            0,
+                        )
+                    ),
+
+                    duration_s=(
+                        analysis.get(
+                            "duration_s",
+                            0.0,
+                        )
+                    ),
+
+                    rms_ms2=(
+                        analysis.get(
+                            "rms_ms2",
+                            0.0,
+                        )
+                    ),
+
+                    rms_g=(
+                        analysis.get(
+                            "rms_g",
+                            0.0,
+                        )
+                    ),
+
+                    peak_ms2=(
+                        analysis.get(
+                            "peak_ms2",
+                            0.0,
+                        )
+                    ),
+
+                    peak_g=(
+                        analysis.get(
+                            "peak_g",
+                            0.0,
+                        )
+                    ),
+
+                    velocity_rms_mms=(
+                        analysis.get(
+                            "velocity_rms_mms",
+                            0.0,
+                        )
+                    ),
+
+                    velocity_peak_mms=(
+                        analysis.get(
+                            "velocity_peak_mms",
+                            0.0,
+                        )
+                    ),
+
+                    analysis_data=analysis,
+
+                    pdf_filename=filename,
+
+                    pdf_data=pdf_bytes,
                 )
-                or 0.0
-            ),
-
-            rpm=(
-                analysis.get(
-                    "rpm",
-                    0.0,
+            )
+    except IntegrityError:
+        existing_measurement = (
+            VibrationMeasurement.objects
+            .filter(
+                measurement_token=(
+                    measurement_token
                 )
-            ),
-
-            sample_rate_hz=(
-                analysis.get(
-                    "sample_rate_hz",
-                    0.0,
-                )
-            ),
-
-            sample_count=(
-                analysis.get(
-                    "sample_count",
-                    0,
-                )
-            ),
-
-            duration_s=(
-                analysis.get(
-                    "duration_s",
-                    0.0,
-                )
-            ),
-
-            rms_ms2=(
-                analysis.get(
-                    "rms_ms2",
-                    0.0,
-                )
-            ),
-
-            rms_g=(
-                analysis.get(
-                    "rms_g",
-                    0.0,
-                )
-            ),
-
-            peak_ms2=(
-                analysis.get(
-                    "peak_ms2",
-                    0.0,
-                )
-            ),
-
-            peak_g=(
-                analysis.get(
-                    "peak_g",
-                    0.0,
-                )
-            ),
-
-            velocity_rms_mms=(
-                analysis.get(
-                    "velocity_rms_mms",
-                    0.0,
-                )
-            ),
-
-            velocity_peak_mms=(
-                analysis.get(
-                    "velocity_peak_mms",
-                    0.0,
-                )
-            ),
-
-            analysis_data=analysis,
-
-            pdf_filename=filename,
-
-            pdf_data=pdf_bytes,
+            )
+            .first()
         )
-    )
+
+        if existing_measurement is None:
+            raise
+
+        response = FileResponse(
+            BytesIO(
+                bytes(
+                    existing_measurement
+                    .pdf_data
+                )
+            ),
+            as_attachment=True,
+            filename=(
+                existing_measurement
+                .pdf_filename
+            ),
+            content_type=(
+                "application/pdf"
+            ),
+        )
+
+        response[
+            "X-SMAV-Folio"
+        ] = (
+            existing_measurement.folio
+        )
+
+        return response
 
 
     response = FileResponse(
@@ -487,20 +571,32 @@ def measurements_dashboard(request):
     almacenadas en PostgreSQL.
     """
 
+    # La lista no necesita el PDF (~165 KB) ni el análisis completo
     measurements = (
         VibrationMeasurement.objects
-        .all()
+        .defer(
+            "pdf_data",
+            "analysis_data",
+        )
         .order_by(
             "-created_at",
             "-id",
         )
     )
 
+    page_obj = Paginator(
+        measurements,
+        MEASUREMENTS_PAGE_SIZE,
+    ).get_page(
+        request.GET.get("page")
+    )
+
     return render(
         request,
         "vibration/manage_measurements.html",
         {
-            "measurements": measurements,
+            "measurements": page_obj,
+            "page_obj": page_obj,
         },
     )
 

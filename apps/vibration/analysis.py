@@ -16,15 +16,20 @@ def analyze_samples(
     rpm_placa: float | int | None = None,
     gravity_included: bool = False,
     user_agent: str = "",
+    audio_pcm16: str | None = None,
+    audio_sample_rate: int | None = None,
 ) -> dict[str, Any]:
     """
     Procesa muestras de acelerómetro ({t, x, y, z}) mediante remuestreo uniforme,
-    filtrado Butterworth 2 Hz - 0.45*fs, espectro Welch, factor de cresta y
-    resolución de alias con RPM de placa.
+    filtrado Butterworth 2 Hz - 0.45*fs, espectro Welch, factor de cresta,
+    resolución de alias con RPM de placa y, si llega audio, cruce con la
+    frecuencia por micrófono (Sección 7.5).
     """
     return process_vibration_samples(
         samples=samples,
         rpm_placa=rpm_placa,
         gravity_included=gravity_included,
         user_agent=user_agent,
+        audio_pcm16=audio_pcm16,
+        audio_sample_rate=audio_sample_rate,
     )

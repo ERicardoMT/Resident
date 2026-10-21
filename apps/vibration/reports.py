@@ -603,27 +603,32 @@ def build_measurement_pdf(
             ),
         ),
         (
-            "RMS velocidad",
+            # La velocidad en mm/s ya no se calcula (salía siempre 0):
+            # en su lugar van el nivel y el factor de cresta
+            "Nivel de vibración",
             (
-                _format_number(
-                    analysis.get(
-                        "velocity_rms_mms"
-                    ),
-                    4,
+                {
+                    "low": "Baja",
+                    "medium": "Media",
+                    "high": "Alta",
+                }.get(
+                    analysis.get("level"),
+                    "—",
                 )
-                + " mm/s"
+                + (
+                    " · con golpes"
+                    if analysis.get("impacts")
+                    else ""
+                )
             ),
         ),
         (
-            "Pico velocidad",
-            (
-                _format_number(
-                    analysis.get(
-                        "velocity_peak_mms"
-                    ),
-                    4,
-                )
-                + " mm/s"
+            "Factor de cresta",
+            _format_number(
+                analysis.get(
+                    "crest"
+                ),
+                2,
             ),
         ),
     ]
@@ -741,6 +746,29 @@ def build_measurement_pdf(
             + " g"
         ),
     )
+
+    # Sección 7.5: frecuencia por micrófono (solo si se grabó audio)
+    if analysis.get("acoustic_used"):
+        acoustic_hz = analysis.get("acoustic_hz")
+
+        if acoustic_hz is None:
+            acoustic_text = "no se identificó"
+        else:
+            acoustic_text = (
+                f"{float(acoustic_hz):.1f} Hz "
+                f"({int(analysis.get('acoustic_rpm') or 0):,} rpm) · "
+                + (
+                    "coincide con el movimiento"
+                    if analysis.get("acoustic_confidence") == "high"
+                    else "no coincide con el movimiento"
+                )
+            )
+
+        pdf.drawString(
+            margin,
+            current_y - 23,
+            "Frecuencia por sonido: " + acoustic_text,
+        )
 
     # =====================================================
     # Espectro FFT

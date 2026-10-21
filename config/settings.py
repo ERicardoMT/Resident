@@ -78,7 +78,12 @@ DEBUG = env_bool(
     default=False,
 )
 
-ALLOWED_HOSTS = ["*"]
+# Solo los dominios desde los que se abre SMAV. ".devtunnels.ms"
+# permite el túnel de pruebas con el celular.
+ALLOWED_HOSTS = env_list(
+    "DJANGO_ALLOWED_HOSTS",
+    "127.0.0.1,localhost,.devtunnels.ms",
+)
 
 CSRF_TRUSTED_ORIGINS = env_list(
     "DJANGO_CSRF_TRUSTED_ORIGINS",
@@ -116,6 +121,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # Sirve CSS, JS e imágenes de static/ también con DEBUG=False
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -126,9 +133,31 @@ MIDDLEWARE = [
 ]
 
 
-# El proyecto todavía utiliza previews dentro de iframe.
-# Esta configuración se puede endurecer antes de producción.
-X_FRAME_OPTIONS = "ALLOWALL"
+# Ninguna página de SMAV se muestra dentro de un iframe:
+# se bloquea para evitar clickjacking sobre el panel y el login.
+X_FRAME_OPTIONS = "DENY"
+
+
+# =========================================================
+# HTTPS (solo cuando DEBUG=False)
+# =========================================================
+
+if not DEBUG:
+    # El túnel y los proxys entregan HTTPS y avisan con este encabezado
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+    # Apagado por defecto: el túnel ya obliga HTTPS y le pasa a Django
+    # las peticiones como http://localhost, lo que causaría un ciclo de
+    # redirecciones. Activarlo solo en un servidor con dominio propio.
+    SECURE_SSL_REDIRECT = env_bool("DJANGO_SECURE_SSL_REDIRECT", default=False)
+
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    # HSTS corto al inicio; subir a 31536000 cuando el dominio sea definitivo
+    SECURE_HSTS_SECONDS = int(os.getenv("DJANGO_HSTS_SECONDS", "3600"))
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_REFERRER_POLICY = "same-origin"
 
 
 # =========================================================
@@ -257,8 +286,20 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+# Carpeta que llena "python manage.py collectstatic" para un servidor
+# definitivo (no se sube a Git)
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# WhiteNoise sirve directo desde static/: con DEBUG=False no hace falta
+# correr collectstatic cada vez que cambia un CSS o JS
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = True
+
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# Ver config/urls.py: Django sirve media/ mientras no haya Nginx
+SERVE_MEDIA = env_bool("DJANGO_SERVE_MEDIA", default=True)
 
 
 # =========================================================
@@ -307,13 +348,18 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {
         "anon": "120/min",
     },
-    "DEFAULT_RENDERER_CLASSES": [
-        "rest_framework.renderers.JSONRenderer",
-        (
-            "rest_framework.renderers."
-            "BrowsableAPIRenderer"
-        ),
-    ],
+    # Detrás del túnel todos llegan como 127.0.0.1: el límite se cuenta
+    # con la IP real de X-Forwarded-For (un proxy delante de Django)
+    "NUM_PROXIES": 1,
+    # La vista navegable del API solo en desarrollo
+    "DEFAULT_RENDERER_CLASSES": (
+        [
+            "rest_framework.renderers.JSONRenderer",
+            "rest_framework.renderers.BrowsableAPIRenderer",
+        ]
+        if DEBUG
+        else ["rest_framework.renderers.JSONRenderer"]
+    ),
 }
 
 # =========================================================

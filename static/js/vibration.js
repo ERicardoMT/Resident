@@ -79,6 +79,136 @@ var COLORS = {
     }
   }
 
+  // ---- Micrófono (Sección 7.5): solo aporta frecuencia ----
+  // Graba los primeros 5 s con el celular apoyado en el chasis y se envía
+  // en el mismo POST final. Sin permiso de micrófono la medición sigue igual.
+  var ACOUSTIC_DURATION_S = 5;
+  var ACOUSTIC_MIN_S = 2;
+  var acoustic = null;
+  var lastAcousticPayload = null;
+
+  // El AudioContext se crea dentro del clic: iOS lo exige para poder sonar/grabar
+  function createAudioContextInGesture() {
+    var AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (
+      !AudioCtx
+      || !navigator.mediaDevices
+      || typeof navigator.mediaDevices.getUserMedia !== "function"
+    ) {
+      return null;
+    }
+    try {
+      var ctx = new AudioCtx();
+      if (ctx.resume) ctx.resume().catch(function () {});
+      return ctx;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  // Pide el micrófono antes de medir, para que el aviso de permiso
+  // no aparezca a mitad de la medición y mueva el celular.
+  function requestMicrophone(ctx) {
+    if (!ctx) return Promise.resolve(null);
+    return navigator.mediaDevices
+      .getUserMedia({
+        audio: {
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false,
+        },
+        video: false,
+      })
+      .catch(function (error) {
+        console.warn("[SMAV MIC] Sin micrófono:", error);
+        return null;
+      });
+  }
+
+  function startAcousticCapture(ctx, stream) {
+    stopAcousticCapture();
+    acoustic = { ctx: ctx, stream: stream, chunks: [], length: 0, rate: 0 };
+    if (!ctx || !stream) return;
+
+    acoustic.rate = ctx.sampleRate;
+    var target = Math.round(ctx.sampleRate * ACOUSTIC_DURATION_S);
+
+    // ScriptProcessor: funciona en Safari, Chrome y Firefox sin módulos extra
+    var source = ctx.createMediaStreamSource(stream);
+    var processor = ctx.createScriptProcessor(4096, 1, 1);
+    var mute = ctx.createGain();
+    mute.gain.value = 0;
+
+    processor.onaudioprocess = function (event) {
+      if (!acoustic || acoustic.length >= target) return;
+      var data = event.inputBuffer.getChannelData(0);
+      var take = Math.min(data.length, target - acoustic.length);
+      acoustic.chunks.push(new Float32Array(data.subarray(0, take)));
+      acoustic.length += take;
+      if (acoustic.length >= target) stopAcousticCapture();
+    };
+
+    source.connect(processor);
+    processor.connect(mute);
+    mute.connect(ctx.destination);
+
+    acoustic.source = source;
+    acoustic.processor = processor;
+    acoustic.mute = mute;
+  }
+
+  // Apaga el micrófono; conserva lo grabado para el envío
+  function stopAcousticCapture() {
+    if (!acoustic) return;
+    try {
+      if (acoustic.processor) {
+        acoustic.processor.onaudioprocess = null;
+        acoustic.processor.disconnect();
+      }
+      if (acoustic.source) acoustic.source.disconnect();
+      if (acoustic.mute) acoustic.mute.disconnect();
+    } catch (error) {
+      // ya desconectado
+    }
+    if (acoustic.stream) {
+      acoustic.stream.getTracks().forEach(function (track) { track.stop(); });
+      acoustic.stream = null;
+    }
+    if (acoustic.ctx && acoustic.ctx.state !== "closed" && acoustic.ctx.close) {
+      acoustic.ctx.close().catch(function () {});
+    }
+    acoustic.processor = null;
+    acoustic.source = null;
+    acoustic.mute = null;
+  }
+
+  // PCM 16 bits little-endian en base64, como lo espera el servidor
+  function buildAcousticPayload() {
+    if (!acoustic || !acoustic.rate || acoustic.length < acoustic.rate * ACOUSTIC_MIN_S) {
+      return null;
+    }
+
+    var pcm = new Int16Array(acoustic.length);
+    var offset = 0;
+    acoustic.chunks.forEach(function (chunk) {
+      for (var i = 0; i < chunk.length; i++) {
+        var s = Math.max(-1, Math.min(1, chunk[i]));
+        pcm[offset++] = s < 0 ? s * 32768 : s * 32767;
+      }
+    });
+
+    var bytes = new Uint8Array(pcm.buffer);
+    var binary = "";
+    for (var j = 0; j < bytes.length; j += 0x8000) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(j, j + 0x8000));
+    }
+
+    return {
+      audio_pcm16: btoa(binary),
+      audio_sample_rate: Math.round(acoustic.rate),
+    };
+  }
+
   // Frecuencia en vivo calculada en el celular con los últimos 3 s.
   // Solo anima el contador; el resultado final lo calcula el servidor
   // con las muestras completas (sin POSTs durante la captura, decisión 11).
@@ -887,6 +1017,259 @@ function updateMeasurementFolioDisplay() {
 
 }
 
+// =====================================================
+// CONTENIDO DE LAS TARJETAS DE RESULTADO
+// =====================================================
+
+var RESULT_LEVELS = {
+  low: { label: "BAJA", word: "baja", cls: "is-low" },
+  medium: { label: "MEDIA", word: "media", cls: "is-medium" },
+  high: { label: "ALTA", word: "alta", cls: "is-high" },
+};
+
+
+// Miles con coma: 2502 -> "2,502"
+function formatThousands(value) {
+
+  return String(
+    Math.round(value)
+  ).replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    ","
+  );
+}
+
+
+function setResultText(id, text) {
+
+  var element =
+    document.getElementById(id);
+
+  if (!element) {
+    return null;
+  }
+
+  element.textContent =
+    text || "";
+
+  element.hidden =
+    !text;
+
+  return element;
+}
+
+
+function fillResultCards(data) {
+
+  var vibration =
+    document.getElementById(
+      "measurement-result-vibration"
+    );
+
+  // Sin datos (la medición falló): solo el aviso de la tarjeta 1
+  if (!data) {
+
+    if (vibration) {
+      vibration.hidden = true;
+    }
+
+    setResultText(
+      "measurement-result-title-1",
+      "No se obtuvo una lectura clara."
+    );
+
+    setResultText(
+      "measurement-result-text-1",
+      "Intenta de nuevo apoyando mejor el teléfono. "
+      + "Si sigue igual, continúa con la selección de tu "
+      + "soporte con el peso de tu máquina o equipo."
+    );
+
+    return;
+  }
+
+
+  // ---- Vibración medida (todas las tarjetas) ----
+  var level =
+    RESULT_LEVELS[data.level]
+    || RESULT_LEVELS.low;
+
+  var levelChip =
+    document.getElementById(
+      "measurement-result-level"
+    );
+
+  if (levelChip) {
+
+    levelChip.textContent =
+      "VIBRACIÓN " + level.label;
+
+    levelChip.className =
+      "measurement-result-level " + level.cls;
+  }
+
+  setResultText(
+    "measurement-result-rms",
+    data.rms_ms2.toFixed(2) + " m/s²"
+  );
+
+  setResultText(
+    "measurement-result-peak",
+    data.peak_ms2.toFixed(2) + " m/s²"
+  );
+
+  setResultText(
+    "measurement-result-impacts",
+    data.impacts
+      ? (
+        "El pico es "
+        + Math.round(data.crest)
+        + " veces el RMS: hubo golpes o se movió el teléfono. "
+        + "Repite la medición para confirmar."
+      )
+      : ""
+  );
+
+  if (vibration) {
+    vibration.hidden = false;
+  }
+
+
+  // ---- Frecuencia ----
+  var hasHz =
+    typeof data.dominant_hz === "number";
+
+  var frequencyText =
+    hasHz
+      ? (
+        data.dominant_hz.toFixed(1)
+        + " Hz · "
+        + formatThousands(data.dominant_rpm)
+        + " rpm"
+      )
+      : "";
+
+  ["2", "3", "4"].forEach(function (n) {
+    setResultText(
+      "measurement-result-frequency-" + n,
+      frequencyText
+    );
+  });
+
+  var limitHz =
+    Math.floor(data.f_max_hz || 0);
+
+
+  // Tarjeta 1: no hubo frecuencia clara, pero la vibración sí se midió
+  setResultText(
+    "measurement-result-title-1",
+    data.frequency_status === "not_found"
+      ? "No se detectó la frecuencia de placa."
+      : "No se detectó una frecuencia clara."
+  );
+
+  setResultText(
+    "measurement-result-text-1",
+    "La vibración sí se midió (arriba). Este teléfono solo "
+    + "detecta frecuencias hasta "
+    + limitHz
+    + " Hz ("
+    + formatThousands(limitHz * 60)
+    + " rpm). Repite apoyando mejor el teléfono o continúa "
+    + "la selección con el peso de tu máquina."
+  );
+
+
+  // Tarjeta 2: cerca del límite del teléfono
+  setResultText(
+    "measurement-result-text-2",
+    "Este teléfono detecta hasta "
+    + limitHz
+    + " Hz. Tómala con reserva y, si puedes, repite la medición."
+  );
+
+
+  // Tarjetas 3 y 4: el sello depende de si hubo golpes
+  ["3", "4"].forEach(function (n) {
+
+    var quality =
+      document.getElementById(
+        "measurement-result-quality-" + n
+      );
+
+    if (!quality) {
+      return;
+    }
+
+    quality.textContent =
+      data.impacts
+        ? "⚠ Hubo golpes durante la medición"
+        : (
+          n === "4"
+            ? "✓ Frecuencia confirmada"
+            : "✓ Señal estable y clara"
+        );
+
+    quality.classList.toggle(
+      "is-warning",
+      !!data.impacts
+    );
+  });
+
+
+  // Tarjeta 3: aviso de posible reflejo cerca del límite
+  var reflectionNote = "";
+
+  if (
+    hasHz
+    && data.frequency_status === "clear"
+    && data.dominant_hz > 0.3 * data.sample_rate_hz
+  ) {
+    reflectionNote =
+      "Podría ser un reflejo de "
+      + Math.abs(data.dominant_hz - data.sample_rate_hz).toFixed(1)
+      + " Hz por el límite del teléfono.";
+  }
+
+  setResultText(
+    "measurement-result-note-3",
+    reflectionNote
+  );
+
+  // Aviso de frecuencia baja solo cuando aplica
+  var lowFrequency =
+    document.getElementById(
+      "measurement-result-low-frequency"
+    );
+
+  if (lowFrequency) {
+    lowFrequency.hidden =
+      !(hasHz && data.dominant_hz < 25);
+  }
+
+
+  // Tarjeta 4: por qué está confirmada (sonido o placa)
+  var confirmation =
+    data.frequency_message || "";
+
+  var cut =
+    confirmation.indexOf(". ");
+
+  // El mensaje del alias empieza repitiendo "X Hz ≈ Y rpm."
+  if (
+    data.frequency_status === "aliased_confirmed"
+    && cut >= 0
+  ) {
+    confirmation =
+      confirmation.slice(cut + 2);
+  }
+
+  setResultText(
+    "measurement-result-note-4",
+    confirmation
+  );
+}
+
 function showMeasurementResult(
   stateNumber,
   data
@@ -909,48 +1292,52 @@ function showMeasurementResult(
 
 updateMeasurementFolioDisplay();
 
-  /*
-   * Frecuencia para
-   * resultados 3 y 4.
-   */
-  if (
+  fillResultCards(
     data
-    &&
-    typeof data.dominant_hz
-      === "number"
-  ) {
-
-    var frequencyText =
-      data.dominant_hz.toFixed(1)
-      + " Hz";
+  );
 
 
-    var frequency3 =
-      document.getElementById(
-        "measurement-result-frequency-3"
-      );
+  // Sección 7.5: lo que dijo el micrófono
+  var acousticLine =
+    document.getElementById(
+      "measurement-result-acoustic"
+    );
 
+  if (acousticLine) {
 
-    var frequency4 =
-      document.getElementById(
-        "measurement-result-frequency-4"
-      );
+    var acousticText = "";
 
+    if (data && data.acoustic_used) {
 
-    if (frequency3) {
+      if (typeof data.acoustic_hz !== "number") {
 
-      frequency3.textContent =
-        frequencyText;
+        acousticText =
+          "Micrófono: no se identificó la frecuencia por sonido.";
+
+      } else if (data.acoustic_confidence === "high") {
+
+        // La tarjeta 4 ya explica que el sonido lo confirma
+        acousticText = "";
+
+      } else {
+
+        acousticText =
+          data.frequency_note
+          || (
+            "El sonido marca "
+            + data.acoustic_hz.toFixed(1)
+            + " Hz, pero el movimiento no lo confirma."
+          );
+
+      }
 
     }
 
+    acousticLine.textContent =
+      acousticText;
 
-    if (frequency4) {
-
-      frequency4.textContent =
-        frequencyText;
-
-    }
+    acousticLine.hidden =
+      !acousticText;
 
   }
 
@@ -1001,6 +1388,23 @@ function finalizeFullMeasurement() {
    */
   var finalSamples =
     stopFullMeasurementCapture();
+
+  // Audio de los primeros 5 s (null si no hubo micrófono).
+  // Un fallo del micrófono nunca bloquea la medición.
+  try {
+
+    stopAcousticCapture();
+
+    lastAcousticPayload =
+      buildAcousticPayload();
+
+  } catch (error) {
+
+    console.warn("[SMAV MIC]", error);
+
+    lastAcousticPayload = null;
+
+  }
 
 
   /*
@@ -1206,6 +1610,12 @@ function analyzeSampleSet(
   payload.gravity_included = gravityIncluded;
   payload.user_agent = navigator.userAgent || "";
 
+  // Sección 7.5: el audio va en el mismo POST (sin envíos intermedios)
+  if (lastAcousticPayload) {
+    payload.audio_pcm16 = lastAcousticPayload.audio_pcm16;
+    payload.audio_sample_rate = lastAcousticPayload.audio_sample_rate;
+  }
+
   return fetch(
     ANALYZE_URL,
     {
@@ -1355,6 +1765,8 @@ hideMeasurementResult();
   // Sección 7.1: sin POSTs durante la captura; pantalla encendida
   // y frecuencia local cada 500 ms en el contador.
   gravityIncluded = false;
+
+  lastAcousticPayload = null;
 
   acquireWakeLock();
 
@@ -1563,6 +1975,17 @@ function requestMeasurementPdfFile() {
 
   user_agent:
     navigator.userAgent || "",
+
+  // Mismo audio que en pantalla para que el PDF dé el mismo número
+  audio_pcm16:
+    lastAcousticPayload
+      ? lastAcousticPayload.audio_pcm16
+      : null,
+
+  audio_sample_rate:
+    lastAcousticPayload
+      ? lastAcousticPayload.audio_sample_rate
+      : null,
 
   };
 
@@ -1845,6 +2268,8 @@ function stop() {
 
   stopLiveReadout();
 
+  stopAcousticCapture();
+
   releaseWakeLock();
 
 
@@ -1900,16 +2325,34 @@ function stop() {
   }
 );
 
+// Evita dos arranques si tocan el botón dos veces mientras se
+// piden los permisos (cada muestra se guardaría doble)
+var isStartingMeasurement = false;
+
 function handleStartMeasurement() {
 
-  if (running) {
+  if (running || isStartingMeasurement) {
     return;
   }
+
+  isStartingMeasurement = true;
+
+  if (els.start) {
+    els.start.disabled = true;
+  }
+
+  // Dentro del clic: iOS solo deja grabar audio si se crea aquí
+  var audioCtx =
+    createAudioContextInGesture();
 
   requestMotionPermission()
     .then(function (granted) {
 
       if (!granted) {
+
+        if (audioCtx && audioCtx.close) {
+          audioCtx.close().catch(function () {});
+        }
 
         setStatus(
           "Permiso de movimiento denegado.",
@@ -1924,9 +2367,37 @@ function handleStartMeasurement() {
         return;
       }
 
-      startReal();
+      // Micrófono opcional (Sección 7.5): si no hay permiso, se mide igual
+      return requestMicrophone(audioCtx)
+        .then(function (stream) {
+
+          if (!stream && audioCtx && audioCtx.close) {
+            audioCtx.close().catch(function () {});
+          }
+
+          startReal();
+
+          startAcousticCapture(
+            stream ? audioCtx : null,
+            stream
+          );
+
+        });
 
     })
+
+  .then(
+    function () {
+
+      isStartingMeasurement = false;
+
+      // Si no arrancó (permiso negado), el botón vuelve a quedar activo
+      if (!running && els.start) {
+        els.start.disabled = false;
+      }
+
+    }
+  )
     
   .catch(
     function (error) {
@@ -1935,6 +2406,12 @@ function handleStartMeasurement() {
         "[SMAV SENSOR]",
         error
       );
+
+      isStartingMeasurement = false;
+
+      if (!running && els.start) {
+        els.start.disabled = false;
+      }
 
 
       setStatus(

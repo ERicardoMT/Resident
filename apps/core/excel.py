@@ -275,7 +275,8 @@ def _write_measurements(sheet) -> None:
 
     sheet.append([header for header, _ in MEASUREMENT_COLUMNS])
 
-    for measurement in VibrationMeasurement.objects.order_by("-created_at"):
+    # Sin el PDF ni el análisis completo: no van en el Excel
+    for measurement in VibrationMeasurement.objects.defer("pdf_data", "analysis_data").order_by("-created_at"):
         row = []
         for _, field_name in MEASUREMENT_COLUMNS:
             value = getattr(measurement, field_name)

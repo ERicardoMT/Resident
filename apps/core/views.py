@@ -1,11 +1,12 @@
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlparse
+from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
 from django.apps import apps
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import Http404, HttpResponse, StreamingHttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -31,6 +32,10 @@ from .models import (
     CatalogSubcategory,
     CustomCatalogCategory,
 )
+
+
+# Renglones por página en los paneles de administración
+PAGE_SIZE = 25
 
 
 def home(request):
@@ -638,11 +643,34 @@ def productos_dashboard_view(request):
     )
 
 
+    # 25 productos por página; los filtros se conservan al cambiar de página
+    page_obj = Paginator(
+        productos,
+        PAGE_SIZE,
+    ).get_page(
+        request.GET.get("page")
+    )
+
+    extra_query = urlencode(
+        {
+            key: value
+            for key, value in (
+                ("q", search_query),
+                ("category", selected_category),
+                ("status", selected_status),
+            )
+            if value
+        }
+    )
+
+
     return render(
         request,
         "core/manage_products.html",
         {
-            "productos": productos,
+            "productos": page_obj,
+            "page_obj": page_obj,
+            "extra_query": extra_query,
 
             "search_query":
                 search_query,
@@ -1495,49 +1523,21 @@ def catalog_model_3d_proxy(
 
 
 def producto_detalle_view(request, nombre_producto):
+    # Un producto que no existe o está dado de baja responde 404
     producto_encontrado = CatalogItem.objects.filter(
         name=nombre_producto,
         is_active=True,
     ).first()
 
-    # Respaldo temporal para productos estáticos antiguos.
-    if not producto_encontrado:
-        productos_estaticos = [
-            {
-                "nombre": (
-                    "COLGANTE ANTIVIBRACIÓN DE CAUCHO "
-                    "LÍNEA CDC-2 PARA 100 kg"
-                ),
-                "precio": "Cotizar",
-                "categoria": "colgantes",
-                "badge": None,
-                "descripcion": "Descripción genérica...",
-            },
-        ]
+    if producto_encontrado is None:
+        raise Http404(
+            "El producto no existe."
+        )
 
-        for producto in productos_estaticos:
-            if producto["nombre"] == nombre_producto:
-                class ProductoFalso:
-                    pass
-
-                producto_encontrado = ProductoFalso()
-                producto_encontrado.name = producto["nombre"]
-                producto_encontrado.price_label = producto["precio"]
-                producto_encontrado.category = producto["categoria"]
-                producto_encontrado.badge = producto["badge"]
-                producto_encontrado.description = producto["descripcion"]
-                producto_encontrado.image = None
-                producto_encontrado.model_3d = None
-                producto_encontrado.ar_model = None
-                producto_encontrado.model_url = ""
-                break
-
-    if producto_encontrado:
-
-        producto_encontrado.description = (
-            normalize_kg_text(
-                sanitize_catalog_html(
-                    producto_encontrado.description
+    producto_encontrado.description = (
+        normalize_kg_text(
+            sanitize_catalog_html(
+                producto_encontrado.description
             )
         )
     )
