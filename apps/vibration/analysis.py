@@ -22,8 +22,8 @@ def analyze_samples(
     """
     Procesa muestras de acelerómetro ({t, x, y, z}) mediante remuestreo uniforme,
     filtrado Butterworth 2 Hz - 0.45*fs, espectro Welch, factor de cresta,
-    resolución de alias con RPM de placa y, si llega audio, cruce con la
-    frecuencia por micrófono (Sección 7.5).
+    resolución de alias con RPM de placa y, si llega audio, la frecuencia
+    por micrófono como resultado aparte (Sección 7.5).
     """
     return process_vibration_samples(
         samples=samples,

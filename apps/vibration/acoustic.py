@@ -34,12 +34,9 @@ PEAK_MIN_REL_MAGNITUDE = 0.01
 
 # Límites del audio recibido
 MIN_AUDIO_S = 2.0
-MAX_AUDIO_S = 6.0
+MAX_AUDIO_S = 11.0
 MIN_AUDIO_RATE = 8000
 MAX_AUDIO_RATE = 96000
-
-# Cruce con el acelerómetro: ±5 % (deslizamiento de motores, sección 7.3)
-CROSS_TOLERANCE = 0.05
 
 
 def decode_pcm16(audio_b64: str, sample_rate: int) -> np.ndarray:
@@ -143,11 +140,6 @@ def find_fundamental(peaks_hz: list[float]) -> tuple[float | None, int]:
     return best_f0, best_count
 
 
-def fold_frequency(freq_hz: float, fs: float) -> float:
-    """Dónde aparece freq_hz muestreada a fs (alias, sección 4)."""
-    return abs(freq_hz - round(freq_hz / fs) * fs)
-
-
 def analyze_audio(audio_b64: str, sample_rate: int) -> dict:
     """Frecuencia de giro por sonido. acoustic_hz es None si no se identificó."""
     signal = decode_pcm16(audio_b64, sample_rate)
@@ -158,14 +150,3 @@ def analyze_audio(audio_b64: str, sample_rate: int) -> dict:
         "acoustic_harmonics": count if f0 is not None else 0,
         "acoustic_peaks_hz": [round(p, 2) for p in peaks],
     }
-
-
-def match_accelerometer(f0: float, accel_peaks_hz: list[float], fs: float) -> float | None:
-    """Pico del acelerómetro donde debería verse f0 (directo o reflejado), ±5 %."""
-    expected = fold_frequency(f0, fs) if f0 > 0.45 * fs else f0
-    if expected < 2.0:
-        return None
-    for peak in accel_peaks_hz:
-        if abs(peak - expected) <= CROSS_TOLERANCE * expected:
-            return peak
-    return None

@@ -295,6 +295,10 @@
     hidden
   >
 
+    <span class="measurement-result-source">
+      Acelerómetro
+    </span>
+
     <span
       class="measurement-result-level"
       id="measurement-result-level"
@@ -441,9 +445,8 @@
     >
 
       Tu equipo vibra en frecuencia baja.
-      En ese rango el soporte adecuado suele ser de resorte,
-      y ese se dimensiona para que quede bien a la primera.
-      Guarda tu folio y escríbenos.
+      Guarda tu folio y escríbenos: con este dato
+      nuestro equipo revisa tu caso contigo.
 
     </p>
 
@@ -494,12 +497,31 @@
   </div>
 
 
-  <!-- Frecuencia por micrófono (Sección 7.5) -->
-  <p
-    class="measurement-result-acoustic"
-    id="measurement-result-acoustic"
+  <!-- ======================================================
+       MICRÓFONO (resultado aparte; no cambia el del acelerómetro)
+       ====================================================== -->
+
+  <div
+    class="measurement-result-mic"
+    id="measurement-result-mic"
     hidden
-  ></p>
+  >
+
+    <span class="measurement-result-source">
+      Micrófono
+    </span>
+
+    <div
+      class="measurement-result-frequency"
+      id="measurement-result-mic-frequency"
+    ></div>
+
+    <p
+      class="measurement-result-note"
+      id="measurement-result-mic-note"
+    ></p>
+
+  </div>
 
 
   <!-- ======================================================
@@ -1400,17 +1422,35 @@
   text-align: center;
 }
 
-.measurement-result-acoustic {
-  margin: 12px auto 0;
-  max-width: 650px;
-  color: #17457d;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.5;
+/* Bloques por sensor: Acelerómetro y Micrófono */
+.measurement-result-source {
+  display: block;
+  margin-bottom: 10px;
+  color: #4ab8f1;
+  font-size: 13.5px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.measurement-result-mic {
+  margin: 16px 0 0;
+  padding: 16px 17px;
+  border: 1px solid #d9e5ee;
+  border-radius: 15px;
+  background: #f7fafc;
   text-align: center;
 }
 
-.measurement-result-acoustic[hidden] {
+.measurement-result-mic[hidden] {
+  display: none !important;
+}
+
+.measurement-result-mic .measurement-result-frequency {
+  margin-top: 4px;
+}
+
+.measurement-result-mic .measurement-result-frequency:empty {
   display: none;
 }
 

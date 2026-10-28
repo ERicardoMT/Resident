@@ -79,10 +79,10 @@ var COLORS = {
     }
   }
 
-  // ---- Micrófono (Sección 7.5): solo aporta frecuencia ----
-  // Graba los primeros 5 s con el celular apoyado en el chasis y se envía
+  // ---- Micrófono : solo aporta frecuencia ----
+  // Graba los 10 s de la medición con el celular apoyado en el chasis y se envía
   // en el mismo POST final. Sin permiso de micrófono la medición sigue igual.
-  var ACOUSTIC_DURATION_S = 5;
+  var ACOUSTIC_DURATION_S = 10;
   var ACOUSTIC_MIN_S = 2;
   var acoustic = null;
   var lastAcousticPayload = null;
@@ -1297,47 +1297,56 @@ updateMeasurementFolioDisplay();
   );
 
 
-  // Sección 7.5: lo que dijo el micrófono
-  var acousticLine =
+  // Sección 7.5: resultado del micrófono, aparte del acelerómetro
+  var micBlock =
     document.getElementById(
-      "measurement-result-acoustic"
+      "measurement-result-mic"
     );
 
-  if (acousticLine) {
+  if (micBlock) {
 
-    var acousticText = "";
+    var micFrequency = "";
+    var micNote = "";
 
-    if (data && data.acoustic_used) {
+    if (data && !data.acoustic_used) {
 
-      if (typeof data.acoustic_hz !== "number") {
+      micNote =
+        "No se grabó sonido: el navegador no dio permiso "
+        + "de micrófono.";
 
-        acousticText =
-          "Micrófono: no se identificó la frecuencia por sonido.";
+    } else if (data && typeof data.acoustic_hz !== "number") {
 
-      } else if (data.acoustic_confidence === "high") {
+      micNote =
+        "No se identificó una frecuencia por sonido.";
 
-        // La tarjeta 4 ya explica que el sonido lo confirma
-        acousticText = "";
+    } else if (data) {
 
-      } else {
+      micFrequency =
+        data.acoustic_hz.toFixed(1)
+        + " Hz · "
+        + formatThousands(data.acoustic_rpm)
+        + " rpm";
 
-        acousticText =
-          data.frequency_note
-          || (
-            "El sonido marca "
-            + data.acoustic_hz.toFixed(1)
-            + " Hz, pero el movimiento no lo confirma."
-          );
-
-      }
+      micNote =
+        "Identificada por "
+        + data.acoustic_harmonics
+        + " armónicos del sonido de la máquina.";
 
     }
 
-    acousticLine.textContent =
-      acousticText;
+    setResultText(
+      "measurement-result-mic-frequency",
+      micFrequency
+    );
 
-    acousticLine.hidden =
-      !acousticText;
+    setResultText(
+      "measurement-result-mic-note",
+      micNote
+    );
+
+    // Sin datos (la medición falló) no se muestra el bloque
+    micBlock.hidden =
+      !data;
 
   }
 
@@ -1389,7 +1398,7 @@ function finalizeFullMeasurement() {
   var finalSamples =
     stopFullMeasurementCapture();
 
-  // Audio de los primeros 5 s (null si no hubo micrófono).
+  // Audio de los 10 s de la medición (null si no hubo micrófono).
   // Un fallo del micrófono nunca bloquea la medición.
   try {
 

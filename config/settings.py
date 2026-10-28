@@ -280,6 +280,10 @@ USE_TZ = True
 # Archivos estáticos y archivos subidos
 # =========================================================
 
+# Una medición con 10 s de audio pesa ~1.3 MB (hasta ~2.6 MB si el
+# celular graba a 96 kHz); el límite por defecto de Django es 2.5 MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
+
 STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [

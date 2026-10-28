@@ -11,7 +11,7 @@ Valida:
 8. Placa que no coincide con el espectro -> 'not_found', dominant None.
 9. Seno 28.7 Hz (arriba de 0.45*fs) -> la amplitud sí se mide.
 10-14. Micrófono (7.5): audio con armónicos 83.4/125.1/166.8 + red 60/120 -> 41.7 Hz;
-       solo red o ruido -> nada; cruce con el acelerómetro (alias confirmado o lecturas distintas).
+       solo red o ruido -> nada; el micrófono da su propio resultado y no cambia el del acelerómetro.
 """
 
 import base64
@@ -25,7 +25,7 @@ from apps.vibration.dsp import process_vibration_samples
 AUDIO_RATE = 48000
 
 
-def synthetic_audio(tones, mains=(), noise=0.02, seconds=5.0, seed=0):
+def synthetic_audio(tones, mains=(), noise=0.02, seconds=10.0, seed=0):
     """Audio PCM 16 bits en base64: tonos [(Hz, amplitud)], red eléctrica y ruido."""
     rng = np.random.default_rng(seed)
     t = np.arange(int(seconds * AUDIO_RATE)) / AUDIO_RATE
@@ -206,25 +206,30 @@ class DspMinimumAutomatedTests(unittest.TestCase):
         self.assertIsNone(analyze_audio(synthetic_audio([], mains), AUDIO_RATE)["acoustic_hz"])
         self.assertIsNone(analyze_audio(synthetic_audio([], noise=0.1), AUDIO_RATE)["acoustic_hz"])
 
-    def test_12_acoustic_confirms_alias_without_placa(self):
-        """Torno: acelerómetro ve 18.3 Hz (alias de 41.7) y el sonido marca 41.7 -> aliased_confirmed sin placa."""
+    def test_12_acoustic_does_not_change_accelerometer(self):
+        """Torno: el acelerómetro ve 18.3 Hz (alias de 41.7) y el sonido 41.7 -> cada uno da lo suyo, sin mezclarse."""
         z = 1.0 * np.sin(2.0 * np.pi * 41.7 * self.times)
         samples = generate_samples(self.times, z=z, x=np.zeros_like(z))
 
-        res = process_vibration_samples(
+        with_audio = process_vibration_samples(
             samples,
             audio_pcm16=synthetic_audio(LATHE_TONES, MAINS_HUM),
             audio_sample_rate=AUDIO_RATE,
         )
+        without_audio = process_vibration_samples(samples)
 
-        self.assertEqual(res["frequency_status"], "aliased_confirmed")
-        self.assertAlmostEqual(res["dominant_hz"], 41.7, delta=0.3)
-        self.assertEqual(res["acoustic_confidence"], "high")
-        # El micrófono no cambia la amplitud
-        self.assertAlmostEqual(res["rms_ms2"], 1.0 / np.sqrt(2.0), delta=0.02)
+        # Acelerómetro: idéntico con o sin micrófono
+        for key in ("frequency_status", "dominant_hz", "dominant_rpm", "rms_ms2", "peak_ms2", "level", "frequency_note"):
+            self.assertEqual(with_audio[key], without_audio[key], key)
+        self.assertAlmostEqual(with_audio["dominant_hz"], 18.3, delta=0.3)
 
-    def test_13_acoustic_and_accelerometer_disagree(self):
-        """Acelerómetro 14.4 Hz y sonido 41.7 Hz -> confianza baja, se queda la lectura del movimiento."""
+        # Micrófono: su propio resultado
+        self.assertAlmostEqual(with_audio["acoustic_hz"], 41.7, delta=0.3)
+        self.assertEqual(with_audio["acoustic_rpm"], int(round(with_audio["acoustic_hz"] * 60)))
+        self.assertGreaterEqual(with_audio["acoustic_harmonics"], 3)
+
+    def test_13_different_readings_are_both_reported(self):
+        """Acelerómetro 14.4 Hz y sonido 41.7 Hz -> cada uno reporta el suyo, sin nota de cruce."""
         z = 1.0 * np.sin(2.0 * np.pi * 14.4 * self.times)
         samples = generate_samples(self.times, z=z, x=np.zeros_like(z))
 
@@ -236,11 +241,11 @@ class DspMinimumAutomatedTests(unittest.TestCase):
 
         self.assertEqual(res["frequency_status"], "clear")
         self.assertAlmostEqual(res["dominant_hz"], 14.4, delta=0.1)
-        self.assertEqual(res["acoustic_confidence"], "low")
-        self.assertIn("Dos lecturas distintas", res["frequency_note"])
+        self.assertAlmostEqual(res["acoustic_hz"], 41.7, delta=0.3)
+        self.assertIsNone(res["frequency_note"])
 
-    def test_14_acoustic_confirms_in_range(self):
-        """Compresor 14.4 Hz: el sonido con armónicos de 14.4 lo confirma -> confirmed."""
+    def test_14_same_frequency_does_not_confirm(self):
+        """Compresor 14.4 Hz en los dos: el estado sigue siendo del acelerómetro ('clear', no 'confirmed')."""
         tones = [(14.4 * k, 0.1 / k) for k in (2, 3, 4, 5)]
         z = 1.0 * np.sin(2.0 * np.pi * 14.4 * self.times)
         samples = generate_samples(self.times, z=z, x=np.zeros_like(z))
@@ -251,9 +256,9 @@ class DspMinimumAutomatedTests(unittest.TestCase):
             audio_sample_rate=AUDIO_RATE,
         )
 
-        self.assertEqual(res["frequency_status"], "confirmed")
+        self.assertEqual(res["frequency_status"], "clear")
         self.assertAlmostEqual(res["dominant_hz"], 14.4, delta=0.1)
-        self.assertEqual(res["acoustic_confidence"], "high")
+        self.assertAlmostEqual(res["acoustic_hz"], 14.4, delta=0.1)
 
 
 if __name__ == "__main__":

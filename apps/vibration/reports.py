@@ -747,27 +747,24 @@ def build_measurement_pdf(
         ),
     )
 
-    # Sección 7.5: frecuencia por micrófono (solo si se grabó audio)
+    # Sección 7.5: resultado del micrófono, aparte del acelerómetro
+    # (solo si se grabó audio)
     if analysis.get("acoustic_used"):
         acoustic_hz = analysis.get("acoustic_hz")
 
         if acoustic_hz is None:
-            acoustic_text = "no se identificó"
+            acoustic_text = "no se identificó una frecuencia por sonido"
         else:
             acoustic_text = (
                 f"{float(acoustic_hz):.1f} Hz "
                 f"({int(analysis.get('acoustic_rpm') or 0):,} rpm) · "
-                + (
-                    "coincide con el movimiento"
-                    if analysis.get("acoustic_confidence") == "high"
-                    else "no coincide con el movimiento"
-                )
+                f"{int(analysis.get('acoustic_harmonics') or 0)} armónicos"
             )
 
         pdf.drawString(
             margin,
             current_y - 23,
-            "Frecuencia por sonido: " + acoustic_text,
+            "Micrófono: " + acoustic_text,
         )
 
     # =====================================================
