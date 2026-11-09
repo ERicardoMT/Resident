@@ -4,14 +4,17 @@ import re
 import unicodedata
 from decimal import Decimal, InvalidOperation
 from typing import Any
-from apps.core.utils import normalize_kg_text
+from apps.core.utils import (
+    normalize_kg_text,
+    select_close_capacity_products,
+)
 
 from apps.core.models import (
     CatalogCategory,
     LevelerTechnicalData,
 )
 
-MAX_RECOMMENDATIONS = 20
+MAX_RECOMMENDATIONS = 30
 
 def normalize_text(
     value: Any,
@@ -1036,73 +1039,14 @@ def recommend_levelers_v2(
 
 
     # =====================================================
-    # RECOMENDACIONES VARIADAS POR CAPACIDAD
+    # RECOMENDACIONES CON CAPACIDAD CERCANA A LA CARGA
     # =====================================================
 
-    selected_products = []
-
-    seen_capacities = set()
-
-
-    # Primero tomamos un modelo
-    # de cada capacidad disponible.
-    for product in candidates:
-
-        capacity = (
-            product.capacity_kg
-        )
-
-        if (
-            capacity
-            in seen_capacities
-        ):
-            continue
-
-        seen_capacities.add(
-            capacity
-        )
-
-        selected_products.append(
-            product
-        )
-
-        if (
-            len(selected_products)
-            >= MAX_RECOMMENDATIONS
-        ):
-            break
-
-
-    # Si faltan lugares, completamos
-    # con otros modelos compatibles.
-    if (
-        len(selected_products)
-        < MAX_RECOMMENDATIONS
-    ):
-
-        selected_ids = {
-            product.pk
-            for product
-            in selected_products
-        }
-
-        for product in candidates:
-
-            if (
-                product.pk
-                in selected_ids
-            ):
-                continue
-
-            selected_products.append(
-                product
-            )
-
-            if (
-                len(selected_products)
-                >= MAX_RECOMMENDATIONS
-            ):
-                break
+    selected_products = select_close_capacity_products(
+        candidates,
+        load_per_point,
+        MAX_RECOMMENDATIONS,
+    )
 
 
     recommended = (

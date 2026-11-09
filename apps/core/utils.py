@@ -89,3 +89,41 @@ def normalize_kg_text(value):
         r"\1 kg",
         str(value),
     )
+
+# Las recomendaciones solo muestran modelos cuya capacidad
+# no exceda demasiado la carga requerida por apoyo.
+RECOMMENDATION_CAPACITY_RATIO = 3.0
+RECOMMENDATION_MIN_RESULTS = 10
+
+
+def select_close_capacity_products(
+    products,
+    required_load,
+    limit,
+    capacity_ratio=RECOMMENDATION_CAPACITY_RATIO,
+    min_results=RECOMMENDATION_MIN_RESULTS,
+):
+    """
+    Recibe productos ya ordenados por capacidad ascendente
+    (todos con capacidad suficiente) y devuelve los que están
+    cerca de la carga requerida.
+
+    - Incluye todos los modelos con capacidad
+      <= carga requerida * capacity_ratio.
+    - Si quedan menos de min_results, completa con los
+      siguientes modelos de menor capacidad disponibles.
+    """
+
+    products = list(products)
+    max_capacity = float(required_load) * capacity_ratio
+
+    close = [
+        product
+        for product in products
+        if float(product.capacity_kg) <= max_capacity
+    ]
+
+    if len(close) < min_results:
+        close = products[:max(min_results, len(close))]
+
+    return close[:limit]

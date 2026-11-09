@@ -36,11 +36,6 @@
     ),
     direction: document.getElementById("level-direction"),
 
-    tolerance: document.getElementById("level-tolerance"),
-    toleranceValue: document.getElementById(
-      "level-tolerance-value"
-    ),
-
     start: document.getElementById("btn-level-start"),
     stop: document.getElementById("btn-level-stop"),
     zero: document.getElementById("btn-level-zero"),
@@ -154,10 +149,6 @@
       }
 
       var parsed = JSON.parse(stored);
-
-      if (finiteNumber(parsed.tolerance)) {
-        state.tolerance = clamp(parsed.tolerance, 0.2, 2);
-      }
 
       if (!parsed.offsets) {
         return;
@@ -1033,25 +1024,6 @@
         : "Gravedad absoluta";
   }
 
-  function updateTolerance() {
-    var tolerance = Number(elements.tolerance.value);
-
-    if (!finiteNumber(tolerance)) {
-      tolerance = 0.5;
-    }
-
-    state.tolerance = clamp(tolerance, 0.2, 2);
-
-    elements.toleranceValue.textContent =
-      "±" + state.tolerance.toFixed(1) + "°";
-
-    saveSettings();
-
-    if (state.corrected) {
-      renderReading(state.corrected);
-    }
-  }
-
   function resetVisuals() {
     elements.bubble.style.transform =
       "translate(-50%, -50%)";
@@ -1069,12 +1041,6 @@
 
   function initialize() {
     loadSettings();
-
-    elements.tolerance.value =
-      state.tolerance.toFixed(1);
-
-    elements.toleranceValue.textContent =
-      "±" + state.tolerance.toFixed(1) + "°";
 
     elements.start.addEventListener(
       "click",
@@ -1094,11 +1060,6 @@
     elements.reset.addEventListener(
       "click",
       resetRelativeZero
-    );
-
-    elements.tolerance.addEventListener(
-      "input",
-      updateTolerance
     );
 
     window.addEventListener(

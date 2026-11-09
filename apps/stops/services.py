@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from decimal import Decimal, InvalidOperation
 from typing import Any
-from apps.core.utils import normalize_kg_text
+from apps.core.utils import (
+    normalize_kg_text,
+    select_close_capacity_products,
+)
 
 from apps.core.models import (
     AntivibrationTechnicalData,
@@ -10,7 +13,7 @@ from apps.core.models import (
     CatalogSubcategory,
 )
 
-MAX_RECOMMENDATIONS = 20
+MAX_RECOMMENDATIONS = 30
 
 ANTIVIBRATION_SUBCATEGORIES = [
     (
@@ -617,71 +620,13 @@ def recommend_antivibrators(
         candidates.count()
     )
 
-    all_products = list(
-        candidates
+    # Modelos con capacidad cercana a la carga
+    # requerida, sin disparar la capacidad.
+    products = select_close_capacity_products(
+        candidates,
+        required_load,
+        MAX_RECOMMENDATIONS,
     )
-
-    products = []
-
-    seen_capacities = set()
-
-# Primero tomamos un modelo
-# de cada capacidad disponible.
-    for product in all_products:
-
-        capacity = (
-            product.capacity_kg
-        )
-
-        if capacity in seen_capacities:
-            continue
-
-        seen_capacities.add(
-            capacity
-        )
-
-        products.append(
-            product
-        )
-
-        if (
-            len(products)
-            >= MAX_RECOMMENDATIONS
-        ):
-            break
-
-
-# Si todavía faltan espacios,
-# completamos con otros modelos
-# compatibles sin repetir producto.
-    if (
-        len(products)
-        < MAX_RECOMMENDATIONS
-    ):
-
-        selected_ids = {
-            product.pk
-            for product in products
-        }
-
-        for product in all_products:
-
-            if (
-                product.pk
-                in selected_ids
-            ):
-             continue
-
-            products.append(
-                product
-         )
-
-            if (
-                len(products)
-                >= MAX_RECOMMENDATIONS
-            ):
-             break
-
 
     recommended = (
         products[0]
