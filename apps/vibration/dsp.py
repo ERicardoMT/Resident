@@ -310,6 +310,21 @@ def process_vibration_samples(
                 "Revisa que el celular esté bien apoyado."
             )
 
+    # Límite del acelerómetro: llega hasta 0.45*fs (27 Hz = 1,620 rpm a 60 Hz).
+    # Más rápido, la frecuencia aparece reflejada (falsa). Se considera que la
+    # máquina lo rebasa si la frecuencia está cerca del límite, si podría ser
+    # un reflejo (> 0.30*fs) o si hay vibración sin una frecuencia clara.
+    accel_limit_exceeded = bool(
+        frequency_status == "near_limit"
+        or (
+            frequency_status == "clear"
+            and dominant_hz is not None
+            and dominant_hz > 0.30 * fs
+        )
+        or (frequency_status == "unclear" and level != "low")
+    )
+    accel_limit_hz = int(math.floor(f_high))
+
     dominant_rpm = (
         int(round(dominant_hz * 60.0))
         if dominant_hz is not None
@@ -371,6 +386,9 @@ def process_vibration_samples(
         "frequency_note": frequency_note,
         "f_min_hz": round(f_low, 1),
         "f_max_hz": round(f_high, 1),
+        "accel_limit_exceeded": accel_limit_exceeded,
+        "accel_limit_hz": accel_limit_hz,
+        "accel_limit_rpm": accel_limit_hz * 60,
         "rpm_placa": float(rpm_placa) if rpm_placa else None,
         "gravity_included": gravity_included,
         "acoustic_hz": acoustic_hz,

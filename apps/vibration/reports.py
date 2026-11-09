@@ -767,6 +767,21 @@ def build_measurement_pdf(
             "Micrófono: " + acoustic_text,
         )
 
+    # Aviso si la máquina rebasó el límite del acelerómetro
+    if analysis.get("accel_limit_exceeded"):
+        pdf.setFillColor(colors.HexColor("#B3261E"))
+        pdf.drawString(
+            margin,
+            current_y - 35,
+            (
+                "Se sobrepasó el límite del acelerómetro ("
+                f"{int(analysis.get('accel_limit_hz') or 0)} Hz · "
+                f"{int(analysis.get('accel_limit_rpm') or 0):,} rpm): "
+                "su frecuencia puede no ser la real."
+            ),
+        )
+        pdf.setFillColor(MUTED)
+
     # =====================================================
     # Espectro FFT
     # =====================================================

@@ -10,7 +10,7 @@ from apps.core.models import (
     CatalogSubcategory,
 )
 
-MAX_RECOMMENDATIONS = 10
+MAX_RECOMMENDATIONS = 20
 
 ANTIVIBRATION_SUBCATEGORIES = [
     (

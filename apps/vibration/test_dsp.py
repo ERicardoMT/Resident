@@ -12,6 +12,7 @@ Valida:
 9. Seno 28.7 Hz (arriba de 0.45*fs) -> la amplitud sí se mide.
 10-14. Micrófono (7.5): audio con armónicos 83.4/125.1/166.8 + red 60/120 -> 41.7 Hz;
        solo red o ruido -> nada; el micrófono da su propio resultado y no cambia el del acelerómetro.
+15. Límite del acelerómetro: cerca del límite o posible reflejo -> accel_limit_exceeded.
 """
 
 import base64
@@ -260,6 +261,19 @@ class DspMinimumAutomatedTests(unittest.TestCase):
         self.assertAlmostEqual(res["dominant_hz"], 14.4, delta=0.1)
         self.assertAlmostEqual(res["acoustic_hz"], 14.4, delta=0.1)
 
+
+    def test_15_accelerometer_limit_exceeded(self):
+        """Torno a 41.7 Hz (se ve en 18.3) y taladro a 25.5 Hz rebasan el límite; el compresor a 14.4 no."""
+        def check(freq, amp=1.0):
+            z = amp * np.sin(2.0 * np.pi * freq * self.times)
+            return process_vibration_samples(generate_samples(self.times, z=z, x=np.zeros_like(z)))
+
+        self.assertTrue(check(41.7)["accel_limit_exceeded"])
+        self.assertTrue(check(25.5, 0.3)["accel_limit_exceeded"])
+        compressor = check(14.4)
+        self.assertFalse(compressor["accel_limit_exceeded"])
+        self.assertEqual(compressor["accel_limit_hz"], 27)
+        self.assertEqual(compressor["accel_limit_rpm"], 1620)
 
 if __name__ == "__main__":
     unittest.main()

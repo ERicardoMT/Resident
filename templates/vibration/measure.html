@@ -324,6 +324,12 @@
       hidden
     ></p>
 
+    <p
+      class="measurement-result-impacts"
+      id="measurement-result-limit"
+      hidden
+    ></p>
+
   </div>
 
 
@@ -528,6 +534,28 @@
        LEYENDAS DEL PDF
        ====================================================== -->
 
+  <!-- Micrófono a pedido: para máquinas rápidas que no disparan la alerta -->
+  <div
+    class="measurement-result-mic-manual"
+    id="measurement-result-mic-manual"
+    hidden
+  >
+
+    <button
+      type="button"
+      class="btn btn-ghost"
+      id="btn-mic-manual"
+    >
+      Medir RPM con micrófono
+    </button>
+
+    <p>
+      Usar si la máquina gira muy rápido (más de 1,620 rpm).
+    </p>
+
+  </div>
+
+
   <div class="measurement-result-legend">
 
     <p>
@@ -548,6 +576,84 @@
   </div>
 
 </section>
+
+  <!-- ======================================================
+       ALERTAS: SE REBASÓ EL ACELERÓMETRO -> MICRÓFONO
+       ====================================================== -->
+
+  <div
+    class="measurement-mic-modal"
+    id="measurement-mic-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="measurement-limit-title"
+    hidden
+  >
+
+    <div class="measurement-mic-modal-card">
+
+      <div
+        class="measurement-result-alert
+               measurement-result-alert-danger"
+        id="measurement-limit-alert"
+      >
+
+        <div
+          class="measurement-result-alert-title"
+          id="measurement-limit-title"
+        >
+          ⚠ Se sobrepasó el límite del acelerómetro
+        </div>
+
+        <p id="measurement-limit-text">
+          La máquina gira más rápido de lo que el acelerómetro
+          puede medir (27 Hz · 1,620 rpm).
+        </p>
+
+      </div>
+
+
+      <div
+        class="measurement-result-alert
+               measurement-result-alert-warning"
+      >
+
+        <div class="measurement-result-alert-title">
+          Se usará el micrófono del teléfono
+        </div>
+
+        <p>
+          Guarden silencio para una mejor medición. Deja el
+          teléfono apoyado sobre la máquina durante 10 segundos.
+        </p>
+
+      </div>
+
+
+      <div class="measurement-mic-modal-actions">
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="btn-mic-start"
+        >
+          Medir con micrófono · 10 segundos
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-ghost"
+          id="btn-mic-skip"
+        >
+          Ver resultado sin micrófono
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
 
   <details
     class="measurement-advanced"
@@ -1378,6 +1484,69 @@
   font-size: 16px;
   font-weight: 700;
   line-height: 1.45;
+}
+
+.measurement-result-mic-manual {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.measurement-result-mic-manual[hidden] {
+  display: none !important;
+}
+
+.measurement-result-mic-manual .btn {
+  width: 100%;
+  max-width: 420px;
+}
+
+.measurement-result-mic-manual p {
+  margin: 8px auto 0;
+  max-width: 520px;
+  color: #6d7e91;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.measurement-mic-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(3, 28, 51, 0.55);
+}
+
+.measurement-mic-modal[hidden] {
+  display: none !important;
+}
+
+.measurement-mic-modal-card {
+  width: 100%;
+  max-width: 520px;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 18px 40px rgba(7, 44, 84, 0.25);
+}
+
+.measurement-mic-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.measurement-mic-modal-actions .btn {
+  width: 100%;
 }
 
 .measurement-result-alert-warning {

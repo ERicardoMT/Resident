@@ -1130,6 +1130,19 @@ function fillResultCards(data) {
       : ""
   );
 
+  setResultText(
+    "measurement-result-limit",
+    data.accel_limit_exceeded
+      ? (
+        "Se sobrepasó el límite del acelerómetro ("
+        + data.accel_limit_hz
+        + " Hz · "
+        + formatThousands(data.accel_limit_rpm)
+        + " rpm): la frecuencia de abajo puede no ser la real."
+      )
+      : ""
+  );
+
   if (vibration) {
     vibration.hidden = false;
   }
@@ -1308,18 +1321,7 @@ updateMeasurementFolioDisplay();
     var micFrequency = "";
     var micNote = "";
 
-    if (data && !data.acoustic_used) {
-
-      micNote =
-        "No se grabó sonido: el navegador no dio permiso "
-        + "de micrófono.";
-
-    } else if (data && typeof data.acoustic_hz !== "number") {
-
-      micNote =
-        "No se identificó una frecuencia por sonido.";
-
-    } else if (data) {
+    if (micStatus === "used" && data && typeof data.acoustic_hz === "number") {
 
       micFrequency =
         data.acoustic_hz.toFixed(1)
@@ -1331,6 +1333,27 @@ updateMeasurementFolioDisplay();
         "Identificada por "
         + data.acoustic_harmonics
         + " armónicos del sonido de la máquina.";
+
+    } else if (micStatus === "used") {
+
+      micNote =
+        "No se identificó una frecuencia por sonido.";
+
+    } else if (micStatus === "denied") {
+
+      micNote =
+        "No se grabó sonido: el navegador no dio permiso "
+        + "de micrófono.";
+
+    } else if (micStatus === "failed") {
+
+      micNote =
+        "No se pudo medir con el micrófono. Intenta de nuevo.";
+
+    } else if (micStatus === "skipped") {
+
+      micNote =
+        "No se usó el micrófono.";
 
     }
 
@@ -1344,10 +1367,22 @@ updateMeasurementFolioDisplay();
       micNote
     );
 
-    // Sin datos (la medición falló) no se muestra el bloque
+    // Solo aparece si la máquina rebasó el límite del acelerómetro
     micBlock.hidden =
-      !data;
+      !data || micStatus === "not_needed";
 
+  }
+
+  var micManual =
+    document.getElementById(
+      "measurement-result-mic-manual"
+    );
+
+  if (micManual) {
+    micManual.hidden =
+      !data
+      || !pendingAccelData
+      || micStatus === "used";
   }
 
 
@@ -1389,6 +1424,353 @@ updateMeasurementFolioDisplay();
   );
 }
 
+// =====================================================
+// ACELERÓMETRO PRINCIPAL -> MICRÓFONO SI SE REBASA EL LÍMITE
+// =====================================================
+
+// "not_needed" | "skipped" | "denied" | "used" | "failed"
+var micStatus = "not_needed";
+
+// Datos de la etapa del acelerómetro mientras se decide si usar micrófono
+var pendingAccelSamples = null;
+var pendingAccelData = null;
+
+// true cuando el micrófono se pidió con el botón, sin que se rebasara el límite
+var micOfferManual = false;
+var micStatusBeforeManual = "not_needed";
+
+var micPhaseTimer = null;
+var micPhaseStartedAt = 0;
+var isMicPhaseRunning = false;
+
+
+// Elige la tarjeta según el resultado del acelerómetro
+function showAccelerometerResult(data) {
+
+  var status = data.frequency_status;
+
+  if (
+    status === "unclear"
+    || data.dominant_hz === null
+    || data.dominant_hz === undefined
+  ) {
+    // Sin frecuencia clara
+    showMeasurementResult(1, data);
+
+  } else if (status === "near_limit") {
+    // Cerca del límite físico (0.40*fs – 0.45*fs)
+    showMeasurementResult(2, data);
+
+  } else if (
+    status === "aliased_confirmed"
+    || status === "confirmed"
+  ) {
+    // Frecuencia resuelta con RPM de placa
+    showMeasurementResult(4, data);
+
+  } else {
+    // "clear" o cualquier otro: frecuencia confiable
+    showMeasurementResult(3, data);
+  }
+}
+
+
+function setMicModalVisible(visible) {
+
+  var modal =
+    document.getElementById(
+      "measurement-mic-modal"
+    );
+
+  if (modal) {
+    modal.hidden = !visible;
+  }
+}
+
+
+// Alertas: se rebasó el límite y se usará el micrófono
+function offerMicrophoneMeasurement(samples, data, manual) {
+
+  pendingAccelSamples = samples;
+  pendingAccelData = data;
+
+  micOfferManual = !!manual;
+
+  // A pedido: solo la alerta de silencio; el límite no se rebasó
+  var limitAlert =
+    document.getElementById(
+      "measurement-limit-alert"
+    );
+
+  if (limitAlert) {
+    limitAlert.hidden = micOfferManual;
+  }
+
+  var skipButton =
+    document.getElementById(
+      "btn-mic-skip"
+    );
+
+  if (skipButton) {
+    skipButton.textContent =
+      micOfferManual
+        ? "Cancelar"
+        : "Ver resultado sin micrófono";
+  }
+
+  if (micOfferManual) {
+    micStatusBeforeManual = micStatus;
+    setMicModalVisible(true);
+    return;
+  }
+
+  setResultText(
+    "measurement-limit-text",
+    "La máquina gira más rápido de lo que el acelerómetro puede medir ("
+    + data.accel_limit_hz
+    + " Hz · "
+    + formatThousands(data.accel_limit_rpm)
+    + " rpm). La frecuencia que marca puede no ser la real."
+  );
+
+  setStatus(
+    "Se sobrepasó el límite del acelerómetro.",
+    false
+  );
+
+  setMicModalVisible(true);
+}
+
+
+// "Ver resultado sin micrófono"
+function skipMicrophoneMeasurement() {
+
+  setMicModalVisible(false);
+
+  // A pedido: "Cancelar" deja el resultado como estaba
+  if (micOfferManual) {
+    return;
+  }
+
+  micStatus = "skipped";
+
+  if (pendingAccelData) {
+    showAccelerometerResult(pendingAccelData);
+  }
+}
+
+
+function setMicPhaseUi(progress, remainingSeconds) {
+
+  if (els.simpleKicker) {
+    els.simpleKicker.textContent =
+      "MIDIENDO CON MICRÓFONO...";
+  }
+
+  if (els.simpleHelp) {
+    els.simpleHelp.textContent =
+      "Guarden silencio · "
+      + remainingSeconds
+      + (remainingSeconds === 1 ? " segundo" : " segundos");
+  }
+
+  if (els.simpleProgressBarFill) {
+    els.simpleProgressBarFill.style.width =
+      (progress * 100) + "%";
+  }
+
+  setRingProgress(progress);
+}
+
+
+// "Medir con micrófono · 10 segundos" (el clic permite usar el micrófono en iOS)
+function startMicrophoneMeasurement() {
+
+  if (isMicPhaseRunning || !pendingAccelData) {
+    return;
+  }
+
+  setMicModalVisible(false);
+
+  var ctx =
+    createAudioContextInGesture();
+
+  requestMicrophone(ctx)
+    .then(function (stream) {
+
+      if (!stream) {
+
+        if (ctx && ctx.close) {
+          ctx.close().catch(function () {});
+        }
+
+        micStatus = "denied";
+
+        showAccelerometerResult(pendingAccelData);
+
+        return;
+      }
+
+      isMicPhaseRunning = true;
+
+      hideMeasurementResult();
+
+      if (els.simpleCard && els.simpleCard.scrollIntoView) {
+        els.simpleCard.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      els.start.disabled = true;
+      els.pdf.disabled = true;
+      els.stop.disabled = false;
+
+      if (els.hz) {
+        els.hz.textContent = "—";
+      }
+
+      setStatus(
+        "Midiendo con micrófono...",
+        true
+      );
+
+      startAcousticCapture(ctx, stream);
+
+      micPhaseStartedAt = Date.now();
+
+      setMicPhaseUi(0, SIMPLE_MEASUREMENT_DURATION_MS / 1000);
+
+      micPhaseTimer = setInterval(
+        function () {
+
+          var elapsed =
+            Date.now() - micPhaseStartedAt;
+
+          var progress =
+            Math.min(1, elapsed / SIMPLE_MEASUREMENT_DURATION_MS);
+
+          setMicPhaseUi(
+            progress,
+            Math.max(0, Math.ceil((SIMPLE_MEASUREMENT_DURATION_MS - elapsed) / 1000))
+          );
+
+          if (progress >= 1) {
+            finishMicrophoneMeasurement();
+          }
+
+        },
+        SMAV_SIMPLE_TICK_MS
+      );
+
+    });
+}
+
+
+function stopMicPhase() {
+
+  if (micPhaseTimer !== null) {
+    clearInterval(micPhaseTimer);
+    micPhaseTimer = null;
+  }
+
+  isMicPhaseRunning = false;
+
+  stopAcousticCapture();
+
+  els.start.disabled = false;
+  els.stop.disabled = true;
+}
+
+
+// Terminan los 10 s del micrófono: se analiza junto con las muestras
+// del acelerómetro (cada sensor da su propio resultado)
+function finishMicrophoneMeasurement() {
+
+  stopMicPhase();
+
+  try {
+    lastAcousticPayload =
+      buildAcousticPayload();
+  } catch (error) {
+    console.warn("[SMAV MIC]", error);
+    lastAcousticPayload = null;
+  }
+
+  if (!lastAcousticPayload) {
+    micStatus = "failed";
+    smavSetSimpleFinished();
+    showAccelerometerResult(pendingAccelData);
+    return;
+  }
+
+  if (els.simpleKicker) {
+    els.simpleKicker.textContent =
+      "ANALIZANDO...";
+  }
+
+  analyzeSampleSet(
+    pendingAccelSamples
+  )
+
+    .then(function (data) {
+
+      micStatus = "used";
+
+      updateReadout(data);
+
+      smavSetSimpleFinished();
+
+      setStatus(
+        "Medición completada",
+        false
+      );
+
+      showAccelerometerResult(data);
+
+    })
+
+    .catch(function (error) {
+
+      console.error(
+        "[SMAV MIC FINAL]",
+        error
+      );
+
+      micStatus = "failed";
+
+      lastAcousticPayload = null;
+
+      smavSetSimpleFinished();
+
+      showAccelerometerResult(pendingAccelData);
+
+    });
+}
+
+
+// "Detener" durante el micrófono: se queda el resultado del acelerómetro
+function cancelMicrophoneMeasurement() {
+
+  stopMicPhase();
+
+  micStatus =
+    micOfferManual
+      ? micStatusBeforeManual
+      : "skipped";
+
+  lastAcousticPayload = null;
+
+  smavSetSimpleFinished();
+
+  setStatus(
+    "Medición con micrófono cancelada",
+    false
+  );
+
+  if (pendingAccelData) {
+    showAccelerometerResult(pendingAccelData);
+  }
+}
+
+
 function finalizeFullMeasurement() {
 
   /*
@@ -1397,24 +1779,6 @@ function finalizeFullMeasurement() {
    */
   var finalSamples =
     stopFullMeasurementCapture();
-
-  // Audio de los 10 s de la medición (null si no hubo micrófono).
-  // Un fallo del micrófono nunca bloquea la medición.
-  try {
-
-    stopAcousticCapture();
-
-    lastAcousticPayload =
-      buildAcousticPayload();
-
-  } catch (error) {
-
-    console.warn("[SMAV MIC]", error);
-
-    lastAcousticPayload = null;
-
-  }
-
 
   /*
    * Detenemos sensor,
@@ -1504,30 +1868,25 @@ function finalizeFullMeasurement() {
          * RESULTADO 3: frecuencia confiable y clara
          * RESULTADO 4: frecuencia confirmada con datos de placa
          */
-        var status = data.frequency_status;
+        // Si la máquina rebasa el límite del acelerómetro se
+        // ofrece medir con el micrófono; si no, va el resultado
+        if (data.accel_limit_exceeded) {
 
-        if (
-          status === "unclear"
-          || data.dominant_hz === null
-          || data.dominant_hz === undefined
-        ) {
-          // Sin frecuencia clara
-          showMeasurementResult(1, data);
-
-        } else if (status === "near_limit") {
-          // Cerca del límite físico (0.40*fs – 0.45*fs)
-          showMeasurementResult(2, data);
-
-        } else if (
-          status === "aliased_confirmed"
-          || status === "confirmed"
-        ) {
-          // Frecuencia resuelta con RPM de placa
-          showMeasurementResult(4, data);
+          offerMicrophoneMeasurement(
+            finalSamples,
+            data
+          );
 
         } else {
-          // "clear" o cualquier otro: frecuencia confiable
-          showMeasurementResult(3, data);
+
+          micStatus = "not_needed";
+
+          // Se guardan por si después usan "Medir RPM con micrófono"
+          pendingAccelSamples = finalSamples;
+          pendingAccelData = data;
+
+          showAccelerometerResult(data);
+
         }
 
 
@@ -1776,6 +2135,23 @@ hideMeasurementResult();
   gravityIncluded = false;
 
   lastAcousticPayload = null;
+
+  // Medición nueva: se limpia la etapa del micrófono
+  micStatus = "not_needed";
+
+  pendingAccelSamples = null;
+
+  pendingAccelData = null;
+
+  micOfferManual = false;
+
+  setMicModalVisible(false);
+
+  if (isMicPhaseRunning) {
+    stopMicPhase();
+  }
+
+  acoustic = null;
 
   acquireWakeLock();
 
@@ -2350,18 +2726,12 @@ function handleStartMeasurement() {
     els.start.disabled = true;
   }
 
-  // Dentro del clic: iOS solo deja grabar audio si se crea aquí
-  var audioCtx =
-    createAudioContextInGesture();
-
+  // El acelerómetro es el sensor principal; el micrófono solo se pide
+  // después, si la máquina rebasa el límite del acelerómetro
   requestMotionPermission()
     .then(function (granted) {
 
       if (!granted) {
-
-        if (audioCtx && audioCtx.close) {
-          audioCtx.close().catch(function () {});
-        }
 
         setStatus(
           "Permiso de movimiento denegado.",
@@ -2376,22 +2746,7 @@ function handleStartMeasurement() {
         return;
       }
 
-      // Micrófono opcional (Sección 7.5): si no hay permiso, se mide igual
-      return requestMicrophone(audioCtx)
-        .then(function (stream) {
-
-          if (!stream && audioCtx && audioCtx.close) {
-            audioCtx.close().catch(function () {});
-          }
-
-          startReal();
-
-          startAcousticCapture(
-            stream ? audioCtx : null,
-            stream
-          );
-
-        });
+      startReal();
 
     })
 
@@ -2459,10 +2814,43 @@ els.pdf.addEventListener(
     "click",
     function () {
 
+      // Durante el micrófono, Detener conserva el resultado del acelerómetro
+      if (isMicPhaseRunning) {
+        cancelMicrophoneMeasurement();
+        return;
+      }
+
       stop();
 
     }
   );
+
+  // Botones de la ventana de alertas
+  var micStartButton = document.getElementById("btn-mic-start");
+  var micSkipButton = document.getElementById("btn-mic-skip");
+
+  if (micStartButton) {
+    micStartButton.addEventListener("click", startMicrophoneMeasurement);
+  }
+
+  if (micSkipButton) {
+    micSkipButton.addEventListener("click", skipMicrophoneMeasurement);
+  }
+
+  // Micrófono a pedido desde el resultado
+  var micManualButton = document.getElementById("btn-mic-manual");
+
+  if (micManualButton) {
+    micManualButton.addEventListener("click", function () {
+      if (pendingAccelData && !isMicPhaseRunning) {
+        offerMicrophoneMeasurement(
+          pendingAccelSamples,
+          pendingAccelData,
+          true
+        );
+      }
+    });
+  }
 
   // Estado inicial de los lienzos.
 setMeasurementUnit("acceleration");

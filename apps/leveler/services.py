@@ -11,7 +11,7 @@ from apps.core.models import (
     LevelerTechnicalData,
 )
 
-MAX_RECOMMENDATIONS = 10
+MAX_RECOMMENDATIONS = 20
 
 def normalize_text(
     value: Any,
